@@ -1,0 +1,108 @@
+/* common styles for all modules */
+.root {
+	-fx-base: #303030;
+	-fx-background-color: #303030;
+}
+
+.instructions {		/* the instruction label at the top of a scene */
+	-fx-background-color: #202020;
+	-fx-max-width: Infinity;
+	-fx-border-color: gray;
+	-fx-border-width: 0 0 1 0;
+	-fx-padding: 20px;
+}
+
+.bottom-buttons {	/* the row of buttons at the bottom of a scene */
+	-fx-background-color: #202020;
+	-fx-max-width: Infinity;
+	-fx-border-color: gray;
+	-fx-border-width: 1 0 0 0;
+	-fx-padding: 15px;
+	-fx-alignment: center-left;
+	-fx-spacing: 5px;
+	-fx-font-size: 15;
+}
+
+.bottom-buttons .button {
+	-fx-text-fill: silver;
+    -fx-background-color: #333333;
+	-fx-background-radius: 5;
+	-fx-border-color: transparent;
+}
+
+.bottom-buttons .button:hover {
+	-fx-border-radius: 5;
+	-fx-border-color: silver;
+}
+
+.bottom-buttons .button:focused {
+	-fx-border-radius: 5;
+	-fx-border-color: silver;
+}
+
+.bottom-buttons .label {
+	-fx-padding: 0 15 0 0;
+}
+
+/* styles specific to the main menu */
+#version {	/* the version text in the lower left corner of the main menu */
+	-fx-font-size: 12px;
+	-fx-text-fill: gray;	
+}
+
+#title {	/* the title text on the main menu */
+	-fx-font-size: 64px;
+	-fx-text-fill: #FF3020;
+	-fx-effect: innershadow(three-pass-box , rgba(0, 0, 0, 0.7) , 6, 0.0 , 0 , 2);
+	-fx-padding: 80 0 0 0;
+}
+
+#neon-link {	/* the link to the project website */
+	-fx-font-size: 12px;
+	-fx-text-fill: gray;
+}
+
+#neon-link:focused {
+	-fx-text-fill: #FF3020;
+}
+
+.hyperlink {	/* the 'buttons' on the main menu */
+	-fx-font-size: 15;
+	-fx-text-fill: white;
+	-fx-underline: false;
+}
+
+.hyperlink:focused {
+	-fx-text-fill: red;
+	-fx-border-width: 0;
+}
+
+/* styles specific for the new game menu */
+#new-menu .label {
+	-fx-font-size: 14;
+}
+
+.list-view {	/* the species list */
+	-fx-background-color: gray;
+	-fx-background-radius: 2;
+	-fx-background-insets: 0, 1;
+}
+
+.list-view:focused {
+	-fx-background-color: #0093ff;
+}
+
+.list-view .list-cell:even {
+	-fx-background-color: #303030;
+	-fx-text-fill: silver;
+}
+
+.list-view .list-cell:odd {
+	-fx-background-color: #333333;
+	-fx-text-fill: silver;
+}
+
+.list-view .list-cell:selected {
+	-fx-background-color: #202020;
+	-fx-text-fill: white;
+}

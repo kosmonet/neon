@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+	<children>
+		<Label id="title" fx:id="titleLabel" maxHeight="Infinity" text="the neon roguelike engine" VBox.vgrow="ALWAYS" />
+		<Hyperlink fx:id="newLink" onKeyPressed="#newKeyPressed" text="New game" />
+		<Hyperlink fx:id="loadLink" onKeyPressed="#loadKeyPressed" text="Load game" />
+		<Hyperlink fx:id="optionLink" onKeyPressed="#optionKeyPressed" text="Options" />
+		<Hyperlink fx:id="quitLink" onKeyPressed="#quitKeyPressed" text="Quit" />
+		<Hyperlink id="neon-link" onAction="#loadWebsite" text="github.com/kosmonet/aneirin/" />
+		<Label id="version" fx:id="versionLabel" alignment="BOTTOM_LEFT" maxHeight="Infinity" maxWidth="Infinity" text="version" VBox.vgrow="ALWAYS" />
+	</children>
+</VBox>
