@@ -34,7 +34,7 @@ public class CreatureLoader implements ResourceLoader {
 	}
 	
 	public Element save(Resource resource) {
-		// TODO: proberen casts zoveel mogelijk te vermijden
+		// TODO: manier zoeken om casts te vermijden
 		RCreature rc = (RCreature)resource;
 		Element creature = new Element(rc.getType());
 		creature.setAttribute("id", rc.getID());

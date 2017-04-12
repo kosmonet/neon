@@ -38,8 +38,8 @@ public class Server implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus = new EventBus("Server Bus");
+	private final NeonFileSystem files = new NeonFileSystem();
 	private final ServerSocket socket;
-	private final NeonFileSystem files;
 	private final ResourceManager resources;
 	
 	/**
@@ -50,8 +50,7 @@ public class Server implements Runnable {
 	 */
 	public Server(String version, ServerSocket socket) {
 		this.socket = socket;
-		bus.register(socket);	
-		files = new NeonFileSystem();
+		bus.register(socket);
 		resources = new ResourceManager(files);
 		new ServerLoader().configure(files, resources);
 		

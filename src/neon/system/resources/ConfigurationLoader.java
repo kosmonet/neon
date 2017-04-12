@@ -18,8 +18,8 @@
 
 package neon.system.resources;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.jdom2.Element;
 
@@ -58,15 +58,15 @@ public class ConfigurationLoader implements ResourceLoader {
 		}
 	}	
 
-	private CServer loadServer (Element root) {
-		Set<String> modules = new LinkedHashSet<String>();
+	private CServer loadServer(Element root) {
+		// LinkedHashSet to preserve module load order and to prevent doubles
+		LinkedHashSet<String> modules = new LinkedHashSet<String>();
 		for (Element module : root.getChild("modules").getChildren()) {
 			modules.add(module.getText());
 		}
-
-		CServer cs = new CServer();
-		cs.setModules(modules);
-		return cs;
+		
+		String level = root.getChildText("log").toUpperCase();
+		return new CServer(modules, level);
 	}
 
 
@@ -76,8 +76,7 @@ public class ConfigurationLoader implements ResourceLoader {
 	}		
 
 	private CClient loadClient(Element root) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CClient();
 	}
 
 	private Element saveClient(CClient resource) {
@@ -86,16 +85,25 @@ public class ConfigurationLoader implements ResourceLoader {
 	}
 
 	private CGame loadGame(Element root) {
-		// TODO Auto-generated method stub
-		return null;
+		String title = root.getAttributeValue("title");
+		HashSet<String> species = new HashSet<>();
+		
+		Element playable = root.getChild("playable");
+		if (playable != null) {
+			for (Element id : playable.getChildren()) {
+				species.add(id.getText());
+			}
+		}
+		
+		return new CGame(title, species);
 	}
 
 	private Element saveGame(CGame resource) {
 		Element game = new Element("game");
 		game.setAttribute("title", resource.getTitle());
 		Element playable = new Element("playable");
-		for(String id : resource.getPlayableSpecies()) {
-			Element species = new Element("species");
+		for (String id : resource.getPlayableSpecies()) {
+			Element species = new Element("id");
 			species.setText(id);
 			playable.addContent(species);
 		}

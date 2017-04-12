@@ -35,6 +35,7 @@ public class RCreature extends Resource {
 	 */
 	public RCreature(String id, String type) {
 		super(id, type);
+		name = id;
 	}
 	
 	/**

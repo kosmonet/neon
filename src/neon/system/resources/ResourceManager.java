@@ -57,7 +57,8 @@ public class ResourceManager {
 	/**
 	 * Adds a new resource to the manager. The resource is stored in the 
 	 * temporary folder. If this resource already existed, it will be 
-	 * overwritten without warning.
+	 * overwritten without warning. Global namespace resources are read-only,
+	 * they can never be added through the resource manager.
 	 * 
 	 * @param namespace
 	 * @param resource
@@ -65,6 +66,11 @@ public class ResourceManager {
 	 * @throws IOException 
 	 */
 	public void addResource(String namespace, Resource resource) throws MissingLoaderException, IOException {
+		if (namespace.equals("global")) {
+			logger.warning("trying to write to global namespace");
+			throw new IllegalArgumentException("Global namespace is read-only!");
+		}
+		
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
@@ -82,6 +88,19 @@ public class ResourceManager {
 		} else {
 			throw new MissingLoaderException("Loader for resource type <" + resource.getType() + "> was not found.");
 		}
+	}
+	
+	/**
+	 * Returns a resource from the global namespace. Global namespace resources
+	 * are read-only, they cannot be overwritten through the resource manager.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws MissingResourceException
+	 * @throws MissingLoaderException
+	 */
+	public <T extends Resource> T getResource(String id) throws MissingResourceException, MissingLoaderException {
+		return getResource("global", id);	
 	}
 	
 	/**
@@ -108,7 +127,12 @@ public class ResourceManager {
 
 		// resource was not loaded, do it now
 		try {
-			Element resource = files.loadFile(new XMLTranslator(), namespace, id + ".xml").getRootElement();
+			Element resource;
+			if (namespace.equals("global")) {
+				resource = files.loadFile(new XMLTranslator(), id + ".xml").getRootElement();				
+			} else {
+				resource = files.loadFile(new XMLTranslator(), namespace, id + ".xml").getRootElement();				
+			}
 			String type = resource.getName();
 			if(loaders.containsKey(type)) {
 				return (T) loaders.get(type).load(resource);

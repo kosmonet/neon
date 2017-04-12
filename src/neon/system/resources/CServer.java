@@ -18,9 +18,7 @@
 
 package neon.system.resources;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Configuration information for the server. This resource should be created 
@@ -31,15 +29,21 @@ import java.util.Set;
  *
  */
 public class CServer extends Resource {
-	private final Set<String> modules = new LinkedHashSet<>();
+	private final LinkedHashSet<String> modules = new LinkedHashSet<>();
+	private final String level;
 
-	public CServer() {
+	/**
+	 * Initializes this server configuration resource with the given set of
+	 * modules. A {@source LinkedHashSet} is used to prevent doubles and to 
+	 * preserve the correct load order of the modules. 
+	 * 
+	 * @param modules
+	 * @param level
+	 */
+	public CServer(LinkedHashSet<String> modules, String level) {
 		super("server", "config");
-	}
-	
-	public void setModules(Collection<String> modules) {
-		this.modules.clear();
 		this.modules.addAll(modules);
+		this.level = level;
 	}
 	
 	/**
@@ -48,5 +52,13 @@ public class CServer extends Resource {
 	public String[] getModules() {
 		String[] list = new String[modules.size()];
 		return modules.toArray(list);
+	}
+	
+	/**
+	 * 
+	 * @return the required logging {@code Level}
+	 */
+	public String getLogLevel() {
+		return level;
 	}
 }

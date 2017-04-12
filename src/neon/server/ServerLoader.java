@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
@@ -35,9 +36,9 @@ import neon.system.resources.CGame;
 import neon.system.resources.CServer;
 import neon.system.resources.ConfigurationLoader;
 import neon.system.resources.MissingLoaderException;
+import neon.system.resources.MissingResourceException;
 import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
-import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
 public class ServerLoader {
@@ -54,31 +55,45 @@ public class ServerLoader {
 	public void configure(NeonFileSystem files, ResourceManager manager) {
 		try {
 			CServer configuration = initConfiguration();
+			logger.setLevel(Level.parse(configuration.getLogLevel()));
 			initFileSystem(files, configuration.getModules());
 			initResources(manager, configuration);
-			initClient(manager, configuration);
-			initGame(manager, configuration);
+			initClient(manager);
+			initGame(manager, configuration.getModules());
+			logger.info("server succesfully configured");
 		} catch (JDOMException e) {
 			logger.severe("JDOMException in server configuration");
 		} catch (IOException e) {
 			logger.severe("could not load configuration file");
-		}	
+		}
+	}
+
+	private CServer initConfiguration() throws IOException, JDOMException {
+		// try to load the neon.ini file
+		try (InputStream in = Files.newInputStream(Paths.get(".", "neon.ini"))) {
+			Document doc = new SAXBuilder().build(in);
+			return (CServer) new ConfigurationLoader().load(doc.getRootElement());
+		} 	
 	}
 	
-	private void initGame(ResourceManager resources, CServer configuration) {
+	private void initGame(ResourceManager resources, String[] modules) {
+		// use a set to prevent doubles
 		HashSet<String> species = new HashSet<>();
 		// default game title
 		String title = "neon";
 		
 		// go through the loaded modules to check if any redefined the title
-		for (String id : configuration.getModules()) {
+		for (String id : modules) {
 			try {
-				RModule module = resources.getResource("config", id);
+				RModule module = resources.getResource(id);
 				species.addAll(module.getSpecies());
 				if (module.getTitle() != null) {
 					title = module.getTitle();
 				}
-			} catch (ResourceException e) {
+			} catch (MissingResourceException e) {
+				// something went wrong loading the module, try to continue anyway
+				logger.warning("problem loading module " + id);
+			} catch (MissingLoaderException e) {
 				logger.severe(e.getMessage());
 			}
 		}
@@ -92,14 +107,6 @@ public class ServerLoader {
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}		
-	}
-
-	private CServer initConfiguration() throws IOException, JDOMException {
-		// try to load the neon.ini file
-		try (InputStream in = Files.newInputStream(Paths.get(".", "neon.ini"))) {
-			Document doc = new SAXBuilder().build(in);
-			return (CServer) new ConfigurationLoader().load(doc.getRootElement());
-		} 	
 	}
 	
 	private void initFileSystem(NeonFileSystem files, String[] modules) {
@@ -117,8 +124,7 @@ public class ServerLoader {
 	private void initResources(ResourceManager resources, CServer configuration) {
 		// add all necessary resource loaders to the manager
 		resources.addLoader("config", new ConfigurationLoader());
-		ModuleLoader loader = new ModuleLoader();
-		resources.addLoader("module", loader);
+		resources.addLoader("module", new ModuleLoader());
 		
 		// add server configuration resource to the manager
 		try {
@@ -128,25 +134,9 @@ public class ServerLoader {
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}
-
-		// add module resources to the manager (most other resources will be loaded on demand)
-		for (String id : configuration.getModules()) {
-			try (InputStream in = Files.newInputStream(Paths.get("data", id, "main.xml"))) {
-				Document doc = new SAXBuilder().build(in);
-				RModule module = loader.load(doc.getRootElement());
-				module.setID(id);
-				resources.addResource("config", module);
-			} catch (JDOMException e) {
-				logger.severe("JDOMException in module configuration");
-			} catch (IOException e) {
-				logger.severe("error loading " + e.getMessage());
-			} catch (MissingLoaderException e) {
-				logger.severe(e.getMessage());
-			}		
-		}
 	}
 	
-	private void initClient(ResourceManager resources, CServer configuration) {
+	private void initClient(ResourceManager resources) {
 		// add client configuration resource to the manager
 		try {
 			CClient client = new CClient();			
