@@ -30,6 +30,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import neon.editor.dialogs.SettingsEditor;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.MissingLoaderException;
@@ -64,7 +65,7 @@ public class Editor extends Application {
 		
 		resources.addLoader("module", new ModuleLoader());
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("editor.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
 		loader.setController(this);
 		
 		try {
@@ -91,10 +92,7 @@ public class Editor extends Application {
 	}
 	
 	@FXML private void editSettings(ActionEvent event) {
-		Stage editStage = new Stage();
-		editStage.initOwner(stage);
-		editStage.setTitle("Module settings");
-		editStage.showAndWait();
+		new SettingsEditor(module, stage).show();
 	}
 	
 	@FXML private void showAbout(ActionEvent event) {
