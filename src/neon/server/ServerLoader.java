@@ -86,7 +86,7 @@ public class ServerLoader {
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
-				species.addAll(module.getSpecies());
+				species.addAll(module.getPlayableSpecies());
 				if (module.getTitle() != null) {
 					title = module.getTitle();
 				}

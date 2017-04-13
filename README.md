@@ -1,6 +1,6 @@
 # The Neon Roguelike Engine
 
-##Requirements
+## Requirements
 The engine is written for Java 8, and uses JavaFX 8 for the user interface. 
 
 The following external libraries are needed:

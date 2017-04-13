@@ -16,32 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.editor;
 
-import java.util.HashSet;
-import java.util.Set;
+public class SettingsEditor {
 
-import org.jdom2.Element;
-
-public class ModuleLoader implements ResourceLoader {
-	@Override
-	public RModule load(Element root) {
-		RModule module = new RModule(root.getAttributeValue("id"), root.getChildText("title"));
-		
-		Set<String> species = new HashSet<>();		
-		Element playable = root.getChild("playable");
-		if (playable != null) {
-			for (Element id : playable.getChildren()) {
-				species.add(id.getText());
-			}
-		}
-		module.addPlayableSpecies(species);
-		
-		return module;	
-	}
-
-	@Override
-	public Element save(Resource resource) {
-		return new Element("module");
-	}
 }

@@ -51,7 +51,7 @@ public class RModule extends Resource {
 	 * 
 	 * @param species
 	 */
-	public void addSpecies(Collection<String> species) {
+	public void addPlayableSpecies(Collection<String> species) {
 		this.species.addAll(species);
 	}
 	
@@ -59,7 +59,7 @@ public class RModule extends Resource {
 	 * 
 	 * @return a set of playable species
 	 */
-	public Set<String> getSpecies() {
+	public Set<String> getPlayableSpecies() {
 		return species;
 	}
 }

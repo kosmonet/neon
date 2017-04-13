@@ -39,8 +39,8 @@ public class Server implements Runnable {
 	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
+	private final ResourceManager resources = new ResourceManager(files);;
 	private final ServerSocket socket;
-	private final ResourceManager resources;
 	
 	/**
 	 * Initializes the server.
@@ -51,7 +51,6 @@ public class Server implements Runnable {
 	public Server(String version, ServerSocket socket) {
 		this.socket = socket;
 		bus.register(socket);
-		resources = new ResourceManager(files);
 		new ServerLoader().configure(files, resources);
 		
 		// send configuration message to the client
