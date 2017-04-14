@@ -55,10 +55,20 @@ public class ResourceManager {
 	}
 	
 	/**
+	 * Adds a resource to the global namespace.
+	 * 
+	 * @param resource
+	 * @throws IOException 
+	 * @throws MissingLoaderException 
+	 */
+	public void addResource(Resource resource) throws MissingLoaderException, IOException {
+		addResource("global", resource);
+	}
+	
+	/**
 	 * Adds a new resource to the manager. The resource is stored in the 
 	 * temporary folder. If this resource already existed, it will be 
-	 * overwritten without warning. Global namespace resources are read-only,
-	 * they can never be added through the resource manager.
+	 * overwritten without warning. 
 	 * 
 	 * @param namespace
 	 * @param resource
@@ -66,11 +76,6 @@ public class ResourceManager {
 	 * @throws IOException 
 	 */
 	public void addResource(String namespace, Resource resource) throws MissingLoaderException, IOException {
-		if (namespace.equals("global")) {
-			logger.warning("trying to write to global namespace");
-			throw new IllegalArgumentException("Global namespace is read-only!");
-		}
-		
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
@@ -82,17 +87,20 @@ public class ResourceManager {
 		
 		// save resource to temp folder
 		String type = resource.getType();
-		if(loaders.containsKey(type)) {
+		if (loaders.containsKey(type)) {
 			Document doc = new Document(loaders.get(type).save(resource));
-			files.saveFile(doc, new XMLTranslator(), namespace, resource.getID() + ".xml");			
+			if (namespace.equals("global")) {
+				files.saveFile(doc, new XMLTranslator(), resource.getID() + ".xml");			
+			} else {
+				files.saveFile(doc, new XMLTranslator(), namespace, resource.getID() + ".xml");							
+			}
 		} else {
 			throw new MissingLoaderException("Loader for resource type <" + resource.getType() + "> was not found.");
 		}
 	}
 	
 	/**
-	 * Returns a resource from the global namespace. Global namespace resources
-	 * are read-only, they cannot be overwritten through the resource manager.
+	 * Returns a resource from the global namespace. 
 	 * 
 	 * @param id
 	 * @return

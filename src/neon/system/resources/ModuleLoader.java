@@ -30,10 +30,8 @@ public class ModuleLoader implements ResourceLoader {
 		
 		Set<String> species = new HashSet<>();		
 		Element playable = root.getChild("playable");
-		if (playable != null) {
-			for (Element id : playable.getChildren()) {
-				species.add(id.getText());
-			}
+		for (Element id : playable.getChildren()) {
+			species.add(id.getText());
 		}
 		module.addPlayableSpecies(species);
 		
@@ -42,6 +40,21 @@ public class ModuleLoader implements ResourceLoader {
 
 	@Override
 	public Element save(Resource resource) {
-		return new Element("module");
+		RModule module = (RModule) resource;
+		Element root = new Element("module");
+		root.setAttribute("id", module.getID());
+		Element title = new Element("title");
+		title.setText(module.getTitle());
+		root.addContent(title);
+		Element playable = new Element("playable");
+		root.addContent(playable);
+		
+		for (String species : module.getPlayableSpecies()) {
+			Element id = new Element("id");
+			id.setText(species);
+			playable.addContent(id);
+		}
+		
+		return root;
 	}
 }

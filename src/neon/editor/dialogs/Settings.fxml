@@ -15,7 +15,7 @@
 
 <BorderPane prefHeight="320.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <Label styleClass="instructions" fx:id="instructionLabel" text="Label" />
+      <Label styleClass="instructions" fx:id="instructionLabel" text="Instructions" />
    </top>
    <center>
       <GridPane hgap="10.0" vgap="5.0" BorderPane.alignment="CENTER">
@@ -40,11 +40,11 @@
       </GridPane>
    </center>
    <bottom>
-      <ButtonBar buttonOrder="L_E+U+FBXI_YNOCAH_R" styleClass="bottom-buttons" BorderPane.alignment="CENTER">
+      <ButtonBar styleClass="bottom-buttons" BorderPane.alignment="CENTER">
         <buttons>
-            <Button mnemonicParsing="false" text="Ok" />
-          <Button mnemonicParsing="false" text="Apply" />
-            <Button mnemonicParsing="false" text="Cancel" />
+            <Button text="Ok" onAction="#okPressed" ButtonBar.buttonData="OK_DONE" />
+          <Button text="Apply" onAction="#applyPressed" ButtonBar.buttonData="APPLY" />
+            <Button text="Cancel" onAction="#cancelPressed" ButtonBar.buttonData="CANCEL_CLOSE" />
         </buttons>
       </ButtonBar>
    </bottom>

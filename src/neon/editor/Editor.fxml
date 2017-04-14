@@ -10,28 +10,27 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" text="New..." />
-                  <MenuItem mnemonicParsing="false" text="Open..." onAction="#showOpen" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem mnemonicParsing="false" text="Quit" onAction="#quit" />
+                  <MenuItem text="New..." onAction="#showNew" />
+                  <MenuItem text="Open..." onAction="#showOpen" />
+                  <MenuItem fx:id="saveItem" text="Save" onAction="#saveModule" />
+                  <SeparatorMenuItem />
+              <MenuItem text="Quit" onAction="#quit" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu text="Edit">
             <items>
               <MenuItem fx:id="settingsItem" mnemonicParsing="false" text="Module settings..." onAction="#editSettings" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" onAction="#showAbout" />
+              <MenuItem text="About" onAction="#showAbout" />
             </items>
           </Menu>
         </menus>

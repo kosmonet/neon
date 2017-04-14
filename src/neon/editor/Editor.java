@@ -21,16 +21,24 @@ package neon.editor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import neon.editor.dialogs.SettingsEditor;
+import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.MissingLoaderException;
@@ -42,23 +50,36 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
+/**
+ * The neon roguelike editor.
+ * 
+ * @author mdriesen
+ *
+ */
 public class Editor extends Application {
 	private static final Logger logger = Logger.getGlobal();
 	
-	@FXML private MenuItem settingsItem;
+	@FXML private MenuItem saveItem, settingsItem;
 	
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
+	private final EventBus bus = new EventBus("Editor Bus");
 	private Stage stage;	
 	private Scene scene;
 	private RModule module;
 	
+	/**
+	 * Initializes this {@code Editor}.
+	 */
 	public Editor() {
+		bus.register(this);
+		
 		try {
-			files.setTemporaryFolder(Paths.get(".", "temp"));
+			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
 			logger.severe("could not initialize file system");			
 		}
@@ -76,6 +97,7 @@ public class Editor extends Application {
 		}
 		
 		settingsItem.setDisable(true);
+		saveItem.setDisable(true);
 	}
 	
 	@Override
@@ -92,7 +114,7 @@ public class Editor extends Application {
 	}
 	
 	@FXML private void editSettings(ActionEvent event) {
-		new SettingsEditor(module, stage).show();
+		new SettingsEditor(module, stage, bus).show();
 	}
 	
 	@FXML private void showAbout(ActionEvent event) {
@@ -101,7 +123,6 @@ public class Editor extends Application {
 		alert.setHeaderText("The Neon Roguelike Editor");
 		alert.setContentText("Version 0.5.0 \n"
 				+ "Copyright (C) 2017 - mdriesen");
-
 		alert.showAndWait();
 	}
 	
@@ -110,8 +131,48 @@ public class Editor extends Application {
 		chooser.setTitle("Open Module");
         chooser.setInitialDirectory(new File("data")); 
 		File file = chooser.showDialog(stage);
-		if (file.exists()) {
+		if (file != null && file.exists()) {
 			loadModule(file);			
+		}
+	}
+	
+	@FXML private void showNew(ActionEvent event) {
+		// ask for a new module id
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Create New Module");
+		dialog.setHeaderText("Give an id for the new module.");
+		dialog.setContentText("Module id:");
+		Optional<String> result = dialog.showAndWait();
+		
+		// check if id is valid
+		if (result.isPresent() && !result.get().isEmpty()) {
+			String id = result.get();
+			Path path = Paths.get("data", id);
+			
+			// check if id didn't exist already
+			if (Files.exists(path)) {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Module conflict");
+				alert.setContentText("The module id already exists. Use another id.");
+				alert.showAndWait();
+				return;
+			}
+			
+			// create the new module
+			try {
+				Files.createDirectories(path);
+				files.addModule(id);				
+				module = new RModule(id, "");
+				resources.addResource(module);
+				settingsItem.setDisable(false);
+				stage.setTitle("The Neon Roguelike Editor - " + module.getID());
+				saveItem.setDisable(false);
+			} catch (IOException e) {
+				logger.severe("could not create module directory " + path);
+			} catch (MissingLoaderException e) {
+				logger.severe(e.getMessage());
+			}
 		}
 	}
 	
@@ -125,12 +186,40 @@ public class Editor extends Application {
 			module = resources.getResource(file.getName());
 			settingsItem.setDisable(false);
 			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
+			saveItem.setDisable(false);
 		} catch (FileNotFoundException e) {
 			logger.info(e.getMessage());
 		} catch (MissingResourceException e) {
 			logger.warning(e.getMessage());
 		} catch (MissingLoaderException e) {
 			logger.warning(e.getMessage());
+		}
+	}
+	
+	@FXML private void saveModule(ActionEvent event) {
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("data", module.getID()));
+	}
+	
+	/**
+	 * Saves an edited resource to disk.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	public void saveResource(SaveEvent event) {
+		// special consideration if this concerns the module resource
+		if (event.toString().equals("module")) {
+			module = event.getResource();
+			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
+		}
+		
+		try {
+			resources.addResource(event.getResource());
+			logger.fine("saved resource " + event.getResource().getID());
+		} catch (MissingLoaderException e) {
+			logger.severe(e.getMessage());
+		} catch (IOException e) {
+			logger.severe("failed to save resource " + event.getResource().getID());
 		}
 	}
 	

@@ -87,9 +87,7 @@ public class ServerLoader {
 			try {
 				RModule module = resources.getResource(id);
 				species.addAll(module.getPlayableSpecies());
-				if (module.getTitle() != null) {
-					title = module.getTitle();
-				}
+				title = module.getTitle().isEmpty() ? title : module.getTitle();
 			} catch (MissingResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);

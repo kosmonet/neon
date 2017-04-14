@@ -111,18 +111,26 @@ public class NeonFileSystem {
 	 * @throws IOException 
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
-		if (!Files.exists(path)) {
-			logger.fine("creating temp folder " + path);
-			Files.createDirectories(path);
+		// delete contents of existing temp folder
+		if (Files.exists(path)) {
+			delete(path.toFile());
 		}
 
-		if (path.toFile().isDirectory()) {
-			temporary = path;			
-			logger.config("temp folder set to " + path);
-		} else {
-			throw new NotDirectoryException(path.toString() + " is not a folder");
-		}
+		// create new temp folder
+		Files.createDirectories(path);
+		temporary = path;			
+		logger.config("temp folder set to " + path);
 	}
+	
+	private void delete(File file) {
+		if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				delete(f);
+			}
+		}
+		file.delete();
+	}
+
 	
 	/**
 	 * Sets the path to the folder of the current saved game.
@@ -191,7 +199,7 @@ public class NeonFileSystem {
 	 * @throws IOException 
 	 */
 	public <T> T loadFile(Translator<T> translator, String... path) throws IOException {
-		// we go through getFile(String... path) to resolve the real path
+		// we go through loadFile(String... path) to resolve the real path
 		try (InputStream in = Files.newInputStream(loadFile(path).toPath())) {
 			return translator.translate(in);
 		}

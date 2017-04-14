@@ -1,0 +1,66 @@
+/*
+ *	Neon, a roguelike engine.
+ *	Copyright (C) 2017 - Maarten Driesen
+ * 
+ *	This program is free software; you can redistribute it and/or modify
+ *	it under the terms of the GNU General Public License as published by
+ *	the Free Software Foundation; either version 3 of the License, or
+ *	(at your option) any later version.
+ *
+ *	This program is distributed in the hope that it will be useful,
+ *	but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *	GNU General Public License for more details.
+ *
+ *	You should have received a copy of the GNU General Public License
+ *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package neon.system.files;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Logger;
+
+import com.google.common.collect.TreeTraverser;
+import com.google.common.io.Files;
+
+/**
+ * A collection of utility methods to work with the file system.
+ * 
+ * @author mdriesen
+ *
+ */
+public class FileUtils {
+	private final static Logger logger = Logger.getGlobal();
+
+	/**
+	 * Move the contents of a folder to another folder.
+	 * 
+	 * @param from
+	 * @param to
+	 */
+	public static void moveFolder(Path from, Path to) {
+		logger.info("copying files from " + from + " to " + to);
+		
+		TreeTraverser<File> traverser = Files.fileTreeTraverser();
+		for (File file : traverser.preOrderTraversal(from.toFile())) {
+			// parent folder should not be copied!
+			if (!file.equals(from.toFile())) {
+				// construct the destination path from the origin path
+				Path origin = Paths.get(file.getPath());
+				Path relative = from.relativize(origin);
+				Path destination = to.resolve(relative);
+				logger.finest("copying file " + relative + " to " + to);
+
+				try {
+					Files.copy(file, destination.toFile());
+				} catch (IOException e) {
+					logger.severe("could not write file " + destination);
+				}
+			}
+		}
+	}
+}
