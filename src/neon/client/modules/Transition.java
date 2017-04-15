@@ -31,7 +31,7 @@ public class Transition {
 	private final Module from, to;
 	
 	/**
-	 * Creates a transition between the from and to modules, under the given
+	 * Creates a transition between the from and to {@code Module}s, under the given
 	 * condition.
 	 * 
 	 * @param from
@@ -51,7 +51,8 @@ public class Transition {
 	 */
 	@Subscribe
 	public void transition(TransitionEvent event) {
-		if (from.isActive() && event.toString().equals(condition)) {
+		if (from.isActive() && !event.isConsumed() && event.toString().equals(condition)) {
+			event.consume();
 			from.setActive(false);
 			from.exit(event);
 			to.setActive(true);

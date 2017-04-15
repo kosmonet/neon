@@ -16,28 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.console;
 
 import neon.system.event.ClientEvent;
 
 /**
- * An event to signal the transition between two client states.
+ * An event to signal that a message should be shown on the console.
  * 
  * @author mdriesen
  *
  */
-public class TransitionEvent extends ClientEvent {
-	private boolean consumed = false;
-	
-	public TransitionEvent(String message) {
+public class ConsoleEvent extends ClientEvent{
+	public ConsoleEvent(String message) {
 		super(message);
-	}
-	
-	public void consume() {
-		consumed = true;
-	}
-	
-	public boolean isConsumed() {
-		return consumed;
 	}
 }

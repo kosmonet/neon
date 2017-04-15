@@ -1,6 +1,6 @@
 .instructions {		/* the instruction label at the top of a dialog */
 	-fx-background-color: #DDDDFF;
- 	-fx-max-width: Infinity;
+	-fx-max-width: Infinity;
 	-fx-border-color: gray;
 	-fx-border-width: 0 0 1 0;
 	-fx-padding: 10px;

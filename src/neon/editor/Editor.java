@@ -98,6 +98,8 @@ public class Editor extends Application {
 		
 		settingsItem.setDisable(true);
 		saveItem.setDisable(true);
+		
+		// TODO: accordeonpane voor de resource lijst, elke titledpane krijgt ne tree
 	}
 	
 	@Override

@@ -20,9 +20,16 @@ package neon.server;
 
 import java.util.logging.Logger;
 
-import com.google.common.eventbus.EventBus;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import neon.client.console.ConsoleEvent;
 import neon.system.event.ClientConfigurationEvent;
+import neon.system.event.ScriptEvent;
 import neon.system.files.NeonFileSystem;
 import neon.system.resources.CGame;
 import neon.system.resources.ResourceException;
@@ -39,7 +46,8 @@ public class Server implements Runnable {
 	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
-	private final ResourceManager resources = new ResourceManager(files);;
+	private final ResourceManager resources = new ResourceManager(files);
+	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");;
 	private final ServerSocket socket;
 	
 	/**
@@ -51,6 +59,7 @@ public class Server implements Runnable {
 	public Server(String version, ServerSocket socket) {
 		this.socket = socket;
 		bus.register(socket);
+		bus.register(this);
 		new ServerLoader().configure(files, resources);
 		
 		// send configuration message to the client
@@ -60,6 +69,17 @@ public class Server implements Runnable {
 		} catch (ResourceException e) {
 			logger.severe(e.getMessage());
 		}
+	}
+	
+	@Subscribe
+	public void execute(ScriptEvent event) {
+		try {
+			engine.eval("print('" + event + "')");
+		} catch (ScriptException e) {
+			logger.warning("could not evaluate script: " + event);
+		}
+		
+		bus.post(new ConsoleEvent("message received on " + Thread.currentThread()));
 	}
 	
 	/**

@@ -85,7 +85,6 @@ public class SettingsEditor {
 			scene.getStylesheets().add(getClass().getResource("../editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
 			logger.severe("failed to load settings editor ui");
 		}
 		
@@ -100,7 +99,7 @@ public class SettingsEditor {
 	 * Shows the settings editor window.
 	 */
 	public void show() {
-		stage.showAndWait();
+		stage.show();
 	}
 
 	@FXML private void cancelPressed(ActionEvent event) {

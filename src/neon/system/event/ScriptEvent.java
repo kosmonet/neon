@@ -16,28 +16,10 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.system.event;
 
-import neon.system.event.ClientEvent;
-
-/**
- * An event to signal the transition between two client states.
- * 
- * @author mdriesen
- *
- */
-public class TransitionEvent extends ClientEvent {
-	private boolean consumed = false;
-	
-	public TransitionEvent(String message) {
-		super(message);
-	}
-	
-	public void consume() {
-		consumed = true;
-	}
-	
-	public boolean isConsumed() {
-		return consumed;
+public class ScriptEvent extends ServerEvent {
+	public ScriptEvent(String command) {
+		super(command);
 	}
 }

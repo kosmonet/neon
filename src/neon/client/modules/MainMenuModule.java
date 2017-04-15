@@ -36,6 +36,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
+import neon.client.console.Console;
 import neon.system.event.ClientConfigurationEvent;
 
 /**
@@ -82,6 +83,8 @@ public class MainMenuModule extends Module {
 		quitLink.setOnAction(event -> System.exit(0));
 		// also quit when pressing esc
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
+		// show console when pressing F1
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new Console(bus).show());
 		
 		versionLabel.setText("release " + version);
 	}
