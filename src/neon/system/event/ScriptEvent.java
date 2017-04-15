@@ -18,6 +18,12 @@
 
 package neon.system.event;
 
+/**
+ * An event containing a script that should be executed.
+ * 
+ * @author mdriesen
+ *
+ */
 public class ScriptEvent extends ServerEvent {
 	public ScriptEvent(String command) {
 		super(command);

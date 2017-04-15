@@ -169,7 +169,7 @@ public class Console {
 	}
 	
 	private class ConsoleHandler extends Handler {
-		ConsoleHandler(Level level) {
+		private ConsoleHandler(Level level) {
 			setLevel(level);
 			setFormatter(new NeonLogFormatter());
 		}

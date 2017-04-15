@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.jdom2.Element;
 
-public class ModuleLoader implements ResourceLoader {
+public class ModuleLoader implements ResourceLoader<RModule> {
 	@Override
 	public RModule load(Element root) {
 		RModule module = new RModule(root.getAttributeValue("id"), root.getChildText("title"));
@@ -39,8 +39,7 @@ public class ModuleLoader implements ResourceLoader {
 	}
 
 	@Override
-	public Element save(Resource resource) {
-		RModule module = (RModule) resource;
+	public Element save(RModule module) {
 		Element root = new Element("module");
 		root.setAttribute("id", module.getID());
 		Element title = new Element("title");

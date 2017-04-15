@@ -29,7 +29,7 @@ import org.jdom2.Element;
  * @author mdriesen
  *
  */
-public class ConfigurationLoader implements ResourceLoader {
+public class ConfigurationLoader implements ResourceLoader<Resource> {
 	@Override
 	public Resource load(Element root) {
 		switch (root.getName()) {

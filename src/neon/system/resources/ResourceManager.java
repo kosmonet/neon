@@ -20,7 +20,9 @@ package neon.system.resources;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -42,6 +44,7 @@ public class ResourceManager {
 	
 	private final NeonFileSystem files;
 	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
+	@SuppressWarnings("rawtypes")
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
 	
 	/**
@@ -75,7 +78,8 @@ public class ResourceManager {
 	 * @throws MissingLoaderException 
 	 * @throws IOException 
 	 */
-	public void addResource(String namespace, Resource resource) throws MissingLoaderException, IOException {
+	@SuppressWarnings("unchecked")
+	public <T extends Resource> void addResource(String namespace, T resource) throws MissingLoaderException, IOException {
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
@@ -158,7 +162,24 @@ public class ResourceManager {
 	 * @param type
 	 * @param loader
 	 */
-	public void addLoader(String type, ResourceLoader loader) {
+	public <T extends Resource> void addLoader(String type, ResourceLoader<T> loader) {
 		loaders.put(type, loader);
+	}
+	
+	/**
+	 * List all resources of a given type. 
+	 * 
+	 * @param type
+	 * @return
+	 * @throws IOException 
+	 */
+	public Set<String> listResources(String type) throws IOException {
+		HashSet<String> set = new HashSet<>();
+		
+		for (String file : files.listFiles(type)) {
+			set.add(file.replace(".xml", ""));
+		}
+		
+		return set;
 	}
 }

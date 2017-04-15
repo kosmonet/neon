@@ -33,9 +33,9 @@ public class RCreature extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RCreature(String id, String type) {
-		super(id, type);
-		name = id;
+	public RCreature(String id, String name) {
+		super(id, "creature");
+		this.name = name;
 	}
 	
 	/**
@@ -43,14 +43,5 @@ public class RCreature extends Resource {
 	 */
 	public String getName() {
 		return name;
-	}
-	
-	/**
-	 * Sets the name of this creature.
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 }

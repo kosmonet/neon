@@ -26,16 +26,15 @@ import org.jdom2.Element;
  * @author mdriesen
  *
  */
-public class CreatureLoader implements ResourceLoader {
+public class CreatureLoader implements ResourceLoader<RCreature> {
+	@Override
 	public RCreature load(Element root) {
-		RCreature creature = new RCreature(root.getAttributeValue("id"), root.getName());
-		creature.setName(root.getAttributeValue("name"));
+		RCreature creature = new RCreature(root.getAttributeValue("id"), root.getAttributeValue("name"));
 		return creature;
 	}
 	
-	public Element save(Resource resource) {
-		// TODO: manier zoeken om casts te vermijden
-		RCreature rc = (RCreature)resource;
+	@Override
+	public Element save(RCreature rc) {
 		Element creature = new Element(rc.getType());
 		creature.setAttribute("id", rc.getID());
 		creature.setAttribute("name", rc.getName());

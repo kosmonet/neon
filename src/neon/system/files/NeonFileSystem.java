@@ -30,6 +30,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -226,5 +228,47 @@ public class NeonFileSystem {
 			logger.finest("writing file " + Arrays.toString(path));
 			translator.translate(output, out);
 		}
+	}
+	
+	/**
+	 * Lists all the files in the given folder.
+	 * 
+	 * @param folder
+	 * @return
+	 * @throws IOException
+	 */
+	public Set<String> listFiles(String... folder) throws IOException {
+		HashSet<String> files = new HashSet<String>();
+		
+		// check the temp folder first
+		if (temporary != null) {
+			Path path = Paths.get(temporary.toString(), folder);
+			if (Files.isDirectory(path)) {
+				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+			}
+		}
+
+		// then check the save folder
+		if (save != null) {
+			Path path = Paths.get(save.toString(), folder);
+			if (Files.isDirectory(path)) {
+				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+			}
+		}
+		
+		// copy path to larger array to make room for the module name
+		String[] temp = new String[folder.length + 1];
+		System.arraycopy(folder, 0, temp, 1, folder.length);
+		
+		// check all loaded modules to see if the requested file is present in that module
+		for (String module : modules) {
+			temp[0] = module;
+			Path path = Paths.get("data", temp);
+			if (Files.isDirectory(path)) {
+				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+			}
+		}
+		
+		return files;
 	}
 }

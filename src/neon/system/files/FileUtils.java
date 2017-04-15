@@ -37,7 +37,8 @@ public class FileUtils {
 	private final static Logger logger = Logger.getGlobal();
 
 	/**
-	 * Move the contents of a folder to another folder.
+	 * Move the contents of a folder to another folder. This method will 
+	 * overwrite existing items in the destination folder.
 	 * 
 	 * @param from
 	 * @param to
@@ -48,7 +49,7 @@ public class FileUtils {
 		TreeTraverser<File> traverser = Files.fileTreeTraverser();
 		for (File file : traverser.preOrderTraversal(from.toFile())) {
 			// parent folder should not be copied!
-			if (!file.equals(from.toFile())) {
+			if (!file.isDirectory()) {
 				// construct the destination path from the origin path
 				Path origin = Paths.get(file.getPath());
 				Path relative = from.relativize(origin);
@@ -59,6 +60,14 @@ public class FileUtils {
 					Files.copy(file, destination.toFile());
 				} catch (IOException e) {
 					logger.severe("could not write file " + destination);
+				}
+			} else if (!file.equals(from.toFile())) {
+				Path origin = Paths.get(file.getPath());
+				Path relative = from.relativize(origin);
+				Path destination = to.resolve(relative);
+
+				if (!destination.toFile().exists()) {
+					destination.toFile().mkdirs();
 				}
 			}
 		}

@@ -26,18 +26,19 @@ import org.jdom2.Element;
  * @author mdriesen
  *
  */
-public class ItemLoader implements ResourceLoader {
-	public Resource load(Element root) {
+public class ItemLoader implements ResourceLoader<RItem> {
+	@Override
+	public RItem load(Element root) {
 		RItem creature = new RItem(root.getAttributeValue("id"), root.getName());
 		creature.setName(root.getAttributeValue("name"));
 		return creature;
 	}
 	
-	public Element save(Resource resource) {
-		RItem ri = (RItem)resource;
-		Element creature = new Element(ri.getType());
-		creature.setAttribute("id", ri.getID());
-		creature.setAttribute("name", ri.getName());
-		return creature;
+	@Override
+	public Element save(RItem ri) {
+		Element item = new Element(ri.getType());
+		item.setAttribute("id", ri.getID());
+		item.setAttribute("name", ri.getName());
+		return item;
 	}
 }

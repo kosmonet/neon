@@ -35,15 +35,19 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import neon.editor.dialogs.CreatureEditor;
 import neon.editor.dialogs.SettingsEditor;
 import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
+import neon.system.resources.CreatureLoader;
 import neon.system.resources.MissingLoaderException;
 import neon.system.resources.MissingResourceException;
 import neon.system.resources.ModuleLoader;
+import neon.system.resources.RCreature;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceManager;
 import javafx.scene.Scene;
@@ -51,6 +55,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
@@ -64,6 +71,7 @@ public class Editor extends Application {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private MenuItem saveItem, settingsItem;
+	@FXML private TreeView<String> creatureTree, itemTree;
 	
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
@@ -98,8 +106,6 @@ public class Editor extends Application {
 		
 		settingsItem.setDisable(true);
 		saveItem.setDisable(true);
-		
-		// TODO: accordeonpane voor de resource lijst, elke titledpane krijgt ne tree
 	}
 	
 	@Override
@@ -189,12 +195,30 @@ public class Editor extends Application {
 			settingsItem.setDisable(false);
 			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
 			saveItem.setDisable(false);
+			loadCreatures();
 		} catch (FileNotFoundException e) {
 			logger.info(e.getMessage());
 		} catch (MissingResourceException e) {
 			logger.warning(e.getMessage());
 		} catch (MissingLoaderException e) {
 			logger.warning(e.getMessage());
+		}
+	}
+	
+	private void loadCreatures() {
+		TreeItem<String> root = new TreeItem<>();
+		creatureTree.setRoot(root);
+		creatureTree.setShowRoot(false);
+		creatureTree.setOnMouseClicked(new CreatureTreeHandler());
+		resources.addLoader("creature", new CreatureLoader());
+		
+		try {
+			for (String creature : resources.listResources("creatures")) {
+				TreeItem<String> item = new TreeItem<>(creature);
+				root.getChildren().add(item);
+			}
+		} catch (IOException e) {
+			logger.warning("could not load creature list");
 		}
 	}
 	
@@ -209,14 +233,17 @@ public class Editor extends Application {
 	 */
 	@Subscribe
 	public void saveResource(SaveEvent event) {
+		String namespace = event.toString();
+		
 		// special consideration if this concerns the module resource
 		if (event.toString().equals("module")) {
 			module = event.getResource();
 			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
+			namespace = "global";
 		}
 		
 		try {
-			resources.addResource(event.getResource());
+			resources.addResource(namespace, event.getResource());
 			logger.fine("saved resource " + event.getResource().getID());
 		} catch (MissingLoaderException e) {
 			logger.severe(e.getMessage());
@@ -235,5 +262,27 @@ public class Editor extends Application {
 		logger.addHandler(handler);
 		
 		launch(args);
+	}
+	
+	private class CreatureTreeHandler implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent event) {
+			if (event.getClickCount() == 2) {
+	            TreeItem<String> item = creatureTree.getSelectionModel().getSelectedItem();
+	            if (item != null) {
+	            	RCreature creature;
+					try {
+						creature = resources.getResource("creatures", item.getValue());
+		            	new CreatureEditor(creature, stage, bus).show();
+					} catch (MissingResourceException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (MissingLoaderException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            }
+	        }
+		}		
 	}
 }

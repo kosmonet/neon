@@ -26,14 +26,14 @@ import org.jdom2.Element;
  * @author mdriesen
  *
  */
-public interface ResourceLoader {
+public interface ResourceLoader<T extends Resource> {
 	/**
 	 * Load a resource from a JDOM element.
 	 * 
 	 * @param root
 	 * @return
 	 */
-	public Resource load(Element root);
+	public T load(Element root);
 	
 	/**
 	 * Save a resource to a JDOM element.
@@ -41,5 +41,5 @@ public interface ResourceLoader {
 	 * @param resource
 	 * @return
 	 */
-	public Element save(Resource resource);
+	public Element save(T resource);
 }

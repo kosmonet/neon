@@ -55,6 +55,13 @@ public class MainMenuModule extends Module {
 	private final EventBus bus;
 	private Scene scene;
 	
+	/**
+	 * Initializes this module.
+	 * 
+	 * @param ui
+	 * @param version
+	 * @param bus
+	 */
 	public MainMenuModule(UserInterface ui, String version, EventBus bus) {
 		this.ui = ui;
 		this.bus = bus;
@@ -83,6 +90,7 @@ public class MainMenuModule extends Module {
 		quitLink.setOnAction(event -> System.exit(0));
 		// also quit when pressing esc
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
+		
 		// show console when pressing F1
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new Console(bus).show());
 		
@@ -102,12 +110,12 @@ public class MainMenuModule extends Module {
 	
 	@FXML private void loadWebsite() throws IOException, URISyntaxException {
 		if (Desktop.isDesktopSupported()) {
-			Desktop.getDesktop().browse(new URI("https://github.com/kosmonet/aneirin/"));
+			Desktop.getDesktop().browse(new URI("https://github.com/kosmonet/"));
 		}		
 	}
 	
 	@FXML private void newKeyPressed(KeyEvent event) {
-		// default action key is space, so we need an extra keyhandler for enter
+		// default action key is space, so we need an extra key handler for enter
 		if (event.getCode().equals(KeyCode.ENTER)) {
 			bus.post(new TransitionEvent("new game"));
 		}

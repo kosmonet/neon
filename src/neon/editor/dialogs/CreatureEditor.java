@@ -28,34 +28,31 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import neon.editor.SaveEvent;
-import neon.system.resources.RModule;
+import neon.system.resources.RCreature;
 
 /**
  * This resource editor shows a modal dialog window to edit the properties
- * of a module:
+ * of a creature:
  * <ul>
- * 	<li>the title of the game</li>
- * 	<li>a list of playable species</li>
+ * 	<li>the display name</li>
  * </ul>
  * 
- * The settings editor does not perform the actual saving of the edited module 
- * resource. Instead, it sends a {@code SaveEvent} to request that the module
- * resource be saved.
+ * The creature editor does not perform the actual saving of the edited 
+ * creature resource. Instead, it sends a {@code SaveEvent} to request 
+ * that the creature resource be saved.
  * 
  * @author mdriesen
  *
  */
-public class SettingsEditor {
+public class CreatureEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Label instructionLabel;
-	@FXML private TextField titleField;
-	@FXML private ListView<String> speciesList;
+	@FXML private TextField nameField;
 	
 	private final Stage stage = new Stage();
 	private final EventBus bus;
@@ -63,21 +60,21 @@ public class SettingsEditor {
 	private Scene scene;
 	
 	/**
-	 * Initializes this {@code SettingsEditor}.
+	 * Initializes this {@code CreatureEditor}.
 	 * 
-	 * @param module	the module to edit
+	 * @param creature	the creature to edit
 	 * @param mainStage	the parent stage for the dialog window
 	 * @param bus		the {@code EventBus} used for messaging
 	 */
-	public SettingsEditor(RModule module, Stage mainStage, EventBus bus) {
-		this.id = module.getID();
+	public CreatureEditor(RCreature creature, Stage mainStage, EventBus bus) {
+		this.id = creature.getID();
 		this.bus = bus;
 		
 		stage.initOwner(mainStage);
-		stage.setTitle("Module properties");
+		stage.setTitle("Creature properties");
 		stage.initModality(Modality.APPLICATION_MODAL); 
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Settings.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Creature.fxml"));
 		loader.setController(this);
 		
 		try {
@@ -85,18 +82,15 @@ public class SettingsEditor {
 			scene.getStylesheets().add(getClass().getResource("../editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load settings editor ui");
+			logger.severe("failed to load creature editor ui");
 		}
 		
-		titleField.setText(module.getTitle());
-		speciesList.getItems().addAll(module.getPlayableSpecies());
-		
-		instructionLabel.setText("Providing a game title will overwrite the title given by any parent "
-				+ "module(s). Playable species will be appended to those defined in parent module(s).");
+		nameField.setText(creature.getName());
+		instructionLabel.setText("The creature name will be displayed in-game, not the id.");
 	}
 	
 	/**
-	 * Shows the settings editor window.
+	 * Shows the creature editor window.
 	 */
 	public void show() {
 		stage.show();
@@ -107,10 +101,9 @@ public class SettingsEditor {
 	}
 	
 	@FXML private void applyPressed(ActionEvent event) {
-		// save changes to a new module resource
-		RModule module = new RModule(id, titleField.getText());
-		module.addPlayableSpecies(speciesList.getItems());
-		bus.post(new SaveEvent("module", module));
+		// save changes to a new creature resource
+		RCreature creature = new RCreature(id, nameField.getText());
+		bus.post(new SaveEvent("creatures", creature));
 	}
 	
 	@FXML private void okPressed(ActionEvent event) {

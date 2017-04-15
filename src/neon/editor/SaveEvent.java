@@ -30,8 +30,8 @@ import neon.system.resources.Resource;
 public class SaveEvent extends NeonEvent {
 	private final Resource resource;
 	
-	public SaveEvent(String message, Resource resource) {
-		super("module");
+	public SaveEvent(String type, Resource resource) {
+		super(type);
 		this.resource = resource;
 	}
 	

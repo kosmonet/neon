@@ -10,6 +10,7 @@
 	-fx-border-color: gray;
 	-fx-border-width: 0 0 1 0;
 	-fx-padding: 20px;
+	-fx-alignment: center;
 }
 
 .bottom-buttons {	/* the row of buttons at the bottom of a scene */

@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu text="File">
             <items>
-                  <MenuItem text="New..." onAction="#showNew" />
-                  <MenuItem text="Open..." onAction="#showOpen" />
-                  <MenuItem fx:id="saveItem" text="Save" onAction="#saveModule" />
+                  <MenuItem onAction="#showNew" text="New..." />
+                  <MenuItem onAction="#showOpen" text="Open..." />
+                  <MenuItem fx:id="saveItem" onAction="#saveModule" text="Save" />
                   <SeparatorMenuItem />
-              <MenuItem text="Quit" onAction="#quit" />
+              <MenuItem onAction="#quit" text="Quit" />
             </items>
           </Menu>
           <Menu text="Edit">
             <items>
-              <MenuItem fx:id="settingsItem" mnemonicParsing="false" text="Module settings..." onAction="#editSettings" />
+              <MenuItem fx:id="settingsItem" onAction="#editSettings" text="Module settings..." />
             </items>
           </Menu>
           <Menu text="Help">
             <items>
-              <MenuItem text="About" onAction="#showAbout" />
+              <MenuItem onAction="#showAbout" text="About" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5, 0.5" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.25, 0.25" BorderPane.alignment="CENTER">
          <items>
             <AnchorPane>
                <children>
-                  <Label prefWidth="200.0" text="Label" />
+                  <Label prefWidth="100.0" text="Label" />
                </children>
             </AnchorPane>
             <AnchorPane>
@@ -49,11 +51,20 @@
                   <Label text="Label" />
                </children>
             </AnchorPane>
-            <AnchorPane>
-               <children>
-                  <TreeView prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-               </children>
-            </AnchorPane>
+            <Accordion prefWidth="100.0">
+              <panes>
+                <TitledPane text="Creatures">
+                  <content>
+                              <TreeView fx:id="creatureTree" />
+                           </content>
+                </TitledPane>
+                <TitledPane text="Items">
+                     <content>
+                        <TreeView fx:id="itemTree" />
+                     </content>
+                </TitledPane>
+              </panes>
+            </Accordion>
          </items>
       </SplitPane>
    </center>
