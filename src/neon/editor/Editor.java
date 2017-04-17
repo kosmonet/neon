@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -34,32 +33,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import neon.editor.dialogs.CreatureEditor;
-import neon.editor.dialogs.SettingsEditor;
 import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
-import neon.system.resources.CreatureLoader;
 import neon.system.resources.MissingLoaderException;
-import neon.system.resources.MissingResourceException;
 import neon.system.resources.ModuleLoader;
-import neon.system.resources.RCreature;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceManager;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 
 /**
  * The neon roguelike editor.
@@ -70,21 +51,18 @@ import javafx.fxml.FXMLLoader;
 public class Editor extends Application {
 	private static final Logger logger = Logger.getGlobal();
 	
-	@FXML private MenuItem saveItem, settingsItem;
-	@FXML private TreeView<String> creatureTree, itemTree;
-	
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final EventBus bus = new EventBus("Editor Bus");
-	private Stage stage;	
-	private Scene scene;
-	private RModule module;
+	private final UserInterface ui;	// where all JavaFX business takes place
+	private String id;
 	
 	/**
 	 * Initializes this {@code Editor}.
 	 */
 	public Editor() {
 		bus.register(this);
+		ui = new UserInterface(this, bus);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -93,137 +71,63 @@ public class Editor extends Application {
 		}
 		
 		resources.addLoader("module", new ModuleLoader());
-		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
-		loader.setController(this);
-		
-		try {
-			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("editor.css").toExternalForm());
-		} catch (IOException e) {
-			logger.severe("failed to load editor ui");
-		}
-		
-		settingsItem.setDisable(true);
-		saveItem.setDisable(true);
 	}
 	
 	@Override
 	public void start(Stage stage) {
-		this.stage = stage;
-		stage.setTitle("The Neon Roguelike Editor");
-		stage.setScene(scene);
-		stage.setWidth(1280);
-		stage.setMinWidth(800);
-		stage.setHeight(720);
-		stage.setMinHeight(600);
-		stage.show();
-		stage.centerOnScreen();
+		ui.start(stage);
 	}
 	
-	@FXML private void editSettings(ActionEvent event) {
-		new SettingsEditor(module, stage, bus).show();
+	/**
+	 * 
+	 * @return the id of the currently loaded module
+	 */
+	String getModuleID() {
+		return id;
 	}
 	
-	@FXML private void showAbout(ActionEvent event) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("About");
-		alert.setHeaderText("The Neon Roguelike Editor");
-		alert.setContentText("Version 0.5.0 \n"
-				+ "Copyright (C) 2017 - mdriesen");
-		alert.showAndWait();
+	/**
+	 * 
+	 * @return the {@code ResourceManager}
+	 */
+	ResourceManager getResources() {
+		return resources;
 	}
 	
-	@FXML private void showOpen(ActionEvent event) {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle("Open Module");
-        chooser.setInitialDirectory(new File("data")); 
-		File file = chooser.showDialog(stage);
-		if (file != null && file.exists()) {
-			loadModule(file);			
-		}
+	/**
+	 * Creates a new module.
+	 * 
+	 * @param path
+	 * @throws IOException
+	 * @throws MissingLoaderException
+	 */
+	void createModule(Path path) throws IOException, MissingLoaderException {
+		id = path.getFileName().toString();
+
+		// create the new module
+		Files.createDirectories(path);
+		// editing is done in temp, so don't add the actual module folder to the file system
+		resources.addResource(new RModule(id, ""));
 	}
 	
-	@FXML private void showNew(ActionEvent event) {
-		// ask for a new module id
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Create New Module");
-		dialog.setHeaderText("Give an id for the new module.");
-		dialog.setContentText("Module id:");
-		Optional<String> result = dialog.showAndWait();
-		
-		// check if id is valid
-		if (result.isPresent() && !result.get().isEmpty()) {
-			String id = result.get();
-			Path path = Paths.get("data", id);
-			
-			// check if id didn't exist already
-			if (Files.exists(path)) {
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Warning");
-				alert.setHeaderText("Module conflict");
-				alert.setContentText("The module id already exists. Use another id.");
-				alert.showAndWait();
-				return;
-			}
-			
-			// create the new module
-			try {
-				Files.createDirectories(path);
-				files.addModule(id);				
-				module = new RModule(id, "");
-				resources.addResource(module);
-				settingsItem.setDisable(false);
-				stage.setTitle("The Neon Roguelike Editor - " + module.getID());
-				saveItem.setDisable(false);
-			} catch (IOException e) {
-				logger.severe("could not create module directory " + path);
-			} catch (MissingLoaderException e) {
-				logger.severe(e.getMessage());
-			}
-		}
+	/**
+	 * Loads an existing module for editing.
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
+	void loadModule(File file) throws FileNotFoundException {
+		id = file.getName();
+		// editing is done in temp, so don't add the actual module folder to the file system
+		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
 	}
-	
-	@FXML private void quit(ActionEvent event) {
-		System.exit(0);
-	}
-	
-	private void loadModule(File file) {
-		try {
-			files.addModule(file.getName());
-			module = resources.getResource(file.getName());
-			settingsItem.setDisable(false);
-			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
-			saveItem.setDisable(false);
-			loadCreatures();
-		} catch (FileNotFoundException e) {
-			logger.info(e.getMessage());
-		} catch (MissingResourceException e) {
-			logger.warning(e.getMessage());
-		} catch (MissingLoaderException e) {
-			logger.warning(e.getMessage());
-		}
-	}
-	
-	private void loadCreatures() {
-		TreeItem<String> root = new TreeItem<>();
-		creatureTree.setRoot(root);
-		creatureTree.setShowRoot(false);
-		creatureTree.setOnMouseClicked(new CreatureTreeHandler());
-		resources.addLoader("creature", new CreatureLoader());
-		
-		try {
-			for (String creature : resources.listResources("creatures")) {
-				TreeItem<String> item = new TreeItem<>(creature);
-				root.getChildren().add(item);
-			}
-		} catch (IOException e) {
-			logger.warning("could not load creature list");
-		}
-	}
-	
-	@FXML private void saveModule(ActionEvent event) {
-		FileUtils.moveFolder(Paths.get("temp"), Paths.get("data", module.getID()));
+
+	/**
+	 * Save the module that is currently being edited to disk.
+	 */
+	void saveModule() {
+		FileUtils.clearFolder(Paths.get("data", id));
+		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
 	}
 	
 	/**
@@ -237,8 +141,6 @@ public class Editor extends Application {
 		
 		// special consideration if this concerns the module resource
 		if (event.toString().equals("module")) {
-			module = event.getResource();
-			stage.setTitle("The Neon Roguelike Editor - " + module.getID());
 			namespace = "global";
 		}
 		
@@ -262,27 +164,5 @@ public class Editor extends Application {
 		logger.addHandler(handler);
 		
 		launch(args);
-	}
-	
-	private class CreatureTreeHandler implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent event) {
-			if (event.getClickCount() == 2) {
-	            TreeItem<String> item = creatureTree.getSelectionModel().getSelectedItem();
-	            if (item != null) {
-	            	RCreature creature;
-					try {
-						creature = resources.getResource("creatures", item.getValue());
-		            	new CreatureEditor(creature, stage, bus).show();
-					} catch (MissingResourceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (MissingLoaderException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            }
-	        }
-		}		
 	}
 }

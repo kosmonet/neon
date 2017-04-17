@@ -27,10 +27,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import neon.editor.SaveEvent;
 import neon.system.resources.RCreature;
 
@@ -51,7 +51,7 @@ import neon.system.resources.RCreature;
 public class CreatureEditor {
 	private static final Logger logger = Logger.getGlobal();
 
-	@FXML private Label instructionLabel;
+//	@FXML private Label instructionLabel;
 	@FXML private TextField nameField;
 	
 	private final Stage stage = new Stage();
@@ -66,11 +66,10 @@ public class CreatureEditor {
 	 * @param mainStage	the parent stage for the dialog window
 	 * @param bus		the {@code EventBus} used for messaging
 	 */
-	public CreatureEditor(RCreature creature, Stage mainStage, EventBus bus) {
+	public CreatureEditor(RCreature creature, EventBus bus) {
 		this.id = creature.getID();
 		this.bus = bus;
 		
-		stage.initOwner(mainStage);
 		stage.setTitle("Creature properties");
 		stage.initModality(Modality.APPLICATION_MODAL); 
 		
@@ -86,13 +85,14 @@ public class CreatureEditor {
 		}
 		
 		nameField.setText(creature.getName());
-		instructionLabel.setText("The creature name will be displayed in-game, not the id.");
+//		instructionLabel.setText("The creature name will be displayed in-game, not the id.");
 	}
 	
 	/**
 	 * Shows the creature editor window.
 	 */
-	public void show() {
+	public void show(Window parent) {
+		stage.initOwner(parent);
 		stage.show();
 	}
 

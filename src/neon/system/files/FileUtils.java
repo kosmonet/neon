@@ -43,7 +43,7 @@ public class FileUtils {
 	 * @param from
 	 * @param to
 	 */
-	public static void moveFolder(Path from, Path to) {
+	public static void copyFolder(Path from, Path to) {
 		logger.info("copying files from " + from + " to " + to);
 		
 		TreeTraverser<File> traverser = Files.fileTreeTraverser();
@@ -71,5 +71,20 @@ public class FileUtils {
 				}
 			}
 		}
+	}
+	
+	public static void clearFolder(Path folder) {
+		if (folder.toFile().exists()) {
+			delete(folder.toFile());
+		}
+	}
+	
+	private static void delete(File file) {
+		if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				delete(f);
+			}
+		}
+		file.delete();
 	}
 }

@@ -44,7 +44,6 @@ public class ResourceManager {
 	
 	private final NeonFileSystem files;
 	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
-	@SuppressWarnings("rawtypes")
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
 	
 	/**
@@ -167,19 +166,57 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * List all resources of a given type. 
+	 * List all resources of a given type. If a resource was not found for 
+	 * whatever reason, including possible {@code IOException}s, it will not 
+	 * be listed.
 	 * 
 	 * @param type
 	 * @return
-	 * @throws IOException 
 	 */
-	public Set<String> listResources(String type) throws IOException {
+	public Set<String> listResources(String type) {
 		HashSet<String> set = new HashSet<>();
 		
-		for (String file : files.listFiles(type)) {
-			set.add(file.replace(".xml", ""));
+		try {
+			for (String file : files.listFiles(type)) {
+				set.add(file.replace(".xml", ""));
+			}
+		} catch (IOException e) {
+			logger.warning("exception in listing contents of folder <" + type + ">");
 		}
 		
 		return set;
+	}
+	
+	/**
+	 * Checks whether the given resource is present on disk. Returns 
+	 * {@code false} if the resource was not found for whatever reason, 
+	 * including possible {@code IOException}s.
+	 * 
+	 * @param namespace
+	 * @param id
+	 * @return
+	 */
+	public boolean hasResource(String namespace, String id) {
+		try {
+			return files.listFiles(namespace).contains(id + ".xml");
+		} catch (IOException e) {
+			logger.warning("exception in listing contents of folder <" + namespace + ">");
+			return false;
+		}
+	}
+	
+	/**
+	 * Removes the given resource from the resource manager. The resource 
+	 * might still be reloadable from disk afterwards.
+	 * 
+	 * @param namespace
+	 * @param id
+	 */
+	public void removeResource(String namespace, String id) {
+		if (resources.containsKey(namespace)) {
+			resources.get(namespace).remove(id);
+		}
+		
+		files.deleteFile(namespace, id + ".xml");
 	}
 }

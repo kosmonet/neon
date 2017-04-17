@@ -114,25 +114,13 @@ public class NeonFileSystem {
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
 		// delete contents of existing temp folder
-		if (Files.exists(path)) {
-			delete(path.toFile());
-		}
+		FileUtils.clearFolder(path);
 
-		// create new temp folder
+		// create new temp folder if it didn't exist
 		Files.createDirectories(path);
 		temporary = path;			
 		logger.config("temp folder set to " + path);
 	}
-	
-	private void delete(File file) {
-		if (file.isDirectory()) {
-			for (File f : file.listFiles()) {
-				delete(f);
-			}
-		}
-		file.delete();
-	}
-
 	
 	/**
 	 * Sets the path to the folder of the current saved game.
@@ -270,5 +258,19 @@ public class NeonFileSystem {
 		}
 		
 		return files;
+	}
+	
+	/**
+	 * Deletes the file with the given path. This will only delete files in the
+	 * temp folder.
+	 * 
+	 * @param path
+	 */
+	public void deleteFile(String... path) {
+		File file = Paths.get(temporary.toString(), path).toFile();
+		if(file.exists()) {
+			file.delete();
+			logger.finest("deleted file " + Arrays.toString(path));
+		}
 	}
 }
