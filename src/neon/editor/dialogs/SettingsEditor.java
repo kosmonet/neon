@@ -19,6 +19,10 @@
 package neon.editor.dialogs;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -63,7 +67,7 @@ public class SettingsEditor {
 
 	@FXML private Label instructionLabel;
 	@FXML private TextField titleField;
-	@FXML private ListView<String> speciesList;
+	@FXML private ListView<String> speciesList, parentList;
 	
 	private final Stage stage = new Stage();
 	private final EventBus bus;
@@ -107,22 +111,35 @@ public class SettingsEditor {
 				} else {
 					logger.warning("removed unknown creature id: " + species);
 				}
-			}			
+			}
+			
+			for (String parent : module.getParents()) {
+				parentList.getItems().add(parent);
+			}
 		} catch (ResourceException e) {
 			logger.severe("failed to load module resource");
 		}
 		
 		instructionLabel.setText("Providing a game title will overwrite the title given by any parent "
-				+ "module. Playable species will be appended to those defined in parent module(s).");
+				+ "modules. Playable species will be appended to those defined in parent modules.");
 		
-		ContextMenu menu = new ContextMenu();
-		MenuItem addItem = new MenuItem("Add species");
-		addItem.setOnAction(event -> addSpecies(event));
-		menu.getItems().add(addItem);
-		MenuItem removeItem = new MenuItem("Remove species");
-		removeItem.setOnAction(event -> removeSpecies(event));
-		menu.getItems().add(removeItem);
-		speciesList.setContextMenu(menu);
+		ContextMenu speciesMenu = new ContextMenu();
+		MenuItem addCreatureItem = new MenuItem("Add species");
+		addCreatureItem.setOnAction(event -> addSpecies(event));
+		speciesMenu.getItems().add(addCreatureItem);
+		MenuItem removeCreatureItem = new MenuItem("Remove species");
+		removeCreatureItem.setOnAction(event -> removeSpecies(event));
+		speciesMenu.getItems().add(removeCreatureItem);
+		speciesList.setContextMenu(speciesMenu);
+
+		ContextMenu parentMenu = new ContextMenu();
+		MenuItem addParentItem = new MenuItem("Add parent");
+		addParentItem.setOnAction(event -> addParent(event));
+		parentMenu.getItems().add(addParentItem);
+		MenuItem removeParentItem = new MenuItem("Remove parent");
+		removeParentItem.setOnAction(event -> removeParent(event));
+		parentMenu.getItems().add(removeParentItem);
+		parentList.setContextMenu(parentMenu);
 	}
 	
 	/**
@@ -143,7 +160,8 @@ public class SettingsEditor {
 		// save changes to a new module resource
 		RModule module = new RModule(id, titleField.getText());
 		module.addPlayableSpecies(speciesList.getItems());
-		bus.post(new SaveEvent("module", module));
+		parentList.getItems().forEach(parent -> module.addParent(parent));
+		bus.post(new SaveEvent("settings", module));
 	}
 	
 	@FXML private void okPressed(ActionEvent event) {
@@ -158,6 +176,7 @@ public class SettingsEditor {
 		ChoiceDialog<String> dialog = new ChoiceDialog<>(null, choices);
 		dialog.setTitle("Add species");
 		dialog.setHeaderText("Add a creature to the list of playable species.");
+		dialog.initOwner(stage);
 		dialog.setContentText("Choose creature id:");
 
 		Optional<String> result = dialog.showAndWait();
@@ -166,5 +185,32 @@ public class SettingsEditor {
 	
 	private void removeSpecies(ActionEvent event) {
 		speciesList.getItems().remove(speciesList.getSelectionModel().getSelectedItem());
+	}
+
+	private void addParent(ActionEvent event) {
+		Path data = Paths.get("data");
+		Set<String> choices = new HashSet<>();		
+		try {
+			// Java 8 way of listing all available modules in the data folder
+			Files.list(data).filter(path -> Files.isDirectory(path)).forEach(path -> choices.add(path.getFileName().toString()));
+		} catch (IOException e) {
+			logger.severe("could not list all modules");
+		}
+
+		choices.removeAll(parentList.getItems());
+		choices.remove(id);
+
+		ChoiceDialog<String> dialog = new ChoiceDialog<>(null, choices);
+		dialog.setTitle("Add parent module");
+		dialog.setHeaderText("Add a parent to this module.");
+		dialog.initOwner(stage);
+		dialog.setContentText("Select parent folder:");
+
+		Optional<String> result = dialog.showAndWait();
+		result.ifPresent(choice -> parentList.getItems().add(choice));
+	}
+	
+	private void removeParent(ActionEvent event) {
+		parentList.getItems().remove(parentList.getSelectionModel().getSelectedItem());
 	}
 }

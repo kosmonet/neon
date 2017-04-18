@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -36,7 +37,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import neon.editor.dialogs.CreatureEditor;
 import neon.system.resources.CreatureLoader;
-import neon.system.resources.MissingLoaderException;
 import neon.system.resources.RCreature;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
@@ -50,14 +50,13 @@ import neon.system.resources.ResourceManager;
 public class CreatureHandler {
 	private final static Logger logger = Logger.getGlobal();
 	
-	private final TreeView<String> tree;
+	private final TreeView<Card> tree;
 	private final ResourceManager resources;
 	private final EventBus bus;
-	private final Window parent;
+	private Window parent;
 	
-	CreatureHandler(TreeView<String> creatureTree, ResourceManager resources, EventBus bus) {
+	CreatureHandler(TreeView<Card> creatureTree, ResourceManager resources, EventBus bus) {
 		tree = creatureTree;
-		parent = tree.getScene().getWindow();
 		this.resources = resources;
 		this.bus = bus;
 		
@@ -68,19 +67,41 @@ public class CreatureHandler {
 		MenuItem removeItem = new MenuItem("Remove creature");
 		removeItem.setOnAction(event -> removeCreature(event));
 		creatureMenu.getItems().add(removeItem);
-		creatureTree.setContextMenu(creatureMenu);
+		tree.setContextMenu(creatureMenu);
+		
+		tree.setCellFactory(new CardCellFactory());
 	}
 	
+	/**
+	 * Populates the creature tree with creatures.
+	 */
 	void loadCreatures() {
-		TreeItem<String> root = new TreeItem<>();
+		parent = tree.getScene().getWindow();
+
+		TreeItem<Card> root = new TreeItem<>();
 		tree.setRoot(root);
 		tree.setShowRoot(false);
 		tree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("creature", new CreatureLoader());
 
 		for (String creature : resources.listResources("creatures")) {
-			TreeItem<String> item = new TreeItem<>(creature);
+			TreeItem<Card> item = new TreeItem<>(new Card("creatures", creature, resources));
 			root.getChildren().add(item);
+		}
+	}
+	
+	@Subscribe
+	private void save(SaveEvent event) {
+		switch(event.toString()) {
+		case "creatures":
+			// tree cells don't automatically refresh if content is changed
+			tree.refresh();
+			break;
+		case "module":
+			// reset the changed status for all index cards
+			tree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));
+			tree.refresh();
+			break;
 		}
 	}
 	
@@ -109,36 +130,35 @@ public class CreatureHandler {
 
 			try {
 				resources.addResource("creatures", creature);
-				TreeItem<String> item = new TreeItem<>(id);
+				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources));
 				tree.getRoot().getChildren().add(item);
-            	new CreatureEditor(creature, bus).show(parent);
-			} catch (MissingLoaderException e) {
-				logger.severe(e.getMessage());
+            	new CreatureEditor(item.getValue(), bus).show(parent);
 			} catch (IOException e) {
 				logger.severe("could not create creature " + id);
+			} catch (ResourceException e) {
+				logger.severe(e.getMessage());
 			}
 		}
 	}
 	
 	private void removeCreature(ActionEvent event) {
 		// remove from the creature tree
-		TreeItem<String> selected = tree.getSelectionModel().getSelectedItem();
+		TreeItem<Card> selected = tree.getSelectionModel().getSelectedItem();
 		tree.getRoot().getChildren().remove(selected);
 		// remove from the temp folder
-		resources.removeResource("creatures", selected.getValue());
+		resources.removeResource("creatures", selected.getValue().toString());
 	}
 	
 	private void mouseClicked(MouseEvent event) {
 		if (event.getClickCount() == 2) {
-            TreeItem<String> item = tree.getSelectionModel().getSelectedItem();
+            TreeItem<Card> item = tree.getSelectionModel().getSelectedItem();
             if (item != null) {
-				try {
-					RCreature creature = resources.getResource("creatures", item.getValue());
-	            	new CreatureEditor(creature, bus).show(parent);
+	            try {
+					new CreatureEditor(item.getValue(), bus).show(parent);
 				} catch (ResourceException e) {
-					logger.warning("could not load creature resource: " + item.getValue());
+					logger.severe(e.getMessage());
 				}
             }
         }
-	}		
+	}	
 }

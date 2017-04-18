@@ -166,9 +166,7 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * List all resources of a given type. If a resource was not found for 
-	 * whatever reason, including possible {@code IOException}s, it will not 
-	 * be listed.
+	 * List all resources of a given type.
 	 * 
 	 * @param type
 	 * @return
@@ -176,33 +174,22 @@ public class ResourceManager {
 	public Set<String> listResources(String type) {
 		HashSet<String> set = new HashSet<>();
 		
-		try {
-			for (String file : files.listFiles(type)) {
-				set.add(file.replace(".xml", ""));
-			}
-		} catch (IOException e) {
-			logger.warning("exception in listing contents of folder <" + type + ">");
+		for (String file : files.listFiles(type)) {
+			set.add(file.replace(".xml", ""));
 		}
 		
 		return set;
 	}
 	
 	/**
-	 * Checks whether the given resource is present on disk. Returns 
-	 * {@code false} if the resource was not found for whatever reason, 
-	 * including possible {@code IOException}s.
+	 * Checks whether the given resource is present on disk.
 	 * 
 	 * @param namespace
 	 * @param id
 	 * @return
 	 */
 	public boolean hasResource(String namespace, String id) {
-		try {
-			return files.listFiles(namespace).contains(id + ".xml");
-		} catch (IOException e) {
-			logger.warning("exception in listing contents of folder <" + namespace + ">");
-			return false;
-		}
+		return files.listFiles(namespace).contains(id + ".xml");
 	}
 	
 	/**

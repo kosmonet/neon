@@ -23,14 +23,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A mod resource. This resource is not intended to be handled by the resource 
- * manager, it is capable of saving and loading itself.
+ * A module resource.
  * 
  * @author mdriesen
  *
  */
 public class RModule extends Resource {
 	private final Set<String> species = new HashSet<>();
+	private final Set<String> parents = new HashSet<>();
 	private final String title;
 
 	public RModule(String id, String title) {
@@ -47,12 +47,21 @@ public class RModule extends Resource {
 	}
 	
 	/**
-	 * Add species to the list of playable species.
+	 * Adds a creature to the list of playable species.
 	 * 
-	 * @param species
+	 * @param creature the id of a playable creature
 	 */
-	public void addPlayableSpecies(Collection<String> species) {
-		this.species.addAll(species);
+	public void addPlayableSpecies(String creature) {
+		species.add(creature);
+	}
+	
+	/**
+	 * Adds creatures to the list of playable species.
+	 * 
+	 * @param creatures
+	 */
+	public void addPlayableSpecies(Collection<String> creatures) {
+		species.addAll(creatures);
 	}
 	
 	/**
@@ -61,5 +70,22 @@ public class RModule extends Resource {
 	 */
 	public Set<String> getPlayableSpecies() {
 		return species;
+	}
+	
+	/**
+	 * Adds modules to the list of parent modules.
+	 * 
+	 * @param species
+	 */
+	public void addParent(String parent) {
+		parents.add(parent);
+	}
+	
+	/**
+	 * 
+	 * @return a set of parent modules
+	 */
+	public Set<String> getParents() {
+		return parents;
 	}
 }

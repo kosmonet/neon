@@ -219,20 +219,26 @@ public class NeonFileSystem {
 	}
 	
 	/**
-	 * Lists all the files in the given folder.
+	 * Lists all the files in the given folder. If a file was not found for 
+	 * any reason (including possible {@code IOException}s), it will not be
+	 * listed.
 	 * 
 	 * @param folder
 	 * @return
 	 * @throws IOException
 	 */
-	public Set<String> listFiles(String... folder) throws IOException {
+	public Set<String> listFiles(String... folder) {
 		HashSet<String> files = new HashSet<String>();
 		
 		// check the temp folder first
 		if (temporary != null) {
 			Path path = Paths.get(temporary.toString(), folder);
 			if (Files.isDirectory(path)) {
-				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try {
+					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				} catch (IOException e) {
+					logger.warning("could not list files in folder " + path);
+				}
 			}
 		}
 
@@ -240,7 +246,11 @@ public class NeonFileSystem {
 		if (save != null) {
 			Path path = Paths.get(save.toString(), folder);
 			if (Files.isDirectory(path)) {
-				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try {
+					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				} catch (IOException e) {
+					logger.warning("could not list files in the save folder " + path);
+				}
 			}
 		}
 		
@@ -253,7 +263,11 @@ public class NeonFileSystem {
 			temp[0] = module;
 			Path path = Paths.get("data", temp);
 			if (Files.isDirectory(path)) {
-				Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try {
+					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				} catch (IOException e) {
+					logger.warning("could not list files in the temp folder " + path);
+				}
 			}
 		}
 		

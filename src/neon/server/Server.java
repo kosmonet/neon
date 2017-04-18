@@ -60,7 +60,7 @@ public class Server implements Runnable {
 		this.socket = socket;
 		bus.register(socket);
 		bus.register(this);
-		new ServerLoader().configure(files, resources);
+		new ServerLoader(bus).configure(files, resources);
 		
 		// send configuration message to the client
 		try {

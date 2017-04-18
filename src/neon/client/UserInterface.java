@@ -21,8 +21,11 @@ package neon.client;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import neon.system.event.ClientConfigurationEvent;
+import neon.system.event.MessageEvent;
 
 /**
  * The user interface contains a number of JavaFX-related utility methods that 
@@ -60,6 +63,21 @@ public class UserInterface {
 	@Subscribe
 	public void configure(ClientConfigurationEvent event) {
 		stage.setTitle(event.getTitle());
+	}
+	
+	/**
+	 * Shows a warning message in a dialog window.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	public void show(MessageEvent event) {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Warning");
+		alert.setHeaderText(event.getHeader());
+		alert.setContentText(event.toString());
+		alert.initOwner(stage);
+		alert.showAndWait();
 	}
 	
 	/**

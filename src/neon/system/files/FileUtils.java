@@ -73,10 +73,19 @@ public class FileUtils {
 		}
 	}
 	
+	/**
+	 * Clears all content from the given folder.
+	 * 
+	 * @param folder
+	 */
 	public static void clearFolder(Path folder) {
+		// delete folder
 		if (folder.toFile().exists()) {
 			delete(folder.toFile());
 		}
+		
+		// recreate folder
+		folder.toFile().mkdir();
 	}
 	
 	private static void delete(File file) {

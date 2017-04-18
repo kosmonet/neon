@@ -40,6 +40,7 @@ import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.MissingLoaderException;
 import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
+import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
 /**
@@ -128,6 +129,11 @@ public class Editor extends Application {
 	void saveModule() {
 		FileUtils.clearFolder(Paths.get("data", id));
 		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
+		try {
+			bus.post(new SaveEvent("module", resources.getResource(id)));
+		} catch (ResourceException e) {
+			logger.severe(e.getMessage());
+		}
 	}
 	
 	/**
@@ -136,12 +142,14 @@ public class Editor extends Application {
 	 * @param event
 	 */
 	@Subscribe
-	public void saveResource(SaveEvent event) {
+	public void saveResource(SaveEvent event) {	
 		String namespace = event.toString();
-		
+
 		// special consideration if this concerns the module resource
-		if (event.toString().equals("module")) {
+		if (event.toString().equals("settings")) {
 			namespace = "global";
+		} else if (namespace.equals("module")) {
+			return;
 		}
 		
 		try {

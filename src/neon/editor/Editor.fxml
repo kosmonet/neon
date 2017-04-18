@@ -18,8 +18,8 @@
         <menus>
           <Menu text="File">
             <items>
-                  <MenuItem onAction="#showNew" text="New..." />
-                  <MenuItem onAction="#showOpen" text="Open..." />
+                  <MenuItem fx:id="newItem" onAction="#showNew" text="New..." />
+                  <MenuItem fx:id="openItem" onAction="#showOpen" text="Open..." />
                   <MenuItem fx:id="saveItem" onAction="#saveModule" text="Save" />
                   <SeparatorMenuItem />
               <MenuItem onAction="#quit" text="Quit" />

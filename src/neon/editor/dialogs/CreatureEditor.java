@@ -31,8 +31,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.editor.Card;
 import neon.editor.SaveEvent;
 import neon.system.resources.RCreature;
+import neon.system.resources.ResourceException;
 
 /**
  * This resource editor shows a modal dialog window to edit the properties
@@ -57,6 +59,7 @@ public class CreatureEditor {
 	private final Stage stage = new Stage();
 	private final EventBus bus;
 	private final String id;
+	private final Card card;
 	private Scene scene;
 	
 	/**
@@ -65,9 +68,12 @@ public class CreatureEditor {
 	 * @param creature	the creature to edit
 	 * @param mainStage	the parent stage for the dialog window
 	 * @param bus		the {@code EventBus} used for messaging
+	 * @throws ResourceException 
 	 */
-	public CreatureEditor(RCreature creature, EventBus bus) {
-		this.id = creature.getID();
+	public CreatureEditor(Card card, EventBus bus) throws ResourceException {
+		this.card = card;
+		RCreature creature = card.getResource();
+		id = creature.getID();
 		this.bus = bus;
 		
 		stage.setTitle("Creature properties");
@@ -104,6 +110,7 @@ public class CreatureEditor {
 		// save changes to a new creature resource
 		RCreature creature = new RCreature(id, nameField.getText());
 		bus.post(new SaveEvent("creatures", creature));
+		card.setChanged(true);
 	}
 	
 	@FXML private void okPressed(ActionEvent event) {

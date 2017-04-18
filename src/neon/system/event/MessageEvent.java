@@ -16,31 +16,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
-
-import neon.system.event.NeonEvent;
-import neon.system.resources.Resource;
+package neon.system.event;
 
 /**
- * An event to signal that an edited resource should be saved.
+ * A {@code ClientEvent} to transmit a message that should be shown by the 
+ * client in a dialog window.
  * 
  * @author mdriesen
  *
  */
-public class SaveEvent extends NeonEvent {
-	private final Resource resource;
+public class MessageEvent extends ClientEvent{
+	private final String header;
 	
-	public SaveEvent(String type, Resource resource) {
-		super(type);
-		this.resource = resource;
+	public MessageEvent(String message, String header) {
+		super(message);
+		this.header = header;
 	}
 	
 	/**
 	 * 
-	 * @return the resource that has to be saved
+	 * @return the header for the message dialog
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Resource> T getResource() {
-		return (T) resource;
+	public String getHeader() {
+		return header;
 	}
 }

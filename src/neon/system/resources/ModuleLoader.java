@@ -18,22 +18,26 @@
 
 package neon.system.resources;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jdom2.Element;
 
+/**
+ * Responsible for loading and saving module resources.
+ * 
+ * @author mdriesen
+ *
+ */
 public class ModuleLoader implements ResourceLoader<RModule> {
 	@Override
 	public RModule load(Element root) {
 		RModule module = new RModule(root.getAttributeValue("id"), root.getChildText("title"));
 		
-		Set<String> species = new HashSet<>();		
-		Element playable = root.getChild("playable");
-		for (Element id : playable.getChildren()) {
-			species.add(id.getText());
+		for (Element id : root.getChild("playable").getChildren()) {
+			module.addPlayableSpecies(id.getText());
 		}
-		module.addPlayableSpecies(species);
+		
+		for (Element parent : root.getChild("parents").getChildren()) {
+			module.addParent(parent.getText());
+		}
 		
 		return module;	
 	}
@@ -45,13 +49,21 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 		Element title = new Element("title");
 		title.setText(module.getTitle());
 		root.addContent(title);
+		
 		Element playable = new Element("playable");
 		root.addContent(playable);
-		
 		for (String species : module.getPlayableSpecies()) {
 			Element id = new Element("id");
 			id.setText(species);
 			playable.addContent(id);
+		}
+		
+		Element parents = new Element("parents");
+		root.addContent(parents);
+		for (String parent : module.getParents()) {
+			Element id = new Element("id");
+			id.setText(parent);
+			parents.addContent(id);
 		}
 		
 		return root;

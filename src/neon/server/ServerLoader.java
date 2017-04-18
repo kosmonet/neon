@@ -30,6 +30,9 @@ import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import com.google.common.eventbus.EventBus;
+
+import neon.system.event.MessageEvent;
 import neon.system.files.NeonFileSystem;
 import neon.system.resources.CClient;
 import neon.system.resources.CGame;
@@ -39,10 +42,27 @@ import neon.system.resources.MissingLoaderException;
 import neon.system.resources.MissingResourceException;
 import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
+import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
+/**
+ * Most of the server configuration is performed by the {@code ServerLoader}.
+ * 
+ * @author mdriesen
+ *
+ */
 public class ServerLoader {
 	private static final Logger logger = Logger.getGlobal();
+	
+	private final EventBus bus;
+	
+	/**
+	 * Initializes this loader with an {@code EventBus}.
+	 * @param bus
+	 */
+	ServerLoader(EventBus bus) {
+		this.bus = bus;
+	}
 
 	/**
 	 * Configures the file system and resource manager. Configuration data is
@@ -52,7 +72,7 @@ public class ServerLoader {
 	 * @param files
 	 * @param manager
 	 */
-	public void configure(NeonFileSystem files, ResourceManager manager) {
+	void configure(NeonFileSystem files, ResourceManager manager) {
 		try {
 			CServer configuration = initConfiguration();
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
@@ -70,7 +90,7 @@ public class ServerLoader {
 
 	private CServer initConfiguration() throws IOException, JDOMException {
 		// try to load the neon.ini file
-		try (InputStream in = Files.newInputStream(Paths.get(".", "neon.ini"))) {
+		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
 			return (CServer) new ConfigurationLoader().load(doc.getRootElement());
 		} 	
@@ -113,7 +133,7 @@ public class ServerLoader {
 			for (String module : modules) {
 				files.addModule(module);
 			}
-			files.setTemporaryFolder(Paths.get(".", "temp"));
+			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
 			logger.severe("could not initialize file system");			
 		}
@@ -123,6 +143,25 @@ public class ServerLoader {
 		// add all necessary resource loaders to the manager
 		resources.addLoader("config", new ConfigurationLoader());
 		resources.addLoader("module", new ModuleLoader());
+		
+		// check if all required parent modules are present
+		try {
+			HashSet<String> modules = new HashSet<>();
+			for (String id : configuration.getModules()) {
+				modules.add(id);
+				RModule module = resources.getResource(id);
+				for (String parent : module.getParents()) {
+					if (!modules.contains(parent)) {
+						logger.warning("module <" + id + "> is missing parent <" + parent + ">");
+						bus.post(new MessageEvent("Module <" + id + "> is missing parent <" + 
+								parent + ">. Check if all necessary modules are present in "
+								+ "the correct load order", "Server configuration error"));
+					}
+				}
+			}
+		} catch (ResourceException e) {
+			logger.severe(e.getMessage());
+		}
 		
 		// add server configuration resource to the manager
 		try {

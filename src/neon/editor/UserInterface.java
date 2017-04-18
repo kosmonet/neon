@@ -52,11 +52,12 @@ import neon.system.resources.MissingLoaderException;
 public class UserInterface {
 	private static final Logger logger = Logger.getGlobal();
 	
-	@FXML private MenuItem saveItem, settingsItem;
-	@FXML private TreeView<String> creatureTree, itemTree;
+	@FXML private MenuItem saveItem, settingsItem, openItem, newItem;
+	@FXML private TreeView<Card> creatureTree, itemTree;
 	
 	private final Editor editor;
 	private final EventBus bus;
+	private final CreatureHandler creatureHandler;
 	private Stage stage;	
 	private Scene scene;
 	
@@ -70,6 +71,7 @@ public class UserInterface {
 		this.editor = editor;
 		this.bus = bus;
 		
+		// load the user interface
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
 		loader.setController(this);
 		
@@ -82,6 +84,10 @@ public class UserInterface {
 		
 		settingsItem.setDisable(true);
 		saveItem.setDisable(true);		
+
+		// listeners for ui elements that represent resources
+		creatureHandler = new CreatureHandler(creatureTree, editor.getResources(), bus);
+		bus.register(creatureHandler);
 	}
 	
 	/**
@@ -120,8 +126,10 @@ public class UserInterface {
 				editor.loadModule(file);
 				settingsItem.setDisable(false);
 				saveItem.setDisable(false);
+				openItem.setDisable(true);
+				newItem.setDisable(true);
 				stage.setTitle("The Neon Roguelike Editor - " + file.getName());
-				new CreatureHandler(creatureTree, editor.getResources(), bus).loadCreatures();
+				creatureHandler.loadCreatures();
 			} catch (FileNotFoundException e) {
 				logger.severe("could not open module " + file.getName());
 			}
@@ -168,10 +176,12 @@ public class UserInterface {
 			// create the new module
 			try {
 				editor.createModule(path);
-				settingsItem.setDisable(false);
 				stage.setTitle("The Neon Roguelike Editor - " + id);
+				settingsItem.setDisable(false);
 				saveItem.setDisable(false);
-				new CreatureHandler(creatureTree, editor.getResources(), bus).loadCreatures();
+				openItem.setDisable(true);
+				newItem.setDisable(true);
+				creatureHandler.loadCreatures();
 			} catch (MissingLoaderException e) {
 				logger.severe(e.getMessage());
 			} catch (IOException e) {
