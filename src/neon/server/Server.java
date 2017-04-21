@@ -29,6 +29,7 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.client.console.ConsoleEvent;
 import neon.system.event.ClientConfigurationEvent;
+import neon.system.event.NewGameEvent;
 import neon.system.event.ScriptEvent;
 import neon.system.files.NeonFileSystem;
 import neon.system.resources.CGame;
@@ -73,13 +74,31 @@ public class Server implements Runnable {
 	
 	@Subscribe
 	public void execute(ScriptEvent event) {
-		try {
-			engine.eval("print('" + event + "')");
-		} catch (ScriptException e) {
-			logger.warning("could not evaluate script: " + event);
+		Object result = execute(event.toString());
+		if (result != null) {
+			bus.post(new ConsoleEvent(result.toString()));
 		}
-		
-		bus.post(new ConsoleEvent("message received on " + Thread.currentThread()));
+	}
+	
+	/**
+	 * Executes the given script with the nashorn engine.
+	 * 
+	 * @param script the script to execute
+	 * @return the result of the script
+	 */
+	public Object execute(String script) {
+		Object result = null;
+		try {
+			result = engine.eval(script);
+		} catch (ScriptException e) {
+			logger.warning("could not evaluate script: " + script);
+		}		
+		return result;
+	}
+	
+	@Subscribe
+	public void startGame(NewGameEvent event) {
+		new GameLoader();
 	}
 	
 	/**

@@ -16,51 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.client.graphics;
+
+import javafx.scene.canvas.Canvas;
 
 /**
- * A class that represents a resource that is loaded from disk. Every resource
- * has at least an id and a resource type.
- * 
- * TODO: geen getters en setters maar public variabelen?
+ * A resizable JavaFX {@code Canvas}.
  * 
  * @author mdriesen
  *
  */
-public abstract class Resource {
-	private String id, type;
-	
-	/**
-	 * Creates a new resource with the given id and type.
-	 * 
-	 * @param id
-	 * @param type
-	 */
-	public Resource(String id, String type) {
-		this.id = id;
-		this.type = type;
-	}
-	
-	/**
-	 * @return the resource id
-	 */
-	public String getID() {
-		return id;
-	}
-	
-	/**
-	 * Sets the ID of this resource.
-	 * 
-	 * @param id
-	 */
-	public void setID(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the resource type
-	 */
-	public String getType() {
-		return type;
+public class RenderCanvas extends Canvas {
+	@Override
+	public boolean isResizable() {
+	    return true;
 	}
 }

@@ -27,6 +27,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import neon.client.modules.GameModule;
 import neon.client.modules.MainMenuModule;
 import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
@@ -84,9 +85,14 @@ public class Client implements Runnable {
 		modules.add(newGame);
 		bus.register(newGame);
 		
+		GameModule game = new GameModule(ui);
+		modules.add(game);
+		bus.register(game);
+		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
 		bus.register(new Transition(newGame, mainMenu, "cancel"));
+		bus.register(new Transition(newGame, game, "start game"));
 	}
 	
 	private class BusListener {

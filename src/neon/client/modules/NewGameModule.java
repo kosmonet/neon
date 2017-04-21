@@ -35,6 +35,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
 import neon.system.event.ClientConfigurationEvent;
+import neon.system.event.NewGameEvent;
 
 public class NewGameModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
@@ -87,7 +88,8 @@ public class NewGameModule extends Module {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
-			bus.post(new TransitionEvent("start game"));			
+			bus.post(new TransitionEvent("start game"));
+			bus.post(new NewGameEvent());
 		}
 	}
 	

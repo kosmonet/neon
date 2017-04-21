@@ -18,8 +18,9 @@ public class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>>
     			setText(entry.toString());
 	    		if (entry.isChanged()) {
 	    			setStyle("-fx-font-style: italic");
+	    			// TODO: parent in lichtgrijs, geherdefinieerde in bold
 	    		} else {
-	    			setStyle("-fx-font-style: normal");	    			
+	    			setStyle("-fx-font-style: normal");
 	    		}
     		} else {
     			setText(null);	    			
