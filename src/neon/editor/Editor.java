@@ -40,7 +40,6 @@ import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.MissingLoaderException;
 import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
-import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
 /**
@@ -63,7 +62,7 @@ public class Editor extends Application {
 	 */
 	public Editor() {
 		bus.register(this);
-		ui = new UserInterface(this, bus);
+		ui = new UserInterface(resources, bus);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -80,29 +79,15 @@ public class Editor extends Application {
 	}
 	
 	/**
-	 * 
-	 * @return the id of the currently loaded module
-	 */
-	String getModuleID() {
-		return id;
-	}
-	
-	/**
-	 * 
-	 * @return the {@code ResourceManager}
-	 */
-	ResourceManager getResources() {
-		return resources;
-	}
-	
-	/**
 	 * Creates a new module.
 	 * 
-	 * @param path
+	 * @param event
 	 * @throws IOException
 	 * @throws MissingLoaderException
 	 */
-	void createModule(Path path) throws IOException, MissingLoaderException {
+	@Subscribe
+	private void createModule(LoadEvent.Create event) throws IOException, MissingLoaderException {
+		Path path = event.getPath();
 		id = path.getFileName().toString();
 
 		// create the new module
@@ -114,26 +99,26 @@ public class Editor extends Application {
 	/**
 	 * Loads an existing module for editing.
 	 * 
-	 * @param file
+	 * @param event
 	 * @throws FileNotFoundException
 	 */
-	void loadModule(File file) throws FileNotFoundException {
+	@Subscribe
+	private void loadModule(LoadEvent.Load event) throws FileNotFoundException {
+		File file = event.getFile();
 		id = file.getName();
 		// editing is done in temp, so don't add the actual module folder to the file system
 		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
 	}
 
 	/**
-	 * Save the module that is currently being edited to disk.
+	 * Saves the module that is currently being edited to disk.
+	 * 
+	 * @param event
 	 */
-	void saveModule() {
+	@Subscribe
+	private void saveModule(SaveEvent.Module event) {
 		FileUtils.clearFolder(Paths.get("data", id));
 		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
-		try {
-			bus.post(new SaveEvent("module", resources.getResource(id)));
-		} catch (ResourceException e) {
-			logger.severe(e.getMessage());
-		}
 	}
 	
 	/**
@@ -142,15 +127,8 @@ public class Editor extends Application {
 	 * @param event
 	 */
 	@Subscribe
-	public void saveResource(SaveEvent event) {	
-		String namespace = event.toString();
-
-		// special consideration if this concerns the module resource
-		if (event.toString().equals("settings")) {
-			namespace = "global";
-		} else if (namespace.equals("module")) {
-			return;
-		}
+	private void saveResource(SaveEvent.Resources event) {	
+		String namespace = event.getNamespace();
 		
 		try {
 			resources.addResource(namespace, event.getResource());

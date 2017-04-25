@@ -16,26 +16,21 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.event;
+package neon.system.resources;
 
-/**
- * An event that can be posted on the server or client bus.
- * 
- * @author mdriesen
- *
- */
-public class NeonEvent {
-	private final String message;
+public class RMap extends Resource {
+	private String name;
+	private int width, height;
 	
-	public NeonEvent(String message) {
-		this.message = message;
+	public RMap(String id) {
+		super(id, "map");
 	}
 	
-	public String toString() {
-		return message;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
-	public String getMessage() {
-		return message;
+	public String getName() {
+		return name;
 	}
 }

@@ -22,8 +22,6 @@ package neon.system.resources;
  * A class that represents a resource that is loaded from disk. Every resource
  * has at least an id and a resource type.
  * 
- * TODO: geen getters en setters maar public variabelen?
- * 
  * @author mdriesen
  *
  */

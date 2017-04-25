@@ -64,8 +64,8 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
 		
 		pane.setMap(tree, depth);
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.drawShapes(xpos, ypos));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.drawShapes(xpos, ypos));
+		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
 	}
 	
 	private void move(String dir) {
@@ -75,7 +75,7 @@ public class GameModule extends Module {
 		case "up": ypos = Math.max(0, ypos - 1); break;
 		case "down": ypos++; break;
 		}
-		pane.drawShapes(xpos, ypos);
+		pane.draw(xpos, ypos);
 	}
 	
 	@Override
@@ -91,7 +91,7 @@ public class GameModule extends Module {
     	
 		ui.showScene(scene);
 		
-		pane.drawShapes(xpos, ypos);
+		pane.draw(xpos, ypos);
 		logger.finest("entering game module");
 	}
 

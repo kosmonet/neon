@@ -12,11 +12,11 @@ public class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>>
 	
 	private class CardTreeCell extends TreeCell<Card> {
     	@Override
-    	protected void updateItem(Card entry, boolean empty) {
-    		super.updateItem(entry, empty);
+    	protected void updateItem(Card card, boolean empty) {
+    		super.updateItem(card, empty);
     		if (!empty) {
-    			setText(entry.toString());
-	    		if (entry.isChanged()) {
+    			setText(card.toString());
+	    		if (card.isChanged()) {
 	    			setStyle("-fx-font-style: italic");
 	    			// TODO: parent in lichtgrijs, geherdefinieerde in bold
 	    		} else {

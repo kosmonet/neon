@@ -11,64 +11,85 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Button?>
+<?import neon.editor.MenuHandler?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu text="File">
-            <items>
-                  <MenuItem fx:id="newItem" onAction="#showNew" text="New..." />
-                  <MenuItem fx:id="openItem" onAction="#showOpen" text="Open..." />
-                  <MenuItem fx:id="saveItem" onAction="#saveModule" text="Save" />
-                  <SeparatorMenuItem />
-              <MenuItem onAction="#quit" text="Quit" />
-            </items>
-          </Menu>
-          <Menu text="Edit">
-            <items>
-              <MenuItem fx:id="settingsItem" onAction="#editSettings" text="Module settings..." />
-            </items>
-          </Menu>
-          <Menu text="Help">
-            <items>
-              <MenuItem onAction="#showAbout" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <center>
-      <SplitPane dividerPositions="0.25, 0.25" BorderPane.alignment="CENTER">
-         <items>
-            <AnchorPane>
-               <children>
-                  <Label prefWidth="100.0" text="Label" />
-               </children>
-            </AnchorPane>
-            <AnchorPane>
-               <children>
-                  <Label text="Label" />
-               </children>
-            </AnchorPane>
-            <Accordion prefWidth="100.0">
-              <panes>
-                <TitledPane text="Creatures">
-                  <content>
-                              <TreeView fx:id="creatureTree" />
-                           </content>
-                </TitledPane>
-                <TitledPane text="Items">
-                     <content>
-                        <TreeView fx:id="itemTree" />
-                     </content>
-                </TitledPane>
-              </panes>
-            </Accordion>
-         </items>
-      </SplitPane>
-   </center>
-   <bottom>
-      <Label text="Status bar" BorderPane.alignment="BOTTOM_LEFT" />
-   </bottom>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="neon.editor.MenuHandler">
+	<top>
+		<MenuBar>
+			<menus>
+				<Menu text="File">
+					<items>
+						<MenuItem fx:id="newItem" onAction="#showNew" text="New..." />
+						<MenuItem fx:id="openItem" onAction="#showOpen" text="Open..." />
+						<MenuItem fx:id="saveItem" onAction="#saveModule" text="Save" />
+						<SeparatorMenuItem />
+						<MenuItem onAction="#quit" text="Quit" />
+					</items>
+				</Menu>
+				<Menu text="Edit">
+					<items>
+						<MenuItem fx:id="settingsItem" onAction="#editSettings" text="Module settings..." />
+					</items>
+				</Menu>
+				<Menu text="Help">
+					<items>
+						<MenuItem onAction="#showAbout" text="About" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</top>
+	<center>
+		<SplitPane dividerPositions="0.2, 0.8">
+			<items>
+				<AnchorPane>
+					<children>
+						<fx:include source="ui/MapTree.fxml" />
+					</children>
+				</AnchorPane>
+				<BorderPane>
+					<top>
+						<ToolBar>
+							<items>
+								<Button text="Button" />
+							</items>
+						</ToolBar>
+					</top>
+					<center>
+						<TabPane fx:id="tabs" tabClosingPolicy="ALL_TABS" />
+					</center>
+					<bottom>
+						<ButtonBar styleClass="bottom-buttons">
+							<buttons>
+								<Button text="Terrain" />
+								<Button text="Height" />
+								<Button text="Info" />
+							</buttons>
+						</ButtonBar>
+					</bottom>
+				</BorderPane>
+				<Accordion>
+					<panes>
+						<TitledPane text="Creatures">
+							<content>
+						<fx:include source="ui/CreatureTree.fxml" />
+							</content>
+						</TitledPane>
+						<TitledPane text="Items">
+							<content>
+								<TreeView fx:id="itemTree" />
+							</content>
+						</TitledPane>
+					</panes>
+				</Accordion>
+			</items>
+		</SplitPane>
+	</center>
+	<bottom>
+		<Label text="Status bar" BorderPane.alignment="BOTTOM_LEFT" />
+	</bottom>
 </BorderPane>

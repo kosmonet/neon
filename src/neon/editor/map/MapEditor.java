@@ -16,26 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.event;
+package neon.editor.map;
 
-/**
- * An event that can be posted on the server or client bus.
- * 
- * @author mdriesen
- *
- */
-public class NeonEvent {
-	private final String message;
+import neon.editor.Card;
+
+public class MapEditor {
+	private final Card card;
 	
-	public NeonEvent(String message) {
-		this.message = message;
+	public MapEditor(Card card) {
+		this.card = card;
 	}
 	
-	public String toString() {
-		return message;
-	}
-	
-	public String getMessage() {
-		return message;
+	public void show() {
+		
 	}
 }

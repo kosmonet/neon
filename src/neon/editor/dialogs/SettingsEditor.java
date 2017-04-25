@@ -161,7 +161,8 @@ public class SettingsEditor {
 		RModule module = new RModule(id, titleField.getText());
 		module.addPlayableSpecies(speciesList.getItems());
 		parentList.getItems().forEach(parent -> module.addParent(parent));
-		bus.post(new SaveEvent("settings", module));
+		// an RModule is in the global namespace
+		bus.post(new SaveEvent.Resources("global", module));
 	}
 	
 	@FXML private void okPressed(ActionEvent event) {

@@ -25,7 +25,9 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -50,16 +52,24 @@ import neon.system.resources.ResourceManager;
 public class CreatureHandler {
 	private final static Logger logger = Logger.getGlobal();
 	
-	private final TreeView<Card> tree;
+	@FXML private TreeView<Card> creatureTree;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	private Window parent;
 	
-	CreatureHandler(TreeView<Card> creatureTree, ResourceManager resources, EventBus bus) {
-		tree = creatureTree;
+	CreatureHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
 		this.bus = bus;
-		
+	}
+	
+	@FXML public void initialize() {		
+		creatureTree.setCellFactory(new CardCellFactory());
+	}
+	
+	/*
+	 * Populates the creature tree with creatures.
+	 */
+	private void loadResources() {
 		ContextMenu creatureMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add creature");
 		addItem.setOnAction(event -> addCreature(event));
@@ -67,21 +77,14 @@ public class CreatureHandler {
 		MenuItem removeItem = new MenuItem("Remove creature");
 		removeItem.setOnAction(event -> removeCreature(event));
 		creatureMenu.getItems().add(removeItem);
-		tree.setContextMenu(creatureMenu);
-		
-		tree.setCellFactory(new CardCellFactory());
-	}
-	
-	/**
-	 * Populates the creature tree with creatures.
-	 */
-	void loadCreatures() {
-		parent = tree.getScene().getWindow();
+		creatureTree.setContextMenu(creatureMenu);
+
+		parent = creatureTree.getScene().getWindow();
 
 		TreeItem<Card> root = new TreeItem<>();
-		tree.setRoot(root);
-		tree.setShowRoot(false);
-		tree.setOnMouseClicked(event -> mouseClicked(event));
+		creatureTree.setShowRoot(false);
+		creatureTree.setRoot(root);
+		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("creature", new CreatureLoader());
 
 		for (String creature : resources.listResources("creatures")) {
@@ -90,19 +93,29 @@ public class CreatureHandler {
 		}
 	}
 	
+	/**
+	 * Signals to this handler that a resource was saved.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void save(SaveEvent event) {
-		switch(event.toString()) {
-		case "creatures":
-			// tree cells don't automatically refresh if content is changed
-			tree.refresh();
-			break;
-		case "module":
-			// reset the changed status for all index cards
-			tree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));
-			tree.refresh();
-			break;
-		}
+		creatureTree.refresh();
+	}
+	
+	/**
+	 * Signals to this handler that the entire module was saved.
+	 * @param event
+	 */
+	@Subscribe
+	private void save(SaveEvent.Module event) {
+		creatureTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));		
+	}
+	
+	@Subscribe
+	private void load(LoadEvent event) {
+		// module is loading on this tick, load creatures on the next tick
+		Platform.runLater(() -> loadResources());
 	}
 	
 	private void addCreature(ActionEvent event) {
@@ -131,7 +144,7 @@ public class CreatureHandler {
 			try {
 				resources.addResource("creatures", creature);
 				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources));
-				tree.getRoot().getChildren().add(item);
+				creatureTree.getRoot().getChildren().add(item);
             	new CreatureEditor(item.getValue(), bus).show(parent);
 			} catch (IOException e) {
 				logger.severe("could not create creature " + id);
@@ -143,15 +156,15 @@ public class CreatureHandler {
 	
 	private void removeCreature(ActionEvent event) {
 		// remove from the creature tree
-		TreeItem<Card> selected = tree.getSelectionModel().getSelectedItem();
-		tree.getRoot().getChildren().remove(selected);
+		TreeItem<Card> selected = creatureTree.getSelectionModel().getSelectedItem();
+		creatureTree.getRoot().getChildren().remove(selected);
 		// remove from the temp folder
 		resources.removeResource("creatures", selected.getValue().toString());
 	}
 	
 	private void mouseClicked(MouseEvent event) {
 		if (event.getClickCount() == 2) {
-            TreeItem<Card> item = tree.getSelectionModel().getSelectedItem();
+            TreeItem<Card> item = creatureTree.getSelectionModel().getSelectedItem();
             if (item != null) {
 	            try {
 					new CreatureEditor(item.getValue(), bus).show(parent);

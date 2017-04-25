@@ -44,9 +44,6 @@ import java.util.logging.Logger;
  * 
  * @author mdriesen
  *
- * TODO: wanneer een file opgevraagd wordt, gaat filesystem vanaf de laatste module kijken
- * of de gevraagde file aanwezig is. Is het misschien beter alle files in een hashmap 
- * bij te houden om die dan achteraf sneller op te kunnen vragen?
  */
 public class NeonFileSystem {
 	private final static Logger logger = Logger.getGlobal();

@@ -16,26 +16,42 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.event;
+package neon.editor;
 
-/**
- * An event that can be posted on the server or client bus.
- * 
- * @author mdriesen
- *
- */
-public class NeonEvent {
-	private final String message;
+import java.io.File;
+import java.nio.file.Path;
+
+import neon.system.event.NeonEvent;
+
+public class LoadEvent extends NeonEvent {
 	
-	public NeonEvent(String message) {
-		this.message = message;
+	public LoadEvent(String message) {
+		super(message);
 	}
 	
-	public String toString() {
-		return message;
+	public static class Load extends LoadEvent {
+		private final File file;
+
+		public Load(File file) {
+			super(file.getName());
+			this.file = file;
+		}		
+		
+		public File getFile() {
+			return file;
+		}
 	}
 	
-	public String getMessage() {
-		return message;
+	public static class Create extends LoadEvent {
+		private final Path path;
+		
+		public Create(Path path) {
+			super(path.getFileName().toString());
+			this.path = path;
+		}
+		
+		public Path getPath() {
+			return path;
+		}
 	}
 }

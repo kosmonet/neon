@@ -22,25 +22,66 @@ import neon.system.event.NeonEvent;
 import neon.system.resources.Resource;
 
 /**
- * An event to signal that an edited resource should be saved.
+ * An event to signal that something should be saved.
  * 
  * @author mdriesen
  *
  */
 public class SaveEvent extends NeonEvent {
-	private final Resource resource;
-	
-	public SaveEvent(String type, Resource resource) {
-		super(type);
-		this.resource = resource;
+	public SaveEvent(String message) {
+		super(message);
 	}
 	
 	/**
+	 * An event to signal that a resource should be saved.
 	 * 
-	 * @return the resource that has to be saved
+	 * @author mdriesen
+	 *
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Resource> T getResource() {
-		return (T) resource;
+	public static class Resources extends SaveEvent {
+		private final Resource resource;
+		private final String namespace;
+		
+		/**
+		 * Initializes this event with a resource and a namespace the resource
+		 * belongs to.
+		 * 
+		 * @param namespace
+		 * @param resource
+		 */
+		public Resources(String namespace, Resource resource) {
+			super("save resource " + resource.getID());
+			this.namespace = namespace;
+			this.resource = resource;
+		}
+
+		/**
+		 * 
+		 * @return the namespace the resource to be saved belongs to
+		 */
+		public String getNamespace() {
+			return namespace;
+		}
+		
+		/**
+		 * 
+		 * @return the resource that has to be saved
+		 */
+		@SuppressWarnings("unchecked")
+		public <T extends Resource> T getResource() {
+			return (T) resource;
+		}		
+	}
+	
+	/**
+	 * An event to signal that an entire module should be saved.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Module extends SaveEvent {
+		public Module() {
+			super("save current module");
+		}		
 	}
 }

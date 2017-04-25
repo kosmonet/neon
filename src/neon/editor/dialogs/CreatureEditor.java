@@ -109,7 +109,7 @@ public class CreatureEditor {
 	@FXML private void applyPressed(ActionEvent event) {
 		// save changes to a new creature resource
 		RCreature creature = new RCreature(id, nameField.getText());
-		bus.post(new SaveEvent("creatures", creature));
+		bus.post(new SaveEvent.Resources("creatures", creature));
 		card.setChanged(true);
 	}
 	

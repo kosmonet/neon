@@ -16,26 +16,20 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.event;
+package neon.system.resources;
 
-/**
- * An event that can be posted on the server or client bus.
- * 
- * @author mdriesen
- *
- */
-public class NeonEvent {
-	private final String message;
-	
-	public NeonEvent(String message) {
-		this.message = message;
+import org.jdom2.Element;
+
+public class MapLoader implements ResourceLoader<RMap> {
+	@Override
+	public RMap load(Element root) {
+		RMap map = new RMap(root.getAttributeValue("id"));
+		return map;
 	}
-	
-	public String toString() {
-		return message;
-	}
-	
-	public String getMessage() {
-		return message;
+
+	@Override
+	public Element save(RMap map) {
+		Element root = new Element("map");
+		return root;
 	}
 }

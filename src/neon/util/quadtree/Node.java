@@ -19,6 +19,9 @@
 package neon.util.quadtree;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A node in the quadtree.
@@ -102,6 +105,24 @@ class Node<T> {
 		} 
 
 		return value;
+	}
+	
+	/**
+	 * Returns a collection of all leaf nodes contained in this node.
+	 * 
+	 * @return
+	 */
+	Collection<Node<T>> getLeaves() {
+		if(isLeaf()) {
+			return Arrays.asList(this);
+		} else {
+			ArrayList<Node<T>> list = new ArrayList<>();
+			list.addAll(NW.getLeaves());
+			list.addAll(NE.getLeaves());
+			list.addAll(SW.getLeaves());
+			list.addAll(SE.getLeaves());
+			return list;
+		}
 	}
 	
 	private boolean contains(int x, int y) {
