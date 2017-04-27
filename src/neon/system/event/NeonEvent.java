@@ -24,18 +24,6 @@ package neon.system.event;
  * @author mdriesen
  *
  */
-public class NeonEvent {
-	private final String message;
+public abstract class NeonEvent {
 	
-	public NeonEvent(String message) {
-		this.message = message;
-	}
-	
-	public String toString() {
-		return message;
-	}
-	
-	public String getMessage() {
-		return message;
-	}
 }

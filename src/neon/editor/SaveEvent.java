@@ -28,10 +28,6 @@ import neon.system.resources.Resource;
  *
  */
 public class SaveEvent extends NeonEvent {
-	public SaveEvent(String message) {
-		super(message);
-	}
-	
 	/**
 	 * An event to signal that a resource should be saved.
 	 * 
@@ -50,7 +46,6 @@ public class SaveEvent extends NeonEvent {
 		 * @param resource
 		 */
 		public Resources(String namespace, Resource resource) {
-			super("save resource " + resource.getID());
 			this.namespace = namespace;
 			this.resource = resource;
 		}
@@ -79,9 +74,5 @@ public class SaveEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Module extends SaveEvent {
-		public Module() {
-			super("save current module");
-		}		
-	}
+	public static class Module extends SaveEvent {}
 }

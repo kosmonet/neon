@@ -23,10 +23,20 @@ import java.nio.file.Path;
 
 import neon.system.event.NeonEvent;
 
-public class LoadEvent extends NeonEvent {
+public class LoadEvent extends NeonEvent {	
+	private final String id;
 	
-	public LoadEvent(String message) {
-		super(message);
+	/**
+	 * Creates a new {@code LoadEvent}.
+	 * 
+	 * @param id the id of the module that was loaded
+	 */
+	public LoadEvent(String id) {
+		this.id = id;
+	}
+	
+	public String getModuleID() {
+		return id;
 	}
 	
 	public static class Load extends LoadEvent {
@@ -46,7 +56,7 @@ public class LoadEvent extends NeonEvent {
 		private final Path path;
 		
 		public Create(Path path) {
-			super(path.getFileName().toString());
+			super(path.toFile().getName());
 			this.path = path;
 		}
 		

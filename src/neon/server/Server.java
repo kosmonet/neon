@@ -74,7 +74,7 @@ public class Server implements Runnable {
 	
 	@Subscribe
 	public void execute(ScriptEvent event) {
-		Object result = execute(event.toString());
+		Object result = execute(event.getScript());
 		if (result != null) {
 			bus.post(new ConsoleEvent(result.toString()));
 		}

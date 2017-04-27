@@ -26,10 +26,11 @@ package neon.system.event;
  *
  */
 public class MessageEvent extends ClientEvent{
+	private final String message;
 	private final String header;
 	
 	public MessageEvent(String message, String header) {
-		super(message);
+		this.message = message;
 		this.header = header;
 	}
 	
@@ -39,5 +40,9 @@ public class MessageEvent extends ClientEvent{
 	 */
 	public String getHeader() {
 		return header;
+	}
+	
+	public String getMessage() {
+		return message;
 	}
 }

@@ -51,7 +51,7 @@ public class Transition {
 	 */
 	@Subscribe
 	public void transition(TransitionEvent event) {
-		if (from.isActive() && !event.isConsumed() && event.toString().equals(condition)) {
+		if (from.isActive() && !event.isConsumed() && event.getCondition().equals(condition)) {
 			event.consume();
 			from.setActive(false);
 			from.exit(event);

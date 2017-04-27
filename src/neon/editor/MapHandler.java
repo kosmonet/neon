@@ -36,6 +36,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import neon.editor.map.MapEditor;
+import neon.editor.ui.CardCellFactory;
 import neon.system.resources.MapLoader;
 import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
@@ -78,24 +79,28 @@ public class MapHandler {
 		}
 	}
 	
+	/**
+	 * Signals to this handler that a resource was saved.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void save(SaveEvent event) {
-		switch(event.toString()) {
-		case "maps":
-			// tree cells don't automatically refresh if content is changed
-			mapTree.refresh();
-			break;
-		case "module":
-			// reset the changed status for all index cards
-			mapTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));
-			mapTree.refresh();
-			break;
-		}
+		mapTree.refresh();
+	}
+	
+	/**
+	 * Signals to this handler that the entire module was saved.
+	 * @param event
+	 */
+	@Subscribe
+	private void save(SaveEvent.Module event) {
+		mapTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));		
 	}
 	
 	@Subscribe
 	private void load(LoadEvent event) {
-		// editor is loading on this tick, schedule a refresh on the next tick
+		// module is loading on this tick, load maps on the next tick
 		Platform.runLater(() -> loadResources());
 	}
 	
@@ -126,7 +131,7 @@ public class MapHandler {
 				resources.addResource("maps", map);
 				TreeItem<Card> item = new TreeItem<>(new Card("maps", id, resources));
 				mapTree.getRoot().getChildren().add(item);
-//            	new MapEditor(item.getValue());
+            	new MapEditor(item.getValue());
 			} catch (IOException e) {
 				logger.severe("could not create map " + id);
 			} catch (ResourceException e) {

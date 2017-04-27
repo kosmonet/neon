@@ -86,7 +86,7 @@ public class ClientSocket {
 			return queue.take();
 		} catch (InterruptedException e) {
 			logger.warning("client event queue interrupted");
-			return new ClientEvent("");
+			return new ClientEvent();
 		}
 	}
 	

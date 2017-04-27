@@ -108,6 +108,7 @@ public class Editor extends Application {
 		id = file.getName();
 		// editing is done in temp, so don't add the actual module folder to the file system
 		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
+		logger.fine("loaded module " + id);
 	}
 
 	/**
@@ -119,6 +120,7 @@ public class Editor extends Application {
 	private void saveModule(SaveEvent.Module event) {
 		FileUtils.clearFolder(Paths.get("data", id));
 		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
+		logger.fine("saved module " + id);
 	}
 	
 	/**

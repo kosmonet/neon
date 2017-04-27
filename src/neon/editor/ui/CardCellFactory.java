@@ -1,8 +1,9 @@
-package neon.editor;
+package neon.editor.ui;
 
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.util.Callback;
+import neon.editor.Card;
 
 public class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>> {
 	@Override

@@ -27,7 +27,13 @@ import neon.system.event.ClientEvent;
  *
  */
 public class ConsoleEvent extends ClientEvent{
+	private final String message;
+	
 	public ConsoleEvent(String message) {
-		super(message);
+		this.message = message;
+	}
+	
+	public String getMessage() {
+		return message;
 	}
 }

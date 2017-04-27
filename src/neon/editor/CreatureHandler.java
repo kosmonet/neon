@@ -38,6 +38,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import neon.editor.dialogs.CreatureEditor;
+import neon.editor.ui.CardCellFactory;
 import neon.system.resources.CreatureLoader;
 import neon.system.resources.RCreature;
 import neon.system.resources.ResourceException;
@@ -66,7 +67,7 @@ public class CreatureHandler {
 		creatureTree.setCellFactory(new CardCellFactory());
 	}
 	
-	/*
+	/**
 	 * Populates the creature tree with creatures.
 	 */
 	private void loadResources() {
@@ -105,6 +106,7 @@ public class CreatureHandler {
 	
 	/**
 	 * Signals to this handler that the entire module was saved.
+	 * 
 	 * @param event
 	 */
 	@Subscribe
@@ -112,12 +114,21 @@ public class CreatureHandler {
 		creatureTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));		
 	}
 	
+	/**
+	 * Signals to this handler that a module was loaded.
+	 * @param event
+	 */
 	@Subscribe
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load creatures on the next tick
 		Platform.runLater(() -> loadResources());
 	}
 	
+	/**
+	 * Adds a creature to the module.
+	 * 
+	 * @param event
+	 */
 	private void addCreature(ActionEvent event) {
 		// ask for a new creature id
 		TextInputDialog dialog = new TextInputDialog();
@@ -154,6 +165,11 @@ public class CreatureHandler {
 		}
 	}
 	
+	/**
+	 * Removes a creature from the module.
+	 * 
+	 * @param event
+	 */
 	private void removeCreature(ActionEvent event) {
 		// remove from the creature tree
 		TreeItem<Card> selected = creatureTree.getSelectionModel().getSelectedItem();
@@ -162,6 +178,11 @@ public class CreatureHandler {
 		resources.removeResource("creatures", selected.getValue().toString());
 	}
 	
+	/**
+	 * Opens a creature editor when a creature in the tree was double clicked.
+	 * 
+	 * @param event
+	 */
 	private void mouseClicked(MouseEvent event) {
 		if (event.getClickCount() == 2) {
             TreeItem<Card> item = creatureTree.getSelectionModel().getSelectedItem();

@@ -25,7 +25,13 @@ package neon.system.event;
  *
  */
 public class ScriptEvent extends ServerEvent {
-	public ScriptEvent(String command) {
-		super(command);
+	private final String script;
+	
+	public ScriptEvent(String script) {
+		this.script = script;
+	}
+	
+	public String getScript() {
+		return script;
 	}
 }

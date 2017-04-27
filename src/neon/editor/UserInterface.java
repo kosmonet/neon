@@ -30,7 +30,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import neon.system.resources.ResourceManager;
 
 /**
@@ -67,13 +66,12 @@ public class UserInterface {
 		bus.register(creatureHandler);
 		
 		// load the user interface
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
-		final Callback<Class<?>, Object> factory = type -> getController(type);
-		loader.setControllerFactory(factory);
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/Editor.fxml"));
+		loader.setControllerFactory(type -> getController(type));
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("editor.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("ui/editor.css").toExternalForm());
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.severe("failed to load editor ui");
@@ -111,6 +109,6 @@ public class UserInterface {
 
 	@Subscribe
 	private void loadModule(LoadEvent event) {
-		stage.setTitle("The Neon Roguelike Editor - " + event.getMessage());
+		stage.setTitle("The Neon Roguelike Editor - " + event.getModuleID());
 	}
 }

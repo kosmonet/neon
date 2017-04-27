@@ -82,7 +82,7 @@ public class ServerSocket {
 			return queue.take();
 		} catch (InterruptedException e) {
 			logger.warning("server event queue interrupted");
-			return new ServerEvent("");
+			return new ServerEvent();
 		}
 	}
 	

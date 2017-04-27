@@ -24,8 +24,4 @@ package neon.system.event;
  * @author mdriesen
  *
  */
-public class ServerEvent extends NeonEvent {
-	public ServerEvent(String message) {
-		super(message);
-	}
-}
+public class ServerEvent extends NeonEvent { }

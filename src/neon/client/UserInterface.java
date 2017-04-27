@@ -75,7 +75,7 @@ public class UserInterface {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
 		alert.setHeaderText(event.getHeader());
-		alert.setContentText(event.toString());
+		alert.setContentText(event.getMessage());
 		alert.initOwner(stage);
 		alert.showAndWait();
 	}

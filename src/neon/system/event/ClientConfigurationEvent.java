@@ -36,7 +36,6 @@ public class ClientConfigurationEvent extends ClientEvent {
 	 * @param cg
 	 */
 	public ClientConfigurationEvent(CGame cg) {
-		super("client configuration");
 		species = new String[cg.getPlayableSpecies().size()];
 		cg.getPlayableSpecies().toArray(species);
 		title = cg.getTitle();

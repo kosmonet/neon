@@ -18,8 +18,4 @@
 
 package neon.system.event;
 
-public class NewGameEvent extends ServerEvent {
-	public NewGameEvent() {
-		super("start new game");
-	}
-}
+public class NewGameEvent extends ServerEvent {}

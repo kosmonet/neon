@@ -119,7 +119,7 @@ public class Console {
 	 */
 	@Subscribe
 	public void print(ConsoleEvent event) {
-		Text text = new Text(event.toString() + "\n");
+		Text text = new Text(event.getMessage() + "\n");
 		text.setFill(Color.BEIGE);
 		flow.getChildren().add(flow.getChildren().size() - offset, text);
 	}

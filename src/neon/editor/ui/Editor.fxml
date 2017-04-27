@@ -48,7 +48,7 @@
 			<items>
 				<AnchorPane>
 					<children>
-						<fx:include source="ui/MapTree.fxml" />
+						<fx:include source="MapTree.fxml" />
 					</children>
 				</AnchorPane>
 				<BorderPane>
@@ -76,7 +76,7 @@
 					<panes>
 						<TitledPane text="Creatures">
 							<content>
-						<fx:include source="ui/CreatureTree.fxml" />
+						<fx:include source="CreatureTree.fxml" />
 							</content>
 						</TitledPane>
 						<TitledPane text="Items">

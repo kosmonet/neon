@@ -27,10 +27,15 @@ import neon.system.event.ClientEvent;
  *
  */
 public class TransitionEvent extends ClientEvent {
+	private final String condition;
 	private boolean consumed = false;
 	
-	public TransitionEvent(String message) {
-		super(message);
+	public TransitionEvent(String condition) {
+		this.condition = condition;
+	}
+	
+	public String getCondition() {
+		return condition;
 	}
 	
 	public void consume() {
