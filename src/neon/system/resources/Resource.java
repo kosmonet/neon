@@ -26,7 +26,7 @@ package neon.system.resources;
  *
  */
 public abstract class Resource {
-	private String id, type;
+	private final String id, type;
 	
 	/**
 	 * Creates a new resource with the given id and type.
@@ -44,15 +44,6 @@ public abstract class Resource {
 	 */
 	public String getID() {
 		return id;
-	}
-	
-	/**
-	 * Sets the ID of this resource.
-	 * 
-	 * @param id
-	 */
-	public void setID(String id) {
-		this.id = id;
 	}
 
 	/**

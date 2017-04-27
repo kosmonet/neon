@@ -67,7 +67,7 @@ public class Editor extends Application {
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
-			logger.severe("could not initialize file system");			
+			logger.severe("could not set the temporary folder");			
 		}
 		
 		resources.addLoader("module", new ModuleLoader());
@@ -93,7 +93,7 @@ public class Editor extends Application {
 		// create the new module
 		Files.createDirectories(path);
 		// editing is done in temp, so don't add the actual module folder to the file system
-		resources.addResource(new RModule(id, ""));
+		resources.addResource(new RModule(id, id));
 	}
 	
 	/**

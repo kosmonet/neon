@@ -55,6 +55,8 @@ public class Card {
 	
 	/**
 	 * Sets the changed status of this card.
+	 * 
+	 * @param changed
 	 */
 	public void setChanged(boolean changed) {
 		this.changed = changed;

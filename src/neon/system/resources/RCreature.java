@@ -25,7 +25,7 @@ package neon.system.resources;
  *
  */
 public class RCreature extends Resource {
-	private String name;
+	private final String name;
 	
 	/**
 	 * Creates a new creature resource with the given id and type.

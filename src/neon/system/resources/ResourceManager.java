@@ -84,6 +84,7 @@ public class ResourceManager {
 			logger.info("creating namespace " + namespace);
 			resources.put(namespace, new MapMaker().weakValues().makeMap());
 		}
+		// TODO: namespaces in resource zelf bijhouden?
 		
 		// add resource to the weak value map
 		resources.get(namespace).put(resource.getID(), resource);

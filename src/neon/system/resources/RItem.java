@@ -25,7 +25,7 @@ package neon.system.resources;
  *
  */
 public class RItem extends Resource {
-	private String name;
+	private final String name;
 	
 	/**
 	 * Creates a new item resource with the given id and type.
@@ -33,8 +33,9 @@ public class RItem extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RItem(String id, String type) {
+	public RItem(String id, String type, String name) {
 		super(id, type);
+		this.name = name;
 	}
 	
 	/**
@@ -42,14 +43,5 @@ public class RItem extends Resource {
 	 */
 	public String getName() {
 		return name;
-	}
-	
-	/**
-	 * Sets the name of this item.
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 }

@@ -23,7 +23,9 @@ import org.jdom2.Element;
 public class MapLoader implements ResourceLoader<RMap> {
 	@Override
 	public RMap load(Element root) {
-		RMap map = new RMap(root.getAttributeValue("id"));
+		String id = root.getAttributeValue("id");
+		String name = root.getAttributeValue("name");
+		RMap map = new RMap(id, name);
 		return map;
 	}
 

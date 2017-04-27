@@ -32,6 +32,11 @@ public class CGame extends Resource {
 		this.title = title;
 	}
 	
+	/**
+	 * Returns the id's of all playable species.
+	 * 
+	 * @return a {@code Set<String>} with id's
+	 */
 	public Set<String> getPlayableSpecies() {
 		return species;
 	}

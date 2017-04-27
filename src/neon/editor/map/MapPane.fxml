@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="neon.editor.MapHandler">
+	<top>
+		<ToolBar>
+			<items>
+				<Button text="Button" />
+			</items>
+		</ToolBar>
+	</top>
+	<center>
+		<TabPane fx:id="tabs" tabClosingPolicy="ALL_TABS" />
+	</center>
+	<bottom>
+		<ButtonBar styleClass="bottom-buttons">
+			<buttons>
+				<Button text="Terrain" onAction="#showTerrain" ButtonBar.buttonData="LEFT"  />
+				<Button text="Height" onAction="#showHeight" ButtonBar.buttonData="LEFT" />
+				<Button text="Info" onAction="#showInfo" ButtonBar.buttonData="LEFT" />
+				<Button text="Save" onAction="#save" ButtonBar.buttonData="RIGHT" />
+			</buttons>
+		</ButtonBar>
+	</bottom>
+</BorderPane>
+	

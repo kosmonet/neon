@@ -30,6 +30,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -42,10 +44,18 @@ import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
+/**
+ * This handlers takes care of loading, saving, adding and removing map 
+ * resources.
+ * 
+ * @author mdriesen
+ *
+ */
 public class MapHandler {
 	private final static Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> mapTree;
+	@FXML private TabPane tabs;
 	
 	private final ResourceManager resources;
 	
@@ -80,17 +90,19 @@ public class MapHandler {
 	}
 	
 	/**
-	 * Signals to this handler that a resource was saved.
+	 * Signals to this handler that something was saved.
 	 * 
 	 * @param event
 	 */
 	@Subscribe
 	private void save(SaveEvent event) {
-		mapTree.refresh();
+		// stuff may still be going on, refresh the tree on the next tick
+		Platform.runLater(() -> mapTree.refresh());
 	}
 	
 	/**
 	 * Signals to this handler that the entire module was saved.
+	 * 
 	 * @param event
 	 */
 	@Subscribe
@@ -104,6 +116,43 @@ public class MapHandler {
 		Platform.runLater(() -> loadResources());
 	}
 	
+	@FXML private void showInfo() {
+		Tab tab = tabs.getSelectionModel().getSelectedItem();
+		if (tab != null) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.showInfo();
+		}
+	}
+	
+	@FXML private void showHeight() {
+		Tab tab = tabs.getSelectionModel().getSelectedItem();
+		if (tab != null) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.showHeight();
+		}
+	}
+	
+	@FXML private void showTerrain() {
+		Tab tab = tabs.getSelectionModel().getSelectedItem();
+		if (tab != null) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.showTerrain();
+		}
+	}
+	
+	@FXML private void save() {
+		Tab tab = tabs.getSelectionModel().getSelectedItem();
+		if (tab != null) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.save();
+		}
+	}
+	
+	/**
+	 * Adds a map to the currently opened module.
+	 * 
+	 * @param event
+	 */
 	private void addMap(ActionEvent event) {
 		// ask for a new map id
 		TextInputDialog dialog = new TextInputDialog();
@@ -125,7 +174,7 @@ public class MapHandler {
 			}
 
 			// create the map
-			RMap map = new RMap(id);
+			RMap map = new RMap(id, id);
 
 			try {
 				resources.addResource("maps", map);
@@ -140,20 +189,67 @@ public class MapHandler {
 		}
 	}
 	
+	/**
+	 * Removes a map from the currently opened module.
+	 * 
+	 * @param event
+	 */
 	private void removeMap(ActionEvent event) {
 		// remove from the map tree
 		TreeItem<Card> selected = mapTree.getSelectionModel().getSelectedItem();
 		mapTree.getRoot().getChildren().remove(selected);
+		Card card = selected.getValue();
+
+		// check if the map was opened in a tab
+		Optional<Tab> tab = getTab(card.toString());
+		if (tab.isPresent()) {
+			// remove from the tab pane
+			tabs.getTabs().remove(tab.get());
+			// call the onClosed() handler for cleanup
+	        tab.get().getOnClosed().handle(null);
+		}
+		
 		// remove from the temp folder
-		resources.removeResource("maps", selected.getValue().toString());
+		resources.removeResource("maps", card.toString());
 	}
 	
-	private void mouseClicked(MouseEvent event) {
-		if (event.getClickCount() == 2) {
+	/**
+	 * Searches for a tab with the given id.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private Optional<Tab> getTab(String id) {
+    	for (Tab tab : tabs.getTabs()) {
+    		if (tab.getId().equals(id)) {
+    			return Optional.of(tab);
+    		}
+    	}
+    	
+    	return Optional.empty();
+	}
+	
+	private void mouseClicked(MouseEvent me) {
+		if (me.getClickCount() == 2) {
             TreeItem<Card> item = mapTree.getSelectionModel().getSelectedItem();
             if (item != null) {
-            	new MapEditor(item.getValue());
+            	Card card = item.getValue();
+            	
+            	// check if the selected map is already opened
+            	Optional<Tab> opt = getTab(card.toString());
+            	if (opt.isPresent()) {
+            		// if so, just select the tab with that map
+           			tabs.getSelectionModel().select(opt.get());
+            	} else {
+            		// if not, create a new map editor
+            		MapEditor editor = new MapEditor(card);
+            		Tab tab = new Tab(card.toString(), editor.getPane());
+            		tab.setUserData(editor);
+            		tab.setOnClosed(event -> editor.close(event));
+            		tab.setId(card.toString());
+            		tabs.getTabs().add(tab);
+            	}
             }
-        }		
+		}		
 	}
 }

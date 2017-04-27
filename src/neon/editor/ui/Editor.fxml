@@ -11,10 +11,6 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.Button?>
 <?import neon.editor.MenuHandler?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="neon.editor.MenuHandler">
@@ -48,35 +44,15 @@
 			<items>
 				<AnchorPane>
 					<children>
-						<fx:include source="MapTree.fxml" />
+						<fx:include source="../map/MapTree.fxml" />
 					</children>
 				</AnchorPane>
-				<BorderPane>
-					<top>
-						<ToolBar>
-							<items>
-								<Button text="Button" />
-							</items>
-						</ToolBar>
-					</top>
-					<center>
-						<TabPane fx:id="tabs" tabClosingPolicy="ALL_TABS" />
-					</center>
-					<bottom>
-						<ButtonBar styleClass="bottom-buttons">
-							<buttons>
-								<Button text="Terrain" />
-								<Button text="Height" />
-								<Button text="Info" />
-							</buttons>
-						</ButtonBar>
-					</bottom>
-				</BorderPane>
+				<fx:include source="../map/MapPane.fxml" />
 				<Accordion>
 					<panes>
 						<TitledPane text="Creatures">
 							<content>
-						<fx:include source="CreatureTree.fxml" />
+								<fx:include source="CreatureTree.fxml" />
 							</content>
 						</TitledPane>
 						<TitledPane text="Items">

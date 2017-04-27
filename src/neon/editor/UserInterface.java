@@ -24,12 +24,10 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import neon.system.resources.ResourceManager;
 
 /**
@@ -40,9 +38,6 @@ import neon.system.resources.ResourceManager;
  */
 public class UserInterface {
 	private static final Logger logger = Logger.getGlobal();
-	
-	@FXML private TreeView<Card> itemTree;
-	@FXML private TabPane tabs;
 	
 	private final CreatureHandler creatureHandler;
 	private final MapHandler mapHandler;
@@ -58,7 +53,7 @@ public class UserInterface {
 	 */
 	UserInterface(ResourceManager resources, EventBus bus) {
 		// separate handlers for all the different ui elements
-		menuHandler = new MenuHandler(resources, bus);
+		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);
 		mapHandler = new MapHandler(resources);
 		bus.register(mapHandler);
@@ -91,6 +86,14 @@ public class UserInterface {
 	}
 	
 	/**
+	 * 
+	 * @return the main window of the editor
+	 */
+	public Window getWindow() {
+		return stage;
+	}
+	
+	/**
 	 * Shows the main window on screen.
 	 * 
 	 * @param stage
@@ -99,7 +102,7 @@ public class UserInterface {
 		this.stage = stage;
 		stage.setTitle("The Neon Roguelike Editor");
 		stage.setScene(scene);
-		stage.setWidth(1280);
+		stage.setWidth(1440);
 		stage.setMinWidth(800);
 		stage.setHeight(720);
 		stage.setMinHeight(600);

@@ -84,7 +84,7 @@ public class CreatureEditor {
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("../editor.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
 			logger.severe("failed to load creature editor ui");

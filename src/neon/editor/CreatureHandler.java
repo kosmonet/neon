@@ -95,13 +95,14 @@ public class CreatureHandler {
 	}
 	
 	/**
-	 * Signals to this handler that a resource was saved.
+	 * Signals to this handler that something was saved.
 	 * 
 	 * @param event
 	 */
 	@Subscribe
 	private void save(SaveEvent event) {
-		creatureTree.refresh();
+		// stuff may still be going on, refresh the tree on the next tick
+		Platform.runLater(() -> creatureTree.refresh());
 	}
 	
 	/**

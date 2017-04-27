@@ -29,8 +29,10 @@ import org.jdom2.Element;
 public class ItemLoader implements ResourceLoader<RItem> {
 	@Override
 	public RItem load(Element root) {
-		RItem creature = new RItem(root.getAttributeValue("id"), root.getName());
-		creature.setName(root.getAttributeValue("name"));
+		String name = root.getAttributeValue("name");
+		String id = root.getAttributeValue("id");
+		String type = root.getName();
+		RItem creature = new RItem(id, type, name);
 		return creature;
 	}
 	

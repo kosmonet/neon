@@ -18,6 +18,9 @@
 
 package neon.editor.map;
 
+import javafx.event.Event;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import neon.editor.Card;
 
 public class MapEditor {
@@ -27,7 +30,27 @@ public class MapEditor {
 		this.card = card;
 	}
 	
-	public void show() {
-		
+	public Pane getPane() {
+		return new GridPane();
+	}
+	
+	public void close(Event event) {
+		System.out.println("closing " + card + "!");
+	}
+	
+	public void showInfo() {
+		System.out.println("showing " + card + " info");
+	}
+	
+	public void showTerrain() {
+		System.out.println("showing " + card + " terrain");
+	}
+	
+	public void showHeight() {
+		System.out.println("showing " + card + " height");
+	}
+	
+	public void save() {
+		System.out.println("saving " + card);
 	}
 }

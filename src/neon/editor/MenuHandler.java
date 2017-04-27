@@ -30,7 +30,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
@@ -39,15 +38,16 @@ import neon.system.resources.ResourceManager;
 
 public class MenuHandler {
 	@FXML private MenuItem saveItem, settingsItem, openItem, newItem;
-	@FXML private TabPane tabs;
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
+	private final UserInterface ui;
 	private String id;
 	
-	public MenuHandler(ResourceManager resources, EventBus bus) {
+	public MenuHandler(ResourceManager resources, EventBus bus, UserInterface ui) {
 		this.resources = resources;
 		this.bus = bus;
+		this.ui = ui;
 	}
 	
 	@FXML public void initialize() {
@@ -57,7 +57,7 @@ public class MenuHandler {
 
 	@FXML private void showAbout(ActionEvent event) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.initOwner(tabs.getScene().getWindow());
+		alert.initOwner(ui.getWindow());
 		alert.setTitle("About");
 		alert.setHeaderText("The Neon Roguelike Editor");
 		alert.setContentText("Version 0.5.0 \n"
@@ -69,7 +69,7 @@ public class MenuHandler {
 		DirectoryChooser chooser = new DirectoryChooser();
 		chooser.setTitle("Open Module");
         chooser.setInitialDirectory(new File("data")); 
-		File file = chooser.showDialog(tabs.getScene().getWindow());
+		File file = chooser.showDialog(ui.getWindow());
 		if (file != null && file.exists()) {
 			bus.post(new LoadEvent.Load(file)); 
 			loadModule(file.getName());
@@ -79,7 +79,7 @@ public class MenuHandler {
 	@FXML private void showNew(ActionEvent event) {
 		// ask for a new module id
 		TextInputDialog dialog = new TextInputDialog();
-		dialog.initOwner(tabs.getScene().getWindow());
+		dialog.initOwner(ui.getWindow());
 		dialog.setTitle("Create New Module");
 		dialog.setHeaderText("Give an id for the new module.");
 		dialog.setContentText("Module id:");
@@ -93,7 +93,7 @@ public class MenuHandler {
 			// check if id didn't exist already
 			if (Files.exists(path)) {
 				Alert alert = new Alert(AlertType.WARNING);
-				alert.initOwner(tabs.getScene().getWindow());
+				alert.initOwner(ui.getWindow());
 				alert.setTitle("Warning");
 				alert.setHeaderText("Module conflict");
 				alert.setContentText("The module id already exists, use another id.");
@@ -116,7 +116,7 @@ public class MenuHandler {
 	}
 	
 	@FXML private void editSettings(ActionEvent event) {
-		new SettingsEditor(resources, id, bus).show(tabs.getScene().getWindow());
+		new SettingsEditor(resources, id, bus).show(ui.getWindow());
 	}
 	
 	private void loadModule(String id) {
