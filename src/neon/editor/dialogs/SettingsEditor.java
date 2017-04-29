@@ -73,7 +73,6 @@ public class SettingsEditor {
 	private final EventBus bus;
 	private final String id;
 	private final ResourceManager resources;
-	private Scene scene;
 	
 	/**
 	 * Initializes this {@code SettingsEditor}.
@@ -93,7 +92,7 @@ public class SettingsEditor {
 		loader.setController(this);
 		
 		try {
-			scene = new Scene(loader.load());
+			Scene scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {

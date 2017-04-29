@@ -33,6 +33,8 @@
 				</Menu>
 				<Menu text="Help">
 					<items>
+						<MenuItem onAction="#showHelp" text="Getting started" />
+						<SeparatorMenuItem />
 						<MenuItem onAction="#showAbout" text="About" />
 					</items>
 				</Menu>

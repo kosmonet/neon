@@ -34,6 +34,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
 import neon.editor.dialogs.SettingsEditor;
+import neon.editor.help.HelpWindow;
 import neon.system.resources.ResourceManager;
 
 public class MenuHandler {
@@ -105,6 +106,10 @@ public class MenuHandler {
 			bus.post(new LoadEvent.Create(path));
 			loadModule(id);
 		}
+	}
+	
+	@FXML private void showHelp(ActionEvent event) {
+		new HelpWindow("help.html").show(ui.getWindow());
 	}
 	
 	@FXML private void quit(ActionEvent event) {
