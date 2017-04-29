@@ -112,6 +112,10 @@ public class MenuHandler {
 	}
 	
 	@FXML private void saveModule(ActionEvent event) {
+		// request the user interface to save any opened resources
+		ui.saveResources();
+		
+		// request the editor to save the current module
 		bus.post(new SaveEvent.Module());
 	}
 	

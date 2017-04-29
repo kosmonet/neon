@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
@@ -36,6 +37,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import neon.editor.map.MapEditor;
 import neon.editor.ui.CardCellFactory;
@@ -45,7 +47,7 @@ import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
 /**
- * This handlers takes care of loading, saving, adding and removing map 
+ * This handler takes care of loading, saving, adding and removing map 
  * resources.
  * 
  * @author mdriesen
@@ -58,9 +60,11 @@ public class MapHandler {
 	@FXML private TabPane tabs;
 	
 	private final ResourceManager resources;
+	private final EventBus bus;
 	
-	public MapHandler(ResourceManager resources) {
+	public MapHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
+		this.bus = bus;
 	}
 	
 	@FXML public void initialize() {
@@ -116,6 +120,27 @@ public class MapHandler {
 		Platform.runLater(() -> loadResources());
 	}
 	
+	/**
+	 * Asks the user if all opened maps should be saved. This method should be
+	 * called when saving a module or exiting the editor.
+	 */
+	void saveMaps() {
+		if(!tabs.getTabs().isEmpty()) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Changes made to some maps may not have been saved yet.");
+			alert.setContentText("Save all opened maps?");
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK){				
+				for (Tab tab : tabs.getTabs()) {
+					MapEditor editor = (MapEditor) tab.getUserData();
+					editor.save();
+				}			
+			} 
+		}
+	}
+	
 	@FXML private void showInfo() {
 		Tab tab = tabs.getSelectionModel().getSelectedItem();
 		if (tab != null) {
@@ -156,6 +181,7 @@ public class MapHandler {
 	private void addMap(ActionEvent event) {
 		// ask for a new map id
 		TextInputDialog dialog = new TextInputDialog();
+		dialog.initOwner(mapTree.getScene().getWindow());
 		dialog.setTitle("Add New Map");
 		dialog.setHeaderText("Give an id for the new map.");
 		dialog.setContentText("Map id:");
@@ -166,6 +192,7 @@ public class MapHandler {
 			String id = result.get();
 			if (resources.hasResource("maps", id)) {
 				Alert alert = new Alert(AlertType.WARNING);
+				alert.initOwner(mapTree.getScene().getWindow());
 				alert.setTitle("Warning");
 				alert.setHeaderText("Map conflict");
 				alert.setContentText("The map id already exists, use another id.");
@@ -180,7 +207,7 @@ public class MapHandler {
 				resources.addResource("maps", map);
 				TreeItem<Card> item = new TreeItem<>(new Card("maps", id, resources));
 				mapTree.getRoot().getChildren().add(item);
-            	new MapEditor(item.getValue());
+            	new MapEditor(item.getValue(), bus);
 			} catch (IOException e) {
 				logger.severe("could not create map " + id);
 			} catch (ResourceException e) {
@@ -242,12 +269,22 @@ public class MapHandler {
            			tabs.getSelectionModel().select(opt.get());
             	} else {
             		// if not, create a new map editor
-            		MapEditor editor = new MapEditor(card);
-            		Tab tab = new Tab(card.toString(), editor.getPane());
-            		tab.setUserData(editor);
-            		tab.setOnClosed(event -> editor.close(event));
-            		tab.setId(card.toString());
-            		tabs.getTabs().add(tab);
+					try {
+						MapEditor editor = new MapEditor(card, bus);
+	            		Tab tab = new Tab(card.toString(), editor.getPane());
+	            		tab.setUserData(editor);
+	            		tab.setOnClosed(event -> editor.close(event));
+	            		tab.setId(card.toString());
+	            		tabs.getTabs().add(tab);
+	            		tabs.getSelectionModel().select(tab);
+					} catch (ResourceException e) {
+						Alert alert = new Alert(AlertType.WARNING);
+						alert.setTitle("Warning");
+						alert.initOwner(mapTree.getScene().getWindow());
+						alert.setHeaderText("Resource error");
+						alert.setContentText("Could not load map " + card.toString() + "!");
+						alert.showAndWait();
+					}
             	}
             }
 		}		

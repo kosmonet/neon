@@ -42,6 +42,7 @@ public class UserInterface {
 	private final CreatureHandler creatureHandler;
 	private final MapHandler mapHandler;
 	private final MenuHandler menuHandler;
+	private final ItemHandler itemHandler;
 	private Stage stage;	
 	private Scene scene;
 	
@@ -55,10 +56,12 @@ public class UserInterface {
 		// separate handlers for all the different ui elements
 		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);
-		mapHandler = new MapHandler(resources);
+		mapHandler = new MapHandler(resources, bus);
 		bus.register(mapHandler);
 		creatureHandler = new CreatureHandler(resources, bus);
 		bus.register(creatureHandler);
+		itemHandler = new ItemHandler();
+		bus.register(itemHandler);
 		
 		// load the user interface
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/Editor.fxml"));
@@ -73,6 +76,12 @@ public class UserInterface {
 		}		
 	}
 	
+	/**
+	 * Returns the correct controller for a JavaFX node.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	private Object getController(Class<?> type) {
 		if(type.equals(MenuHandler.class)) {
 			return menuHandler;	
@@ -80,6 +89,8 @@ public class UserInterface {
 			return mapHandler;
 		} else if (type.equals(CreatureHandler.class)) {
 			return creatureHandler;
+		} else if (type.equals(ItemHandler.class)) {
+			return itemHandler;
 		} else {
 			throw new IllegalArgumentException("No controller found for class " + type + "!");
 		}
@@ -113,5 +124,14 @@ public class UserInterface {
 	@Subscribe
 	private void loadModule(LoadEvent event) {
 		stage.setTitle("The Neon Roguelike Editor - " + event.getModuleID());
+	}
+	
+	/**
+	 * Checks if any resources are still opened and should be saved. This 
+	 * method should be called when saving a module or exiting the editor.
+	 */
+	void saveResources() {
+		// check if any maps are still opened
+		mapHandler.saveMaps();
 	}
 }

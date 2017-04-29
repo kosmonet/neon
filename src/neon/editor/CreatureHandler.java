@@ -117,6 +117,7 @@ public class CreatureHandler {
 	
 	/**
 	 * Signals to this handler that a module was loaded.
+	 * 
 	 * @param event
 	 */
 	@Subscribe

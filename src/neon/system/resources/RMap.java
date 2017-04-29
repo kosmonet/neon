@@ -20,14 +20,27 @@ package neon.system.resources;
 
 public class RMap extends Resource {
 	private final String name;
-//	private int width, height;
+	private int width, height;
 	
 	public RMap(String id, String name) {
 		super(id, "map");
 		this.name = name;
 	}
 	
+	public void setSize(int width, int height) {
+		this.height = height;
+		this.width = width;
+	}
+	
 	public String getName() {
 		return name;
+	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
 	}
 }

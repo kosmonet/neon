@@ -57,7 +57,22 @@
 						</TitledPane>
 						<TitledPane text="Items">
 							<content>
-								<TreeView fx:id="itemTree" />
+								<fx:include source="ItemTree.fxml" />
+							</content>
+						</TitledPane>
+						<TitledPane text="Terrain">
+							<content>
+								<TreeView fx:id="terrainTree" />
+							</content>
+						</TitledPane>
+						<TitledPane text="Triggers">
+							<content>
+								<TreeView fx:id="triggerTree" />
+							</content>
+						</TitledPane>
+						<TitledPane text="Placeables">
+							<content>
+								<TreeView fx:id="placeTree" />
 							</content>
 						</TitledPane>
 					</panes>

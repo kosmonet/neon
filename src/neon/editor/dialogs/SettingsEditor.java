@@ -203,7 +203,7 @@ public class SettingsEditor {
 
 		ChoiceDialog<String> dialog = new ChoiceDialog<>(null, choices);
 		dialog.setTitle("Add parent module");
-		dialog.setHeaderText("Add a parent to this module.");
+		dialog.setHeaderText(null);
 		dialog.initOwner(stage);
 		dialog.setContentText("Select parent folder:");
 

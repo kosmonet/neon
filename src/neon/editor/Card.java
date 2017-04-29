@@ -78,4 +78,17 @@ public class Card {
 	public <T extends Resource> T getResource() throws ResourceException {
 		return resources.getResource(namespace, id);
 	}
+	
+	/**
+	 * An extra type of card to allow the resource tree views to be divided 
+	 * into subcategories of different types of items, creatures, ...
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Type extends Card {
+		public Type(String type) {
+			super(null, type, null);
+		}
+	}
 }
