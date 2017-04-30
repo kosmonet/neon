@@ -29,6 +29,7 @@ import org.jdom2.Element;
 import com.google.common.collect.MapMaker;
 import neon.system.files.NeonFileSystem;
 import neon.system.files.XMLTranslator;
+import neon.system.resources.loaders.ResourceLoader;
 
 /**
  * Manages all game resources. Resources are stored with weak references and 

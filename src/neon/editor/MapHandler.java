@@ -37,14 +37,15 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import neon.editor.map.MapEditor;
 import neon.editor.ui.CardCellFactory;
-import neon.system.resources.MapLoader;
 import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
+import neon.system.resources.loaders.MapLoader;
 
 /**
  * This handler takes care of loading, saving, adding and removing map 
@@ -54,6 +55,8 @@ import neon.system.resources.ResourceManager;
  *
  */
 public class MapHandler {
+	private final static ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
+	private final static ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
 	private final static Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> mapTree;
@@ -126,10 +129,10 @@ public class MapHandler {
 	 */
 	void saveMaps() {
 		if(!tabs.getTabs().isEmpty()) {
-			Alert alert = new Alert(AlertType.CONFIRMATION);
+			Alert alert = new Alert(AlertType.CONFIRMATION,
+					"Save all opened maps?", yes, no);
 			alert.setTitle("Warning");
-			alert.setHeaderText("Changes made to some maps may not have been saved yet.");
-			alert.setContentText("Save all opened maps?");
+			alert.setHeaderText("Changes made to opened maps may not have been saved yet.");
 
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == ButtonType.OK){				

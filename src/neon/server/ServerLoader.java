@@ -37,13 +37,13 @@ import neon.system.files.NeonFileSystem;
 import neon.system.resources.CClient;
 import neon.system.resources.CGame;
 import neon.system.resources.CServer;
-import neon.system.resources.ConfigurationLoader;
 import neon.system.resources.MissingLoaderException;
 import neon.system.resources.MissingResourceException;
-import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
+import neon.system.resources.loaders.ConfigurationLoader;
+import neon.system.resources.loaders.ModuleLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.

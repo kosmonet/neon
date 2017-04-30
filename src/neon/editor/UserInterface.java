@@ -43,6 +43,7 @@ public class UserInterface {
 	private final MapHandler mapHandler;
 	private final MenuHandler menuHandler;
 	private final ItemHandler itemHandler;
+	private final TerrainHandler terrainHandler;
 	private Stage stage;	
 	private Scene scene;
 	
@@ -62,6 +63,8 @@ public class UserInterface {
 		bus.register(creatureHandler);
 		itemHandler = new ItemHandler();
 		bus.register(itemHandler);
+		terrainHandler = new TerrainHandler(resources, bus);
+		bus.register(terrainHandler);
 		
 		// load the user interface
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/Editor.fxml"));
@@ -91,6 +94,8 @@ public class UserInterface {
 			return creatureHandler;
 		} else if (type.equals(ItemHandler.class)) {
 			return itemHandler;
+		} else if (type.equals(TerrainHandler.class)) {
+			return terrainHandler;
 		} else {
 			throw new IllegalArgumentException("No controller found for class " + type + "!");
 		}

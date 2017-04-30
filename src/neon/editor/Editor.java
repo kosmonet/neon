@@ -38,9 +38,9 @@ import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.MissingLoaderException;
-import neon.system.resources.ModuleLoader;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceManager;
+import neon.system.resources.loaders.ModuleLoader;
 
 /**
  * The neon roguelike editor.

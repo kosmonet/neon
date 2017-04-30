@@ -39,10 +39,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import neon.editor.dialogs.CreatureEditor;
 import neon.editor.ui.CardCellFactory;
-import neon.system.resources.CreatureLoader;
 import neon.system.resources.RCreature;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
+import neon.system.resources.loaders.CreatureLoader;
 
 /**
  * Class to handle all creature-related matters.

@@ -16,9 +16,11 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.resources.loaders;
 
 import org.jdom2.Element;
+
+import neon.system.resources.RCreature;
 
 /**
  * A resource loader specifically for creatures.

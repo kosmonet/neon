@@ -46,11 +46,6 @@ public class ItemHandler {
 		root.getChildren().add(doors);
 		TreeItem<Card> containers = new TreeItem<>(new Card.Type("Containers"));
 		root.getChildren().add(containers);
-
-//		for (String creature : resources.listResources("creatures")) {
-//			TreeItem<Card> item = new TreeItem<>(new Card("creatures", creature, resources));
-//			root.getChildren().add(item);
-//		}
 	}
 	
 	/**
@@ -81,5 +76,5 @@ public class ItemHandler {
 //				}
             }
         }
-	}	
+	}
 }

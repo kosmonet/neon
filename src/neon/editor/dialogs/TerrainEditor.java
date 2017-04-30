@@ -27,56 +27,44 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
-import neon.system.resources.RCreature;
+import neon.system.resources.RTerrain;
 import neon.system.resources.ResourceException;
 
 /**
- * This resource editor shows a modal dialog window to edit the properties
- * of a creature:
- * <ul>
- * 	<li>the display name</li>
- * </ul>
- * 
- * The creature editor does not perform the actual saving of the edited 
- * creature resource. Instead, it sends a {@code SaveEvent} to request 
- * that the creature resource be saved.
+ * An editor for terrain resources.
  * 
  * @author mdriesen
  *
  */
-public class CreatureEditor {
+public class TerrainEditor {
 	private static final Logger logger = Logger.getGlobal();
 
-//	@FXML private Label instructionLabel;
-	@FXML private TextField nameField;
-	
+	@FXML private TextField nameField, textField;
+	@FXML private ColorPicker colorBox;
+	@FXML private Label previewLabel;
+
 	private final Stage stage = new Stage();
 	private final EventBus bus;
 	private final Card card;
 	
-	/**
-	 * Initializes this {@code CreatureEditor}.
-	 * 
-	 * @param creature	the creature to edit
-	 * @param mainStage	the parent stage for the dialog window
-	 * @param bus		the {@code EventBus} used for messaging
-	 * @throws ResourceException 
-	 */
-	public CreatureEditor(Card card, EventBus bus) throws ResourceException {
+	public TerrainEditor(Card card, EventBus bus) throws ResourceException {
 		this.card = card;
-		RCreature creature = card.getResource();
+		RTerrain terrain = card.getResource();
 		this.bus = bus;
 		
-		stage.setTitle("Creature properties");
+		stage.setTitle("Terrain properties");
 		stage.initModality(Modality.APPLICATION_MODAL); 
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Creature.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Terrain.fxml"));
 		loader.setController(this);
 		
 		try {
@@ -84,15 +72,32 @@ public class CreatureEditor {
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load creature editor ui");
+			e.printStackTrace();
+			logger.severe("failed to load terrain editor ui");
 		}
 		
-		nameField.setText(creature.getName());
-//		instructionLabel.setText("The creature name will be displayed in-game, not the id.");
+		nameField.setText(terrain.getName());
+		textField.setText(terrain.getText());
+		colorBox.setValue(terrain.getColor());
+		
+		previewLabel.setStyle("-fx-background-color: black;");
+		previewLabel.setTextFill(terrain.getColor());
+		previewLabel.setText(terrain.getText());
+		
+		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
+		colorBox.valueProperty().addListener(value -> refresh());
 	}
 	
 	/**
-	 * Shows the creature editor window.
+	 * Refreshes the preview label if the terrain text or color was changed.
+	 */
+	private void refresh() {
+		previewLabel.setText(textField.getText());
+		previewLabel.setTextFill(colorBox.getValue());
+	}
+	
+	/**
+	 * Shows the terrain editor window.
 	 */
 	public void show(Window parent) {
 		stage.initOwner(parent);
@@ -109,8 +114,12 @@ public class CreatureEditor {
 	 * @param event
 	 */
 	@FXML private void applyPressed(ActionEvent event) {
-		RCreature creature = new RCreature(card.toString(), nameField.getText());
-		bus.post(new SaveEvent.Resources("creatures", creature));
+		String name = nameField.getText().isEmpty() ? card.toString() : nameField.getText();
+		String text = textField.getText();
+		Color color = colorBox.getValue();
+		
+		RTerrain terrain = new RTerrain(card.toString(), name, text, color);
+		bus.post(new SaveEvent.Resources("terrain", terrain));
 		card.setChanged(true);
 	}
 	

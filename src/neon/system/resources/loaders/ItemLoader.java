@@ -16,35 +16,33 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.resources.loaders;
 
 import org.jdom2.Element;
 
-public class MapLoader implements ResourceLoader<RMap> {
-	@Override
-	public RMap load(Element root) {
-		String id = root.getAttributeValue("id");
-		String name = root.getAttributeValue("name");
-		RMap map = new RMap(id, name);
-		
-		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
-		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		map.setSize(width, height);
-		
-		return map;
-	}
+import neon.system.resources.RItem;
 
+/**
+ * A resource loader specifically for items.
+ * 
+ * @author mdriesen
+ *
+ */
+public class ItemLoader implements ResourceLoader<RItem> {
 	@Override
-	public Element save(RMap map) {
-		Element root = new Element("map");
-		root.setAttribute("id", map.getID());
-		root.setAttribute("name", map.getName());
-		
-		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getWidth()));
-		size.setAttribute("height", Integer.toString(map.getHeight()));
-		root.addContent(size);
-		
-		return root;
+	public RItem load(Element root) {
+		String name = root.getAttributeValue("name");
+		String id = root.getAttributeValue("id");
+		String type = root.getName();
+		RItem creature = new RItem(id, type, name);
+		return creature;
+	}
+	
+	@Override
+	public Element save(RItem ri) {
+		Element item = new Element(ri.getType());
+		item.setAttribute("id", ri.getID());
+		item.setAttribute("name", ri.getName());
+		return item;
 	}
 }

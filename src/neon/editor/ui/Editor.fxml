@@ -64,7 +64,7 @@
 						</TitledPane>
 						<TitledPane text="Terrain">
 							<content>
-								<TreeView fx:id="terrainTree" />
+								<fx:include source="TerrainTree.fxml" />
 							</content>
 						</TitledPane>
 						<TitledPane text="Triggers">

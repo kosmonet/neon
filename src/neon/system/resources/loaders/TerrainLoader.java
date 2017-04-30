@@ -16,31 +16,37 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.resources.loaders;
 
 import org.jdom2.Element;
 
+import javafx.scene.paint.Color;
+import neon.system.resources.RTerrain;
+
 /**
- * A resource loader specifically for items.
+ * This resource loader takes care of loading and saving terrain resources 
+ * from/to disk. 
  * 
  * @author mdriesen
  *
  */
-public class ItemLoader implements ResourceLoader<RItem> {
+public class TerrainLoader implements ResourceLoader<RTerrain> {
 	@Override
-	public RItem load(Element root) {
-		String name = root.getAttributeValue("name");
+	public RTerrain load(Element root) {
 		String id = root.getAttributeValue("id");
-		String type = root.getName();
-		RItem creature = new RItem(id, type, name);
-		return creature;
+		String text = root.getAttributeValue("text");
+		Color color = Color.web(root.getAttributeValue("color"));
+		String name = root.getAttributeValue("name");
+		return new RTerrain(id, name, text, color);
 	}
-	
+
 	@Override
-	public Element save(RItem ri) {
-		Element item = new Element(ri.getType());
-		item.setAttribute("id", ri.getID());
-		item.setAttribute("name", ri.getName());
-		return item;
+	public Element save(RTerrain terrain) {
+		Element root = new Element("terrain");
+		root.setAttribute("id", terrain.getID());
+		root.setAttribute("name", terrain.getName());
+		root.setAttribute("text", terrain.getText());
+		root.setAttribute("color", terrain.getColorString());
+		return root;
 	}
 }

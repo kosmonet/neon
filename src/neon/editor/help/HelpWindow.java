@@ -29,6 +29,13 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+/**
+ * A window to show help content. It uses the JavaFX {@code WebView} to show
+ * help files in html format.
+ * 
+ * @author mdriesen
+ *
+ */
 public class HelpWindow {
 	private static final Logger logger = Logger.getGlobal();
 	
@@ -36,6 +43,12 @@ public class HelpWindow {
 	
 	private final Stage stage = new Stage();
 	
+	/**
+	 * Initialize a new {@code HelpWindow} with the given html content. This 
+	 * should be a local html file (e.g. ../help/about.html).
+	 * 
+	 * @param content the name of the html file
+	 */
 	public HelpWindow(String content) {
 		stage.setTitle("Help");
 		

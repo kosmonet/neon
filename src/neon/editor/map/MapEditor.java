@@ -18,13 +18,19 @@
 
 package neon.editor.map;
 
+import java.util.Optional;
+
 import com.google.common.eventbus.EventBus;
 
 import javafx.event.Event;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -46,12 +52,16 @@ import neon.system.resources.ResourceException;
  *
  */
 public class MapEditor {
+	private final static ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
+	private final static ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
+	
 	private final Card card;
 	private final GridPane grid = new GridPane();
 	private final AnchorPane pane = new AnchorPane();
 	private final EventBus bus;
 	private final TextField nameField = new TextField();
 	private final Spinner<Integer> widthSpinner, heightSpinner;
+	private boolean saved = true;
 	
 	public MapEditor(Card card, EventBus bus) throws ResourceException {
 		this.bus = bus;
@@ -86,10 +96,28 @@ public class MapEditor {
 		return pane;
 	}
 	
+	/**
+	 * Checks for unsaved changes when the tab is closed.
+	 * 
+	 * @param event
+	 */
 	public void close(Event event) {
-		System.out.println("closing " + card + "!");
+		if(!saved) {
+			Alert alert = new Alert(AlertType.CONFIRMATION, 
+					"Save map before closing?", yes, no);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Map contains unsaved changes.");
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK){	
+				save();
+			} 
+		}
 	}
 	
+	/**
+	 * Shows the map information pane.
+	 */
 	public void showInfo() {
 		pane.getChildren().clear();
 		pane.getChildren().add(grid);
@@ -116,5 +144,6 @@ public class MapEditor {
 		
 		bus.post(new SaveEvent.Resources("maps", map));
 		card.setChanged(true);
+		saved = true;
 	}
 }

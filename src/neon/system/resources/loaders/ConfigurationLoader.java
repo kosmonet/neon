@@ -16,12 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.resources.loaders;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import org.jdom2.Element;
+
+import neon.system.resources.CClient;
+import neon.system.resources.CGame;
+import neon.system.resources.CServer;
+import neon.system.resources.Resource;
 
 /**
  * A resource loader for server, client and game configuration files.
