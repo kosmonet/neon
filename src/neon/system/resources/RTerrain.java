@@ -20,6 +20,12 @@ package neon.system.resources;
 
 import javafx.scene.paint.Color;
 
+/**
+ * A resource representing a type of terrain on the map.
+ * 
+ * @author mdriesen
+ *
+ */
 public class RTerrain extends Resource {
 	private final Color color;
 	private final String text;
@@ -44,6 +50,11 @@ public class RTerrain extends Resource {
 		return text;
 	}
 	
+	/**
+	 * Converts the color of this terrain to a hexadecimal RGB value.
+	 * 
+	 * @return
+	 */
 	public String getColorString() {
 		return String.format("#%02X%02X%02X", 
 				(int) (color.getRed()*255),

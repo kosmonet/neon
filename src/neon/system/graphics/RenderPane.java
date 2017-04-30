@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.graphics;
+package neon.system.graphics;
 
 import java.util.HashMap;
 
@@ -24,6 +24,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import neon.system.resources.RTerrain;
+import neon.system.resources.ResourceException;
+import neon.system.resources.ResourceManager;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -35,10 +38,13 @@ import neon.util.quadtree.RegionQuadTree;
 public class RenderPane extends StackPane {
 	private final TextureFactory factory = new TextureFactory();
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
-	private RegionQuadTree<Color> terrain;
-	private RegionQuadTree<Integer> depth;
+	private final ResourceManager resources;
+	private RegionQuadTree<String> terrain;
+	private RegionQuadTree<Integer> elevation;
+	private int scale = 30;
 
-	public RenderPane() {
+	public RenderPane(ResourceManager resources) {
+		this.resources = resources;
 		double parallax = 1.02;
 		
 		for (int i = -5; i < 4; i++) {
@@ -54,9 +60,11 @@ public class RenderPane extends StackPane {
 		// TODO: brightness en/of saturation filters op elk canvas
 	}
 	
-	public void setMap(RegionQuadTree<Color> terrain, RegionQuadTree<Integer> depth) {
+	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation) {
 		this.terrain = terrain;
-		this.depth = depth;
+		this.elevation = elevation;
+		
+		setPrefSize(scale*terrain.getWidth(), scale*terrain.getHeight());
 	}
 	
     public void draw(int xpos, int ypos) {
@@ -64,13 +72,19 @@ public class RenderPane extends StackPane {
     		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     	}
 
-    	for (int x = xpos; x < 100; x++) {
-    		for (int y = ypos; y < 100; y++) {
-    			GraphicsContext gc = layers.get(depth.get(x, y)).getGraphicsContext2D();
-    			gc.setFill(Color.GREY);
-   				gc.setFill(terrain.get(x, y));
-    			gc.drawImage(factory.getImage(30, gc.getFill(), "g"), 30*(x - xpos), 30*(y - ypos), 30, 30);
+    	try {
+    		for (int x = xpos; x < terrain.getWidth(); x++) {
+    			for (int y = ypos; y < terrain.getHeight(); y++) {
+    				String id = terrain.get(x, y);
+    				Color color = resources.<RTerrain>getResource("terrain", id).getColor();
+    				GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
+    				gc.setFill(Color.GREY);
+    				gc.setFill(color);
+    				gc.drawImage(factory.getImage(scale, gc.getFill(), "g"), scale*(x - xpos), scale*(y - ypos));
+    			}
     		}
+    	} catch (ResourceException e) {
+    		e.printStackTrace();
     	}
     }
 }

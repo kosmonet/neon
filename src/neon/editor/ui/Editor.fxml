@@ -42,7 +42,7 @@
 		</MenuBar>
 	</top>
 	<center>
-		<SplitPane dividerPositions="0.2, 0.8">
+		<SplitPane dividerPositions="0.15, 0.85">
 			<items>
 				<AnchorPane>
 					<children>

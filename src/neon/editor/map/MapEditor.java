@@ -27,17 +27,18 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
+import neon.system.graphics.RenderPane;
 import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
+import neon.system.resources.ResourceManager;
 
 /**
  * The map editor presents a pane on the main window to edit the currently
@@ -57,13 +58,14 @@ public class MapEditor {
 	
 	private final Card card;
 	private final GridPane grid = new GridPane();
-	private final AnchorPane pane = new AnchorPane();
+	private final RenderPane renderer;
+	private final ScrollPane scroller = new ScrollPane();
 	private final EventBus bus;
 	private final TextField nameField = new TextField();
 	private final Spinner<Integer> widthSpinner, heightSpinner;
 	private boolean saved = true;
 	
-	public MapEditor(Card card, EventBus bus) throws ResourceException {
+	public MapEditor(Card card, ResourceManager resources, EventBus bus) throws ResourceException {
 		this.bus = bus;
 		this.card = card;
 		RMap map = card.getResource();
@@ -89,11 +91,17 @@ public class MapEditor {
 	    heightSpinner.setEditable(true);
 	    grid.add(heightSpinner, 1, 2);
 	    
-	    pane.getChildren().add(grid);
+		renderer = new RenderPane(resources);
+		renderer.setMap(map.getTerrain(), map.getElevation());
+	    renderer.setStyle("-fx-background-color: black");
+	    renderer.widthProperty().addListener(value -> renderer.draw(0, 0));
+	    renderer.heightProperty().addListener(value -> renderer.draw(0, 0));
+		
+	    showInfo();	// show the info pane by default	    
 	}
 	
-	public Pane getPane() {
-		return pane;
+	public ScrollPane getPane() {
+		return scroller;
 	}
 	
 	/**
@@ -119,16 +127,15 @@ public class MapEditor {
 	 * Shows the map information pane.
 	 */
 	public void showInfo() {
-		pane.getChildren().clear();
-		pane.getChildren().add(grid);
+		scroller.setContent(grid);
 	}
 	
 	public void showTerrain() {
-		System.out.println("showing " + card + " terrain");
+		scroller.setContent(renderer);
 	}
 	
-	public void showHeight() {
-		System.out.println("showing " + card + " height");
+	public void showElevation() {
+		scroller.setContent(new Label("showing " + card + " height"));
 	}
 	
 	/**
@@ -137,10 +144,9 @@ public class MapEditor {
 	public void save() {
 		String name = nameField.getText();
 		name = name.isEmpty() ? card.toString() : name;
-		RMap map = new RMap(card.toString(), name);
 		widthSpinner.increment(0);	// trick to commit typed text when enter was not pressed
 		heightSpinner.increment(0);
-		map.setSize(widthSpinner.getValue(), heightSpinner.getValue());
+		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue());
 		
 		bus.post(new SaveEvent.Resources("maps", map));
 		card.setChanged(true);

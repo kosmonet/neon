@@ -116,7 +116,7 @@ class Node<T> {
 		if(isLeaf()) {
 			return Arrays.asList(this);
 		} else {
-			ArrayList<Node<T>> list = new ArrayList<>();
+			Collection<Node<T>> list = new ArrayList<>();
 			list.addAll(NW.getLeaves());
 			list.addAll(NE.getLeaves());
 			list.addAll(SW.getLeaves());
@@ -131,5 +131,13 @@ class Node<T> {
 	
 	private boolean isLeaf() {
 		return NW == null;
+	}
+	
+	T getValue() {
+		return value;
+	}
+	
+	Rectangle getBounds() {
+		return new Rectangle(x, y, width, height);
 	}
 }

@@ -148,7 +148,9 @@ public class ResourceManager {
 			}
 			String type = resource.getName();
 			if(loaders.containsKey(type)) {
-				return (T) loaders.get(type).load(resource);
+				T value = (T) loaders.get(type).load(resource);
+				resources.get(namespace).put(id, value);
+				return value;
 			} else {
 				throw new MissingLoaderException("Loader for resource type <" + resource.getName() + "> was not found.");
 			}

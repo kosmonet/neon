@@ -19,6 +19,8 @@
 package neon.util.quadtree;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A region quadtree.
@@ -74,5 +76,21 @@ public class RegionQuadTree<T> {
 		} else {
 			return root.get(x, y);
 		}
+	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
+	
+	public Map<Rectangle, T> getLeaves() {
+		Map<Rectangle, T> leaves = new HashMap<>();
+		for(Node<T> node: root.getLeaves()) {
+			leaves.put(node.getBounds(), node.getValue());
+		}
+		return leaves;
 	}
 }

@@ -18,18 +18,18 @@
 
 package neon.system.resources;
 
+import neon.util.quadtree.RegionQuadTree;
+
 public class RMap extends Resource {
 	private final String name;
-	private int width, height;
+	private final RegionQuadTree<String> terrain;
+	private final RegionQuadTree<Integer> elevation;
 	
-	public RMap(String id, String name) {
+	public RMap(String id, String name, int width, int height) {
 		super(id, "map");
 		this.name = name;
-	}
-	
-	public void setSize(int width, int height) {
-		this.height = height;
-		this.width = width;
+		terrain = new RegionQuadTree<>(width, height);
+		elevation = new RegionQuadTree<>(width, height);
 	}
 	
 	public String getName() {
@@ -37,10 +37,18 @@ public class RMap extends Resource {
 	}
 	
 	public int getWidth() {
-		return width;
+		return terrain.getWidth();
 	}
 	
 	public int getHeight() {
-		return height;
+		return terrain.getHeight();
+	}
+	
+	public RegionQuadTree<String> getTerrain() {
+		return terrain;
+	}
+	
+	public RegionQuadTree<Integer> getElevation() {
+		return elevation;
 	}
 }

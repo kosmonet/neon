@@ -44,7 +44,7 @@ public class UserInterface {
 	private final MenuHandler menuHandler;
 	private final ItemHandler itemHandler;
 	private final TerrainHandler terrainHandler;
-	private Stage stage;	
+	private Stage stage;
 	private Scene scene;
 	
 	/**

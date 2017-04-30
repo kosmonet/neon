@@ -152,11 +152,11 @@ public class MapHandler {
 		}
 	}
 	
-	@FXML private void showHeight() {
+	@FXML private void showElevation() {
 		Tab tab = tabs.getSelectionModel().getSelectedItem();
 		if (tab != null) {
 			MapEditor editor = (MapEditor) tab.getUserData();
-			editor.showHeight();
+			editor.showElevation();
 		}
 	}
 	
@@ -204,13 +204,13 @@ public class MapHandler {
 			}
 
 			// create the map
-			RMap map = new RMap(id, id);
+			RMap map = new RMap(id, id, 100, 100);
 
 			try {
 				resources.addResource("maps", map);
 				TreeItem<Card> item = new TreeItem<>(new Card("maps", id, resources));
 				mapTree.getRoot().getChildren().add(item);
-            	new MapEditor(item.getValue(), bus);
+            	new MapEditor(item.getValue(), resources, bus);
 			} catch (IOException e) {
 				logger.severe("could not create map " + id);
 			} catch (ResourceException e) {
@@ -273,7 +273,7 @@ public class MapHandler {
             	} else {
             		// if not, create a new map editor
 					try {
-						MapEditor editor = new MapEditor(card, bus);
+						MapEditor editor = new MapEditor(card, resources, bus);
 	            		Tab tab = new Tab(card.toString(), editor.getPane());
 	            		tab.setUserData(editor);
 	            		tab.setOnClosed(event -> editor.close(event));

@@ -29,7 +29,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.paint.Color;
 import neon.client.UserInterface;
-import neon.client.graphics.RenderPane;
+import neon.system.graphics.RenderPane;
 import neon.util.quadtree.RegionQuadTree;
 
 public class GameModule extends Module {
@@ -63,7 +63,7 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
 		
-		pane.setMap(tree, depth);
+//		pane.setMap(tree, depth);
 		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
 		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
 	}

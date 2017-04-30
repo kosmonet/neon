@@ -2,4 +2,4 @@
  * @author mdriesen
  *
  */
-package neon.client.graphics;
+package neon.system.graphics;

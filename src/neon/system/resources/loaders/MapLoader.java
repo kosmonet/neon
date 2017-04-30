@@ -18,22 +18,57 @@
 
 package neon.system.resources.loaders;
 
+import java.awt.Rectangle;
+
 import org.jdom2.Element;
 
 import neon.system.resources.RMap;
 
+/**
+ * A loader for map resources.
+ * 
+ * @author mdriesen
+ *
+ */
 public class MapLoader implements ResourceLoader<RMap> {
 	@Override
 	public RMap load(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
-		RMap map = new RMap(id, name);
-		
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		map.setSize(width, height);
+		RMap map = new RMap(id, name, width, height);
+		initTerrain(map, root.getChild("terrain"));
+		initElevation(map, root.getChild("elevation"));
 		
 		return map;
+	}
+	
+	private void initTerrain(RMap map, Element terrain) {
+		for (Element region : terrain.getChildren("region")) {
+			int width = Integer.parseInt(region.getAttributeValue("w"));
+			int height = Integer.parseInt(region.getAttributeValue("h"));
+			int x = Integer.parseInt(region.getAttributeValue("x"));
+			int y = Integer.parseInt(region.getAttributeValue("y"));
+			String id = region.getAttributeValue("id");
+			
+			map.getTerrain().add(new Rectangle(x, y, width, height), id);
+		}
+	}
+	
+	private void initElevation(RMap map, Element elevation) {
+		// initialize with a ground plane at 0 height
+		map.getElevation().add(new Rectangle(0, 0, map.getWidth(), map.getHeight()), 0);
+		
+		for (Element region : elevation.getChildren("region")) {
+			int width = Integer.parseInt(region.getAttributeValue("w"));
+			int height = Integer.parseInt(region.getAttributeValue("h"));
+			int x = Integer.parseInt(region.getAttributeValue("x"));
+			int y = Integer.parseInt(region.getAttributeValue("y"));
+			int value = Integer.parseInt(region.getAttributeValue("v"));
+			
+			map.getElevation().add(new Rectangle(x, y, width, height), value);
+		}		
 	}
 
 	@Override
@@ -46,6 +81,12 @@ public class MapLoader implements ResourceLoader<RMap> {
 		size.setAttribute("width", Integer.toString(map.getWidth()));
 		size.setAttribute("height", Integer.toString(map.getHeight()));
 		root.addContent(size);
+		
+		Element terrain = new Element("terrain");
+		root.addContent(terrain);
+		
+		Element height = new Element("height");
+		root.addContent(height);
 		
 		return root;
 	}

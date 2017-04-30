@@ -21,7 +21,7 @@
 		<ButtonBar styleClass="bottom-buttons">
 			<buttons>
 				<Button text="Terrain" onAction="#showTerrain" ButtonBar.buttonData="LEFT"  />
-				<Button text="Height" onAction="#showHeight" ButtonBar.buttonData="LEFT" />
+				<Button text="Elevation" onAction="#showElevation" ButtonBar.buttonData="LEFT" />
 				<Button text="Info" onAction="#showInfo" ButtonBar.buttonData="LEFT" />
 				<Button text="Save" onAction="#save" ButtonBar.buttonData="RIGHT" />
 			</buttons>
