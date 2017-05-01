@@ -26,7 +26,7 @@ package neon.system.resources;
  *
  */
 public abstract class Resource {
-	private final String id, type;
+	private final String id, type, namespace;
 	
 	/**
 	 * Creates a new resource with the given id and type.
@@ -34,9 +34,10 @@ public abstract class Resource {
 	 * @param id
 	 * @param type
 	 */
-	public Resource(String id, String type) {
+	public Resource(String id, String type, String namespace) {
 		this.id = id;
 		this.type = type;
+		this.namespace = namespace;
 	}
 	
 	/**
@@ -51,5 +52,12 @@ public abstract class Resource {
 	 */
 	public String getType() {
 		return type;
+	}
+	
+	/**
+	 * @return the namespace this resource belongs to
+	 */
+	public String getNamespace() {
+		return namespace;
 	}
 }

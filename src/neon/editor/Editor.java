@@ -129,10 +129,8 @@ public class Editor extends Application {
 	 */
 	@Subscribe
 	private void saveResource(SaveEvent.Resources event) {	
-		String namespace = event.getNamespace();
-		
 		try {
-			resources.addResource(namespace, event.getResource());
+			resources.addResource(event.getResource());
 			logger.fine("saved resource " + event.getResource().getID());
 		} catch (IOException e) {
 			logger.severe("failed to save resource " + event.getResource().getID());

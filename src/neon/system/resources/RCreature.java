@@ -34,7 +34,7 @@ public class RCreature extends Resource {
 	 * @param type
 	 */
 	public RCreature(String id, String name) {
-		super(id, "creature");
+		super(id, "creature", "creatures");
 		this.name = name;
 	}
 	

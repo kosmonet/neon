@@ -23,12 +23,17 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import neon.client.ClientProvider;
 import neon.client.UserInterface;
 import neon.system.event.UpdateEvent;
 import neon.system.graphics.RenderPane;
+import neon.system.resources.CGame;
+import neon.system.resources.RMap;
+import neon.system.resources.ResourceException;
 
 /**
  * 
@@ -38,10 +43,10 @@ import neon.system.graphics.RenderPane;
 public class GameModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
 	
-	@FXML private RenderPane pane;
-	
 	private final UserInterface ui;
+	private RenderPane pane;	
 	private Scene scene;
+	private int xpos = 0, ypos = 0;
 	
 	public GameModule(UserInterface ui) {
 		this.ui = ui;
@@ -56,20 +61,43 @@ public class GameModule extends Module {
 			logger.severe("failed to load new game menu: " + e.getMessage());
 		}
 		
-//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
-//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
-//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
-//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
 		
-//		pane.setMap(tree, depth);
-//		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
-//		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
 	}
 	
 	@Subscribe
-	private void start(UpdateEvent event) {
-		System.out.println("show the new map if it ever arrives");
-//		scene.setRoot(new RenderPane(null));		
+	private void start(UpdateEvent.Start event) throws ResourceException {
+		// store all resources
+		ClientProvider provider = new ClientProvider();
+		provider.addAll(event.getResources());
+		
+		// get the right map
+		CGame game = provider.getResource("config", "game");
+		RMap map = provider.getResource("maps", game.getStartMap());
+		
+		// and draw the scene
+		pane = new RenderPane(provider);
+		scene.setRoot(pane);
+		pane.setMap(map.getTerrain(), map.getElevation());
+		
+		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
+		
+		pane.draw(xpos, ypos);
+	}
+	
+	private void move(String direction) {
+		switch(direction) {
+		case "left": xpos = Math.max(0, xpos - 1); break;
+		case "right": xpos++; break;
+		case "up": ypos = Math.max(0, ypos - 1); break;
+		case "down": ypos++; break;
+		}
+
+		pane.draw(xpos, ypos);
 	}
 	
 	@Override

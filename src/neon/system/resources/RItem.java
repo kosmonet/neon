@@ -34,7 +34,7 @@ public class RItem extends Resource {
 	 * @param type
 	 */
 	public RItem(String id, String type, String name) {
-		super(id, type);
+		super(id, type, "items");
 		this.name = name;
 	}
 	

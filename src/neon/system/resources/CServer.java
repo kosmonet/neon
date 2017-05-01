@@ -41,7 +41,7 @@ public class CServer extends Resource {
 	 * @param level
 	 */
 	public CServer(LinkedHashSet<String> modules, String level) {
-		super("server", "config");
+		super("server", "config", "config");
 		this.modules.addAll(modules);
 		this.level = level;
 	}

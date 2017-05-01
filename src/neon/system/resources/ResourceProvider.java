@@ -16,37 +16,23 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.event;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import neon.system.resources.Resource;
+package neon.system.resources;
 
 /**
- * An event containing resource updates for the client.
+ * Resources are obtained from a resource provider. Concrete implementations
+ * may store their resources on disk, in memory or somewhere else. 
  * 
  * @author mdriesen
  *
  */
-public class UpdateEvent extends ClientEvent {
-	protected final Collection<Resource> resources = new ArrayList<>();
-	
-	public Collection<Resource> getResources() {
-		return resources;
-	}
-	
-	public static class Start extends UpdateEvent {
-		public Start(Collection<Resource> resources) {
-			this.resources.addAll(resources);
-		}
-	}
-	
-	public static class Map extends UpdateEvent {
-		
-	}
-	
-	public static class Resources extends UpdateEvent {
-		
-	}
+public interface ResourceProvider {
+	/**
+	 * Returns a resource from a specific namespace.
+	 * 
+	 * @param namespace
+	 * @param id
+	 * @return the requested resource
+	 * @throws ResourceException 
+	 */
+	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException;
 }

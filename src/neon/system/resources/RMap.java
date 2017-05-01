@@ -26,7 +26,7 @@ public class RMap extends Resource {
 	private final RegionQuadTree<Integer> elevation;
 	
 	public RMap(String id, String name, int width, int height) {
-		super(id, "map");
+		super(id, "map", "maps");
 		this.name = name;
 		terrain = new RegionQuadTree<>(width, height);
 		elevation = new RegionQuadTree<>(width, height);

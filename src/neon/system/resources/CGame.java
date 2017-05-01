@@ -29,7 +29,7 @@ public class CGame extends Resource {
 	private final int x, y;
 
 	public CGame(String title, Collection<String> species, String startMap, int startX, int startY) {
-		super("game", "config");
+		super("game", "config", "config");
 		this.species.addAll(species);
 		this.title = title;
 		map = startMap;

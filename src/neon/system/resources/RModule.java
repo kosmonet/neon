@@ -35,7 +35,7 @@ public class RModule extends Resource {
 	private final int x, y;
 
 	public RModule(String id, String title, String startMap, int startX, int startY) {
-		super(id, "module");
+		super(id, "module", "global");
 		this.title = title;
 		map = startMap;
 		x = startX;

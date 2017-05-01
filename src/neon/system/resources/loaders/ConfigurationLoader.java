@@ -122,7 +122,7 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		start.setAttribute("map", resource.getStartMap());
 		start.setAttribute("x", Integer.toString(resource.getStartX()));
 		start.setAttribute("y", Integer.toString(resource.getStartY()));
-		game.addContent("start");
+		game.addContent(start);
 		
 		return game;
 	}

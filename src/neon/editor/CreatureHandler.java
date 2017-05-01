@@ -155,7 +155,7 @@ public class CreatureHandler {
 			RCreature creature = new RCreature(id, id);
 
 			try {
-				resources.addResource("creatures", creature);
+				resources.addResource(creature);
 				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources));
 				creatureTree.getRoot().getChildren().add(item);
             	new CreatureEditor(item.getValue(), bus).show(parent);

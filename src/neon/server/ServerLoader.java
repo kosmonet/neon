@@ -41,7 +41,9 @@ import neon.system.resources.RModule;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 import neon.system.resources.loaders.ConfigurationLoader;
+import neon.system.resources.loaders.MapLoader;
 import neon.system.resources.loaders.ModuleLoader;
+import neon.system.resources.loaders.TerrainLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.
@@ -49,7 +51,7 @@ import neon.system.resources.loaders.ModuleLoader;
  * @author mdriesen
  *
  */
-public class ServerLoader {
+class ServerLoader {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;
@@ -129,7 +131,7 @@ public class ServerLoader {
 		// add game configuration resource to the manager
 		try {
 			CGame game = new CGame(title, species, map, x, y);			
-			resources.addResource("config", game);
+			resources.addResource(game);
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}		
@@ -154,8 +156,14 @@ public class ServerLoader {
 	
 	private void initResources(ResourceManager resources, CServer configuration) {
 		// add all necessary resource loaders to the manager
-		resources.addLoader("config", new ConfigurationLoader());
+		ConfigurationLoader loader = new ConfigurationLoader();
+		resources.addLoader("config", loader);
+		resources.addLoader("server", loader);
+		resources.addLoader("client", loader);
+		resources.addLoader("game", loader);
 		resources.addLoader("module", new ModuleLoader());
+		resources.addLoader("map", new MapLoader());
+		resources.addLoader("terrain", new TerrainLoader());
 		
 		// check if all required parent modules are present
 		try {
@@ -178,7 +186,7 @@ public class ServerLoader {
 		
 		// add server configuration resource to the manager
 		try {
-			resources.addResource("config", configuration);
+			resources.addResource(configuration);
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}
@@ -188,7 +196,7 @@ public class ServerLoader {
 		// add client configuration resource to the manager
 		try {
 			CClient client = new CClient();			
-			resources.addResource("config", client);
+			resources.addResource(client);
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}

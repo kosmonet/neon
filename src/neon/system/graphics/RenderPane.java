@@ -27,7 +27,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import neon.system.resources.RTerrain;
 import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
+import neon.system.resources.ResourceProvider;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -41,7 +41,7 @@ public class RenderPane extends StackPane {
 	
 	private final TextureFactory factory = new TextureFactory();
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
-	private final ResourceManager resources;
+	private final ResourceProvider resources;
 	private RegionQuadTree<String> terrain;
 	private RegionQuadTree<Integer> elevation;
 	private int scale = 30;
@@ -50,7 +50,7 @@ public class RenderPane extends StackPane {
 		resources = null;
 	}
 	
-	public RenderPane(ResourceManager resources) {
+	public RenderPane(ResourceProvider resources) {
 		this.resources = resources;
 		double parallax = 1.02;
 		

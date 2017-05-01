@@ -31,7 +31,6 @@ import neon.client.console.ConsoleEvent;
 import neon.system.event.ClientConfigurationEvent;
 import neon.system.event.NewGameEvent;
 import neon.system.event.ScriptEvent;
-import neon.system.event.UpdateEvent;
 import neon.system.files.NeonFileSystem;
 import neon.system.resources.CGame;
 import neon.system.resources.ResourceException;
@@ -64,7 +63,7 @@ public class Server implements Runnable {
 		bus.register(socket);
 		bus.register(this);
 		
-		// configure the server
+		// configure the server (file system and resource manager)
 		new ServerLoader(bus).configure(files, resources);
 		
 		// send configuration message to the client
@@ -114,9 +113,11 @@ public class Server implements Runnable {
 	 */
 	@Subscribe
 	private void startGame(NewGameEvent event) {
-		GameLoader loader = new GameLoader();
-		loader.startNewGame();
-		bus.post(new UpdateEvent(loader.getMap()));
+		try {
+			new GameLoader(bus, resources).startNewGame();
+		} catch (ResourceException e) {
+			logger.severe("could not start new game due to missing resources: " + e.getMessage());
+		}
 	}
 	
 	/**

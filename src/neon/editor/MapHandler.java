@@ -207,7 +207,7 @@ public class MapHandler {
 			RMap map = new RMap(id, id, 100, 100);
 
 			try {
-				resources.addResource("maps", map);
+				resources.addResource(map);
 				TreeItem<Card> item = new TreeItem<>(new Card("maps", id, resources));
 				mapTree.getRoot().getChildren().add(item);
             	new MapEditor(item.getValue(), resources, bus);

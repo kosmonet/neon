@@ -127,7 +127,7 @@ public class TerrainHandler {
 			RTerrain terrain = new RTerrain(id, id, ".", Color.WHITE);
 
 			try {
-				resources.addResource("terrains", terrain);
+				resources.addResource(terrain);
 				TreeItem<Card> item = new TreeItem<>(new Card("terrain", id, resources));
 				terrainTree.getRoot().getChildren().add(item);
             	new TerrainEditor(item.getValue(), bus).show(parent);

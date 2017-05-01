@@ -31,6 +31,6 @@ public class CClient extends Resource {
 	 * Initializes the client configuration resource.
 	 */
 	public CClient() {
-		super("client", "config");
+		super("client", "config", "config");
 	}
 }

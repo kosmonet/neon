@@ -148,7 +148,7 @@ public class MapEditor {
 		heightSpinner.increment(0);
 		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue());
 		
-		bus.post(new SaveEvent.Resources("maps", map));
+		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;
 	}

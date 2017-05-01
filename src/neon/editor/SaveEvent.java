@@ -36,7 +36,6 @@ public class SaveEvent extends NeonEvent {
 	 */
 	public static class Resources extends SaveEvent {
 		private final Resource resource;
-		private final String namespace;
 		
 		/**
 		 * Initializes this event with a resource and a namespace the resource
@@ -45,17 +44,8 @@ public class SaveEvent extends NeonEvent {
 		 * @param namespace
 		 * @param resource
 		 */
-		public Resources(String namespace, Resource resource) {
-			this.namespace = namespace;
+		public Resources(Resource resource) {
 			this.resource = resource;
-		}
-
-		/**
-		 * 
-		 * @return the namespace the resource to be saved belongs to
-		 */
-		public String getNamespace() {
-			return namespace;
 		}
 		
 		/**

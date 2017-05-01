@@ -43,7 +43,7 @@ public class UserInterface {
 	 * 
 	 * @param stage
 	 */
-	public UserInterface(Stage stage) {
+	UserInterface(Stage stage) {
 		this.stage = stage;
 		
 		stage.setWidth(1280);
@@ -61,7 +61,7 @@ public class UserInterface {
 	 * @param event an event containing configuration data
 	 */
 	@Subscribe
-	public void configure(ClientConfigurationEvent event) {
+	private void configure(ClientConfigurationEvent event) {
 		stage.setTitle(event.getTitle());
 	}
 	
@@ -71,7 +71,7 @@ public class UserInterface {
 	 * @param event
 	 */
 	@Subscribe
-	public void show(MessageEvent event) {
+	private void show(MessageEvent event) {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
 		alert.setHeaderText(event.getHeader());

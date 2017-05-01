@@ -30,16 +30,16 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-public class TextureFactory {
+class TextureFactory {
 	private final HashMap<Type, Image> map = new HashMap<>();
 	private final SnapshotParameters parameters = new SnapshotParameters();
 	private final Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
 	
-	public TextureFactory() {
+	TextureFactory() {
 		parameters.setFill(Color.TRANSPARENT);
 	}
 	
-	public Image getImage(int size, Paint paint, String text) {
+	Image getImage(int size, Paint paint, String text) {
 		Type type = new Type(size, paint, text);
 		if (map.containsKey(type)) {
 			return map.get(type);

@@ -118,7 +118,7 @@ public class TerrainEditor {
 		Color color = colorBox.getValue();
 		
 		RTerrain terrain = new RTerrain(card.toString(), name, text, color);
-		bus.post(new SaveEvent.Resources("terrain", terrain));
+		bus.post(new SaveEvent.Resources(terrain));
 		card.setChanged(true);
 	}
 	

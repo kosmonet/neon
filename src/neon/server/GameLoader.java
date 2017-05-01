@@ -18,21 +18,57 @@
 
 package neon.server;
 
-import neon.system.resources.RMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
-public class GameLoader {
+import com.google.common.eventbus.EventBus;
+
+import neon.system.event.UpdateEvent;
+import neon.system.resources.CGame;
+import neon.system.resources.RMap;
+import neon.system.resources.Resource;
+import neon.system.resources.ResourceException;
+import neon.system.resources.ResourceManager;
+
+class GameLoader {
+	private static final Logger logger = Logger.getGlobal();
+	
+	private final EventBus bus;
+	private final ResourceManager resources;
+	
+	GameLoader(EventBus bus, ResourceManager resources) {
+		this.bus = bus;
+		this.resources = resources;
+	}
+	
 	/**
 	 * Prepares all data for a new game and sends this back to the client.
+	 * 
+	 * @throws ResourceException 
 	 */
-	void startNewGame() {
-		System.out.println("starting game");
+	void startNewGame() throws ResourceException {
+		logger.info("starting a new game");
+		
+		// get the start map
+		CGame game = resources.getResource("config", "game");
+		RMap map = resources.getResource("maps", game.getStartMap());
+		
+		// collect all necessary resources to start the game
+		Set<Resource> set = new HashSet<>();
+		set.add(game);
+		set.add(map);
+		
+		// add all terrain resources
+		for (String terrain : map.getTerrain().getLeaves().values()) {
+			set.add(resources.getResource("terrain", terrain));
+		}
+		
+		// and send everything back to the client
+		bus.post(new UpdateEvent.Start(set));
 	}
 	
 	void startOldGame() {
 		System.out.println("starting game");
-	}
-	
-	RMap getMap() {
-		return null;
 	}
 }

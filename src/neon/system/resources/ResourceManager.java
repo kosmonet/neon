@@ -40,7 +40,7 @@ import neon.system.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class ResourceManager {
+public class ResourceManager implements ResourceProvider {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
@@ -58,16 +58,6 @@ public class ResourceManager {
 	}
 	
 	/**
-	 * Adds a resource to the global namespace.
-	 * 
-	 * @param resource
-	 * @throws IOException 
-	 */
-	public void addResource(Resource resource) throws IOException {
-		addResource("global", resource);
-	}
-	
-	/**
 	 * Adds a new resource to the manager. The resource is stored in the 
 	 * temporary folder. If this resource already existed, it will be 
 	 * overwritten without warning. 
@@ -77,13 +67,14 @@ public class ResourceManager {
 	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Resource> void addResource(String namespace, T resource) throws IOException {
+	public <T extends Resource> void addResource(T resource) throws IOException {
+		String namespace = resource.getNamespace();
+		
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
 			resources.put(namespace, new MapMaker().weakValues().makeMap());
 		}
-		// TODO: namespaces in resource zelf bijhouden?
 		
 		// add resource to the weak value map
 		resources.get(namespace).put(resource.getID(), resource);
@@ -121,7 +112,7 @@ public class ResourceManager {
 	 * @return the requested resource
 	 * @throws ResourceException 
 	 */
-	@SuppressWarnings("unchecked")
+	@Override @SuppressWarnings("unchecked")
 	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
 		if (resources.containsKey(namespace)) {

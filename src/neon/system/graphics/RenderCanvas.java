@@ -26,7 +26,7 @@ import javafx.scene.canvas.Canvas;
  * @author mdriesen
  *
  */
-public class RenderCanvas extends Canvas {
+class RenderCanvas extends Canvas {
 	@Override
 	public boolean isResizable() {
 	    return true;
