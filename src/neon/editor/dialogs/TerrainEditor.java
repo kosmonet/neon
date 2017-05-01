@@ -72,8 +72,7 @@ public class TerrainEditor {
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.severe("failed to load terrain editor ui");
+			logger.severe("failed to load terrain editor ui" + e.getMessage());
 		}
 		
 		nameField.setText(terrain.getName());

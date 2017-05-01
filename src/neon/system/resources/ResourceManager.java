@@ -62,9 +62,8 @@ public class ResourceManager {
 	 * 
 	 * @param resource
 	 * @throws IOException 
-	 * @throws MissingLoaderException 
 	 */
-	public void addResource(Resource resource) throws MissingLoaderException, IOException {
+	public void addResource(Resource resource) throws IOException {
 		addResource("global", resource);
 	}
 	
@@ -75,11 +74,10 @@ public class ResourceManager {
 	 * 
 	 * @param namespace
 	 * @param resource
-	 * @throws MissingLoaderException 
 	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Resource> void addResource(String namespace, T resource) throws MissingLoaderException, IOException {
+	public <T extends Resource> void addResource(String namespace, T resource) throws IOException {
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
@@ -100,7 +98,7 @@ public class ResourceManager {
 				files.saveFile(doc, new XMLTranslator(), namespace, resource.getID() + ".xml");							
 			}
 		} else {
-			throw new MissingLoaderException("Loader for resource type <" + resource.getType() + "> was not found.");
+			throw new IllegalStateException("Loader for resource type <" + resource.getType() + "> was not found.");
 		}
 	}
 	
@@ -109,10 +107,9 @@ public class ResourceManager {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws MissingResourceException
-	 * @throws MissingLoaderException
+	 * @throws ResourceException
 	 */
-	public <T extends Resource> T getResource(String id) throws MissingResourceException, MissingLoaderException {
+	public <T extends Resource> T getResource(String id) throws ResourceException {
 		return getResource("global", id);	
 	}
 	
@@ -122,11 +119,10 @@ public class ResourceManager {
 	 * @param namespace
 	 * @param id
 	 * @return the requested resource
-	 * @throws MissingResourceException 
-	 * @throws MissingLoaderException 
+	 * @throws ResourceException 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Resource> T getResource(String namespace, String id) throws MissingResourceException, MissingLoaderException {
+	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
 		if (resources.containsKey(namespace)) {
 			if (resources.get(namespace).containsKey(id)) {
@@ -152,10 +148,10 @@ public class ResourceManager {
 				resources.get(namespace).put(id, value);
 				return value;
 			} else {
-				throw new MissingLoaderException("Loader for resource type <" + resource.getName() + "> was not found.");
+				throw new IllegalStateException("Loader for resource type <" + resource.getName() + "> was not found.");
 			}
 		} catch (IOException e) {
-			throw new MissingResourceException("Resource " + namespace + ":" + id + " was not found.");
+			throw new ResourceException("Resource " + namespace + ":" + id + " was not found.", e);
 		}
 	}
 	

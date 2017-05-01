@@ -16,17 +16,34 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.event;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import neon.system.resources.RMap;
+import neon.system.resources.Resource;
 
 /**
- * Exception to signal that a game resource is missing.
+ * An event containing a map and all associated resources for the client. This
+ * event is typically received when the player moves to another map.
  * 
  * @author mdriesen
  *
  */
-@SuppressWarnings("serial")
-public class MissingResourceException extends ResourceException {
-	public MissingResourceException(String message) {
-		super(message);
+public class UpdateEvent extends ClientEvent {
+	private final Collection<Resource> resources = new ArrayList<Resource>();
+	private final RMap map;
+	
+	public UpdateEvent(RMap map) {
+		this.map = map;
+	}
+	
+	public Collection<Resource> getResources() {
+		return resources;
+	}
+	
+	public RMap getMap() {
+		return map;
 	}
 }

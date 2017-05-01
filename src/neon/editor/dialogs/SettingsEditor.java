@@ -38,6 +38,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -66,8 +68,9 @@ public class SettingsEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Label instructionLabel;
-	@FXML private TextField titleField;
+	@FXML private TextField titleField, mapField;
 	@FXML private ListView<String> speciesList, parentList;
+	@FXML private Spinner<Integer> xSpinner, ySpinner;
 	
 	private final Stage stage = new Stage();
 	private final EventBus bus;
@@ -96,12 +99,18 @@ public class SettingsEditor {
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load settings editor ui");
+			logger.severe("failed to load settings editor ui: " + e.getMessage());
 		}
 		
 		try {
 			RModule module = resources.getResource(id);
 			titleField.setText(module.getTitle());
+			
+			mapField.setText(module.getStartMap());
+			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+			xSpinner.getValueFactory().setValue(module.getStartX());
+			ySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+			ySpinner.getValueFactory().setValue(module.getStartY());
 			
 			Set<String> creatures = resources.listResources("creatures");
 			for (String species : module.getPlayableSpecies()) {
@@ -119,8 +128,9 @@ public class SettingsEditor {
 			logger.severe("failed to load module resource");
 		}
 		
-		instructionLabel.setText("Providing a game title will overwrite the title given by any parent "
-				+ "modules. Playable species will be appended to those defined in parent modules.");
+		instructionLabel.setText("Providing a game title or start map will overwrite those "
+				+ "given by any parent modules. Playable species will be appended to those "
+				+ "defined in parent modules.");
 		
 		ContextMenu speciesMenu = new ContextMenu();
 		MenuItem addCreatureItem = new MenuItem("Add species");
@@ -157,7 +167,11 @@ public class SettingsEditor {
 	
 	@FXML private void applyPressed(ActionEvent event) {
 		// save changes to a new module resource
-		RModule module = new RModule(id, titleField.getText());
+		String title = titleField.getText();
+		String map = mapField.getText();
+		xSpinner.increment(0);
+		ySpinner.increment(0);
+		RModule module = new RModule(id, title, map, xSpinner.getValue(), ySpinner.getValue());
 		module.addPlayableSpecies(speciesList.getItems());
 		parentList.getItems().forEach(parent -> module.addParent(parent));
 		// an RModule is in the global namespace

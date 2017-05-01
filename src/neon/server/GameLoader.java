@@ -18,6 +18,21 @@
 
 package neon.server;
 
-public class GameLoader {
+import neon.system.resources.RMap;
 
+public class GameLoader {
+	/**
+	 * Prepares all data for a new game and sends this back to the client.
+	 */
+	void startNewGame() {
+		System.out.println("starting game");
+	}
+	
+	void startOldGame() {
+		System.out.println("starting game");
+	}
+	
+	RMap getMap() {
+		return null;
+	}
 }

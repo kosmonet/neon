@@ -153,7 +153,7 @@ public class TerrainHandler {
 	}
 	
 	/**
-	 * Opens an item editor when an item in the tree was double clicked.
+	 * Opens a terrain editor when an item in the tree was double clicked.
 	 * 
 	 * @param event
 	 */

@@ -31,11 +31,15 @@ import java.util.Set;
 public class RModule extends Resource {
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
-	private final String title;
+	private final String title, map;
+	private final int x, y;
 
-	public RModule(String id, String title) {
+	public RModule(String id, String title, String startMap, int startX, int startY) {
 		super(id, "module");
 		this.title = title;
+		map = startMap;
+		x = startX;
+		y = startY;
 	}
 	
 	/**
@@ -87,5 +91,17 @@ public class RModule extends Resource {
 	 */
 	public Set<String> getParents() {
 		return parents;
+	}
+	
+	public String getStartMap() {
+		return map;
+	}
+	
+	public int getStartX() {
+		return x;
+	}
+
+	public int getStartY() {
+		return y;
 	}
 }

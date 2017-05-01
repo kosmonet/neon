@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;
-import neon.system.resources.MissingLoaderException;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceManager;
 import neon.system.resources.loaders.ModuleLoader;
@@ -86,14 +85,14 @@ public class Editor extends Application {
 	 * @throws MissingLoaderException
 	 */
 	@Subscribe
-	private void createModule(LoadEvent.Create event) throws IOException, MissingLoaderException {
+	private void createModule(LoadEvent.Create event) throws IOException {
 		Path path = event.getPath();
 		id = path.getFileName().toString();
 
 		// create the new module
 		Files.createDirectories(path);
 		// editing is done in temp, so don't add the actual module folder to the file system
-		resources.addResource(new RModule(id, id));
+		resources.addResource(new RModule(id, id, "", 0, 0));
 	}
 	
 	/**
@@ -135,8 +134,6 @@ public class Editor extends Application {
 		try {
 			resources.addResource(namespace, event.getResource());
 			logger.fine("saved resource " + event.getResource().getID());
-		} catch (MissingLoaderException e) {
-			logger.severe(e.getMessage());
 		} catch (IOException e) {
 			logger.severe("failed to save resource " + event.getResource().getID());
 		}

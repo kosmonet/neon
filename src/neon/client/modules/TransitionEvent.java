@@ -34,14 +34,25 @@ public class TransitionEvent extends ClientEvent {
 		this.condition = condition;
 	}
 	
+	/**
+	 * 
+	 * @return the condition for this transition
+	 */
 	public String getCondition() {
 		return condition;
 	}
 	
+	/**
+	 * Consumes this event, so it won't be handled by other bus subscribers.
+	 */
 	public void consume() {
 		consumed = true;
 	}
 	
+	/**
+	 * 
+	 * @return whether this event was consumed by another bus subscriber
+	 */
 	public boolean isConsumed() {
 		return consumed;
 	}

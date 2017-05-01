@@ -31,10 +31,15 @@ import neon.system.resources.RModule;
 public class ModuleLoader implements ResourceLoader<RModule> {
 	@Override
 	public RModule load(Element root) {
-		RModule module = new RModule(root.getAttributeValue("id"), root.getChildText("title"));
+		String id = root.getAttributeValue("id");
+		String title = root.getChildText("title");
+		String map = root.getChild("start").getAttributeValue("map");
+		int x = Integer.parseInt(root.getChild("start").getAttributeValue("x"));
+		int y = Integer.parseInt(root.getChild("start").getAttributeValue("y"));
+		RModule module = new RModule(id, title, map, x, y);
 		
-		for (Element id : root.getChild("playable").getChildren()) {
-			module.addPlayableSpecies(id.getText());
+		for (Element species : root.getChild("playable").getChildren()) {
+			module.addPlayableSpecies(species.getText());
 		}
 		
 		for (Element parent : root.getChild("parents").getChildren()) {
@@ -51,6 +56,12 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 		Element title = new Element("title");
 		title.setText(module.getTitle());
 		root.addContent(title);
+		
+		Element start = new Element("start");
+		start.setAttribute("map", module.getStartMap());
+		start.setAttribute("x", Integer.toString(module.getStartX()));
+		start.setAttribute("y", Integer.toString(module.getStartY()));
+		root.addContent(start);
 		
 		Element playable = new Element("playable");
 		root.addContent(playable);

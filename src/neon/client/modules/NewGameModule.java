@@ -61,11 +61,10 @@ public class NewGameModule extends Module {
 			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.severe("failed to load new game menu");
+			logger.severe("failed to load new game menu: " + e.getMessage());
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		startButton.setOnAction(event -> bus.post(new TransitionEvent("start game")));
 
 		// list catches the esc and enter keys, we need a separate listener
 		speciesList.setOnKeyPressed(event -> keyPressed(event));
@@ -88,9 +87,15 @@ public class NewGameModule extends Module {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
-			bus.post(new TransitionEvent("start game"));
-			bus.post(new NewGameEvent());
+			startGame();
 		}
+	}
+	
+	@FXML private void startGame() {
+		// let the server know that the game module is waiting for game data
+		bus.post(new NewGameEvent());
+		// transition to the actual game module
+		bus.post(new TransitionEvent("start game"));		
 	}
 	
 	/**

@@ -94,18 +94,22 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		HashSet<String> species = new HashSet<>();
 		
 		Element playable = root.getChild("playable");
-		if (playable != null) {
-			for (Element id : playable.getChildren()) {
-				species.add(id.getText());
-			}
+		for (Element id : playable.getChildren()) {
+			species.add(id.getText());
 		}
 		
-		return new CGame(title, species);
+		Element start = root.getChild("start");
+		String map = start.getAttributeValue("map");
+		int x = Integer.parseInt(start.getAttributeValue("x"));
+		int y = Integer.parseInt(start.getAttributeValue("y"));
+		
+		return new CGame(title, species, map, x, y);
 	}
 
 	private Element saveGame(CGame resource) {
 		Element game = new Element("game");
 		game.setAttribute("title", resource.getTitle());
+		
 		Element playable = new Element("playable");
 		for (String id : resource.getPlayableSpecies()) {
 			Element species = new Element("id");
@@ -113,6 +117,13 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 			playable.addContent(species);
 		}
 		game.addContent(playable);
+		
+		Element start = new Element("start");
+		start.setAttribute("map", resource.getStartMap());
+		start.setAttribute("x", Integer.toString(resource.getStartX()));
+		start.setAttribute("y", Integer.toString(resource.getStartY()));
+		game.addContent("start");
+		
 		return game;
 	}
 }

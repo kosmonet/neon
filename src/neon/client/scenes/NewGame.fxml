@@ -52,7 +52,7 @@
    <bottom>
       <HBox styleClass="bottom-buttons">
          <children>
-            <Button fx:id="startButton" defaultButton="true" focusTraversable="false" text="Enter" />
+            <Button fx:id="startButton" defaultButton="true" onAction="#startGame" focusTraversable="false" text="Enter" />
             <Label text="Start" />
             <Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
             <Label text="Cancel" />

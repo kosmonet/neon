@@ -25,11 +25,16 @@ import java.util.Set;
 public class CGame extends Resource {
 	private final Set<String> species = new HashSet<>();
 	private final String title;
+	private final String map;
+	private final int x, y;
 
-	public CGame(String title, Collection<String> species) {
+	public CGame(String title, Collection<String> species, String startMap, int startX, int startY) {
 		super("game", "config");
 		this.species.addAll(species);
 		this.title = title;
+		map = startMap;
+		x = startX;
+		y = startY;
 	}
 	
 	/**
@@ -46,5 +51,17 @@ public class CGame extends Resource {
 	 */
 	public String getTitle() {
 		return title;
+	}
+	
+	public String getStartMap() {
+		return map;
+	}
+	
+	public int getStartX() {
+		return x;
+	}
+	
+	public int getStartY() {
+		return y;
 	}
 }

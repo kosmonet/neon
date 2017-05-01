@@ -19,6 +19,7 @@
 package neon.system.graphics;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -36,6 +37,8 @@ import neon.util.quadtree.RegionQuadTree;
  *
  */
 public class RenderPane extends StackPane {
+	private final static Logger logger = Logger.getGlobal();
+	
 	private final TextureFactory factory = new TextureFactory();
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;
@@ -43,6 +46,10 @@ public class RenderPane extends StackPane {
 	private RegionQuadTree<Integer> elevation;
 	private int scale = 30;
 
+	public RenderPane() {
+		resources = null;
+	}
+	
 	public RenderPane(ResourceManager resources) {
 		this.resources = resources;
 		double parallax = 1.02;
@@ -56,8 +63,6 @@ public class RenderPane extends StackPane {
 			canvas.widthProperty().bind(widthProperty());
 			canvas.heightProperty().bind(heightProperty());
 		}
-		
-		// TODO: brightness en/of saturation filters op elk canvas
 	}
 	
 	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation) {
@@ -84,7 +89,7 @@ public class RenderPane extends StackPane {
     			}
     		}
     	} catch (ResourceException e) {
-    		e.printStackTrace();
+    		logger.severe(e.getMessage());
     	}
     }
 }

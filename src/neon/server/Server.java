@@ -31,6 +31,7 @@ import neon.client.console.ConsoleEvent;
 import neon.system.event.ClientConfigurationEvent;
 import neon.system.event.NewGameEvent;
 import neon.system.event.ScriptEvent;
+import neon.system.event.UpdateEvent;
 import neon.system.files.NeonFileSystem;
 import neon.system.resources.CGame;
 import neon.system.resources.ResourceException;
@@ -58,9 +59,12 @@ public class Server implements Runnable {
 	 * @param socket	the socket used to communicate with a client
 	 */
 	public Server(String version, ServerSocket socket) {
+		// initialize communication with the client
 		this.socket = socket;
 		bus.register(socket);
 		bus.register(this);
+		
+		// configure the server
 		new ServerLoader(bus).configure(files, resources);
 		
 		// send configuration message to the client
@@ -72,8 +76,15 @@ public class Server implements Runnable {
 		}
 	}
 	
+	/**
+	 * Executes a script and sends the result to the debug console. To prevent
+	 * server resources from leaking to the client, only the {@code String}
+	 * representation of the result is sent.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	public void execute(ScriptEvent event) {
+	private void execute(ScriptEvent event) {
 		Object result = execute(event.getScript());
 		if (result != null) {
 			bus.post(new ConsoleEvent(result.toString()));
@@ -86,7 +97,7 @@ public class Server implements Runnable {
 	 * @param script the script to execute
 	 * @return the result of the script
 	 */
-	public Object execute(String script) {
+	private Object execute(String script) {
 		Object result = null;
 		try {
 			result = engine.eval(script);
@@ -96,9 +107,16 @@ public class Server implements Runnable {
 		return result;
 	}
 	
+	/**
+	 * Loads all data for a new game and sends this back to the client.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	public void startGame(NewGameEvent event) {
-		new GameLoader();
+	private void startGame(NewGameEvent event) {
+		GameLoader loader = new GameLoader();
+		loader.startNewGame();
+		bus.post(new UpdateEvent(loader.getMap()));
 	}
 	
 	/**

@@ -18,20 +18,23 @@
 
 package neon.client.modules;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import com.google.common.eventbus.Subscribe;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.paint.Color;
 import neon.client.UserInterface;
+import neon.system.event.UpdateEvent;
 import neon.system.graphics.RenderPane;
-import neon.util.quadtree.RegionQuadTree;
 
+/**
+ * 
+ * @author mdriesen
+ *
+ */
 public class GameModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
 	
@@ -39,9 +42,6 @@ public class GameModule extends Module {
 	
 	private final UserInterface ui;
 	private Scene scene;
-	private RegionQuadTree<Color> tree = new RegionQuadTree<>(100, 100);
-	private RegionQuadTree<Integer> depth = new RegionQuadTree<>(100, 100);	
-	private int xpos = 0, ypos = 0;
 	
 	public GameModule(UserInterface ui) {
 		this.ui = ui;
@@ -53,46 +53,29 @@ public class GameModule extends Module {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.severe("failed to load new game menu");
+			logger.severe("failed to load new game menu: " + e.getMessage());
 		}
 		
-		// also quit when pressing esc
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
+//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
+//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
+//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
+//		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
 		
 //		pane.setMap(tree, depth);
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
+//		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
+//		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
 	}
 	
-	private void move(String dir) {
-		switch (dir) {
-		case "left": xpos = Math.max(0, xpos - 1); break;
-		case "right": xpos++; break;
-		case "up": ypos = Math.max(0, ypos - 1); break;
-		case "down": ypos++; break;
-		}
-		pane.draw(xpos, ypos);
+	@Subscribe
+	private void start(UpdateEvent event) {
+		System.out.println("show the new map if it ever arrives");
+//		scene.setRoot(new RenderPane(null));		
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		// start drawing only after scene size is set
-    	tree.add(new Rectangle(5, 5), Color.RED);
-    	tree.add(new Rectangle(10, 1), Color.BLUE);
-    	tree.add(new Rectangle(20, 10, 5, 5), Color.GREEN);
-    	tree.add(new Rectangle(10, 20, 10, 5), Color.WHITE);
-    	depth.add(new Rectangle(0, 0, 100, 100), 0);
-    	depth.add(new Rectangle(20, 10, 5, 5), 3);
-    	depth.add(new Rectangle(10, 20, 5, 5), -5);
-    	
-		ui.showScene(scene);
-		
-		pane.draw(xpos, ypos);
 		logger.finest("entering game module");
+		ui.showScene(scene);
 	}
 
 	@Override

@@ -33,6 +33,10 @@ public class ConsoleEvent extends ClientEvent{
 		this.message = message;
 	}
 	
+	/**
+	 * 
+	 * @return the message to be displayed
+	 */
 	public String getMessage() {
 		return message;
 	}

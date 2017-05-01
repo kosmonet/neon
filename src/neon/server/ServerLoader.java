@@ -37,8 +37,6 @@ import neon.system.files.NeonFileSystem;
 import neon.system.resources.CClient;
 import neon.system.resources.CGame;
 import neon.system.resources.CServer;
-import neon.system.resources.MissingLoaderException;
-import neon.system.resources.MissingResourceException;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
@@ -96,40 +94,55 @@ public class ServerLoader {
 		} 	
 	}
 	
+	/**
+	 * Initializes the game resource. If an old game is loaded, the game 
+	 * resource is overwritten by the one from the loaded game.
+	 * 
+	 * @param resources
+	 * @param modules
+	 */
 	private void initGame(ResourceManager resources, String[] modules) {
 		// use a set to prevent doubles
 		HashSet<String> species = new HashSet<>();
 		// default game title
 		String title = "neon";
+		// default start position
+		String map = "";
+		int x = 0;
+		int y = 0;
 		
-		// go through the loaded modules to check if any redefined the title
+		// go through the loaded modules to check if any redefined the title or start position
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
 				species.addAll(module.getPlayableSpecies());
 				title = module.getTitle().isEmpty() ? title : module.getTitle();
-			} catch (MissingResourceException e) {
+				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
+				x = module.getStartX() > 0 ? module.getStartX() : x;
+				y = module.getStartY() > 0 ? module.getStartY() : y;
+			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);
-			} catch (MissingLoaderException e) {
-				logger.severe(e.getMessage());
 			}
 		}
 		
-		// add client configuration resource to the manager
+		// add game configuration resource to the manager
 		try {
-			CGame game = new CGame(title, species);			
+			CGame game = new CGame(title, species, map, x, y);			
 			resources.addResource("config", game);
-		} catch (MissingLoaderException e) {
-			logger.severe(e.getMessage());
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}		
 	}
 	
+	/**
+	 * Initializes the file system with required modules and temporary folder.
+	 * 
+	 * @param files
+	 * @param modules
+	 */
 	private void initFileSystem(NeonFileSystem files, String[] modules) {
 		try {
-			// initialize file system with required modules and temp folder
 			for (String module : modules) {
 				files.addModule(module);
 			}
@@ -166,8 +179,6 @@ public class ServerLoader {
 		// add server configuration resource to the manager
 		try {
 			resources.addResource("config", configuration);
-		} catch (MissingLoaderException e) {
-			logger.severe(e.getMessage());
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}
@@ -178,8 +189,6 @@ public class ServerLoader {
 		try {
 			CClient client = new CClient();			
 			resources.addResource("config", client);
-		} catch (MissingLoaderException e) {
-			logger.severe(e.getMessage());
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}

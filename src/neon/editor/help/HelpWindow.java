@@ -60,7 +60,7 @@ public class HelpWindow {
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load help window");
+			logger.severe("failed to load help window: " + e.getMessage());
 		}
 		
         URL url = getClass().getResource(content);

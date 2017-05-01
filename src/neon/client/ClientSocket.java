@@ -38,9 +38,9 @@ import neon.system.event.ServerEvent;
 public class ClientSocket {
 	private static final Logger logger = Logger.getGlobal();
 
-	private BlockingQueue<ClientEvent> queue = new LinkedBlockingQueue<>();
+	private final BlockingQueue<ClientEvent> queue = new LinkedBlockingQueue<>();
+	private final String name;
 	private ServerSocket ss;
-	private String name;
 
 	/**
 	 * Initializes this client socket with the given name.
@@ -86,6 +86,7 @@ public class ClientSocket {
 			return queue.take();
 		} catch (InterruptedException e) {
 			logger.warning("client event queue interrupted");
+			// return an empty event instead
 			return new ClientEvent();
 		}
 	}

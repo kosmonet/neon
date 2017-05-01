@@ -73,7 +73,7 @@ public class MainMenuModule extends Module {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load main menu");
+			logger.severe("failed to load main menu " + e.getMessage());
 		}
 		
 		newLink.setOnMouseEntered(event -> newLink.requestFocus());

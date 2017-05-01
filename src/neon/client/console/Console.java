@@ -81,8 +81,7 @@ public class Console {
 			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			logger.severe("failed to load console");
+			logger.severe("failed to load console: " + e.getMessage());
 		}
 	
 		flow.getChildren().addListener(new ScrollListener());
