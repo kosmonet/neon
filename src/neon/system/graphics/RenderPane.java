@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import neon.system.resources.RTerrain;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceProvider;
@@ -44,11 +44,6 @@ public class RenderPane extends StackPane {
 	private final ResourceProvider resources;
 	private RegionQuadTree<String> terrain;
 	private RegionQuadTree<Integer> elevation;
-	private int scale = 30;
-
-	public RenderPane() {
-		resources = null;
-	}
 	
 	public RenderPane(ResourceProvider resources) {
 		this.resources = resources;
@@ -68,28 +63,24 @@ public class RenderPane extends StackPane {
 	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation) {
 		this.terrain = terrain;
 		this.elevation = elevation;
-		
-		setPrefSize(scale*terrain.getWidth(), scale*terrain.getHeight());
 	}
 	
-    public void draw(int xpos, int ypos) {
-    	for (Canvas canvas : layers.values()) {
-    		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    	}
+	public void draw(int xmin, int ymin, int scale) {
+		for (Canvas canvas : layers.values()) {
+			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		}
 
-    	try {
-    		for (int x = xpos; x < terrain.getWidth(); x++) {
-    			for (int y = ypos; y < terrain.getHeight(); y++) {
-    				String id = terrain.get(x, y);
-    				Color color = resources.<RTerrain>getResource("terrain", id).getColor();
-    				GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
-    				gc.setFill(Color.GREY);
-    				gc.setFill(color);
-    				gc.drawImage(factory.getImage(scale, gc.getFill(), "g"), scale*(x - xpos), scale*(y - ypos));
-    			}
-    		}
-    	} catch (ResourceException e) {
-    		logger.severe(e.getMessage());
-    	}
-    }
+		for (int x = xmin; x < xmin + getWidth()/scale; x++) {
+			for (int y = ymin; y < ymin + getHeight()/scale; y++) {
+				try {
+					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
+					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
+					Image image = factory.getImage(scale, rt.getColor(), rt.getText());
+					gc.drawImage(image, scale*(x - xmin), scale*(y - ymin));
+				} catch (ResourceException e) {
+					logger.warning(e.getMessage());
+				}
+			}
+		}
+	}
 }

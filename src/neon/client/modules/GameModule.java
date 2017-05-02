@@ -46,7 +46,7 @@ public class GameModule extends Module {
 	private final UserInterface ui;
 	private RenderPane pane;	
 	private Scene scene;
-	private int xpos = 0, ypos = 0;
+	private int xpos = 0, ypos = 0, scale = 20;
 	
 	public GameModule(UserInterface ui) {
 		this.ui = ui;
@@ -58,7 +58,7 @@ public class GameModule extends Module {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load new game menu: " + e.getMessage());
+			logger.severe("failed to load new game: " + e.getMessage());
 		}
 		
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
@@ -83,10 +83,10 @@ public class GameModule extends Module {
 		scene.setRoot(pane);
 		pane.setMap(map.getTerrain(), map.getElevation());
 		
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos));
+		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos, scale));
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));
 		
-		pane.draw(xpos, ypos);
+		pane.draw(xpos, ypos, scale);
 	}
 	
 	private void move(String direction) {
@@ -97,7 +97,7 @@ public class GameModule extends Module {
 		case "down": ypos++; break;
 		}
 
-		pane.draw(xpos, ypos);
+		pane.draw(xpos, ypos, scale);
 	}
 	
 	@Override

@@ -33,6 +33,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
 import neon.system.graphics.RenderPane;
@@ -41,8 +42,8 @@ import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
 /**
- * The map editor presents a pane on the main window to edit the currently
- * selected map. Three views are available:
+ * <p>The map editor presents a pane on the main window to edit the currently
+ * selected map. Three views are available:</p>
  * <ul>
  * 	<li>Info: edit general map information</li>
  * 	<li>Terrain: edit the terrain and add entities to the map</li>
@@ -59,11 +60,13 @@ public class MapEditor {
 	private final Card card;
 	private final GridPane grid = new GridPane();
 	private final RenderPane renderer;
+	private final Pane pane = new Pane();
 	private final ScrollPane scroller = new ScrollPane();
 	private final EventBus bus;
 	private final TextField nameField = new TextField();
 	private final Spinner<Integer> widthSpinner, heightSpinner;
 	private boolean saved = true;
+	private int scale = 20;
 	
 	public MapEditor(Card card, ResourceManager resources, EventBus bus) throws ResourceException {
 		this.bus = bus;
@@ -91,17 +94,45 @@ public class MapEditor {
 	    heightSpinner.setEditable(true);
 	    grid.add(heightSpinner, 1, 2);
 	    
+		pane.setPrefSize(scale*map.getWidth(), scale*map.getHeight());
+		pane.setStyle("-fx-background-color: black;");
+	    
 		renderer = new RenderPane(resources);
 		renderer.setMap(map.getTerrain(), map.getElevation());
 	    renderer.setStyle("-fx-background-color: black");
-	    renderer.widthProperty().addListener(value -> renderer.draw(0, 0));
-	    renderer.heightProperty().addListener(value -> renderer.draw(0, 0));
+	    
+	    // redraw when resizing or scrolling the map
+	    renderer.widthProperty().addListener(value -> redraw());
+	    renderer.heightProperty().addListener(value -> redraw());
+	    scroller.vvalueProperty().addListener(value -> redraw());
+	    scroller.hvalueProperty().addListener(value -> redraw());
 		
 	    showInfo();	// show the info pane by default	    
 	}
 	
 	public ScrollPane getPane() {
 		return scroller;
+	}
+	
+	/**
+	 * Redraws the map if the scrollpane was scrolled or resized. Due to a 
+	 * problem with large drawings inside a scrollpane in JavaFX, drawing of 
+	 * the map is a bit weird. Instead of stretching the render pane to the 
+	 * full size of the map, an empty pane is created with the size of the map. 
+	 * This empty pane is then added to the scrollpane. This way, the scrolling 
+	 * behavior is correct. When the map has to be drawn, the visible part is 
+	 * drawn on the actual render pane, which has the same size as the 
+	 * scrollpane viewport. This render pane is then translated to the correct 
+	 * position on the empty pane, so that the right bit of the map shows 
+	 * through the viewport.
+	 */
+	private void redraw() {
+		renderer.setPrefSize(scroller.getViewportBounds().getWidth(), scroller.getViewportBounds().getHeight());
+		double x = scroller.getHvalue() * pane.getWidth();
+		double y = scroller.getVvalue() * pane.getHeight();
+		renderer.draw((int)x/scale, (int)y/scale, scale);
+		renderer.setTranslateX(x);
+		renderer.setTranslateY(y);
 	}
 	
 	/**
@@ -131,7 +162,10 @@ public class MapEditor {
 	}
 	
 	public void showTerrain() {
-		scroller.setContent(renderer);
+		scroller.setContent(pane);
+		pane.getChildren().clear();
+		pane.getChildren().add(renderer);
+		redraw();
 	}
 	
 	public void showElevation() {

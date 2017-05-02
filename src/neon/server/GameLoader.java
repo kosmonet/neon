@@ -69,6 +69,6 @@ class GameLoader {
 	}
 	
 	void startOldGame() {
-		System.out.println("starting game");
+		logger.info("starting an old game");
 	}
 }
