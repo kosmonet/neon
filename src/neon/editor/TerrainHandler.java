@@ -167,6 +167,12 @@ public class TerrainHandler {
 					logger.severe(e.getMessage());
 				}
             }
-        }
+		} else {
+			// also send out a message that something in the tree was selected
+			TreeItem<Card> item = terrainTree.getSelectionModel().getSelectedItem();
+			if (item != null) {
+				bus.post(new SelectionEvent.Terrain(item.getValue().toString()));
+			}
+		}
 	}
 }

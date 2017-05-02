@@ -70,8 +70,8 @@ public class RenderPane extends StackPane {
 			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		}
 
-		for (int x = xmin; x < xmin + getWidth()/scale; x++) {
-			for (int y = ymin; y < ymin + getHeight()/scale; y++) {
+		for (int x = xmin; x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
+			for (int y = ymin; y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
 				try {
 					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
 					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();

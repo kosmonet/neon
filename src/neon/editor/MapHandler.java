@@ -208,15 +208,27 @@ public class MapHandler {
 
 			try {
 				resources.addResource(map);
-				TreeItem<Card> item = new TreeItem<>(new Card("maps", id, resources));
+				Card card = new Card("maps", id, resources);
+				TreeItem<Card> item = new TreeItem<>(card);
 				mapTree.getRoot().getChildren().add(item);
-            	new MapEditor(item.getValue(), resources, bus);
+				createTab(card);
 			} catch (IOException e) {
 				logger.severe("could not create map " + id);
 			} catch (ResourceException e) {
 				logger.severe(e.getMessage());
 			}
 		}
+	}
+	
+	private void createTab(Card card) throws ResourceException {
+		MapEditor editor = new MapEditor(card, resources, bus);
+		bus.register(editor);
+		Tab tab = new Tab(card.toString(), editor.getPane());
+		tab.setUserData(editor);
+		tab.setOnClosed(event -> editor.close());
+		tab.setId(card.toString());
+		tabs.getTabs().add(tab);
+		tabs.getSelectionModel().select(tab);		
 	}
 	
 	/**
@@ -273,13 +285,7 @@ public class MapHandler {
             	} else {
             		// if not, create a new map editor
 					try {
-						MapEditor editor = new MapEditor(card, resources, bus);
-	            		Tab tab = new Tab(card.toString(), editor.getPane());
-	            		tab.setUserData(editor);
-	            		tab.setOnClosed(event -> editor.close(event));
-	            		tab.setId(card.toString());
-	            		tabs.getTabs().add(tab);
-	            		tabs.getSelectionModel().select(tab);
+						createTab(card);
 					} catch (ResourceException e) {
 						Alert alert = new Alert(AlertType.WARNING);
 						alert.setTitle("Warning");
