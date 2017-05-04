@@ -31,15 +31,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 class TextureFactory {
-	private final HashMap<Type, Image> map = new HashMap<>();
-	private final SnapshotParameters parameters = new SnapshotParameters();
-	private final Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
+	private final static HashMap<Type, Image> map = new HashMap<>();
+	private final static SnapshotParameters parameters = new SnapshotParameters();
+	private final static Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
 	
-	TextureFactory() {
+	static {
 		parameters.setFill(Color.TRANSPARENT);
 	}
 	
-	Image getImage(int size, Paint paint, String text) {
+	static Image getImage(int size, Paint paint, String text) {
 		Type type = new Type(size, paint, text);
 		if (map.containsKey(type)) {
 			return map.get(type);
@@ -57,7 +57,7 @@ class TextureFactory {
 		}
 	}
 	
-	private class Type {
+	private static class Type {
 		private final int size;
 		private final Paint paint;
 		private final String text;

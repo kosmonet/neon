@@ -39,9 +39,9 @@ import neon.util.quadtree.RegionQuadTree;
 public class RenderPane extends StackPane {
 	private final static Logger logger = Logger.getGlobal();
 	
-	private final TextureFactory factory = new TextureFactory();
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceProvider resources;
+	
 	private RegionQuadTree<String> terrain;
 	private RegionQuadTree<Integer> elevation;
 	
@@ -75,7 +75,7 @@ public class RenderPane extends StackPane {
 				try {
 					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
 					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
-					Image image = factory.getImage(scale, rt.getColor(), rt.getText());
+					Image image = TextureFactory.getImage(scale, rt.getColor(), rt.getText());
 					gc.drawImage(image, scale*(x - xmin), scale*(y - ymin));
 				} catch (ResourceException e) {
 					logger.warning(e.getMessage());

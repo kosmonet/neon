@@ -25,6 +25,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -68,10 +70,20 @@ public class MapEditor {
 	private final EventBus bus;
 	private final TextField nameField = new TextField();
 	private final Spinner<Integer> widthSpinner, heightSpinner;
+	
 	private boolean saved = true;
 	private int scale = 20;
 	private String terrain;
+	private ImageCursor cursor;
 	
+	/**
+	 * Initializes this map editor.
+	 * 
+	 * @param card
+	 * @param resources
+	 * @param bus
+	 * @throws ResourceException
+	 */
 	public MapEditor(Card card, ResourceManager resources, EventBus bus) throws ResourceException {
 		this.bus = bus;
 		this.card = card;
@@ -105,6 +117,8 @@ public class MapEditor {
 		renderer = new RenderPane(resources);
 		renderer.setMap(map.getTerrain(), map.getElevation());
 	    renderer.setStyle("-fx-background-color: black;");
+	    renderer.setOnMouseEntered(event -> mouseEntered());
+	    renderer.setOnMouseExited(event -> mouseExited());
 	    
 	    // redraw when resizing or scrolling the map
 	    renderer.widthProperty().addListener(value -> redraw());
@@ -215,21 +229,57 @@ public class MapEditor {
 		saved = true;
 	}
 	
+	/**
+	 * Sets the terrain used for drawing in the terrain view.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void selectTerrain(SelectionEvent.Terrain event) {
+	public void selectTerrain(SelectionEvent.Terrain event) {
 		terrain = event.getID();
 	}
 	
+	/**
+	 * Sets the cursor for the terrain view.
+	 * 
+	 * @param cursor
+	 */
+	public void setCursor(ImageCursor cursor) {
+		this.cursor = cursor;
+	}
+	
+	/**
+	 * Sets the correct cursor when the mouse enters the terrain view.
+	 */
+	private void mouseEntered() {
+		if (terrain != null && cursor != null) {
+			scroller.getScene().setCursor(cursor);			
+		}
+	}
+	
+	/**
+	 * Resets the cursor to default when the mouse exits the terrain view.
+	 */
+	private void mouseExited() {
+		scroller.getScene().setCursor(Cursor.DEFAULT);
+	}
+	
+	/**
+	 * Draws terrain or adds a resource when the mouse is clicked on the 
+	 * terrain view.
+	 * 
+	 * @param event
+	 */
 	private void mouseClicked(MouseEvent event) {
-		int x = (int) (event.getX()/scale);
-		int y = (int) (event.getY()/scale);
-//		System.out.println("positie: " + x + ", " + y);
+		int x = (int) Math.floor(event.getX()/scale);
+		int y = (int) Math.floor(event.getY()/scale);
+		int width = (int) Math.ceil(cursor.getImage().getWidth()/scale);
+		
 		if (terrain != null) {
 			try {
 				RMap map = card.getResource();
-				map.getTerrain().add(new Rectangle(x, y, 1, 1), terrain);
+				map.getTerrain().add(new Rectangle(x - width/2, y - width/2, width, width), terrain);						
 				redraw();
-//			System.out.println("terrain: " + map.getTerrain().get(x, y));
 			} catch (ResourceException e) {
 				e.printStackTrace();
 			}

@@ -14,13 +14,13 @@
 	<top>
 		<ToolBar>
 			<items>
-				<Button text="Undo" />
-				<Button text="Redo" />
+				<Button text="Undo" disable="true" />
+				<Button text="Redo" disable="true" />
 				<Separator orientation="VERTICAL" />
 				<Label text="Brush size:" />
-				<Slider showTickMarks="true" />
+				<Slider fx:id="slider" majorTickUnit="50.0" max="220" min="20" showTickMarks="true" />
 				<Separator orientation="VERTICAL" />
-            	<CheckBox text="Show elevation" />
+            	<CheckBox text="Show elevation" disable="true" />
 			</items>
 		</ToolBar>
 	</top>

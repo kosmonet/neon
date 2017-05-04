@@ -74,6 +74,7 @@ public class UserInterface {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("ui/editor.css").toExternalForm());
 		} catch (IOException e) {
+			e.printStackTrace();
 			logger.severe("failed to load editor ui: " + e.getMessage());
 		}		
 	}

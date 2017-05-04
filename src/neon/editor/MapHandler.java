@@ -28,9 +28,14 @@ import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.ImageCursor;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
@@ -38,8 +43,10 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.image.WritableImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import neon.editor.map.MapEditor;
 import neon.editor.ui.CardCellFactory;
 import neon.system.resources.RMap;
@@ -61,9 +68,13 @@ public class MapHandler {
 	
 	@FXML private TreeView<Card> mapTree;
 	@FXML private TabPane tabs;
+	@FXML private Slider slider;
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
+	
+	private String namespace, id;	// to keep track of the currently selected resource in the resource pane
+	private ImageCursor cursor;
 	
 	public MapHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
@@ -71,7 +82,33 @@ public class MapHandler {
 	}
 	
 	@FXML public void initialize() {
-		mapTree.setCellFactory(new CardCellFactory());		
+		// initialize is run twice (MapPane.fxml and MapTree.fxml), so check first if a node is already initialized
+		if(mapTree != null) {
+			mapTree.setCellFactory(new CardCellFactory());			
+		}
+		
+		if (slider != null) {
+			slider.valueProperty().addListener((observable, oldValue, newValue) -> changeBrushSize(newValue.intValue()));
+			changeBrushSize(20);
+		}
+	}
+	
+	private void changeBrushSize(int value) {
+		Canvas canvas = new Canvas(value, value);
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+		gc.setStroke(Color.WHITE);
+		gc.strokeRect(0, 0, value, value);
+
+		WritableImage image = new WritableImage(value, value);
+		SnapshotParameters parameters = new SnapshotParameters();
+		parameters.setFill(Color.TRANSPARENT);
+		canvas.snapshot(parameters, image);
+		cursor = new ImageCursor(image, value/2, value/2);
+
+		for (Tab tab : tabs.getTabs()) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.setCursor(cursor);
+		}
 	}
 	
 	private void loadResources() {
@@ -121,6 +158,12 @@ public class MapHandler {
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load maps on the next tick
 		Platform.runLater(() -> loadResources());
+	}
+	
+	@Subscribe 
+	private void selectResource(SelectionEvent event) {
+		id = event.getID();
+		namespace = event.getNamespace();
 	}
 	
 	/**
@@ -222,6 +265,10 @@ public class MapHandler {
 	
 	private void createTab(Card card) throws ResourceException {
 		MapEditor editor = new MapEditor(card, resources, bus);
+		editor.setCursor(cursor);
+		if (namespace == "terrain") {
+			editor.selectTerrain(new SelectionEvent.Terrain(id));
+		}
 		bus.register(editor);
 		Tab tab = new Tab(card.toString(), editor.getPane());
 		tab.setUserData(editor);
