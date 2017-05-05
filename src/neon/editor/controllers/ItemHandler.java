@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -25,6 +25,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import neon.editor.Card;
+import neon.editor.LoadEvent;
 import neon.editor.ui.CardCellFactory;
 
 public class ItemHandler {

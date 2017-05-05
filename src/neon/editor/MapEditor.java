@@ -16,9 +16,11 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor.map;
+package neon.editor;
 
 import java.awt.Rectangle;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.Optional;
 
 import com.google.common.eventbus.EventBus;
@@ -38,9 +40,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import neon.editor.Card;
-import neon.editor.SaveEvent;
-import neon.editor.SelectionEvent;
 import neon.system.graphics.RenderPane;
 import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
@@ -61,6 +60,7 @@ import neon.system.resources.ResourceManager;
 public class MapEditor {
 	private final static ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
 	private final static ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
+	private final static Logger logger = Logger.getGlobal();
 	
 	private final Card card;
 	private final GridPane grid = new GridPane();
@@ -168,6 +168,17 @@ public class MapEditor {
 	}
 	
 	/**
+	 * Redraws the map if a resource (e.g. terrain) was changed that might 
+	 * have an effect on the visuals.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	private void redraw(SaveEvent.Resources event) {
+		redraw();
+	}
+	
+	/**
 	 * Checks for unsaved changes when the tab is closed.
 	 * 
 	 * @param event
@@ -223,7 +234,18 @@ public class MapEditor {
 		widthSpinner.increment(0);	// trick to commit typed text when enter was not pressed
 		heightSpinner.increment(0);
 		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue());
-		
+		try {
+			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getLeaves().entrySet()) {
+				map.getTerrain().add(entry.getKey(), entry.getValue());
+			}
+			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getLeaves().entrySet()) {
+				map.getElevation().add(entry.getKey(), entry.getValue());
+			}
+		} catch (ResourceException e) {
+			logger.severe("could not save map: " + e.getMessage());
+		}
+
+		renderer.setMap(map.getTerrain(), map.getElevation());
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;

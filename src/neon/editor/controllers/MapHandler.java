@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -47,7 +47,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import neon.editor.map.MapEditor;
+import neon.editor.Card;
+import neon.editor.LoadEvent;
+import neon.editor.MapEditor;
+import neon.editor.SaveEvent;
+import neon.editor.SelectionEvent;
 import neon.editor.ui.CardCellFactory;
 import neon.system.resources.RMap;
 import neon.system.resources.ResourceException;
@@ -170,7 +174,7 @@ public class MapHandler {
 	 * Asks the user if all opened maps should be saved. This method should be
 	 * called when saving a module or exiting the editor.
 	 */
-	void saveMaps() {
+	public void saveMaps() {
 		if(!tabs.getTabs().isEmpty()) {
 			Alert alert = new Alert(AlertType.CONFIRMATION,
 					"Save all opened maps?", yes, no);

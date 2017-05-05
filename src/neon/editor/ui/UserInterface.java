@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.ui;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -28,6 +28,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.editor.LoadEvent;
+import neon.editor.controllers.CreatureHandler;
+import neon.editor.controllers.ItemHandler;
+import neon.editor.controllers.MapHandler;
+import neon.editor.controllers.MenuHandler;
+import neon.editor.controllers.TerrainHandler;
 import neon.system.resources.ResourceManager;
 
 /**
@@ -44,6 +50,7 @@ public class UserInterface {
 	private final MenuHandler menuHandler;
 	private final ItemHandler itemHandler;
 	private final TerrainHandler terrainHandler;
+	
 	private Stage stage;
 	private Scene scene;
 	
@@ -53,7 +60,7 @@ public class UserInterface {
 	 * @param editor
 	 * @param bus
 	 */
-	UserInterface(ResourceManager resources, EventBus bus) {
+	public UserInterface(ResourceManager resources, EventBus bus) {
 		// separate handlers for all the different ui elements
 		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);
@@ -67,14 +74,13 @@ public class UserInterface {
 		bus.register(terrainHandler);
 		
 		// load the user interface
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("ui/Editor.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
 		loader.setControllerFactory(type -> getController(type));
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("ui/editor.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("editor.css").toExternalForm());
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.severe("failed to load editor ui: " + e.getMessage());
 		}		
 	}
@@ -114,7 +120,7 @@ public class UserInterface {
 	 * 
 	 * @param stage
 	 */
-	void start(Stage stage) {
+	public void start(Stage stage) {
 		this.stage = stage;
 		stage.setTitle("The Neon Roguelike Editor");
 		stage.setScene(scene);
@@ -124,6 +130,7 @@ public class UserInterface {
 		stage.setMinHeight(600);
 		stage.show();
 		stage.centerOnScreen();
+		stage.setOnCloseRequest(event -> System.exit(0));
 	}
 
 	@Subscribe
@@ -135,7 +142,7 @@ public class UserInterface {
 	 * Checks if any resources are still opened and should be saved. This 
 	 * method should be called when saving a module or exiting the editor.
 	 */
-	void saveResources() {
+	public void saveResources() {
 		// check if any maps are still opened
 		mapHandler.saveMaps();
 	}

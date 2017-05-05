@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -38,6 +38,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import neon.editor.Card;
+import neon.editor.LoadEvent;
+import neon.editor.SelectionEvent;
 import neon.editor.dialogs.TerrainEditor;
 import neon.editor.ui.CardCellFactory;
 import neon.system.resources.RTerrain;

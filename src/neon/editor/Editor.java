@@ -34,6 +34,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import neon.editor.ui.UserInterface;
 import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
 import neon.system.logging.NeonLogFormatter;

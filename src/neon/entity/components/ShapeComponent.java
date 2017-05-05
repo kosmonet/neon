@@ -16,18 +16,44 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.entity.components;
 
-import neon.entity.components.InventoryComponent;
-import neon.entity.components.ShapeComponent;
-
-public class Creature extends Entity {
-	public final InventoryComponent inventory;
-	public final ShapeComponent shape;
+/**
+ * A component that represents the shape (including position) of an entity.
+ * 
+ * @author mdriesen
+ *
+ */
+public class ShapeComponent implements Component {
+	private final long uid;
 	
-	public Creature(long uid) {
-		super(uid);
-		inventory = new InventoryComponent(uid);
-		shape = new ShapeComponent(uid);
+	private int x, y;
+	
+	public ShapeComponent(long uid) {
+		this.uid = uid;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	/**
+	 * Sets the position of the entity this component belongs to.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setPosition(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 }

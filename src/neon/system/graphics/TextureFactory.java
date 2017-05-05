@@ -40,23 +40,31 @@ class TextureFactory {
 	}
 	
 	static Image getImage(int size, Paint paint, String text) {
+		if(text.length() != 1) {
+			throw new IllegalArgumentException("String should be one character in length.");
+		}
+
+		size = Math.max(size, 1);
 		Type type = new Type(size, paint, text);
 		if (map.containsKey(type)) {
 			return map.get(type);
 		} else {
+//			Font font = base.deriveFont(style, size*6/7f);
+			
 			Canvas canvas = new Canvas(size, size);
 			GraphicsContext gc = canvas.getGraphicsContext2D();
 			gc.setFill(bg);
 			gc.fillRect(0, 0, size, size);
 			gc.setFill(paint);
-			gc.fillText(text, 10, 10);
+			// 0.25 en 0.85 to get the text in the middle of the image
+			gc.fillText(text, size*0.25, size*0.85);
 
 			WritableImage image = new WritableImage(size, size);
 			map.put(type, canvas.snapshot(parameters, image));
 			return image;
 		}
 	}
-	
+		
 	private static class Type {
 		private final int size;
 		private final Paint paint;

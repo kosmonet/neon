@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -33,8 +33,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.DirectoryChooser;
+import neon.editor.LoadEvent;
+import neon.editor.SaveEvent;
 import neon.editor.dialogs.SettingsEditor;
 import neon.editor.help.HelpWindow;
+import neon.editor.ui.UserInterface;
 import neon.system.resources.ResourceManager;
 
 public class MenuHandler {
@@ -109,7 +112,7 @@ public class MenuHandler {
 	}
 	
 	@FXML private void showHelp(ActionEvent event) {
-		new HelpWindow("help.html").show(ui.getWindow());
+		new HelpWindow("help.html").show();
 	}
 	
 	@FXML private void quit(ActionEvent event) {

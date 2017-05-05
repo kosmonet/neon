@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -37,6 +37,9 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
+import neon.editor.Card;
+import neon.editor.LoadEvent;
+import neon.editor.SaveEvent;
 import neon.editor.dialogs.CreatureEditor;
 import neon.editor.ui.CardCellFactory;
 import neon.system.resources.RCreature;
@@ -58,7 +61,7 @@ public class CreatureHandler {
 	private final EventBus bus;
 	private Window parent;
 	
-	CreatureHandler(ResourceManager resources, EventBus bus) {
+	public CreatureHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
 		this.bus = bus;
 	}

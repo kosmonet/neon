@@ -19,6 +19,8 @@
 package neon.system.resources.loaders;
 
 import java.awt.Rectangle;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jdom2.Element;
 
@@ -84,6 +86,16 @@ public class MapLoader implements ResourceLoader<RMap> {
 		
 		Element terrain = new Element("terrain");
 		root.addContent(terrain);
+		Map<Rectangle, String> leaves = map.getTerrain().getLeaves();
+		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
+			Element region = new Element("region");
+			region.setAttribute("x", Integer.toString(entry.getKey().x));
+			region.setAttribute("y", Integer.toString(entry.getKey().y));
+			region.setAttribute("w", Integer.toString(entry.getKey().width));
+			region.setAttribute("h", Integer.toString(entry.getKey().height));
+			region.setAttribute("id", entry.getValue());
+			terrain.addContent(region);
+		}
 		
 		Element height = new Element("height");
 		root.addContent(height);

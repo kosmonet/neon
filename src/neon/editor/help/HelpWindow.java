@@ -27,7 +27,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 /**
  * A window to show help content. It uses the JavaFX {@code WebView} to show
@@ -70,8 +69,7 @@ public class HelpWindow {
 	/**
 	 * Shows the help window.
 	 */
-	public void show(Window parent) {
-		stage.initOwner(parent);
+	public void show() {
 		stage.show();
 	}
 }

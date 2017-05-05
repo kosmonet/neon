@@ -113,7 +113,10 @@ class Node<T> {
 	 * @return
 	 */
 	Collection<Node<T>> getLeaves() {
-		if(isLeaf()) {
+		// this leaf may have zero area if the quadtree size is not a power of 2
+		if(width == 0 || height == 0) {
+			return new ArrayList<Node<T>>();
+		} else if(isLeaf()) {
 			return Arrays.asList(this);
 		} else {
 			Collection<Node<T>> list = new ArrayList<>();
