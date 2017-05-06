@@ -31,7 +31,7 @@ public class LoadEvent extends NeonEvent {
 	 * 
 	 * @param id the id of the module that was loaded
 	 */
-	public LoadEvent(String id) {
+	private LoadEvent(String id) {
 		this.id = id;
 	}
 	

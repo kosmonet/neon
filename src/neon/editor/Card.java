@@ -33,6 +33,8 @@ public class Card {
 	private final String id;
 	private final ResourceManager resources;
 	private final String namespace;
+	private final boolean original;
+
 	private boolean changed = false;
 	
 	/**
@@ -43,10 +45,11 @@ public class Card {
 	 * @param id
 	 * @param resources
 	 */
-	public Card(String namespace, String id, ResourceManager resources) {
+	public Card(String namespace, String id, ResourceManager resources, boolean original) {
 		this.namespace = namespace;
 		this.id = id;
 		this.resources = resources;
+		this.original = original;
 	}
 	
 	public String toString() {
@@ -72,6 +75,14 @@ public class Card {
 	
 	/**
 	 * 
+	 * @return whether the referred resource was already defined by a parent mod
+	 */
+	public boolean isOriginal() {
+		return original;
+	}
+	
+	/**
+	 * 
 	 * @return the resource referred to by this index card
 	 * @throws ResourceException
 	 */
@@ -88,7 +99,7 @@ public class Card {
 	 */
 	public static class Type extends Card {
 		public Type(String type) {
-			super(null, type, null);
+			super(null, type, null, false);
 		}
 	}
 }

@@ -48,7 +48,7 @@ public class HelpWindow {
 	 * 
 	 * @param content the name of the html file
 	 */
-	public HelpWindow(String content) {
+	public HelpWindow() {
 		stage.setTitle("Help");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Help.fxml"));
@@ -61,15 +61,14 @@ public class HelpWindow {
 		} catch (IOException e) {
 			logger.severe("failed to load help window: " + e.getMessage());
 		}
-		
-        URL url = getClass().getResource(content);
-        view.getEngine().load(url.toExternalForm());
 	}
 	
 	/**
 	 * Shows the help window.
 	 */
-	public void show() {
+	public void show(String content) {
+        URL url = getClass().getResource(content);
+        view.getEngine().load(url.toExternalForm());
 		stage.show();
 	}
 }

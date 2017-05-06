@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <WebView fx:id="view" />
    </center>

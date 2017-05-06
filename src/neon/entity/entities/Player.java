@@ -18,8 +18,18 @@
 
 package neon.entity.entities;
 
+/**
+ * An entity representing the player character.
+ * 
+ * @author mdriesen
+ *
+ */
 public class Player extends Creature {
-	public Player(long uid) {
-		super(uid);
+	/**
+	 * Initializes the player character. No uid is needed, the player 
+	 * character always has uid 0.
+	 */
+	public Player() {
+		super(0);
 	}
 }

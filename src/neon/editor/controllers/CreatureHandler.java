@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -57,13 +58,17 @@ public class CreatureHandler {
 	private final static Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> creatureTree;
+	
 	private final ResourceManager resources;
 	private final EventBus bus;
+	private final Multimap<String, String> original;
+	
 	private Window parent;
 	
-	public CreatureHandler(ResourceManager resources, EventBus bus) {
+	public CreatureHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
 		this.resources = resources;
 		this.bus = bus;
+		this.original = original;
 	}
 	
 	@FXML public void initialize() {		
@@ -91,9 +96,9 @@ public class CreatureHandler {
 		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("creature", new CreatureLoader());
 
-		for (String creature : resources.listResources("creatures")) {
-			TreeItem<Card> item = new TreeItem<>(new Card("creatures", creature, resources));
-			root.getChildren().add(item);
+		for (String id : resources.listResources("creatures")) {
+			Card card = new Card("creatures", id, resources, original.get("creatures").contains(id));
+			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
 	
@@ -159,7 +164,7 @@ public class CreatureHandler {
 
 			try {
 				resources.addResource(creature);
-				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources));
+				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources, false));
 				creatureTree.getRoot().getChildren().add(item);
             	new CreatureEditor(item.getValue(), bus).show(parent);
 			} catch (IOException e) {

@@ -159,13 +159,13 @@ public class ResourceManager implements ResourceProvider {
 	/**
 	 * List all resources of a given type.
 	 * 
-	 * @param type
+	 * @param namespace
 	 * @return
 	 */
-	public Set<String> listResources(String type) {
+	public Set<String> listResources(String namespace) {
 		HashSet<String> set = new HashSet<>();
 		
-		for (String file : files.listFiles(type)) {
+		for (String file : files.listFiles(namespace)) {
 			set.add(file.replace(".xml", ""));
 		}
 		

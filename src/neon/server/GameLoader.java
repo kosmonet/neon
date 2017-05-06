@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.entity.EntityManager;
+import neon.entity.entities.Player;
 import neon.system.event.UpdateEvent;
 import neon.system.resources.CGame;
 import neon.system.resources.RMap;
@@ -36,10 +38,12 @@ class GameLoader {
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
+	private final EntityManager entities;
 	
-	GameLoader(EventBus bus, ResourceManager resources) {
+	GameLoader(EventBus bus, ResourceManager resources, EntityManager entities) {
 		this.bus = bus;
 		this.resources = resources;
+		this.entities = entities;
 	}
 	
 	/**
@@ -55,17 +59,20 @@ class GameLoader {
 		RMap map = resources.getResource("maps", game.getStartMap());
 		
 		// collect all necessary resources to start the game
-		Set<Resource> set = new HashSet<>();
-		set.add(game);
-		set.add(map);
+		Set<Resource> clientResources = new HashSet<>();
+		clientResources.add(game);
+		clientResources.add(map);
 		
 		// add all terrain resources
 		for (String terrain : map.getTerrain().getLeaves().values()) {
-			set.add(resources.getResource("terrain", terrain));
+			clientResources.add(resources.getResource("terrain", terrain));
 		}
 		
+		// create the necessary entities
+		entities.addEntity(new Player());
+		
 		// and send everything back to the client
-		bus.post(new UpdateEvent.Start(set));
+		bus.post(new UpdateEvent.Start(clientResources));
 	}
 	
 	void startOldGame() {

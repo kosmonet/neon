@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -76,13 +77,15 @@ public class MapHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
+	private final Multimap<String, String> original;
 	
 	private String namespace, id;	// to keep track of the currently selected resource in the resource pane
 	private ImageCursor cursor;
 	
-	public MapHandler(ResourceManager resources, EventBus bus) {
+	public MapHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
 		this.resources = resources;
 		this.bus = bus;
+		this.original = original;
 	}
 	
 	@FXML public void initialize() {
@@ -131,9 +134,9 @@ public class MapHandler {
 		mapTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("map", new MapLoader());
 
-		for (String map : resources.listResources("maps")) {
-			TreeItem<Card> item = new TreeItem<>(new Card("maps", map, resources));
-			root.getChildren().add(item);
+		for (String id : resources.listResources("maps")) {
+			Card card = new Card("maps", id, resources, original.get("maps").contains(id));
+			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
 	
@@ -255,7 +258,7 @@ public class MapHandler {
 
 			try {
 				resources.addResource(map);
-				Card card = new Card("maps", id, resources);
+				Card card = new Card("maps", id, resources, false);
 				TreeItem<Card> item = new TreeItem<>(card);
 				mapTree.getRoot().getChildren().add(item);
 				createTab(card);

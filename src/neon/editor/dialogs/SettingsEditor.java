@@ -45,6 +45,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import neon.editor.SaveEvent;
+import neon.editor.help.HelpWindow;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
@@ -107,9 +108,9 @@ public class SettingsEditor {
 			titleField.setText(module.getTitle());
 			
 			mapField.setText(module.getStartMap());
-			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
 			xSpinner.getValueFactory().setValue(module.getStartX());
-			ySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+			ySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
 			ySpinner.getValueFactory().setValue(module.getStartY());
 			
 			Set<String> creatures = resources.listResources("creatures");
@@ -129,7 +130,7 @@ public class SettingsEditor {
 		}
 		
 		instructionLabel.setText("Providing a game title or start map will overwrite those "
-				+ "given by any parent modules. Playable species will be appended to those "
+				+ "given by any parent modules. Playable species will be added to those "
 				+ "defined in parent modules.");
 		
 		ContextMenu speciesMenu = new ContextMenu();
@@ -181,6 +182,10 @@ public class SettingsEditor {
 	@FXML private void okPressed(ActionEvent event) {
 		applyPressed(event);
 		cancelPressed(event);
+	}
+
+	@FXML private void helpPressed(ActionEvent event) {
+		new HelpWindow().show("settings.html");
 	}
 
 	private void addSpecies(ActionEvent event) {

@@ -35,6 +35,7 @@
    <bottom>
       <ButtonBar styleClass="bottom-buttons" BorderPane.alignment="CENTER">
         <buttons>
+			<Button onAction="#helpPressed" text="Help" ButtonBar.buttonData="LEFT" />
             <Button onAction="#okPressed" text="Ok" ButtonBar.buttonData="OK_DONE" />
           <Button onAction="#applyPressed" text="Apply" ButtonBar.buttonData="APPLY" />
             <Button onAction="#cancelPressed" text="Cancel" ButtonBar.buttonData="CANCEL_CLOSE" />

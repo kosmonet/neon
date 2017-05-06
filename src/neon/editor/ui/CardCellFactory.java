@@ -2,6 +2,7 @@ package neon.editor.ui;
 
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import neon.editor.Card;
 
@@ -17,6 +18,14 @@ public class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>>
     		super.updateItem(card, empty);
     		if (!empty) {
     			setText(card.toString());
+    			
+    			if(card.isOriginal()) {
+    				setTextFill(Color.GRAY);
+    				System.out.println("original");
+    			} else {
+    				setTextFill(Color.BLACK);
+    			}
+    			
 	    		if (card.isChanged()) {
 	    			setStyle("-fx-font-style: italic");
 	    			// TODO: parent in lichtgrijs, geherdefinieerde in bold

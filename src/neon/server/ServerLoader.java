@@ -120,8 +120,8 @@ class ServerLoader {
 				species.addAll(module.getPlayableSpecies());
 				title = module.getTitle().isEmpty() ? title : module.getTitle();
 				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
-				x = module.getStartX() > 0 ? module.getStartX() : x;
-				y = module.getStartY() > 0 ? module.getStartY() : y;
+				x = module.getStartX() >= 0 ? module.getStartX() : x;
+				y = module.getStartY() >= 0 ? module.getStartY() : y;
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);

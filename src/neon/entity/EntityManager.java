@@ -18,6 +18,19 @@
 
 package neon.entity;
 
-public class UIDStore {
+import java.util.HashMap;
+import java.util.Map;
 
+import neon.entity.entities.Entity;
+
+public class EntityManager {
+	private final Map<Long, Entity> entities = new HashMap<>();
+
+	public Entity getEntity(long uid) {
+		return entities.get(uid);
+	}
+	
+	public void addEntity(Entity entity) {
+		entities.put(entity.uid, entity);
+	}
 }

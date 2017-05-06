@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Module settings</h1>
+<h2>Game title</h2>
+Every game has a title that is shown on the main menu screen and in the window
+title bar. If no title is defined, the engine will just use <q>neon</q> as 
+title. If multiple loaded modules all define a title, the title from the last 
+module in the load order is used. If you do not wish to redefine the title, 
+leave this field blank.
+
+<h2>Start map and position</h2>
+These fields define the map where the game will start and the location on that
+map where the player will be positioned at the start. Again, if multiple 
+modules all define a start map, the one from the last module in the load order
+will be used. If you do not wish to redefine the start map or position, leave
+the map field empty and the coordinate fields at -1.
+
+<h2>Parent modules</h2>
+A module may depend on other modules. These parent modules must be defined, so
+the engine can perform a check at startup. Right click on the list to add or 
+remove parents. The engine nor the editor check for
+circular dependencies, this is the responsibility of the module author.
+
+<h2>Playable species</h2>
+This is a list of all the species available for the player character. Right 
+click on the list to add or remove species. The 
+species in this list will be added to the ones defined by parent modules. It
+is not possible to remove species already defined by a parent module.
+
+</body>
+</html>

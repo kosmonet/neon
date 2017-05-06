@@ -28,6 +28,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.client.console.ConsoleEvent;
+import neon.entity.EntityManager;
 import neon.system.event.ClientConfigurationEvent;
 import neon.system.event.NewGameEvent;
 import neon.system.event.ScriptEvent;
@@ -50,6 +51,7 @@ public class Server implements Runnable {
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");;
 	private final ServerSocket socket;
+	private final EntityManager entities = new EntityManager();
 	
 	/**
 	 * Initializes the server.
@@ -114,7 +116,7 @@ public class Server implements Runnable {
 	@Subscribe
 	private void startGame(NewGameEvent event) {
 		try {
-			new GameLoader(bus, resources).startNewGame();
+			new GameLoader(bus, resources, entities).startNewGame();
 		} catch (ResourceException e) {
 			logger.severe("could not start new game due to missing resources: " + e.getMessage());
 		}

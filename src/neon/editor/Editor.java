@@ -21,6 +21,7 @@ package neon.editor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +30,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jdom2.Element;
+
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -37,6 +42,7 @@ import javafx.stage.Stage;
 import neon.editor.ui.UserInterface;
 import neon.system.files.FileUtils;
 import neon.system.files.NeonFileSystem;
+import neon.system.files.XMLTranslator;
 import neon.system.logging.NeonLogFormatter;
 import neon.system.resources.RModule;
 import neon.system.resources.ResourceManager;
@@ -55,6 +61,8 @@ public class Editor extends Application {
 	private final ResourceManager resources = new ResourceManager(files);
 	private final EventBus bus = new EventBus("Editor Bus");
 	private final UserInterface ui;	// where all JavaFX business takes place
+	private final Multimap<String, String> original = SetMultimapBuilder.hashKeys().hashSetValues().build();
+
 	private String id;
 	
 	/**
@@ -62,7 +70,7 @@ public class Editor extends Application {
 	 */
 	public Editor() {
 		bus.register(this);
-		ui = new UserInterface(resources, bus);
+		ui = new UserInterface(resources, bus, original);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -106,6 +114,29 @@ public class Editor extends Application {
 	private void loadModule(LoadEvent.Load event) throws FileNotFoundException {
 		File file = event.getFile();
 		id = file.getName();
+		
+		// add the parent modules to the file system
+		Path path = Paths.get(file.getPath(), id + ".xml");
+		try (InputStream in = Files.newInputStream(path)) {
+			Element root = new XMLTranslator().translate(in).getRootElement();
+			for (Element parent : root.getChild("parents").getChildren()) {
+				files.addModule(parent.getText());
+			}
+		} catch (IOException e) {
+			throw new FileNotFoundException("module <" + id + "> not found");
+		}
+		
+		// keep track of all resources defined in parent modules
+		for (String creature : resources.listResources("creatures")) {
+			original.put("creatures", creature);
+		}
+		for (String map : resources.listResources("maps")) {
+			original.put("maps", map);
+		}
+		for (String terrain : resources.listResources("terrain")) {
+			original.put("terrain", terrain);
+		}
+		
 		// editing is done in temp, so don't add the actual module folder to the file system
 		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
 		logger.fine("loaded module " + id);

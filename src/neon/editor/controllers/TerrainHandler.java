@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -55,11 +56,13 @@ public class TerrainHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
+	private final Multimap<String, String> original;
 	private Window parent;
 	
-	public TerrainHandler(ResourceManager resources, EventBus bus) {
+	public TerrainHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
 		this.resources = resources;
 		this.bus = bus;
+		this.original = original;
 	}
 	
 	@FXML public void initialize() {		
@@ -84,9 +87,9 @@ public class TerrainHandler {
 		terrainTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("terrain", new TerrainLoader());
 
-		for (String terrain : resources.listResources("terrain")) {
-			TreeItem<Card> item = new TreeItem<>(new Card("terrain", terrain, resources));
-			root.getChildren().add(item);
+		for (String id : resources.listResources("terrain")) {
+			Card card = new Card("terrain", id, resources, original.get("terrain").contains(id));
+			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
 	
@@ -131,7 +134,7 @@ public class TerrainHandler {
 
 			try {
 				resources.addResource(terrain);
-				TreeItem<Card> item = new TreeItem<>(new Card("terrain", id, resources));
+				TreeItem<Card> item = new TreeItem<>(new Card("terrain", id, resources, false));
 				terrainTree.getRoot().getChildren().add(item);
             	new TerrainEditor(item.getValue(), bus).show(parent);
 			} catch (IOException e) {

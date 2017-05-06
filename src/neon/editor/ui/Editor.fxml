@@ -34,6 +34,11 @@
 					<items>
 						<MenuItem onAction="#showHelp" text="Getting started" />
 						<SeparatorMenuItem />
+						<MenuItem onAction="#showHelp" text="Module settings" />
+						<MenuItem onAction="#showHelp" text="Creatures" />
+						<MenuItem onAction="#showHelp" text="Terrain" />
+						<MenuItem onAction="#showHelp" text="Maps" />
+						<SeparatorMenuItem />
 						<MenuItem onAction="#showAbout" text="About" />
 					</items>
 				</Menu>

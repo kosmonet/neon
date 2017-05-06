@@ -112,7 +112,24 @@ public class MenuHandler {
 	}
 	
 	@FXML private void showHelp(ActionEvent event) {
-		new HelpWindow("help.html").show();
+		MenuItem item = (MenuItem) event.getSource();
+		switch (item.getText()) {
+		case "Getting started":
+			new HelpWindow().show("help.html");
+			break;
+		case "Module settings":
+			new HelpWindow().show("settings.html");
+			break;
+		case "Creatures":
+			new HelpWindow().show("creatures.html");
+			break;
+		case "Terrain":
+//			new HelpWindow().show("help.html");
+			break;
+		case "Maps":
+//			new HelpWindow().show("help.html");
+			break;
+		}
 	}
 	
 	@FXML private void quit(ActionEvent event) {

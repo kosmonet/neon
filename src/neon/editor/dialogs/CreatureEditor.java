@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
+import neon.editor.help.HelpWindow;
 import neon.system.resources.RCreature;
 import neon.system.resources.ResourceException;
 
@@ -117,5 +118,9 @@ public class CreatureEditor {
 	@FXML private void okPressed(ActionEvent event) {
 		applyPressed(event);
 		cancelPressed(event);
+	}
+	
+	@FXML private void helpPressed(ActionEvent event) {
+		new HelpWindow().show("creatures.html");
 	}
 }
