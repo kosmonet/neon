@@ -21,7 +21,6 @@ package neon.editor.ui;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.google.common.collect.Multimap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -61,17 +60,17 @@ public class UserInterface {
 	 * @param editor
 	 * @param bus
 	 */
-	public UserInterface(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
+	public UserInterface(ResourceManager resources, EventBus bus) {
 		// separate handlers for all the different ui elements
 		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);
-		mapHandler = new MapHandler(resources, bus, original);
+		mapHandler = new MapHandler(resources, bus);
 		bus.register(mapHandler);
-		creatureHandler = new CreatureHandler(resources, bus, original);
+		creatureHandler = new CreatureHandler(resources, bus);
 		bus.register(creatureHandler);
 		itemHandler = new ItemHandler();
 		bus.register(itemHandler);
-		terrainHandler = new TerrainHandler(resources, bus, original);
+		terrainHandler = new TerrainHandler(resources, bus);
 		bus.register(terrainHandler);
 		
 		// load the user interface

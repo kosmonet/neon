@@ -229,6 +229,7 @@ public class MapEditor {
 	 * Saves the changes to a new map resource, overwriting the original.
 	 */
 	public void save() {
+		card.setRedefined(card.isOriginal() ? true : false);
 		String name = nameField.getText();
 		name = name.isEmpty() ? card.toString() : name;
 		widthSpinner.increment(0);	// trick to commit typed text when enter was not pressed

@@ -56,20 +56,18 @@ public class TerrainHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
-	private final Multimap<String, String> original;
 	private Window parent;
 	
-	public TerrainHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
+	public TerrainHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
 		this.bus = bus;
-		this.original = original;
 	}
 	
 	@FXML public void initialize() {		
 		terrainTree.setCellFactory(new CardCellFactory());
 	}
 	
-	private void loadResources() {
+	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu terrainMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add terrain");
 		addItem.setOnAction(event -> addTerrain(event));
@@ -87,8 +85,7 @@ public class TerrainHandler {
 		terrainTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("terrain", new TerrainLoader());
 
-		for (String id : resources.listResources("terrain")) {
-			Card card = new Card("terrain", id, resources, original.get("terrain").contains(id));
+		for (Card card : cards.get("terrain")) {
 			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
@@ -101,7 +98,7 @@ public class TerrainHandler {
 	@Subscribe
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load terrains on the next tick
-		Platform.runLater(() -> loadResources());
+		Platform.runLater(() -> loadResources(event.getCards()));
 	}
 	
 	/**

@@ -33,7 +33,7 @@
 				<Button onAction="#showTerrain" text="Terrain" ButtonBar.buttonData="LEFT" />
 				<Button onAction="#showElevation" text="Elevation" ButtonBar.buttonData="LEFT" />
 				<Button onAction="#showInfo" text="Info" ButtonBar.buttonData="LEFT" />
-				<Button onAction="#save" text="Save" ButtonBar.buttonData="RIGHT" />
+				<Button onAction="#save" text="Apply" ButtonBar.buttonData="RIGHT" />
 			</buttons>
 		</ButtonBar>
 	</bottom>

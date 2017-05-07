@@ -54,7 +54,6 @@ import neon.system.resources.ResourceException;
 public class CreatureEditor {
 	private static final Logger logger = Logger.getGlobal();
 
-//	@FXML private Label instructionLabel;
 	@FXML private TextField nameField;
 	
 	private final Stage stage = new Stage();
@@ -89,7 +88,6 @@ public class CreatureEditor {
 		}
 		
 		nameField.setText(creature.getName());
-//		instructionLabel.setText("The creature name will be displayed in-game, not the id.");
 	}
 	
 	/**
@@ -108,14 +106,22 @@ public class CreatureEditor {
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
+	 * @throws ResourceException
 	 */
-	@FXML private void applyPressed(ActionEvent event) {
-		RCreature creature = new RCreature(card.toString(), nameField.getText());
-		bus.post(new SaveEvent.Resources(creature));
-		card.setChanged(true);
+	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
+		RCreature rc = card.getResource();
+		String name = nameField.getText();
+		// check if anything was actually changed
+		if (!name.equals(rc.getName())) {
+			card.setRedefined(card.isOriginal() ? true : false);
+			name = name.isEmpty() ? card.toString() : name;
+			RCreature creature = new RCreature(card.toString(), name);
+			bus.post(new SaveEvent.Resources(creature));
+			card.setChanged(true);				
+		}
 	}
 	
-	@FXML private void okPressed(ActionEvent event) {
+	@FXML private void okPressed(ActionEvent event) throws ResourceException {
 		applyPressed(event);
 		cancelPressed(event);
 	}

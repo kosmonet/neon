@@ -17,10 +17,14 @@ will be used. If you do not wish to redefine the start map or position, leave
 the map field empty and the coordinate fields at -1.
 
 <h2>Parent modules</h2>
-A module may depend on other modules. These parent modules must be defined, so
-the engine can perform a check at startup. Right click on the list to add or 
-remove parents. The engine nor the editor check for
-circular dependencies, this is the responsibility of the module author.
+<p>A module may depend on other modules. These parent modules must be defined, 
+so the engine can perform a check at startup. Right click on the list to add 
+or remove parents. The engine nor the editor check for
+circular dependencies, this is the responsibility of the module author.</p>
+
+<p>If a parent module was added or removed, the editor <b>MUST</b> be restarted 
+to reload all necessary resources from the parent modules. Continuing to 
+use the editor may result in unexpected behavior.</p>  
 
 <h2>Playable species</h2>
 This is a list of all the species available for the player character. Right 

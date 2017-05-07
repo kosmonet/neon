@@ -129,9 +129,8 @@ public class SettingsEditor {
 			logger.severe("failed to load module resource");
 		}
 		
-		instructionLabel.setText("Providing a game title or start map will overwrite those "
-				+ "given by any parent modules. Playable species will be added to those "
-				+ "defined in parent modules.");
+		instructionLabel.setText("WARNING: adding or removing parent modules "
+				+ "requires a restart of the editor.");
 		
 		ContextMenu speciesMenu = new ContextMenu();
 		MenuItem addCreatureItem = new MenuItem("Add species");

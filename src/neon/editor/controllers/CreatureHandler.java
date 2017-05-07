@@ -61,14 +61,12 @@ public class CreatureHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
-	private final Multimap<String, String> original;
 	
 	private Window parent;
 	
-	public CreatureHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
+	public CreatureHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
 		this.bus = bus;
-		this.original = original;
 	}
 	
 	@FXML public void initialize() {		
@@ -78,7 +76,7 @@ public class CreatureHandler {
 	/**
 	 * Populates the creature tree with creatures.
 	 */
-	private void loadResources() {
+	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu creatureMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add creature");
 		addItem.setOnAction(event -> addCreature(event));
@@ -96,8 +94,7 @@ public class CreatureHandler {
 		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("creature", new CreatureLoader());
 
-		for (String id : resources.listResources("creatures")) {
-			Card card = new Card("creatures", id, resources, original.get("creatures").contains(id));
+		for (Card card : cards.get("creatures")) {
 			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
@@ -131,7 +128,7 @@ public class CreatureHandler {
 	@Subscribe
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load creatures on the next tick
-		Platform.runLater(() -> loadResources());
+		Platform.runLater(() -> loadResources(event.getCards()));
 	}
 	
 	/**

@@ -48,6 +48,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.MapEditor;
@@ -77,15 +78,13 @@ public class MapHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
-	private final Multimap<String, String> original;
 	
 	private String namespace, id;	// to keep track of the currently selected resource in the resource pane
 	private ImageCursor cursor;
 	
-	public MapHandler(ResourceManager resources, EventBus bus, Multimap<String, String> original) {
+	public MapHandler(ResourceManager resources, EventBus bus) {
 		this.resources = resources;
 		this.bus = bus;
-		this.original = original;
 	}
 	
 	@FXML public void initialize() {
@@ -118,7 +117,7 @@ public class MapHandler {
 		}
 	}
 	
-	private void loadResources() {
+	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu mapMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add map");
 		addItem.setOnAction(event -> addMap(event));
@@ -134,8 +133,7 @@ public class MapHandler {
 		mapTree.setOnMouseClicked(event -> mouseClicked(event));
 		resources.addLoader("map", new MapLoader());
 
-		for (String id : resources.listResources("maps")) {
-			Card card = new Card("maps", id, resources, original.get("maps").contains(id));
+		for (Card card : cards.get("maps")) {
 			root.getChildren().add(new TreeItem<Card>(card));
 		}
 	}
@@ -164,7 +162,7 @@ public class MapHandler {
 	@Subscribe
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load maps on the next tick
-		Platform.runLater(() -> loadResources());
+		Platform.runLater(() -> loadResources(event.getCards()));
 	}
 	
 	@Subscribe 

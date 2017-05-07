@@ -18,6 +18,8 @@
 
 package neon.editor;
 
+import java.util.Objects;
+
 import neon.system.resources.Resource;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
@@ -34,8 +36,10 @@ public class Card {
 	private final ResourceManager resources;
 	private final String namespace;
 	private final boolean original;
+	private final int hash;
 
 	private boolean changed = false;
+	private boolean redefined = false;
 	
 	/**
 	 * Initializes this index card. The status of the referred resource is 
@@ -50,10 +54,26 @@ public class Card {
 		this.id = id;
 		this.resources = resources;
 		this.original = original;
+		hash = Objects.hash(namespace, id);
 	}
 	
+	@Override
 	public String toString() {
 		return id;
+	}
+	
+	@Override
+	public int hashCode() {
+		return hash;
+	}
+	
+	public boolean equals(Object object) {
+		if (!Card.class.isInstance(object)) {
+			return false;
+		} else {
+			Card card = (Card) object;
+			return namespace.equals(card.namespace) && id.equals(card.id);				
+		}
 	}
 	
 	/**
@@ -71,6 +91,14 @@ public class Card {
 	 */
 	public boolean isChanged() {
 		return changed;
+	}
+	
+	public void setRedefined(boolean redefined) {
+		this.redefined = redefined;
+	}
+	
+	public boolean isRedefined() {
+		return redefined;
 	}
 	
 	/**

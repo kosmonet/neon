@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 import org.jdom2.Element;
 
 import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -61,16 +60,15 @@ public class Editor extends Application {
 	private final ResourceManager resources = new ResourceManager(files);
 	private final EventBus bus = new EventBus("Editor Bus");
 	private final UserInterface ui;	// where all JavaFX business takes place
-	private final Multimap<String, String> original = SetMultimapBuilder.hashKeys().hashSetValues().build();
 
-	private String id;
+	private String id;	// the id of the active module
 	
 	/**
 	 * Initializes this {@code Editor}.
 	 */
 	public Editor() {
 		bus.register(this);
-		ui = new UserInterface(resources, bus, original);
+		ui = new UserInterface(resources, bus);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -101,7 +99,7 @@ public class Editor extends Application {
 		// create the new module
 		Files.createDirectories(path);
 		// editing is done in temp, so don't add the actual module folder to the file system
-		resources.addResource(new RModule(id, id, "", 0, 0));
+		resources.addResource(new RModule(id, id, "", -1, -1));
 	}
 	
 	/**
@@ -112,6 +110,7 @@ public class Editor extends Application {
 	 */
 	@Subscribe
 	private void loadModule(LoadEvent.Load event) throws FileNotFoundException {
+		// set the active module id
 		File file = event.getFile();
 		id = file.getName();
 		
@@ -127,18 +126,52 @@ public class Editor extends Application {
 		}
 		
 		// keep track of all resources defined in parent modules
-		for (String creature : resources.listResources("creatures")) {
-			original.put("creatures", creature);
+		Multimap<String, Card> cards = event.getCards();
+		for (String id : resources.listResources("creatures")) {
+			Card card = new Card("creatures", id, resources, true);
+			cards.put("creatures", card);
 		}
-		for (String map : resources.listResources("maps")) {
-			original.put("maps", map);
+		for (String id : resources.listResources("maps")) {
+			Card card = new Card("maps", id, resources, true);
+			cards.put("maps", card);
 		}
-		for (String terrain : resources.listResources("terrain")) {
-			original.put("terrain", terrain);
+		for (String id : resources.listResources("terrain")) {
+			Card card = new Card("terrain", id, resources, true);
+			cards.put("terrain", card);
 		}
 		
 		// editing is done in temp, so don't add the actual module folder to the file system
 		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
+		
+		// keep track of all resources (re)defined in the active module
+		for (String id : FileUtils.listFiles(Paths.get("temp", "creatures"))) {
+			Card card = new Card("creatures", id.replaceAll(".xml", ""), resources, false);
+			if (cards.get("creatures").contains(card)) {
+				cards.remove("creatures", card);
+				card = new Card("creatures", id.replaceAll(".xml", ""), resources, true);
+				card.setRedefined(true);
+			}
+			cards.put("creatures", card);
+		}
+		for (String id : FileUtils.listFiles(Paths.get("temp", "terrain"))) {
+			Card card = new Card("terrain", id.replaceAll(".xml", ""), resources, false);
+			if (cards.get("terrain").contains(card)) {
+				cards.remove("terrain", card);
+				card = new Card("terrain", id.replaceAll(".xml", ""), resources, true);
+				card.setRedefined(true);
+			}
+			cards.put("terrain", card);
+		}
+		for (String id : FileUtils.listFiles(Paths.get("temp", "maps"))) {
+			Card card = new Card("maps", id.replaceAll(".xml", ""), resources, false);
+			if (cards.get("maps").contains(card)) {
+				cards.remove("maps", card);
+				card = new Card("maps", id.replaceAll(".xml", ""), resources, true);
+				card.setRedefined(true);
+			}
+			cards.put("maps", card);
+		}
+				
 		logger.fine("loaded module " + id);
 	}
 

@@ -19,8 +19,7 @@
 package neon.system.graphics;
 
 import java.util.HashMap;
-
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -75,7 +74,7 @@ class TextureFactory {
 			this.size = size;
 			this.paint = paint;
 			this.text = text;
-			hash = Objects.hashCode(size, paint, text);
+			hash = Objects.hash(size, paint, text);
 		}
 		
 		@Override

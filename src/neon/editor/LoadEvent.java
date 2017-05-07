@@ -21,18 +21,26 @@ package neon.editor;
 import java.io.File;
 import java.nio.file.Path;
 
+import com.google.common.collect.Multimap;
+
 import neon.system.event.NeonEvent;
 
 public class LoadEvent extends NeonEvent {	
 	private final String id;
+	private final Multimap<String, Card> cards;
 	
 	/**
 	 * Creates a new {@code LoadEvent}.
 	 * 
 	 * @param id the id of the module that was loaded
 	 */
-	private LoadEvent(String id) {
+	private LoadEvent(String id, Multimap<String, Card> cards) {
 		this.id = id;
+		this.cards = cards;
+	}
+	
+	public Multimap<String, Card> getCards() {
+		return cards;
 	}
 	
 	public String getModuleID() {
@@ -42,8 +50,8 @@ public class LoadEvent extends NeonEvent {
 	public static class Load extends LoadEvent {
 		private final File file;
 
-		public Load(File file) {
-			super(file.getName());
+		public Load(File file, Multimap<String, Card> cards) {
+			super(file.getName(), cards);
 			this.file = file;
 		}		
 		
@@ -55,8 +63,8 @@ public class LoadEvent extends NeonEvent {
 	public static class Create extends LoadEvent {
 		private final Path path;
 		
-		public Create(Path path) {
-			super(path.toFile().getName());
+		public Create(Path path, Multimap<String, Card> cards) {
+			super(path.toFile().getName(), cards);
 			this.path = path;
 		}
 		

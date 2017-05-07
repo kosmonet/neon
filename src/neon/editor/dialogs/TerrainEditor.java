@@ -111,18 +111,24 @@ public class TerrainEditor {
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
+	 * @throws ResourceException
 	 */
-	@FXML private void applyPressed(ActionEvent event) {
+	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
 		String name = nameField.getText().isEmpty() ? card.toString() : nameField.getText();
 		String text = textField.getText();
 		Color color = colorBox.getValue();
+		RTerrain rt = card.getResource();
 		
-		RTerrain terrain = new RTerrain(card.toString(), name, text, color);
-		bus.post(new SaveEvent.Resources(terrain));
-		card.setChanged(true);
+		// check if the resource was actually changed
+		if (!name.equals(rt.getName()) || !text.equals(rt.getText()) || !color.equals(rt.getColor())) {
+			card.setRedefined(card.isOriginal() ? true : false);
+			RTerrain terrain = new RTerrain(card.toString(), name, text, color);
+			bus.post(new SaveEvent.Resources(terrain));
+			card.setChanged(true);
+		}
 	}
 	
-	@FXML private void okPressed(ActionEvent event) {
+	@FXML private void okPressed(ActionEvent event) throws ResourceException {
 		applyPressed(event);
 		cancelPressed(event);
 	}

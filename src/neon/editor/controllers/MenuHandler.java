@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.eventbus.EventBus;
 
 import javafx.event.ActionEvent;
@@ -75,7 +76,8 @@ public class MenuHandler {
         chooser.setInitialDirectory(new File("data")); 
 		File file = chooser.showDialog(ui.getWindow());
 		if (file != null && file.exists()) {
-			bus.post(new LoadEvent.Load(file)); 
+			// multimap will be filled by the editor
+			bus.post(new LoadEvent.Load(file, SetMultimapBuilder.hashKeys().hashSetValues().build())); 
 			loadModule(file.getName());
 		}
 	}
@@ -106,7 +108,7 @@ public class MenuHandler {
 			}
 
 			// create the new module
-			bus.post(new LoadEvent.Create(path));
+			bus.post(new LoadEvent.Create(path, SetMultimapBuilder.hashKeys().hashSetValues().build()));
 			loadModule(id);
 		}
 	}

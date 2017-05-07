@@ -88,6 +88,22 @@ public class FileUtils {
 		folder.toFile().mkdir();
 	}
 	
+	/**
+	 * Lists all the files in the given folder. If the given folder does not
+	 * exist or is not actually a folder, an empty array is returned.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static String[] listFiles(Path folder) {
+		File file = folder.toFile();
+		if (file.exists() && file.isDirectory()) {
+			return file.list();
+		} else {
+			return new String[0];
+		}
+	}
+	
 	private static void delete(File file) {
 		if (file.isDirectory()) {
 			for (File f : file.listFiles()) {
