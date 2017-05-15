@@ -108,3 +108,14 @@
 	-fx-text-fill: white;
 }
 
+/* styles for the dialog windows */
+.dialog-pane .label {
+	-fx-alignment: center;
+}
+
+.dialog-pane {
+	-fx-background-color: #303030ee;
+	-fx-border-width: 1;
+	-fx-border-color: silver;	
+}
+

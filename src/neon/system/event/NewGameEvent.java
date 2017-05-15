@@ -18,4 +18,30 @@
 
 package neon.system.event;
 
-public class NewGameEvent extends ServerEvent {}
+/**
+ * Event to signal that a new game should be started.
+ * 
+ * @author mdriesen
+ *
+ */
+public class NewGameEvent extends ServerEvent {
+	private final String name, species, gender;
+	
+	public NewGameEvent(String name, String species, String gender) {
+		this.name = name;
+		this.species = species;
+		this.gender = gender;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public String getSpecies() {
+		return species;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+}

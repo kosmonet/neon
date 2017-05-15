@@ -18,28 +18,39 @@
 
 package neon.system.event;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
+import neon.entity.entities.Entity;
 import neon.system.resources.Resource;
 
 /**
- * An event containing resource updates for the client.
+ * An event containing updates for the client.
  * 
  * @author mdriesen
  *
  */
 public class UpdateEvent extends ClientEvent {
-	protected final Collection<Resource> resources = new ArrayList<>();
+	protected final Collection<Resource> resources = new HashSet<>();
+	protected final Collection<Entity> entities = new HashSet<>();
 	
 	public Collection<Resource> getResources() {
 		return resources;
 	}
 	
+	public Collection<Entity> getEntities() {
+		return entities;
+	}
+	
 	public static class Start extends UpdateEvent {
-		public Start(Collection<Resource> resources) {
+		public Start(Collection<Resource> resources, Collection<Entity> entities) {
 			this.resources.addAll(resources);
+			this.entities.addAll(entities);
 		}
+	}
+	
+	public static class Turn extends UpdateEvent {
+		
 	}
 	
 	public static class Map extends UpdateEvent {

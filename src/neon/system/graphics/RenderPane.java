@@ -25,6 +25,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import neon.system.resources.RMap;
 import neon.system.resources.RTerrain;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceProvider;
@@ -60,9 +61,9 @@ public class RenderPane extends StackPane {
 		}
 	}
 	
-	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation) {
-		this.terrain = terrain;
-		this.elevation = elevation;
+	public void setMap(RMap map) {
+		terrain = map.getTerrain();
+		elevation = map.getElevation();
 	}
 	
 	public void draw(int xmin, int ymin, int scale) {

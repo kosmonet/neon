@@ -16,46 +16,16 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
-
-import javafx.scene.paint.Color;
+package neon.system.event;
 
 /**
- * A creature resource.
+ * An event containing client input for the server.
  * 
  * @author mdriesen
  *
  */
-public class RCreature extends Resource {
-	private final String name;
-	private final String text;
-	private final Color color;
-	
-	/**
-	 * Creates a new creature resource with the given id and type.
-	 * 
-	 * @param id
-	 * @param type
-	 */
-	public RCreature(String id, String name, String text, Color color) {
-		super(id, "creature", "creatures");
-		this.name = name;
-		this.color = color;
-		this.text = text;
-	}
-	
-	/**
-	 * @return the name of this creature
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	public String getText() {
-		return text;
-	}
-	
-	public Color getColor() {
-		return color;
+public class InputEvent extends ServerEvent {
+	public class Move extends InputEvent {
+		
 	}
 }

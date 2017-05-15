@@ -21,12 +21,14 @@ package neon.client.modules;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
 import neon.system.event.UpdateEvent;
@@ -44,12 +46,16 @@ public class GameModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final UserInterface ui;
-	private RenderPane pane;	
+	private final EventBus bus;
+	private final ClientProvider provider = new ClientProvider();
+	private final RenderPane pane = new RenderPane(provider);
+	
 	private Scene scene;
 	private int xpos = 0, ypos = 0, scale = 20;
 	
-	public GameModule(UserInterface ui) {
+	public GameModule(UserInterface ui, EventBus bus) {
 		this.ui = ui;
+		this.bus = bus;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("../scenes/Game.fxml"));
 		loader.setController(this);
@@ -70,23 +76,25 @@ public class GameModule extends Module {
 	
 	@Subscribe
 	private void start(UpdateEvent.Start event) throws ResourceException {
+		// prepare the scene
+		scene.setRoot(pane);
+		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos, scale));
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));
+		
 		// store all resources
-		ClientProvider provider = new ClientProvider();
 		provider.addAll(event.getResources());
 		
 		// get the right map
 		CGame game = provider.getResource("config", "game");
 		RMap map = provider.getResource("maps", game.getStartMap());
 		
-		// and draw the scene
-		pane = new RenderPane(provider);
-		scene.setRoot(pane);
-		pane.setMap(map.getTerrain(), map.getElevation());
-		
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos, scale));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));
-		
+		pane.setMap(map);		
 		pane.draw(xpos, ypos, scale);
+	}
+	
+	@Subscribe
+	private void update(UpdateEvent.Turn event) {
+		pane.draw(xpos, ypos, scale);		
 	}
 	
 	private void move(String direction) {

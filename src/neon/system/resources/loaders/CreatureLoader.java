@@ -20,6 +20,8 @@ package neon.system.resources.loaders;
 
 import org.jdom2.Element;
 
+import javafx.scene.paint.Color;
+import neon.system.graphics.GraphicsUtils;
 import neon.system.resources.RCreature;
 
 /**
@@ -31,7 +33,11 @@ import neon.system.resources.RCreature;
 public class CreatureLoader implements ResourceLoader<RCreature> {
 	@Override
 	public RCreature load(Element root) {
-		RCreature creature = new RCreature(root.getAttributeValue("id"), root.getAttributeValue("name"));
+		String id = root.getAttributeValue("id");
+		String name = root.getAttributeValue("name");
+		String text = root.getChild("graphics").getAttributeValue("text");
+		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
+		RCreature creature = new RCreature(id, name, text, color);
 		return creature;
 	}
 	
@@ -40,6 +46,12 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		Element creature = new Element(rc.getType());
 		creature.setAttribute("id", rc.getID());
 		creature.setAttribute("name", rc.getName());
+		
+		Element graphics = new Element("graphics");
+		graphics.setAttribute("text", rc.getText());
+		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.getColor()));
+		creature.addContent(graphics);
+		
 		return creature;
 	}
 }

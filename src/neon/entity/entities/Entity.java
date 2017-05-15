@@ -18,7 +18,7 @@
 
 package neon.entity.entities;
 
-public class Entity {
+public abstract class Entity {
 	public final long uid;
 	
 	public Entity(long uid) {

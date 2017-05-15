@@ -20,10 +20,15 @@ package neon.client;
 
 import com.google.common.eventbus.Subscribe;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import neon.system.event.ClientConfigurationEvent;
 import neon.system.event.MessageEvent;
 
@@ -66,7 +71,7 @@ public class UserInterface {
 	}
 	
 	/**
-	 * Shows a warning message in a dialog window.
+	 * Shows a warning message in a proper dialog window.
 	 * 
 	 * @param event
 	 */
@@ -80,6 +85,26 @@ public class UserInterface {
 		alert.showAndWait();
 	}
 	
+	/**
+	 * Shows a message in a semi-transparent dialog for the given duration.
+	 * 
+	 * @param message	the message that will be shown
+	 * @param duration	how long the message will be shown (in milliseconds)
+	 */
+	public void showMessage(String message, int duration) {
+		Dialog<Boolean> dialog = new Dialog<>();
+		dialog.initOwner(stage);
+		dialog.getDialogPane().setContentText(message);
+		dialog.getDialogPane().getScene().setFill(null);
+		dialog.initStyle(StageStyle.TRANSPARENT);
+		dialog.show();
+		
+		// dialog closes when a result is set, dialog.close() won't work without an actual close button
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(duration), event -> dialog.setResult(true)));
+		timeline.setCycleCount(1);
+		timeline.play();
+	}
+
 	/**
 	 * Sets the {@code Scene} to show on the JavaFX primary {@code Stage}.
 	 * 

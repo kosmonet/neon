@@ -41,6 +41,7 @@ import neon.system.resources.RModule;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 import neon.system.resources.loaders.ConfigurationLoader;
+import neon.system.resources.loaders.CreatureLoader;
 import neon.system.resources.loaders.MapLoader;
 import neon.system.resources.loaders.ModuleLoader;
 import neon.system.resources.loaders.TerrainLoader;
@@ -164,6 +165,7 @@ class ServerLoader {
 		resources.addLoader("module", new ModuleLoader());
 		resources.addLoader("map", new MapLoader());
 		resources.addLoader("terrain", new TerrainLoader());
+		resources.addLoader("creature", new CreatureLoader());
 		
 		// check if all required parent modules are present
 		try {
@@ -176,7 +178,7 @@ class ServerLoader {
 						logger.warning("module <" + id + "> is missing parent <" + parent + ">");
 						bus.post(new MessageEvent("Module <" + id + "> is missing parent <" + 
 								parent + ">. Check if all necessary modules are present in "
-								+ "the correct load order", "Server configuration error"));
+								+ "the correct load order.", "Server configuration error"));
 					}
 				}
 			}

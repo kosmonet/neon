@@ -37,6 +37,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
@@ -157,7 +158,7 @@ public class CreatureHandler {
 			}
 
 			// create the creature
-			RCreature creature = new RCreature(id, id);
+			RCreature creature = new RCreature(id, id, "?", Color.BLUE);
 
 			try {
 				resources.addResource(creature);

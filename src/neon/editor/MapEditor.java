@@ -115,7 +115,7 @@ public class MapEditor {
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
 		renderer = new RenderPane(resources);
-		renderer.setMap(map.getTerrain(), map.getElevation());
+		renderer.setMap(map);
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
 	    renderer.setOnMouseExited(event -> mouseExited());
@@ -246,7 +246,7 @@ public class MapEditor {
 			logger.severe("could not save map: " + e.getMessage());
 		}
 
-		renderer.setMap(map.getTerrain(), map.getElevation());
+		renderer.setMap(map);
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;

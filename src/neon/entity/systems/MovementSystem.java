@@ -16,37 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.entity.systems;
 
-import javafx.scene.paint.Color;
+public class MovementSystem {
 
-/**
- * A resource representing a type of terrain on the map.
- * 
- * @author mdriesen
- *
- */
-public class RTerrain extends Resource {
-	private final Color color;
-	private final String text;
-	private final String name;
-	
-	public RTerrain(String id, String name, String text, Color color) {
-		super(id, "terrain", "terrain");
-		this.color = color;
-		this.text = text;
-		this.name = name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public Color getColor() {
-		return color;
-	}
-	
-	public String getText() {
-		return text;
-	}
 }

@@ -18,6 +18,8 @@
 
 package neon.entity.entities;
 
+import neon.system.resources.RCreature;
+
 /**
  * An entity representing the player character.
  * 
@@ -29,7 +31,7 @@ public class Player extends Creature {
 	 * Initializes the player character. No uid is needed, the player 
 	 * character always has uid 0.
 	 */
-	public Player() {
-		super(0);
+	public Player(String name, String gender, RCreature species) {
+		super(0, species);
 	}
 }

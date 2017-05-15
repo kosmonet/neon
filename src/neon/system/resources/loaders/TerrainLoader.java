@@ -21,6 +21,7 @@ package neon.system.resources.loaders;
 import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
+import neon.system.graphics.GraphicsUtils;
 import neon.system.resources.RTerrain;
 
 /**
@@ -34,8 +35,8 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 	@Override
 	public RTerrain load(Element root) {
 		String id = root.getAttributeValue("id");
-		String text = root.getAttributeValue("text");
-		Color color = Color.web(root.getAttributeValue("color"));
+		String text = root.getChild("graphics").getAttributeValue("text");
+		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		String name = root.getAttributeValue("name");
 		return new RTerrain(id, name, text, color);
 	}
@@ -45,8 +46,12 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 		Element root = new Element("terrain");
 		root.setAttribute("id", terrain.getID());
 		root.setAttribute("name", terrain.getName());
-		root.setAttribute("text", terrain.getText());
-		root.setAttribute("color", terrain.getColorString());
+		
+		Element graphics = new Element("graphics");
+		graphics.setAttribute("text", terrain.getText());
+		graphics.setAttribute("color", GraphicsUtils.getColorString(terrain.getColor()));
+		root.addContent(graphics);
+		
 		return root;
 	}
 }

@@ -16,46 +16,21 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.system.resources;
+package neon.system.graphics;
 
 import javafx.scene.paint.Color;
 
-/**
- * A creature resource.
- * 
- * @author mdriesen
- *
- */
-public class RCreature extends Resource {
-	private final String name;
-	private final String text;
-	private final Color color;
-	
+public class GraphicsUtils {
 	/**
-	 * Creates a new creature resource with the given id and type.
+	 * Converts the given color to a hexadecimal RGB value.
 	 * 
-	 * @param id
-	 * @param type
+	 * @param color
+	 * @return
 	 */
-	public RCreature(String id, String name, String text, Color color) {
-		super(id, "creature", "creatures");
-		this.name = name;
-		this.color = color;
-		this.text = text;
-	}
-	
-	/**
-	 * @return the name of this creature
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	public String getText() {
-		return text;
-	}
-	
-	public Color getColor() {
-		return color;
+	public static String getColorString(Color color) {
+		return String.format("#%02X%02X%02X", 
+				(int) (color.getRed()*255),
+	            (int) (color.getGreen()*255),
+	            (int) (color.getBlue()*255));
 	}
 }

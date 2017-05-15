@@ -22,6 +22,10 @@ so the engine can perform a check at startup. Right click on the list to add
 or remove parents. The engine nor the editor check for
 circular dependencies, this is the responsibility of the module author.</p>
 
+<p>The parent modules must be added in the correct load order: the topmost 
+parent should not depend on any lower ranked modules. Use the arrow
+buttons to move a module up/down in the load order.</p>
+
 <p>If a parent module was added or removed, the editor <b>MUST</b> be restarted 
 to reload all necessary resources from the parent modules. Continuing to 
 use the editor may result in unexpected behavior.</p>  

@@ -25,14 +25,23 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 
 import neon.entity.EntityManager;
+import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
+import neon.system.event.NewGameEvent;
 import neon.system.event.UpdateEvent;
 import neon.system.resources.CGame;
+import neon.system.resources.RCreature;
 import neon.system.resources.RMap;
 import neon.system.resources.Resource;
 import neon.system.resources.ResourceException;
 import neon.system.resources.ResourceManager;
 
+/**
+ * This class takes care of preparing the engine for a new or saved game.
+ * 
+ * @author mdriesen
+ *
+ */
 class GameLoader {
 	private static final Logger logger = Logger.getGlobal();
 	
@@ -40,6 +49,13 @@ class GameLoader {
 	private final ResourceManager resources;
 	private final EntityManager entities;
 	
+	/**
+	 * Initializes this game loader.
+	 * 
+	 * @param bus
+	 * @param resources
+	 * @param entities
+	 */
 	GameLoader(EventBus bus, ResourceManager resources, EntityManager entities) {
 		this.bus = bus;
 		this.resources = resources;
@@ -51,7 +67,7 @@ class GameLoader {
 	 * 
 	 * @throws ResourceException 
 	 */
-	void startNewGame() throws ResourceException {
+	void startNewGame(NewGameEvent event) throws ResourceException {
 		logger.info("starting a new game");
 		
 		// get the start map
@@ -68,11 +84,18 @@ class GameLoader {
 			clientResources.add(resources.getResource("terrain", terrain));
 		}
 		
-		// create the necessary entities
-		entities.addEntity(new Player());
+		// collect all the necessary entities
+		Set<Entity> clientEntities = new HashSet<>();
+		
+		// the player character
+		RCreature species = resources.getResource("creatures", event.getSpecies());
+		Player player = new Player(event.getName(), event.getGender(), species);
+		player.shape.setPosition(game.getStartX(), game.getStartY());
+		entities.addEntity(player);
+		clientEntities.add(player);
 		
 		// and send everything back to the client
-		bus.post(new UpdateEvent.Start(clientResources));
+		bus.post(new UpdateEvent.Start(clientResources, clientEntities));
 	}
 	
 	void startOldGame() {

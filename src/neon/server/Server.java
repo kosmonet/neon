@@ -116,7 +116,7 @@ public class Server implements Runnable {
 	@Subscribe
 	private void startGame(NewGameEvent event) {
 		try {
-			new GameLoader(bus, resources, entities).startNewGame();
+			new GameLoader(bus, resources, entities).startNewGame(event);
 		} catch (ResourceException e) {
 			logger.severe("could not start new game due to missing resources: " + e.getMessage());
 		}

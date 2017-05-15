@@ -28,11 +28,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+
 import neon.client.UserInterface;
 import neon.system.event.ClientConfigurationEvent;
 import neon.system.event.NewGameEvent;
@@ -44,6 +46,7 @@ public class NewGameModule extends Module {
 	@FXML private ListView<String> speciesList;
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
+	@FXML private Label instructionLabel;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -92,10 +95,19 @@ public class NewGameModule extends Module {
 	}
 	
 	@FXML private void startGame() {
-		// let the server know that the game module is waiting for game data
-		bus.post(new NewGameEvent());
-		// transition to the actual game module
-		bus.post(new TransitionEvent("start game"));		
+		// collect player character data
+		String name = nameField.getText();
+		String species = speciesList.getSelectionModel().getSelectedItem();
+		String gender = genderGroup.getSelectedToggle().getUserData().toString();
+		
+		if (name.isEmpty()) {
+			ui.showMessage("Enter a valid character name.", 1000);
+		} else {
+			// let the server know that the game module is waiting for game data
+			bus.post(new NewGameEvent(name, species, gender));
+			// transition to the actual game module
+			bus.post(new TransitionEvent("start game"));
+		}
 	}
 	
 	/**

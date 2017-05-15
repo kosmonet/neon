@@ -44,7 +44,7 @@ public class Client implements Runnable {
 	private final UserInterface ui;
 	
 	/**
-	 * Initialize the client.
+	 * Initializes the client.
 	 * 
 	 * @param version	the current version of the client
 	 * @param socket	the socket used for communication with the server
@@ -85,7 +85,7 @@ public class Client implements Runnable {
 		modules.add(newGame);
 		bus.register(newGame);
 		
-		GameModule game = new GameModule(ui);
+		GameModule game = new GameModule(ui, bus);
 		modules.add(game);
 		bus.register(game);
 		
@@ -97,7 +97,7 @@ public class Client implements Runnable {
 	
 	private class BusListener {
 		@Subscribe
-		public void monitor(DeadEvent event) {
+		private void monitor(DeadEvent event) {
 			logger.warning("client received a dead event: " + event.getEvent());
 		}
 	}

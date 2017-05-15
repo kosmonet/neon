@@ -38,6 +38,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
@@ -55,6 +56,8 @@ import neon.system.resources.ResourceManager;
  * of a module:
  * <ul>
  * 	<li>the title of the game</li>
+ * 	<li>the start position of the player character</li>
+ * 	<li>a list of parent modules</li>
  * 	<li>a list of playable species</li>
  * </ul>
  * 
@@ -149,6 +152,9 @@ public class SettingsEditor {
 		removeParentItem.setOnAction(event -> removeParent(event));
 		parentMenu.getItems().add(removeParentItem);
 		parentList.setContextMenu(parentMenu);
+		
+		speciesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		parentList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 	}
 	
 	/**
@@ -165,6 +171,11 @@ public class SettingsEditor {
 		stage.close();
 	}
 	
+	/**
+	 * Saves the changes made to the module settings.
+	 * 
+	 * @param event
+	 */
 	@FXML private void applyPressed(ActionEvent event) {
 		// save changes to a new module resource
 		String title = titleField.getText();
@@ -183,10 +194,50 @@ public class SettingsEditor {
 		cancelPressed(event);
 	}
 
+	/**
+	 * Shows the help window.
+	 * 
+	 * @param event
+	 */
 	@FXML private void helpPressed(ActionEvent event) {
 		new HelpWindow().show("settings.html");
 	}
+	
+	/**
+	 * Moves a parent module up in the list.
+	 * 
+	 * @param event
+	 */
+	@FXML private void moveUp(ActionEvent event) {
+		int index = parentList.getSelectionModel().getSelectedIndex();
+		String parent = parentList.getSelectionModel().getSelectedItem();
+		if (parent != null && index > 0) {
+			parentList.getItems().remove(parent);
+			parentList.getItems().add(index - 1, parent);
+			parentList.getSelectionModel().select(parent);
+		}
+	}
 
+	/**
+	 * Moves a parent module down in the list.
+	 * 
+	 * @param event
+	 */
+	@FXML private void moveDown(ActionEvent event) {
+		int index = parentList.getSelectionModel().getSelectedIndex();
+		String parent = parentList.getSelectionModel().getSelectedItem();
+		if (parent != null && index < parentList.getItems().size() - 1) {
+			parentList.getItems().remove(parent);
+			parentList.getItems().add(index + 1, parent);
+			parentList.getSelectionModel().select(parent);
+		}		
+	}
+
+	/**
+	 * Adds a playable species.
+	 * 
+	 * @param event
+	 */
 	private void addSpecies(ActionEvent event) {
 		Set<String> choices = resources.listResources("creatures");
 		choices.removeAll(speciesList.getItems());
@@ -201,10 +252,20 @@ public class SettingsEditor {
 		result.ifPresent(choice -> speciesList.getItems().add(choice));
 	}
 	
+	/**
+	 * Removes a playable species.
+	 * 
+	 * @param event
+	 */
 	private void removeSpecies(ActionEvent event) {
 		speciesList.getItems().remove(speciesList.getSelectionModel().getSelectedItem());
 	}
 
+	/**
+	 * Adds a parent module.
+	 * 
+	 * @param event
+	 */
 	private void addParent(ActionEvent event) {
 		Path data = Paths.get("data");
 		Set<String> choices = new HashSet<>();		
@@ -228,6 +289,11 @@ public class SettingsEditor {
 		result.ifPresent(choice -> parentList.getItems().add(choice));
 	}
 	
+	/**
+	 * Removes a parent module.
+	 * 
+	 * @param event
+	 */
 	private void removeParent(ActionEvent event) {
 		parentList.getItems().remove(parentList.getSelectionModel().getSelectedItem());
 	}

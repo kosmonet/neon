@@ -27,7 +27,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -54,7 +57,9 @@ import neon.system.resources.ResourceException;
 public class CreatureEditor {
 	private static final Logger logger = Logger.getGlobal();
 
-	@FXML private TextField nameField;
+	@FXML private TextField nameField, textField;
+	@FXML private ColorPicker colorBox;
+	@FXML private Label previewLabel;
 	
 	private final Stage stage = new Stage();
 	private final EventBus bus;
@@ -87,7 +92,16 @@ public class CreatureEditor {
 			logger.severe("failed to load creature editor ui: " + e.getMessage());
 		}
 		
+		previewLabel.setStyle("-fx-background-color: black;");
+		previewLabel.setTextFill(creature.getColor());
+		previewLabel.setText(creature.getText());
+
 		nameField.setText(creature.getName());
+		textField.setText(creature.getText());
+		colorBox.setValue(creature.getColor());
+		
+		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
+		colorBox.valueProperty().addListener(value -> refresh());
 	}
 	
 	/**
@@ -103,6 +117,14 @@ public class CreatureEditor {
 	}
 	
 	/**
+	 * Refreshes the preview label if the text or color was changed.
+	 */
+	private void refresh() {
+		previewLabel.setText(textField.getText());
+		previewLabel.setTextFill(colorBox.getValue());
+	}
+
+	/**
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
@@ -111,11 +133,13 @@ public class CreatureEditor {
 	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
 		RCreature rc = card.getResource();
 		String name = nameField.getText();
+		Color color = colorBox.getValue();
+		String text = textField.getText();
 		// check if anything was actually changed
-		if (!name.equals(rc.getName())) {
+		if (!name.equals(rc.getName()) || !text.equals(rc.getText()) || !color.equals(rc.getColor())) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature(card.toString(), name);
+			RCreature creature = new RCreature(card.toString(), name, text, color);
 			bus.post(new SaveEvent.Resources(creature));
 			card.setChanged(true);				
 		}
