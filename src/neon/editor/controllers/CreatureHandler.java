@@ -39,15 +39,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import neon.common.resources.RCreature;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.CreatureLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.SaveEvent;
 import neon.editor.dialogs.CreatureEditor;
 import neon.editor.ui.CardCellFactory;
-import neon.system.resources.RCreature;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
-import neon.system.resources.loaders.CreatureLoader;
 
 /**
  * Class to handle all creature-related matters.

@@ -37,7 +37,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
 import neon.client.console.Console;
-import neon.system.event.ClientConfigurationEvent;
+import neon.common.event.ClientConfigurationEvent;
 
 /**
  * The module for the main menu screen in the game.

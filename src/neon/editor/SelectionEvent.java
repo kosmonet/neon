@@ -1,6 +1,6 @@
 package neon.editor;
 
-import neon.system.event.NeonEvent;
+import neon.common.event.NeonEvent;
 
 public class SelectionEvent extends NeonEvent {
 	private final String id;

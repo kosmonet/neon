@@ -23,7 +23,7 @@ import java.nio.file.Path;
 
 import com.google.common.collect.Multimap;
 
-import neon.system.event.NeonEvent;
+import neon.common.event.NeonEvent;
 
 public class LoadEvent extends NeonEvent {	
 	private final String id;

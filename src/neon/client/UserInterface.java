@@ -29,8 +29,8 @@ import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import neon.system.event.ClientConfigurationEvent;
-import neon.system.event.MessageEvent;
+import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.MessageEvent;
 
 /**
  * The user interface contains a number of JavaFX-related utility methods that 

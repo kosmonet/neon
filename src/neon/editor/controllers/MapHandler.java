@@ -48,17 +48,16 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-
+import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.MapLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.MapEditor;
 import neon.editor.SaveEvent;
 import neon.editor.SelectionEvent;
 import neon.editor.ui.CardCellFactory;
-import neon.system.resources.RMap;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
-import neon.system.resources.loaders.MapLoader;
 
 /**
  * This handler takes care of loading, saving, adding and removing map 

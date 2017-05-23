@@ -39,15 +39,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import neon.common.resources.RTerrain;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.TerrainLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.SelectionEvent;
 import neon.editor.dialogs.TerrainEditor;
 import neon.editor.ui.CardCellFactory;
-import neon.system.resources.RTerrain;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
-import neon.system.resources.loaders.TerrainLoader;
 
 public class TerrainHandler {
 	private final static Logger logger = Logger.getGlobal();

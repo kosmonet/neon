@@ -45,11 +45,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.common.resources.RModule;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.editor.SaveEvent;
 import neon.editor.help.HelpWindow;
-import neon.system.resources.RModule;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
 
 /**
  * This resource editor shows a modal dialog window to edit the properties

@@ -31,11 +31,11 @@ import javafx.scene.input.KeyCodeCombination;
 
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
-import neon.system.event.UpdateEvent;
-import neon.system.graphics.RenderPane;
-import neon.system.resources.CGame;
-import neon.system.resources.RMap;
-import neon.system.resources.ResourceException;
+import neon.common.event.UpdateEvent;
+import neon.common.graphics.RenderPane;
+import neon.common.resources.CGame;
+import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
 
 /**
  * 

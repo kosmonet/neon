@@ -18,7 +18,7 @@
 
 package neon.entity.entities;
 
-import neon.system.resources.RCreature;
+import neon.common.resources.RCreature;
 
 /**
  * An entity representing the player character.

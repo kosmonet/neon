@@ -28,8 +28,8 @@ import javafx.stage.Stage;
 
 import neon.client.Client;
 import neon.client.ClientSocket;
+import neon.common.logging.NeonLogFormatter;
 import neon.server.ServerSocket;
-import neon.system.logging.NeonLogFormatter;
 import neon.server.Server;
 
 /**

@@ -18,10 +18,10 @@
 
 package neon.entity.entities;
 
+import neon.common.resources.RCreature;
 import neon.entity.components.GraphicsComponent;
 import neon.entity.components.InventoryComponent;
 import neon.entity.components.ShapeComponent;
-import neon.system.resources.RCreature;
 
 public class Creature extends Entity {
 	public final InventoryComponent inventory;

@@ -28,13 +28,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.common.resources.ResourceManager;
 import neon.editor.LoadEvent;
 import neon.editor.controllers.CreatureHandler;
 import neon.editor.controllers.ItemHandler;
 import neon.editor.controllers.MapHandler;
 import neon.editor.controllers.MenuHandler;
 import neon.editor.controllers.TerrainHandler;
-import neon.system.resources.ResourceManager;
 
 /**
  * The {@code UserInterface} takes care of most ui-related editor functionality.

@@ -18,7 +18,7 @@
 
 package neon.client.console;
 
-import neon.system.event.ClientEvent;
+import neon.common.event.ClientEvent;
 
 /**
  * An event to signal that a message should be shown on the console.

@@ -40,10 +40,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import neon.system.graphics.RenderPane;
-import neon.system.resources.RMap;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
+import neon.common.graphics.RenderPane;
+import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 
 /**
  * <p>The map editor presents a pane on the main window to edit the currently

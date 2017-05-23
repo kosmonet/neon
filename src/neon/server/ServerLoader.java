@@ -32,19 +32,19 @@ import org.jdom2.input.SAXBuilder;
 
 import com.google.common.eventbus.EventBus;
 
-import neon.system.event.MessageEvent;
-import neon.system.files.NeonFileSystem;
-import neon.system.resources.CClient;
-import neon.system.resources.CGame;
-import neon.system.resources.CServer;
-import neon.system.resources.RModule;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
-import neon.system.resources.loaders.ConfigurationLoader;
-import neon.system.resources.loaders.CreatureLoader;
-import neon.system.resources.loaders.MapLoader;
-import neon.system.resources.loaders.ModuleLoader;
-import neon.system.resources.loaders.TerrainLoader;
+import neon.common.event.MessageEvent;
+import neon.common.files.NeonFileSystem;
+import neon.common.resources.CClient;
+import neon.common.resources.CGame;
+import neon.common.resources.CServer;
+import neon.common.resources.RModule;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.ConfigurationLoader;
+import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.MapLoader;
+import neon.common.resources.loaders.ModuleLoader;
+import neon.common.resources.loaders.TerrainLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.

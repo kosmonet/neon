@@ -34,11 +34,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.common.resources.RCreature;
+import neon.common.resources.ResourceException;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
 import neon.editor.help.HelpWindow;
-import neon.system.resources.RCreature;
-import neon.system.resources.ResourceException;
 
 /**
  * This resource editor shows a modal dialog window to edit the properties

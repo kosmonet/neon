@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import neon.system.resources.Resource;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceProvider;
+import neon.common.resources.Resource;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceProvider;
 
 /**
  * Manages resources for the client.

@@ -36,8 +36,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import neon.client.UserInterface;
-import neon.system.event.ClientConfigurationEvent;
-import neon.system.event.NewGameEvent;
+import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.NewGameEvent;
 
 public class NewGameModule extends Module {
 	private static final Logger logger = Logger.getGlobal();

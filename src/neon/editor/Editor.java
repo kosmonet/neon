@@ -38,14 +38,14 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import neon.common.files.FileUtils;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
+import neon.common.logging.NeonLogFormatter;
+import neon.common.resources.RModule;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.ModuleLoader;
 import neon.editor.ui.UserInterface;
-import neon.system.files.FileUtils;
-import neon.system.files.NeonFileSystem;
-import neon.system.files.XMLTranslator;
-import neon.system.logging.NeonLogFormatter;
-import neon.system.resources.RModule;
-import neon.system.resources.ResourceManager;
-import neon.system.resources.loaders.ModuleLoader;
 
 /**
  * The neon roguelike editor.

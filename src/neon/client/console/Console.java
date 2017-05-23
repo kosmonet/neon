@@ -40,8 +40,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import neon.system.event.ScriptEvent;
-import neon.system.logging.NeonLogFormatter;
+import neon.common.event.ScriptEvent;
+import neon.common.logging.NeonLogFormatter;
 
 /**
  * A debug console for the neon engine. 

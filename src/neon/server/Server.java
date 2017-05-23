@@ -28,14 +28,14 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.client.console.ConsoleEvent;
+import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.NewGameEvent;
+import neon.common.event.ScriptEvent;
+import neon.common.files.NeonFileSystem;
+import neon.common.resources.CGame;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
-import neon.system.event.ClientConfigurationEvent;
-import neon.system.event.NewGameEvent;
-import neon.system.event.ScriptEvent;
-import neon.system.files.NeonFileSystem;
-import neon.system.resources.CGame;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
 
 /**
  * The server part of the neon engine.

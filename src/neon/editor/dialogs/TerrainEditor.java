@@ -34,10 +34,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.common.resources.RTerrain;
+import neon.common.resources.ResourceException;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
-import neon.system.resources.RTerrain;
-import neon.system.resources.ResourceException;
 
 /**
  * An editor for terrain resources.

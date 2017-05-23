@@ -24,17 +24,17 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.event.NewGameEvent;
+import neon.common.event.UpdateEvent;
+import neon.common.resources.CGame;
+import neon.common.resources.RCreature;
+import neon.common.resources.RMap;
+import neon.common.resources.Resource;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
-import neon.system.event.NewGameEvent;
-import neon.system.event.UpdateEvent;
-import neon.system.resources.CGame;
-import neon.system.resources.RCreature;
-import neon.system.resources.RMap;
-import neon.system.resources.Resource;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
 
 /**
  * This class takes care of preparing the engine for a new or saved game.

@@ -18,7 +18,7 @@
 
 package neon.client.modules;
 
-import neon.system.event.ClientEvent;
+import neon.common.event.ClientEvent;
 
 /**
  * An event to signal the transition between two client states.

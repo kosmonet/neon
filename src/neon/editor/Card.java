@@ -20,9 +20,9 @@ package neon.editor;
 
 import java.util.Objects;
 
-import neon.system.resources.Resource;
-import neon.system.resources.ResourceException;
-import neon.system.resources.ResourceManager;
+import neon.common.resources.Resource;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 
 /**
  * An index card to keep track of a resource id with some extra information 

@@ -24,9 +24,9 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.event.ClientEvent;
+import neon.common.event.ServerEvent;
 import neon.server.ServerSocket;
-import neon.system.event.ClientEvent;
-import neon.system.event.ServerEvent;
 
 /**
  * The client socket receives message from a connected server socket and posts

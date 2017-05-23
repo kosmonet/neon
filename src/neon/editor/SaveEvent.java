@@ -18,8 +18,8 @@
 
 package neon.editor;
 
-import neon.system.event.NeonEvent;
-import neon.system.resources.Resource;
+import neon.common.event.NeonEvent;
+import neon.common.resources.Resource;
 
 /**
  * An event to signal that something should be saved.

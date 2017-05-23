@@ -23,8 +23,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 import com.google.common.eventbus.Subscribe;
 import neon.client.ClientSocket;
-import neon.system.event.ClientEvent;
-import neon.system.event.ServerEvent;
+import neon.common.event.ClientEvent;
+import neon.common.event.ServerEvent;
 
 /**
  * The server socket receives messages from a client socket and stores them on 
