@@ -29,6 +29,9 @@ import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
+import neon.entity.EntityProvider;
+import neon.entity.entities.Entity;
+import neon.entity.entities.Player;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -42,12 +45,14 @@ public class RenderPane extends StackPane {
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceProvider resources;
+	private final EntityProvider entities;
 	
 	private RegionQuadTree<String> terrain;
 	private RegionQuadTree<Integer> elevation;
 	
-	public RenderPane(ResourceProvider resources) {
+	public RenderPane(ResourceProvider resources, EntityProvider entities) {
 		this.resources = resources;
+		this.entities = entities;
 		double parallax = 1.02;
 		
 		for (int i = -5; i < 4; i++) {
@@ -66,11 +71,26 @@ public class RenderPane extends StackPane {
 		elevation = map.getElevation();
 	}
 	
+	/**
+	 * Redraws this pane.
+	 * 
+	 * @param xmin
+	 * @param ymin
+	 * @param scale
+	 */
 	public void draw(int xmin, int ymin, int scale) {
 		for (Canvas canvas : layers.values()) {
 			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		}
-
+		
+		drawMap(xmin, ymin, scale);
+		
+		for (Entity entity : entities.getEntities()) {
+			drawEntity(entity, xmin, ymin, scale);
+		}
+	}
+	
+	private void drawMap(int xmin, int ymin, int scale) {
 		for (int x = xmin; x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
 			for (int y = ymin; y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
 				try {
@@ -82,6 +102,15 @@ public class RenderPane extends StackPane {
 					logger.warning(e.getMessage());
 				}
 			}
+		}		
+	}
+	
+	private void drawEntity(Entity entity, int xmin, int ymin, int scale) {
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
+			GraphicsContext gc = layers.get(player.shape.getZ()).getGraphicsContext2D();
+			Image image = TextureFactory.getImage(scale, player.graphics.getColor(), player.graphics.getText());
+			gc.drawImage(image, scale*(player.shape.getX() - xmin), scale*(player.shape.getY() - ymin));
 		}
 	}
 }

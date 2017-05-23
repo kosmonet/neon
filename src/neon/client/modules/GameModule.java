@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCodeCombination;
 
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
+import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.CGame;
@@ -48,7 +49,7 @@ public class GameModule extends Module {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ClientProvider provider = new ClientProvider();
-	private final RenderPane pane = new RenderPane(provider);
+	private final RenderPane pane = new RenderPane(provider, provider);
 	
 	private Scene scene;
 	private int xpos = 0, ypos = 0, scale = 20;
@@ -71,18 +72,22 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
-		
 	}
 	
 	@Subscribe
-	private void start(UpdateEvent.Start event) throws ResourceException {
+	private void start(UpdateEvent.Start event) {
 		// prepare the scene
 		scene.setRoot(pane);
 		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos, scale));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));
-		
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));		
+	}
+	
+	@Subscribe
+	private void update(UpdateEvent.Map event) throws ResourceException {
 		// store all resources
-		provider.addAll(event.getResources());
+		provider.clear();
+		provider.addResources(event.getResources());
+		provider.addEntities(event.getEntities());
 		
 		// get the right map
 		CGame game = provider.getResource("config", "game");
@@ -92,12 +97,8 @@ public class GameModule extends Module {
 		pane.draw(xpos, ypos, scale);
 	}
 	
-	@Subscribe
-	private void update(UpdateEvent.Turn event) {
-		pane.draw(xpos, ypos, scale);		
-	}
-	
 	private void move(String direction) {
+		bus.post(new InputEvent.Move(direction));
 		switch(direction) {
 		case "left": xpos = Math.max(0, xpos - 1); break;
 		case "right": xpos++; break;

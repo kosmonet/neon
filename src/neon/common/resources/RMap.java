@@ -18,12 +18,16 @@
 
 package neon.common.resources;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import neon.util.quadtree.RegionQuadTree;
 
 public class RMap extends Resource {
 	private final String name;
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
+	private final ArrayList<Long> entities = new ArrayList<>();
 	
 	public RMap(String id, String name, int width, int height) {
 		super(id, "map", "maps");
@@ -50,5 +54,9 @@ public class RMap extends Resource {
 	
 	public RegionQuadTree<Integer> getElevation() {
 		return elevation;
+	}
+	
+	public Collection<Long> getEntities() {
+		return entities;
 	}
 }

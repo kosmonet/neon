@@ -44,6 +44,7 @@ import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.EntityManager;
 
 /**
  * <p>The map editor presents a pane on the main window to edit the currently
@@ -114,7 +115,7 @@ public class MapEditor {
 		pane.setStyle("-fx-background-color: black;");
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
-		renderer = new RenderPane(resources);
+		renderer = new RenderPane(resources, new EntityManager());
 		renderer.setMap(map);
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());

@@ -45,6 +45,7 @@ public class ResourceManager implements ResourceProvider {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
+	// TODO: hier een guava table voor gebruiken?
 	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
 	

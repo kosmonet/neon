@@ -18,8 +18,6 @@
 
 package neon.server;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -29,11 +27,10 @@ import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
-import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
-import neon.entity.entities.Entity;
+import neon.entity.SystemEvent;
 import neon.entity.entities.Player;
 
 /**
@@ -74,28 +71,17 @@ class GameLoader {
 		CGame game = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", game.getStartMap());
 		
-		// collect all necessary resources to start the game
-		Set<Resource> clientResources = new HashSet<>();
-		clientResources.add(game);
-		clientResources.add(map);
-		
-		// add all terrain resources
-		for (String terrain : map.getTerrain().getLeaves().values()) {
-			clientResources.add(resources.getResource("terrain", terrain));
-		}
-		
-		// collect all the necessary entities
-		Set<Entity> clientEntities = new HashSet<>();
-		
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());
 		Player player = new Player(event.getName(), event.getGender(), species);
-		player.shape.setPosition(game.getStartX(), game.getStartY());
+		player.shape.setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
-		clientEntities.add(player);
-		
-		// and send everything back to the client
-		bus.post(new UpdateEvent.Start(clientResources, clientEntities));
+
+		// tell the client everything is ready
+		bus.post(new UpdateEvent.Start());
+
+		// let the systems know a new game is about to start
+		bus.post(new SystemEvent.Start(map));
 	}
 	
 	void startOldGame() {

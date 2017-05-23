@@ -16,49 +16,13 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.entity;
 
-/**
- * A component that represents the shape (including position) of an entity.
- * 
- * @author mdriesen
- *
- */
-public class ShapeComponent implements Component {
-	private final long uid;
-	
-	private int x, y, z;
-	
-	public ShapeComponent(long uid) {
-		this.uid = uid;
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public int getX() {
-		return x;
-	}
-	
-	public int getY() {
-		return y;
-	}
-	
-	public int getZ() {
-		return z;
-	}
-	
-	/**
-	 * Sets the position of the entity this component belongs to.
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void setPosition(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
+import java.util.Collection;
+
+import neon.entity.entities.Entity;
+
+public interface EntityProvider {
+	public Entity getEntity(long uid);
+	public Collection<Entity> getEntities();
 }

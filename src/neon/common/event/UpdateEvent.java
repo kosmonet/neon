@@ -21,6 +21,7 @@ package neon.common.event;
 import java.util.Collection;
 import java.util.HashSet;
 
+import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.entity.entities.Entity;
 
@@ -42,22 +43,42 @@ public class UpdateEvent extends ClientEvent {
 		return entities;
 	}
 	
-	public static class Start extends UpdateEvent {
-		public Start(Collection<Resource> resources, Collection<Entity> entities) {
+	/**
+	 * An event to indicate that a game is started.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Start extends UpdateEvent {}
+	
+	/**
+	 * An event to indicate a new turn.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Turn extends UpdateEvent {
+	}
+	
+	/**
+	 * An event to indicate a change of map.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Map extends UpdateEvent {
+		private final RMap map;
+		
+		public Map(RMap map, Collection<Resource> resources, Collection<Entity> entities) {
+			this.map = map;
 			this.resources.addAll(resources);
 			this.entities.addAll(entities);
 		}
+		
+		public RMap getMap() {
+			return map;
+		}
 	}
 	
-	public static class Turn extends UpdateEvent {
-		
-	}
-	
-	public static class Map extends UpdateEvent {
-		
-	}
-	
-	public static class Resources extends UpdateEvent {
-		
-	}
+	public static class Resources extends UpdateEvent {}
 }

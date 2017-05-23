@@ -36,6 +36,7 @@ import neon.common.resources.CGame;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
+import neon.entity.systems.MovementSystem;
 
 /**
  * The server part of the neon engine.
@@ -75,6 +76,9 @@ public class Server implements Runnable {
 		} catch (ResourceException e) {
 			logger.severe(e.getMessage());
 		}
+		
+		// add all the systems to the bus
+		bus.register(new MovementSystem(resources, entities, bus));
 	}
 	
 	/**

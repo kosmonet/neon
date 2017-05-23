@@ -70,7 +70,6 @@ public class Client implements Runnable {
 	public void run() {
 		while (true) {
 			ClientEvent event = socket.getEvent();
-			// TODO: kan dit niet los van de JavaFX thread?
 			Platform.runLater(() -> bus.post(event));
 		}
 	}

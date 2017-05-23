@@ -18,12 +18,13 @@
 
 package neon.entity;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import neon.entity.entities.Entity;
 
-public class EntityManager {
+public class EntityManager implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
 
 	public Entity getEntity(long uid) {
@@ -32,5 +33,9 @@ public class EntityManager {
 	
 	public void addEntity(Entity entity) {
 		entities.put(entity.uid, entity);
+	}
+	
+	public Collection<Entity> getEntities() {
+		return entities.values();
 	}
 }

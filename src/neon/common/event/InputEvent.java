@@ -25,7 +25,15 @@ package neon.common.event;
  *
  */
 public class InputEvent extends ServerEvent {
-	public class Move extends InputEvent {
+	public static class Move extends InputEvent {
+		private final String direction;
 		
+		public Move(String direction) {
+			this.direction = direction;
+		}
+		
+		public String getDirection() {
+			return direction;
+		}
 	}
 }

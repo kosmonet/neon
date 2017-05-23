@@ -25,6 +25,8 @@ import java.util.Map;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
+import neon.entity.EntityProvider;
+import neon.entity.entities.Entity;
 
 /**
  * Manages resources for the client.
@@ -32,28 +34,33 @@ import neon.common.resources.ResourceProvider;
  * @author mdriesen
  *
  */
-public class ClientProvider implements ResourceProvider {
+public class ClientProvider implements ResourceProvider, EntityProvider {
 	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
+	private final Map<Long, Entity> entities = new HashMap<>();
 
+	/**
+	 * Clears all entities and resources from this provider.
+	 */
+	public void clear() {
+		resources.clear();
+		entities.clear();
+	}
+	
 	/**
 	 * Adds a collection of resources to this provider.
 	 * 
 	 * @param collection
 	 */
-	public void addAll(Collection<Resource> collection) {
+	public void addResources(Collection<Resource> collection) {
 		for (Resource resource : collection) {
 			// make sure namespace exists
-			if(!resources.containsKey(resource.getNamespace())) {
+			if (!resources.containsKey(resource.getNamespace())) {
 				resources.put(resource.getNamespace(), new HashMap<>());
 			}
 			
 			// add resource to correct namespace
 			resources.get(resource.getNamespace()).put(resource.getID(), resource);
 		}
-	}
-	
-	public void clear() {
-		resources.clear();
 	}
 	
 	@Override @SuppressWarnings("unchecked")
@@ -64,5 +71,26 @@ public class ClientProvider implements ResourceProvider {
 		} else {
 			throw new ResourceException("Resource " + namespace + ":" + id + " was not found.");
 		}
+	}
+
+	/**
+	 * Adds a collection of entities to this provider.
+	 * 
+	 * @param collection
+	 */
+	public void addEntities(Collection<Entity> collection) {
+		for (Entity entity : collection) {
+			entities.put(entity.uid, entity);
+		}
+	}
+	
+	@Override
+	public Entity getEntity(long uid) {
+		return entities.get(uid);
+	}
+
+	@Override
+	public Collection<Entity> getEntities() {
+		return entities.values();
 	}
 }

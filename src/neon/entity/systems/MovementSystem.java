@@ -18,6 +18,65 @@
 
 package neon.entity.systems;
 
-public class MovementSystem {
+import java.util.HashSet;
+import java.util.Set;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import neon.common.event.InputEvent;
+import neon.common.event.UpdateEvent;
+import neon.common.resources.RMap;
+import neon.common.resources.Resource;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.entity.EntityManager;
+import neon.entity.SystemEvent;
+import neon.entity.entities.Entity;
+
+/**
+ * The system that handles all movement-related events.
+ * 
+ * @author mdriesen
+ *
+ */
+public class MovementSystem {
+	private final EntityManager entities;
+	private final ResourceManager resources;
+	private final EventBus bus;
+	
+	public MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
+		this.entities = entities;
+		this.resources = resources;
+		this.bus = bus;
+	}
+	
+	@Subscribe
+	private void start(SystemEvent.Start event) throws ResourceException {
+		// add the player to the start map
+		RMap map = event.getMap();
+		map.getEntities().add(0l);
+		
+		// collect all necessary resources to start the game
+		Set<Resource> clientResources = new HashSet<>();
+		clientResources.add(resources.getResource("config", "game"));
+		clientResources.add(map);
+		
+		// add all terrain resources
+		for (String terrain : map.getTerrain().getLeaves().values()) {
+			clientResources.add(resources.getResource("terrain", terrain));
+		}
+		
+		// collect all the necessary entities
+		Set<Entity> clientEntities = new HashSet<>();
+		clientEntities.add(entities.getEntity(0));
+
+		// tell the client everything is ready
+		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));
+	}
+	
+	@Subscribe
+	private void move(InputEvent.Move event) {
+		System.out.println(event.getDirection());
+	}
 }
