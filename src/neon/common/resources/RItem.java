@@ -18,6 +18,8 @@
 
 package neon.common.resources;
 
+import javafx.scene.paint.Color;
+
 /**
  * An item resource.
  * 
@@ -26,6 +28,8 @@ package neon.common.resources;
  */
 public class RItem extends Resource {
 	private final String name;
+	private final String character;
+	private final Color color;
 	
 	/**
 	 * Creates a new item resource with the given id and type.
@@ -33,9 +37,11 @@ public class RItem extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RItem(String id, String type, String name) {
+	public RItem(String id, String type, String name, String character, Color color) {
 		super(id, type, "items");
 		this.name = name;
+		this.character = character;
+		this.color = color;
 	}
 	
 	/**
@@ -43,5 +49,13 @@ public class RItem extends Resource {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	public String getCharacter() {
+		return character;
+	}
+	
+	public Color getColor() {
+		return color;
 	}
 }

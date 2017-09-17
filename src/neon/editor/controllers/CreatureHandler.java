@@ -158,11 +158,11 @@ public class CreatureHandler {
 			}
 
 			// create the creature
-			RCreature creature = new RCreature(id, id, "?", Color.BLUE);
-
 			try {
-				resources.addResource(creature);
-				TreeItem<Card> item = new TreeItem<>(new Card("creatures", id, resources, false));
+				resources.addResource(new RCreature(id, id, "?", Color.BLUE));
+				Card card = new Card("creatures", id, resources, false);
+				card.setChanged(true);
+				TreeItem<Card> item = new TreeItem<>(card);
 				creatureTree.getRoot().getChildren().add(item);
             	new CreatureEditor(item.getValue(), bus).show(parent);
 			} catch (IOException e) {

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+	<top>
+		<Label fx:id="instructionLabel" styleClass="instructions" text="Money owned: X copper pieces." />
+	</top>
+	<center>
+		<GridPane BorderPane.alignment="CENTER">
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="34.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+			</columnConstraints>
+			<children>
+				<ListView fx:id="itemList" />
+				<VBox GridPane.columnIndex="2" />
+			</children>
+		</GridPane>
+	</center>
+	<bottom>
+		<HBox styleClass="bottom-buttons">
+			<children>
+				<Button fx:id="equipButton" defaultButton="true" focusTraversable="false" text="Enter" />
+				<Label text="Equip" />
+				<Button fx:id="dropButton" text="Del" focusTraversable="false" />
+				<Label text="Drop" />
+				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
+				<Label text="Cancel" />
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>

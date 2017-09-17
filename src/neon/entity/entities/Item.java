@@ -16,28 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.entity.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import neon.common.resources.RItem;
+import neon.entity.components.GraphicsComponent;
+import neon.entity.components.ShapeComponent;
 
-public class InventoryComponent implements Component {
-	private final long uid;
-	private final Collection<Long> items = new ArrayList<Long>();
-	
-	public InventoryComponent(long uid) {
-		this.uid = uid;
-	}
-	
-	public long getEntity() {
-		return uid;
-	}
-	
-	public void addItem(long uid) {
-		items.add(uid);
-	}
-	
-	public void removeItem(long uid) {
-		items.remove(uid);
+public class Item extends Entity {
+	public final ShapeComponent shape;
+	public final GraphicsComponent graphics;
+
+	public Item(long uid, RItem item) {
+		super(uid);
+		shape = new ShapeComponent(uid);
+		graphics = new GraphicsComponent(uid, item.getCharacter(), item.getColor());
 	}
 }

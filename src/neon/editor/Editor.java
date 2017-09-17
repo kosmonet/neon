@@ -131,6 +131,10 @@ public class Editor extends Application {
 			Card card = new Card("creatures", id, resources, true);
 			cards.put("creatures", card);
 		}
+		for (String id : resources.listResources("items")) {
+			Card card = new Card("items", id, resources, true);
+			cards.put("items", card);
+		}
 		for (String id : resources.listResources("maps")) {
 			Card card = new Card("maps", id, resources, true);
 			cards.put("maps", card);
@@ -152,6 +156,15 @@ public class Editor extends Application {
 				card.setRedefined(true);
 			}
 			cards.put("creatures", card);
+		}
+		for (String id : FileUtils.listFiles(Paths.get("temp", "items"))) {
+			Card card = new Card("items", id.replaceAll(".xml", ""), resources, false);
+			if (cards.get("items").contains(card)) {
+				cards.remove("items", card);
+				card = new Card("items", id.replaceAll(".xml", ""), resources, true);
+				card.setRedefined(true);
+			}
+			cards.put("items", card);
 		}
 		for (String id : FileUtils.listFiles(Paths.get("temp", "terrain"))) {
 			Card card = new Card("terrain", id.replaceAll(".xml", ""), resources, false);

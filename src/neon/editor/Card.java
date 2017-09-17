@@ -67,6 +67,7 @@ public class Card {
 		return hash;
 	}
 	
+	@Override
 	public boolean equals(Object object) {
 		if (!Card.class.isInstance(object)) {
 			return false;
@@ -128,6 +129,11 @@ public class Card {
 	public static class Type extends Card {
 		public Type(String type) {
 			super(null, type, null, false);
+		}
+		
+		@Override
+		public boolean equals(Object object) {
+			return this == object;
 		}
 	}
 }

@@ -34,9 +34,7 @@ import neon.client.UserInterface;
 import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
-import neon.common.resources.CGame;
-import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
+import neon.entity.entities.Player;
 
 /**
  * 
@@ -52,7 +50,7 @@ public class GameModule extends Module {
 	private final RenderPane pane = new RenderPane(provider, provider);
 	
 	private Scene scene;
-	private int xpos = 0, ypos = 0, scale = 20;
+	private int scale = 20;
 	
 	public GameModule(UserInterface ui, EventBus bus) {
 		this.ui = ui;
@@ -72,41 +70,49 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
+
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
 	}
 	
 	@Subscribe
-	private void start(UpdateEvent.Start event) {
+	private void update(UpdateEvent.Start event) {
 		// prepare the scene
 		scene.setRoot(pane);
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> pane.draw(xpos, ypos, scale));
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> pane.draw(xpos, ypos, scale));		
+		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
+		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> redraw());		
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Map event) throws ResourceException {
-		// store all resources
+	private void update(UpdateEvent.Map event) {
+		// store all resources and entities
 		provider.clear();
 		provider.addResources(event.getResources());
 		provider.addEntities(event.getEntities());
 		
-		// get the right map
-		CGame game = provider.getResource("config", "game");
-		RMap map = provider.getResource("maps", game.getStartMap());
-		
-		pane.setMap(map);		
-		pane.draw(xpos, ypos, scale);
+		pane.setMap(event.getMap());		
+		redraw();
+	}
+	
+	@Subscribe
+	private void update(UpdateEvent.Entities event) {
+		// store all changed entities
+		provider.addEntities(event.getEntities());
+		redraw();
 	}
 	
 	private void move(String direction) {
 		bus.post(new InputEvent.Move(direction));
-		switch(direction) {
-		case "left": xpos = Math.max(0, xpos - 1); break;
-		case "right": xpos++; break;
-		case "up": ypos = Math.max(0, ypos - 1); break;
-		case "down": ypos++; break;
-		}
-
+	}
+	
+	private void redraw() {
+		Player player = (Player) provider.getEntity(0);
+		int xpos = Math.max(0, (int) (player.shape.getX() - pane.getWidth()/(2*scale)));
+		int ypos = Math.max(0, (int) (player.shape.getY() - pane.getHeight()/(2*scale)));
 		pane.draw(xpos, ypos, scale);
+	}
+	
+	private void showInventory() {
+		bus.post(new TransitionEvent("inventory"));
 	}
 	
 	@Override

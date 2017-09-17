@@ -68,7 +68,7 @@ public class UserInterface {
 		bus.register(mapHandler);
 		creatureHandler = new CreatureHandler(resources, bus);
 		bus.register(creatureHandler);
-		itemHandler = new ItemHandler();
+		itemHandler = new ItemHandler(resources, bus);
 		bus.register(itemHandler);
 		terrainHandler = new TerrainHandler(resources, bus);
 		bus.register(terrainHandler);

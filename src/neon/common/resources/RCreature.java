@@ -28,20 +28,20 @@ import javafx.scene.paint.Color;
  */
 public class RCreature extends Resource {
 	private final String name;
-	private final String text;
+	private final String character;
 	private final Color color;
 	
 	/**
-	 * Creates a new creature resource with the given id and type.
+	 * Creates a new creature resource with the given id, name, character and color.
 	 * 
 	 * @param id
 	 * @param type
 	 */
-	public RCreature(String id, String name, String text, Color color) {
+	public RCreature(String id, String name, String character, Color color) {
 		super(id, "creature", "creatures");
 		this.name = name;
 		this.color = color;
-		this.text = text;
+		this.character = character;
 	}
 	
 	/**
@@ -51,10 +51,16 @@ public class RCreature extends Resource {
 		return name;
 	}
 	
-	public String getText() {
-		return text;
+	/**
+	 * @return the unicode character representing the creature
+	 */
+	public String getCharacter() {
+		return character;
 	}
 	
+	/**
+	 * @return	the color of this creature
+	 */
 	public Color getColor() {
 		return color;
 	}

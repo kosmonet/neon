@@ -90,9 +90,16 @@ public class RenderPane extends StackPane {
 		}
 	}
 	
+	/**
+	 * Draws the map.
+	 * 
+	 * @param xmin
+	 * @param ymin
+	 * @param scale
+	 */
 	private void drawMap(int xmin, int ymin, int scale) {
-		for (int x = xmin; x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
-			for (int y = ymin; y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
+		for (int x = Math.max(0, xmin); x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
+			for (int y = Math.max(0,  ymin); y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
 				try {
 					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
 					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
@@ -105,11 +112,20 @@ public class RenderPane extends StackPane {
 		}		
 	}
 	
+	/**
+	 * Draws the entities on the map.
+	 * 
+	 * @param entity
+	 * @param xmin
+	 * @param ymin
+	 * @param scale
+	 */
 	private void drawEntity(Entity entity, int xmin, int ymin, int scale) {
 		if (entity instanceof Player) {
 			Player player = (Player) entity;
 			GraphicsContext gc = layers.get(player.shape.getZ()).getGraphicsContext2D();
 			Image image = TextureFactory.getImage(scale, player.graphics.getColor(), player.graphics.getText());
+			gc.clearRect(scale*(player.shape.getX() - xmin) + 1, scale*(player.shape.getY() - ymin) + 1, scale - 1, scale - 1);
 			gc.drawImage(image, scale*(player.shape.getX() - xmin), scale*(player.shape.getY() - ymin));
 		}
 	}

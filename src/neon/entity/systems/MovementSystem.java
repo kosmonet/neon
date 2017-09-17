@@ -33,6 +33,7 @@ import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
 import neon.entity.SystemEvent;
 import neon.entity.entities.Entity;
+import neon.entity.entities.Player;
 
 /**
  * The system that handles all movement-related events.
@@ -45,6 +46,8 @@ public class MovementSystem {
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
+	private RMap map;
+	
 	public MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.resources = resources;
@@ -54,7 +57,7 @@ public class MovementSystem {
 	@Subscribe
 	private void start(SystemEvent.Start event) throws ResourceException {
 		// add the player to the start map
-		RMap map = event.getMap();
+		map = event.getMap();
 		map.getEntities().add(0l);
 		
 		// collect all necessary resources to start the game
@@ -77,6 +80,15 @@ public class MovementSystem {
 	
 	@Subscribe
 	private void move(InputEvent.Move event) {
-		System.out.println(event.getDirection());
+		Player player = (Player) entities.getEntity(0);
+		
+		switch(event.getDirection()) {
+		case "left": player.shape.setX(Math.max(0, player.shape.getX() - 1)); break;
+		case "right": player.shape.setX(player.shape.getX() + 1); break;
+		case "up": player.shape.setY(Math.max(0, player.shape.getY() - 1)); break;
+		case "down": player.shape.setY(player.shape.getY() + 1); break;
+		}
+		
+		bus.post(new UpdateEvent.Entities(player));
 	}
 }

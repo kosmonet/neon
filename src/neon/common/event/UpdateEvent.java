@@ -31,7 +31,7 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-public class UpdateEvent extends ClientEvent {
+public abstract class UpdateEvent extends ClientEvent {
 	protected final Collection<Resource> resources = new HashSet<>();
 	protected final Collection<Entity> entities = new HashSet<>();
 	
@@ -57,8 +57,7 @@ public class UpdateEvent extends ClientEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Turn extends UpdateEvent {
-	}
+	public static class Turn extends UpdateEvent {}
 	
 	/**
 	 * An event to indicate a change of map.
@@ -81,4 +80,10 @@ public class UpdateEvent extends ClientEvent {
 	}
 	
 	public static class Resources extends UpdateEvent {}
+	
+	public static class Entities extends UpdateEvent {
+		public Entities(Entity entity) {
+			entities.add(entity);
+		}
+	}
 }

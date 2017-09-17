@@ -20,6 +20,7 @@ package neon.common.resources.loaders;
 
 import org.jdom2.Element;
 
+import javafx.scene.paint.Color;
 import neon.common.resources.RItem;
 
 /**
@@ -34,8 +35,10 @@ public class ItemLoader implements ResourceLoader<RItem> {
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
 		String type = root.getName();
-		RItem creature = new RItem(id, type, name);
-		return creature;
+		String character = root.getChild("graphics").getAttributeValue("char");
+		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
+		RItem item = new RItem(id, type, name, character, color);
+		return item;
 	}
 	
 	@Override

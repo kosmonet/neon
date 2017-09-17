@@ -34,7 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
@@ -42,21 +42,21 @@ import neon.editor.help.HelpWindow;
 
 /**
  * This resource editor shows a modal dialog window to edit the properties
- * of a creature:
+ * of a item:
  * <ul>
  * 	<li>the display name</li>
  * 	<li>the character</li>
  * 	<li>the color</li>
  * </ul>
  * 
- * The creature editor does not perform the actual saving to disk of the edited 
- * creature resource. Instead, it sends a {@code SaveEvent} to request 
- * that the creature resource be saved.
+ * The item editor does not perform the actual saving to disk of the edited 
+ * item resource. Instead, it sends a {@code SaveEvent} to request 
+ * that the item resource be saved.
  * 
  * @author mdriesen
  *
  */
-public class CreatureEditor {
+public class ItemEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TextField nameField, textField;
@@ -68,22 +68,22 @@ public class CreatureEditor {
 	private final Card card;
 	
 	/**
-	 * Initializes this {@code CreatureEditor}.
+	 * Initializes this {@code ItemEditor}.
 	 * 
-	 * @param creature	the creature to edit
+	 * @param item	the item to edit
 	 * @param mainStage	the parent stage for the dialog window
 	 * @param bus		the {@code EventBus} used for messaging
 	 * @throws ResourceException 
 	 */
-	public CreatureEditor(Card card, EventBus bus) throws ResourceException {
+	public ItemEditor(Card card, EventBus bus) throws ResourceException {
 		this.card = card;
-		RCreature creature = card.getResource();
+		RItem item = card.getResource();
 		this.bus = bus;
 		
-		stage.setTitle("Creature properties");
+		stage.setTitle("Item properties");
 		stage.initModality(Modality.APPLICATION_MODAL); 
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("Creature.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("Item.fxml"));
 		loader.setController(this);
 		
 		try {
@@ -91,23 +91,23 @@ public class CreatureEditor {
 			scene.getStylesheets().add(getClass().getResource("../ui/editor.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load creature editor ui: " + e.getMessage());
+			logger.severe("failed to load item editor ui: " + e.getMessage());
 		}
 		
 		previewLabel.setStyle("-fx-background-color: black;");
-		previewLabel.setTextFill(creature.getColor());
-		previewLabel.setText(creature.getCharacter());
+		previewLabel.setTextFill(item.getColor());
+		previewLabel.setText(item.getCharacter());
 
-		nameField.setText(creature.getName());
-		textField.setText(creature.getCharacter());
-		colorBox.setValue(creature.getColor());
+		nameField.setText(item.getName());
+		textField.setText(item.getCharacter());
+		colorBox.setValue(item.getColor());
 		
 		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 		colorBox.valueProperty().addListener(value -> refresh());
 	}
 	
 	/**
-	 * Shows the creature editor window.
+	 * Shows the item editor window.
 	 */
 	public void show(Window parent) {
 		stage.initOwner(parent);
@@ -133,16 +133,16 @@ public class CreatureEditor {
 	 * @throws ResourceException
 	 */
 	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
-		RCreature rc = card.getResource();
+		RItem rc = card.getResource();
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
-		String text = textField.getText();
+		String character = textField.getText();
 		// check if anything was actually changed
-		if (!name.equals(rc.getName()) || !text.equals(rc.getCharacter()) || !color.equals(rc.getColor())) {
+		if (!name.equals(rc.getName()) || !character.equals(rc.getCharacter()) || !color.equals(rc.getColor())) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature(card.toString(), name, text, color);
-			bus.post(new SaveEvent.Resources(creature));
+			RItem item = new RItem(card.toString(), "item", name, character, color);
+			bus.post(new SaveEvent.Resources(item));
 			card.setChanged(true);				
 		}
 	}
@@ -153,6 +153,6 @@ public class CreatureEditor {
 	}
 	
 	@FXML private void helpPressed(ActionEvent event) {
-		new HelpWindow().show("creatures.html");
+		new HelpWindow().show("items.html");
 	}
 }

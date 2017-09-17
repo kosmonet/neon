@@ -32,6 +32,6 @@ public class Creature extends Entity {
 		super(uid);
 		inventory = new InventoryComponent(uid);
 		shape = new ShapeComponent(uid);
-		graphics = new GraphicsComponent(uid, species.getText(), species.getColor());
+		graphics = new GraphicsComponent(uid, species.getCharacter(), species.getColor());
 	}
 }

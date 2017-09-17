@@ -18,36 +18,82 @@
 
 package neon.editor.controllers;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.stage.Window;
+import neon.common.resources.RItem;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.ItemLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
+import neon.editor.SaveEvent;
+import neon.editor.dialogs.ItemEditor;
 import neon.editor.ui.CardCellFactory;
 
 public class ItemHandler {
+	private final static Logger logger = Logger.getGlobal();
+
 	@FXML private TreeView<Card> itemTree;
+	
+	private final ResourceManager resources;
+	private final EventBus bus;
+	private final TreeItem<Card> items = new TreeItem<>(new Card.Type("Items"));
+	private final TreeItem<Card> doors = new TreeItem<>(new Card.Type("Doors"));
+	private final TreeItem<Card> containers = new TreeItem<>(new Card.Type("Containers"));
+	
+	private Window parent;
+
+	public ItemHandler(ResourceManager resources, EventBus bus) {
+		this.resources = resources;
+		this.bus = bus;
+	}
 	
 	@FXML public void initialize() {		
 		itemTree.setCellFactory(new CardCellFactory());
 	}
 	
-	private void loadResources() {
+	private void loadResources(Multimap<String, Card> cards) {
+		ContextMenu itemMenu = new ContextMenu();
+		MenuItem addItem = new MenuItem("Add item");
+		addItem.setOnAction(event -> addItem(event));
+		itemMenu.getItems().add(addItem);
+		MenuItem removeItem = new MenuItem("Remove item");
+		removeItem.setOnAction(event -> removeItem(event));
+		itemMenu.getItems().add(removeItem);
+		itemTree.setContextMenu(itemMenu);
+
 		TreeItem<Card> root = new TreeItem<>();
 		itemTree.setShowRoot(false);
 		itemTree.setRoot(root);
 		itemTree.setOnMouseClicked(event -> mouseClicked(event));
+		resources.addLoader("item", new ItemLoader());
 		
-		TreeItem<Card> items = new TreeItem<>(new Card.Type("Items"));
 		root.getChildren().add(items);
-		TreeItem<Card> doors = new TreeItem<>(new Card.Type("Doors"));
 		root.getChildren().add(doors);
-		TreeItem<Card> containers = new TreeItem<>(new Card.Type("Containers"));
 		root.getChildren().add(containers);
+
+		for (Card card : cards.get("items")) {
+			items.getChildren().add(new TreeItem<Card>(card));
+		}
 	}
 	
 	/**
@@ -58,7 +104,72 @@ public class ItemHandler {
 	@Subscribe
 	private void load(LoadEvent event) {
 		// module is loading on this tick, load creatures on the next tick
-		Platform.runLater(() -> loadResources());
+		Platform.runLater(() -> loadResources(event.getCards()));
+	}
+	
+	/**
+	 * Signals to this handler that something was saved.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	private void save(SaveEvent event) {
+		// stuff may still be going on, refresh the tree on the next tick
+		Platform.runLater(() -> itemTree.refresh());
+	}
+	
+	/**
+	 * Adds an item to the module.
+	 * 
+	 * @param event
+	 */
+	private void addItem(ActionEvent event) {
+		// ask for a new item id
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Add New Item");
+		dialog.setHeaderText("Give an id for the new item.");
+		dialog.setContentText("Item id:");
+		Optional<String> result = dialog.showAndWait();
+
+		// check if id is valid
+		if (result.isPresent() && !result.get().isEmpty()) {
+			String id = result.get();
+			if (resources.hasResource("items", id)) {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Item conflict");
+				alert.setContentText("The item id already exists, use another id.");
+				alert.showAndWait();
+				return;
+			}
+
+			// create the item
+			try {
+				resources.addResource(new RItem(id, "item", id, "?", Color.BLUE));
+				Card card = new Card("items", id, resources, false);
+				card.setChanged(true);
+				TreeItem<Card> item = new TreeItem<>(card);
+				items.getChildren().add(item);
+            	new ItemEditor(item.getValue(), bus).show(parent);
+			} catch (IOException e) {
+				logger.severe("could not create item " + id);
+			} catch (ResourceException e) {
+				logger.severe(e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * Removes an item from the module.
+	 * 
+	 * @param event
+	 */
+	private void removeItem(ActionEvent event) {
+		// remove from the item tree
+		TreeItem<Card> selected = itemTree.getSelectionModel().getSelectedItem();
+		selected.getParent().getChildren().remove(selected);
+		// remove from the temp folder
+		resources.removeResource("items", selected.getValue().toString());
 	}
 	
 	/**
@@ -71,11 +182,11 @@ public class ItemHandler {
             TreeItem<Card> item = itemTree.getSelectionModel().getSelectedItem();
             // don't react when clicked on the item type headings
             if (item != null && !(item.getValue() instanceof Card.Type)) {
-//	            try {
-//					new CreatureEditor(item.getValue(), bus).show(parent);
-//				} catch (ResourceException e) {
-//					logger.severe(e.getMessage());
-//				}
+	            try {
+					new ItemEditor(item.getValue(), bus).show(parent);
+				} catch (ResourceException e) {
+					logger.severe(e.getMessage());
+				}
             }
         }
 	}
