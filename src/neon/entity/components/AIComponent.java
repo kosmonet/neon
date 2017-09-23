@@ -16,25 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.entity.components;
 
-import neon.common.resources.RCreature;
-import neon.entity.components.AIComponent;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.InventoryComponent;
-import neon.entity.components.ShapeComponent;
-
-public class Creature extends Entity {
-	public final InventoryComponent inventory;
-	public final ShapeComponent shape;
-	public final GraphicsComponent graphics;
-	public final AIComponent ai;
+public class AIComponent implements Component {
+	private final long uid;
 	
-	public Creature(long uid, RCreature species) {
-		super(uid);
-		inventory = new InventoryComponent(uid);
-		shape = new ShapeComponent(uid);
-		graphics = new GraphicsComponent(uid, species.getCharacter(), species.getColor());
-		ai = new AIComponent(uid);
+	public AIComponent(long uid) {
+		this.uid = uid;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 }

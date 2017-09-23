@@ -8,6 +8,7 @@
  * 		<li>name: same as id</li>
  * 		<li>color: blue</li>
  * 		<li>character: ?</li>
+ * 		<li>speed: 10</li>
  * 	</ul>
  * 	</li>
  * 

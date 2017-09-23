@@ -37,7 +37,8 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		String name = root.getAttributeValue("name");
 		String character = root.getChild("graphics").getAttributeValue("char");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
-		RCreature creature = new RCreature(id, name, character, color);
+		int speed = Integer.parseInt(root.getAttributeValue("speed"));
+		RCreature creature = new RCreature(id, name, character, color, speed);
 		return creature;
 	}
 	

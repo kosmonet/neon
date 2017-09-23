@@ -21,24 +21,24 @@
    <center>
       <GridPane hgap="10.0" vgap="5.0" BorderPane.alignment="CENTER">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" />
-          <ColumnConstraints hgrow="SOMETIMES" />
+			<ColumnConstraints hgrow="SOMETIMES" />
+			<ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
+			<RowConstraints vgrow="SOMETIMES" />
+			<RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
+			<RowConstraints vgrow="SOMETIMES" />
+			<RowConstraints vgrow="SOMETIMES" />
+		<RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
             <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
-         <children>
+		<children>
             <Label text="Game title:" />
             <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.columnSpan="4" />
             <Separator GridPane.columnSpan="5" GridPane.rowIndex="1" />

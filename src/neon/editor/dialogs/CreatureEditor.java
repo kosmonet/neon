@@ -29,6 +29,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -62,6 +64,7 @@ public class CreatureEditor {
 	@FXML private TextField nameField, textField;
 	@FXML private ColorPicker colorBox;
 	@FXML private Label previewLabel;
+	@FXML private Spinner<Integer> speedSpinner;
 	
 	private final Stage stage = new Stage();
 	private final EventBus bus;
@@ -101,6 +104,8 @@ public class CreatureEditor {
 		nameField.setText(creature.getName());
 		textField.setText(creature.getCharacter());
 		colorBox.setValue(creature.getColor());
+		speedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
+		speedSpinner.getValueFactory().setValue(creature.getSpeed());
 		
 		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 		colorBox.valueProperty().addListener(value -> refresh());
@@ -137,15 +142,22 @@ public class CreatureEditor {
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
 		String text = textField.getText();
+		speedSpinner.increment(0);	// stupid way to validate spinner value
+		int speed = speedSpinner.getValue();
 		// check if anything was actually changed
-		if (!name.equals(rc.getName()) || !text.equals(rc.getCharacter()) || !color.equals(rc.getColor())) {
+		if (!name.equals(rc.getName()) || !text.equals(rc.getCharacter()) || !color.equals(rc.getColor()) ||
+				speed != rc.getSpeed()) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature(card.toString(), name, text, color);
+			RCreature creature = new RCreature(card.toString(), name, text, color, speed);
 			bus.post(new SaveEvent.Resources(creature));
 			card.setChanged(true);				
 		}
 	}
+	
+//	private boolean isChanged() {
+//		return !name.equals(rc.getName()) || !text.equals(rc.getCharacter()) || !color.equals(rc.getColor());
+//	}
 	
 	@FXML private void okPressed(ActionEvent event) throws ResourceException {
 		applyPressed(event);

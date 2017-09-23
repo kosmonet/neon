@@ -30,6 +30,7 @@ public class RCreature extends Resource {
 	private final String name;
 	private final String character;
 	private final Color color;
+	private final int speed;
 	
 	/**
 	 * Creates a new creature resource with the given id, name, character and color.
@@ -37,11 +38,12 @@ public class RCreature extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RCreature(String id, String name, String character, Color color) {
+	public RCreature(String id, String name, String character, Color color, int speed) {
 		super(id, "creature", "creatures");
 		this.name = name;
 		this.color = color;
 		this.character = character;
+		this.speed = speed;
 	}
 	
 	/**
@@ -63,5 +65,9 @@ public class RCreature extends Resource {
 	 */
 	public Color getColor() {
 		return color;
+	}
+	
+	public int getSpeed() {
+		return speed;
 	}
 }

@@ -159,7 +159,7 @@ public class CreatureHandler {
 
 			// create the creature
 			try {
-				resources.addResource(new RCreature(id, id, "?", Color.BLUE));
+				resources.addResource(new RCreature(id, id, "?", Color.BLUE, 10));
 				Card card = new Card("creatures", id, resources, false);
 				card.setChanged(true);
 				TreeItem<Card> item = new TreeItem<>(card);

@@ -30,7 +30,7 @@ import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 
 /**
- * This service handles the inventory-related server bits.
+ * This system handles the inventory-related server bits.
  * 
  * @author mdriesen
  *
