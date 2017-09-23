@@ -84,9 +84,9 @@ public class ClientProvider implements ResourceProvider, EntityProvider {
 		}
 	}
 	
-	@Override
-	public Entity getEntity(long uid) {
-		return entities.get(uid);
+	@Override @SuppressWarnings("unchecked")
+	public <T extends Entity> T getEntity(long uid) {
+		return (T) entities.get(uid);
 	}
 
 	@Override

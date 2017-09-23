@@ -28,17 +28,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 
-class TextureFactory {
+public class TextureFactory {
 	private final static HashMap<Type, Image> map = new HashMap<>();
 	private final static SnapshotParameters parameters = new SnapshotParameters();
 	private final static Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
 	
 	static {
 		parameters.setFill(Color.TRANSPARENT);
+		Font.loadFont("lib/DejaVuSansMono.ttf", 12);
 	}
 	
-	static Image getImage(int size, Paint paint, String text) {
+	public static Image getImage(int size, Paint paint, String text) {
 		if(text.length() != 1) {
 			throw new IllegalArgumentException("String should be one character in length.");
 		}
@@ -48,13 +50,18 @@ class TextureFactory {
 		if (map.containsKey(type)) {
 			return map.get(type);
 		} else {
-//			Font font = base.deriveFont(style, size*6/7f);
-			
 			Canvas canvas = new Canvas(size, size);
 			GraphicsContext gc = canvas.getGraphicsContext2D();
 			gc.setFill(bg);
 			gc.fillRect(0, 0, size, size);
 			gc.setFill(paint);
+			
+			// @ looks ugly in DejaVu Sans Mono
+			if(!text.equals("@")) {
+				gc.setFont(Font.font("DejaVu Sans Mono", size*6/7));
+			} else {
+				gc.setFont(Font.font(size*6/7));				
+			}
 			// 0.25 en 0.85 to get the text in the middle of the image
 			gc.fillText(text, size*0.25, size*0.85);
 

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import neon.client.ui.DescriptionLabel?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
@@ -16,23 +17,29 @@
 	</top>
 	<center>
 		<GridPane BorderPane.alignment="CENTER">
+			<rowConstraints>
+				<RowConstraints vgrow="ALWAYS" />
+			</rowConstraints>
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="34.0" />
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
 			</columnConstraints>
 			<children>
-				<ListView fx:id="itemList" />
-				<VBox GridPane.columnIndex="2" />
+				<ListView fx:id="playerList" GridPane.columnIndex="0" />
+				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
+					<DescriptionLabel fx:id="description" focusTraversable="false" />
+				</HBox>
+				<ListView fx:id="followerList" GridPane.columnIndex="2"  />
 			</children>
 		</GridPane>
 	</center>
 	<bottom>
 		<HBox styleClass="bottom-buttons">
 			<children>
-				<Button fx:id="equipButton" defaultButton="true" focusTraversable="false" text="Enter" />
-				<Label text="Equip" />
-				<Button fx:id="dropButton" text="Del" focusTraversable="false" />
+				<Button fx:id="equipButton" focusTraversable="false" text="Space" />
+				<Label text="Use/equip" />
+				<Button fx:id="dropButton" text="Enter" defaultButton="true" focusTraversable="false" />
 				<Label text="Drop" />
 				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
 				<Label text="Cancel" />

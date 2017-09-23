@@ -23,6 +23,6 @@ import java.util.Collection;
 import neon.entity.entities.Entity;
 
 public interface EntityProvider {
-	public Entity getEntity(long uid);
+	public <T extends Entity> T getEntity(long uid);
 	public Collection<Entity> getEntities();
 }

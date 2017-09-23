@@ -79,8 +79,19 @@ public abstract class UpdateEvent extends ClientEvent {
 		}
 	}
 	
+	/**
+	 * An event to signal a resource update.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Resources extends UpdateEvent {}
 	
+	/**
+	 * An event to signal an entity update.
+	 * @author mdriesen
+	 *
+	 */
 	public static class Entities extends UpdateEvent {
 		public Entities(Entity entity) {
 			entities.add(entity);

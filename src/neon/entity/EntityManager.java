@@ -27,14 +27,16 @@ import neon.entity.entities.Entity;
 public class EntityManager implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
 
-	public Entity getEntity(long uid) {
-		return entities.get(uid);
+	@Override @SuppressWarnings("unchecked")
+	public <T extends Entity> T getEntity(long uid) {
+		return (T) entities.get(uid);
 	}
 	
 	public void addEntity(Entity entity) {
 		entities.put(entity.uid, entity);
 	}
 	
+	@Override
 	public Collection<Entity> getEntities() {
 		return entities.values();
 	}

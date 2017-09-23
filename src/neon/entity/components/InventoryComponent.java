@@ -40,4 +40,8 @@ public class InventoryComponent implements Component {
 	public void removeItem(long uid) {
 		items.remove(uid);
 	}
+	
+	public Collection<Long> getItems() {
+		return items;
+	}
 }

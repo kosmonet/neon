@@ -16,29 +16,42 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.entity.systems;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import neon.common.event.ClientEvent;
+import neon.common.event.ServerEvent;
+import neon.entity.EntityManager;
 import neon.entity.entities.Item;
+import neon.entity.entities.Player;
 
 /**
- * An event that is sent to the client.
+ * This service handles the inventory-related server bits.
  * 
  * @author mdriesen
  *
  */
-public class ClientEvent extends NeonEvent {
-	public static class Inventory extends ClientEvent {
-		private final ArrayList<Item> items;
-		
-		public Inventory(Collection<Item> items) {
-			this.items = new ArrayList<>(items);
+public class InventorySystem {
+	private final EventBus bus;
+	private final EntityManager entities;
+	
+	public InventorySystem(EntityManager entities, EventBus bus) {
+		this.bus = bus;
+		this.entities = entities;
+	}
+	
+	@Subscribe
+	private void getInventory(ServerEvent.Inventory event) {
+		Player player = entities.getEntity(0);
+		ArrayList<Item> items = new ArrayList<>();
+		for (long uid : player.inventory.getItems()) {
+			items.add(entities.getEntity(uid));
 		}
 		
-		public Collection<Item> getItems() {
-			return items;
-		}
+		bus.post(new ClientEvent.Inventory(items));
 	}
 }

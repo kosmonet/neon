@@ -90,8 +90,8 @@ public class Client implements Runnable {
 		bus.register(game);
 		
 		InventoryModule inventory = new InventoryModule(ui, bus);
-		modules.add(game);
-		bus.register(game);
+		modules.add(inventory);
+		bus.register(inventory);
 		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));

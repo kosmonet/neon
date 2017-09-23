@@ -42,6 +42,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.MapLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
@@ -166,6 +167,7 @@ class ServerLoader {
 		resources.addLoader("map", new MapLoader());
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());
+		resources.addLoader("item", new ItemLoader());
 		
 		// check if all required parent modules are present
 		try {

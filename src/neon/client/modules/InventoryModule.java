@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -33,6 +34,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
+import neon.client.ui.DescriptionLabel;
+import neon.common.event.ClientEvent;
+import neon.common.event.ServerEvent;
 import neon.entity.entities.Item;
 
 public class InventoryModule extends Module {
@@ -42,7 +46,8 @@ public class InventoryModule extends Module {
 	private final EventBus bus;
 
 	@FXML private Button cancelButton;
-	@FXML private ListView<Item> itemList;
+	@FXML private ListView<Item> playerList, followerList;
+	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
 	
@@ -63,10 +68,9 @@ public class InventoryModule extends Module {
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 		
 		// list catches the esc key, we need a separate listener
-		itemList.setOnKeyPressed(event -> keyPressed(event));
-		
-		ObservableList<Item> items = FXCollections.observableArrayList();
-		itemList.setItems(items);
+		playerList.setOnKeyPressed(event -> keyPressed(event));
+		followerList.setOnKeyPressed(event -> keyPressed(event));
+		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -75,14 +79,29 @@ public class InventoryModule extends Module {
 		}
 	}
 	
+	@Subscribe
+	private void showInventory(ClientEvent.Inventory event) {
+		playerList.getItems().clear();
+		playerList.getItems().addAll(event.getItems());
+		playerList.getSelectionModel().selectFirst();
+	}
+	
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
+		bus.post(new ServerEvent.Inventory());
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting inventory module");
+	}
+	
+	private class ListListener implements ChangeListener<Item> {
+	    @Override
+	    public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue) {
+	    	description.update(newValue);
+	    }
 	}
 }

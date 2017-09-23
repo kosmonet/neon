@@ -25,13 +25,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.event.ServerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
-import neon.entity.SystemEvent;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
 
@@ -55,7 +55,7 @@ public class MovementSystem {
 	}
 	
 	@Subscribe
-	private void start(SystemEvent.Start event) throws ResourceException {
+	private void start(ServerEvent.Start event) throws ResourceException {
 		// add the player to the start map
 		map = event.getMap();
 		map.getEntities().add(0l);

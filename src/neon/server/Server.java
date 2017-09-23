@@ -36,6 +36,7 @@ import neon.common.resources.CGame;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
+import neon.entity.systems.InventorySystem;
 import neon.entity.systems.MovementSystem;
 
 /**
@@ -79,6 +80,7 @@ public class Server implements Runnable {
 		
 		// add all the systems to the bus
 		bus.register(new MovementSystem(resources, entities, bus));
+		bus.register(new InventorySystem(entities, bus));
 	}
 	
 	/**
