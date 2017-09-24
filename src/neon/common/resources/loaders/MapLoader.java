@@ -39,7 +39,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		RMap map = new RMap(id, name, width, height);
+		short uid = Short.parseShort(root.getAttributeValue("uid"));
+		RMap map = new RMap(id, name, width, height, uid);
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
 		
@@ -59,9 +60,6 @@ public class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	private void initElevation(RMap map, Element elevation) {
-		// initialize with a ground plane at 0 height
-		map.getElevation().add(new Rectangle(0, 0, map.getWidth(), map.getHeight()), 0);
-		
 		for (Element region : elevation.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
 			int height = Integer.parseInt(region.getAttributeValue("h"));
@@ -78,6 +76,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		Element root = new Element("map");
 		root.setAttribute("id", map.getID());
 		root.setAttribute("name", map.getName());
+		root.setAttribute("uid", Short.toString(map.uid));
 		
 		Element size = new Element("size");
 		size.setAttribute("width", Integer.toString(map.getWidth()));
@@ -88,13 +87,15 @@ public class MapLoader implements ResourceLoader<RMap> {
 		root.addContent(terrain);
 		Map<Rectangle, String> leaves = map.getTerrain().getLeaves();
 		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
-			Element region = new Element("region");
-			region.setAttribute("x", Integer.toString(entry.getKey().x));
-			region.setAttribute("y", Integer.toString(entry.getKey().y));
-			region.setAttribute("w", Integer.toString(entry.getKey().width));
-			region.setAttribute("h", Integer.toString(entry.getKey().height));
-			region.setAttribute("id", entry.getValue());
-			terrain.addContent(region);
+			if(entry.getValue() != null) {
+				Element region = new Element("region");
+				region.setAttribute("x", Integer.toString(entry.getKey().x));
+				region.setAttribute("y", Integer.toString(entry.getKey().y));
+				region.setAttribute("w", Integer.toString(entry.getKey().width));
+				region.setAttribute("h", Integer.toString(entry.getKey().height));
+				region.setAttribute("id", entry.getValue());
+				terrain.addContent(region);
+			}
 		}
 		
 		Element height = new Element("height");

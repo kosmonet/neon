@@ -52,6 +52,25 @@ public class RegionQuadTree<T> {
 	}
 	
 	/**
+	 * Initializes the tree with the given size and initial value.
+	 * 
+	 * @param width
+	 * @param height
+	 * @param value
+	 */
+	public RegionQuadTree(int width, int height, T value) {
+		if(width < 1 || height < 1) {
+			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
+		}		
+
+		this.width = width;
+		this.height = height;
+		int size = Math.max(width, height);
+		// make a square tree
+		root = new Node<T>(0, 0, size, size, value);
+	}
+	
+	/**
 	 * Adds a value to the tree.
 	 * 
 	 * @param bounds
@@ -88,8 +107,10 @@ public class RegionQuadTree<T> {
 	
 	public Map<Rectangle, T> getLeaves() {
 		Map<Rectangle, T> leaves = new HashMap<>();
-		for(Node<T> node: root.getLeaves()) {
-			leaves.put(node.getBounds(), node.getValue());
+		if(!root.isLeaf()) {
+			for(Node<T> node : root.getLeaves()) {
+				leaves.put(node.getBounds(), node.getValue());
+			}
 		}
 		return leaves;
 	}

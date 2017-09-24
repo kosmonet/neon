@@ -97,6 +97,7 @@ class GameLoader {
 	}
 	
 	void startOldGame() {
+		// TODO: correcte mod uid's inlezen uit save folder
 		logger.info("starting an old game");
 	}
 }

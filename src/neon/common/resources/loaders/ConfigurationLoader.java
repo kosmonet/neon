@@ -75,9 +75,18 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	}
 
 
-	private Element saveServer(Resource resource) {
-		Element element = new Element("server");
-		return element;
+	private Element saveServer(CServer server) {
+		Element root = new Element("server");
+		Element modules = new Element("modules");
+		for(String id : server.getModules()) {
+			Element module = new Element("module");
+			module.setText(id);
+			module.setAttribute("uid", Short.toString(server.getModuleUID(id)));
+			modules.addContent(module);
+		}
+		
+		root.addContent(modules);
+		return root;
 	}		
 
 	private CClient loadClient(Element root) {

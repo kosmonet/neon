@@ -19,6 +19,7 @@
 package neon.editor.controllers;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -48,6 +49,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -77,6 +79,7 @@ public class MapHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
+	private final HashSet<Short> uids = new HashSet<>();
 	
 	private String namespace, id;	// to keep track of the currently selected resource in the resource pane
 	private ImageCursor cursor;
@@ -134,6 +137,12 @@ public class MapHandler {
 
 		for (Card card : cards.get("maps")) {
 			root.getChildren().add(new TreeItem<Card>(card));
+			try {
+				RMap map = card.getResource();
+				uids.add(map.uid);
+			} catch (ResourceException e) {
+				logger.severe("failed to load map: " + card.toString());
+			}
 		}
 	}
 	
@@ -175,7 +184,7 @@ public class MapHandler {
 	 * called when saving a module or exiting the editor.
 	 */
 	public void saveMaps() {
-		if(!tabs.getTabs().isEmpty()) {
+		if (!tabs.getTabs().isEmpty()) {
 			Alert alert = new Alert(AlertType.CONFIRMATION,
 					"Save all opened maps?", yes, no);
 			alert.setTitle("Warning");
@@ -251,11 +260,12 @@ public class MapHandler {
 			}
 
 			// create the map
-			RMap map = new RMap(id, id, 100, 100);
+			RMap map = new RMap(id, id, 100, 100, getFreeUID());
 
 			try {
 				resources.addResource(map);
 				Card card = new Card("maps", id, resources, false);
+				card.setChanged(true);
 				TreeItem<Card> item = new TreeItem<>(card);
 				mapTree.getRoot().getChildren().add(item);
 				createTab(card);
@@ -265,6 +275,12 @@ public class MapHandler {
 				logger.severe(e.getMessage());
 			}
 		}
+	}
+	
+	private short getFreeUID() {
+		short uid = 0;
+		while(uids.contains(++uid));
+		return uid;
 	}
 	
 	private void createTab(Card card) throws ResourceException {

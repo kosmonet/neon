@@ -20,6 +20,8 @@ package neon.common.resources;
 
 import java.util.LinkedHashSet;
 
+import com.google.common.collect.HashBiMap;
+
 /**
  * Configuration information for the server. This resource should be created 
  * by the server when a new game is started, it cannot initially be loaded 
@@ -31,6 +33,7 @@ import java.util.LinkedHashSet;
 public class CServer extends Resource {
 	private final LinkedHashSet<String> modules = new LinkedHashSet<>();
 	private final String level;
+	private final HashBiMap<String, Short> uids = HashBiMap.create();
 
 	/**
 	 * Initializes this server configuration resource with the given set of
@@ -44,6 +47,11 @@ public class CServer extends Resource {
 		super("server", "config", "config");
 		this.modules.addAll(modules);
 		this.level = level;
+		
+		short index = 1;
+		for(String module : modules) {
+			uids.put(module, index++);
+		}
 	}
 	
 	/**
@@ -60,5 +68,14 @@ public class CServer extends Resource {
 	 */
 	public String getLogLevel() {
 		return level;
+	}
+	
+	/**
+	 * 
+	 * @param module
+	 * @return	the uid of the module
+	 */
+	public short getModuleUID(String module) {
+		return uids.get(module);
 	}
 }

@@ -132,7 +132,7 @@ class Node<T> {
 		return (x >= this.x && x < this.x + width && y >= this.y && y < this.y + height);
 	}
 	
-	private boolean isLeaf() {
+	boolean isLeaf() {
 		return NW == null;
 	}
 	

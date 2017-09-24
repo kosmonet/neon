@@ -24,6 +24,11 @@ import java.util.Map;
 
 import neon.entity.entities.Entity;
 
+/**
+ * 
+ * @author mdriesen
+ *
+ */
 public class EntityManager implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
 
@@ -39,5 +44,13 @@ public class EntityManager implements EntityProvider {
 	@Override
 	public Collection<Entity> getEntities() {
 		return entities.values();
+	}
+	
+	short getModuleUID(Entity entity) {
+		return getModuleUID(entity.uid);
+	}
+	
+	short getModuleUID(long entity) {
+		return (short) (entity >>> 48);		
 	}
 }

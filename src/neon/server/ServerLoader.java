@@ -74,14 +74,14 @@ class ServerLoader {
 	 * @param files
 	 * @param manager
 	 */
-	void configure(NeonFileSystem files, ResourceManager manager) {
+	void configure(NeonFileSystem files, ResourceManager resources) {
 		try {
 			CServer configuration = initConfiguration();
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
 			initFileSystem(files, configuration.getModules());
-			initResources(manager, configuration);
-			initClient(manager);
-			initGame(manager, configuration.getModules());
+			initResources(resources, configuration);
+			initClient(resources);
+			initGame(resources, configuration.getModules());
 			logger.info("server succesfully configured");
 		} catch (JDOMException e) {
 			logger.severe("JDOMException in server configuration");
@@ -100,7 +100,7 @@ class ServerLoader {
 	
 	/**
 	 * Initializes the game resource. If an old game is loaded, the game 
-	 * resource is overwritten by the one from the loaded game.
+	 * resource will be overwritten later by the one from the loaded game.
 	 * 
 	 * @param resources
 	 * @param modules
