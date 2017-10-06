@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class RegionQuadTree<T> {
 	private final int width, height;
-	private final Node<T> root;
+	private final RegionNode<T> root;
 	
 	/**
 	 * Initializes the tree with the given size.
@@ -48,7 +48,7 @@ public class RegionQuadTree<T> {
 		this.height = height;
 		int size = Math.max(width, height);
 		// make a square tree
-		root = new Node<T>(0, 0, size, size);
+		root = new RegionNode<T>(0, 0, size, size);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class RegionQuadTree<T> {
 		this.height = height;
 		int size = Math.max(width, height);
 		// make a square tree
-		root = new Node<T>(0, 0, size, size, value);
+		root = new RegionNode<T>(0, 0, size, size, value);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class RegionQuadTree<T> {
 	public Map<Rectangle, T> getLeaves() {
 		Map<Rectangle, T> leaves = new HashMap<>();
 		if(!root.isLeaf()) {
-			for(Node<T> node : root.getLeaves()) {
+			for(RegionNode<T> node : root.getLeaves()) {
 				leaves.put(node.getBounds(), node.getValue());
 			}
 		}

@@ -41,7 +41,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import neon.common.graphics.RenderPane;
-import neon.common.resources.RMap;
+import neon.editor.resource.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityManager;
@@ -90,7 +90,7 @@ public class MapEditor {
 		this.bus = bus;
 		this.card = card;
 		RMap map = card.getResource();
-		uid = map.uid;
+		uid = map.getUID();
 		
 		grid.setHgap(10);
 	    grid.setVgap(10);
@@ -118,7 +118,7 @@ public class MapEditor {
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
 		renderer = new RenderPane(resources, new EntityManager());
-		renderer.setMap(map);
+		renderer.setMap(map.getTerrain(), map.getElevation());
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
 	    renderer.setOnMouseExited(event -> mouseExited());
@@ -249,7 +249,7 @@ public class MapEditor {
 			logger.severe("could not save map: " + e.getMessage());
 		}
 
-		renderer.setMap(map);
+		renderer.setMap(map.getTerrain(), map.getElevation());
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;

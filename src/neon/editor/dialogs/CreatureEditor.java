@@ -98,14 +98,14 @@ public class CreatureEditor {
 		}
 		
 		previewLabel.setStyle("-fx-background-color: black;");
-		previewLabel.setTextFill(creature.getColor());
-		previewLabel.setText(creature.getCharacter());
+		previewLabel.setTextFill(creature.color);
+		previewLabel.setText(creature.character);
 
-		nameField.setText(creature.getName());
-		textField.setText(creature.getCharacter());
-		colorBox.setValue(creature.getColor());
+		nameField.setText(creature.name);
+		textField.setText(creature.character);
+		colorBox.setValue(creature.color);
 		speedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
-		speedSpinner.getValueFactory().setValue(creature.getSpeed());
+		speedSpinner.getValueFactory().setValue(creature.speed);
 		
 		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 		colorBox.valueProperty().addListener(value -> refresh());
@@ -145,8 +145,8 @@ public class CreatureEditor {
 		speedSpinner.increment(0);	// stupid way to validate spinner value
 		int speed = speedSpinner.getValue();
 		// check if anything was actually changed
-		if (!name.equals(rc.getName()) || !text.equals(rc.getCharacter()) || !color.equals(rc.getColor()) ||
-				speed != rc.getSpeed()) {
+		if (!name.equals(rc.name) || !text.equals(rc.character) || !color.equals(rc.color) ||
+				speed != rc.speed) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
 			RCreature creature = new RCreature(card.toString(), name, text, color, speed);

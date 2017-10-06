@@ -31,8 +31,8 @@ public class Item extends Entity {
 	public Item(long uid, RItem item) {
 		super(uid);
 		shape = new ShapeComponent(uid);
-		graphics = new GraphicsComponent(uid, item.getCharacter(), item.getColor());
-		name = item.getName();
+		graphics = new GraphicsComponent(uid, item.character, item.color);
+		name = item.name;
 	}
 	
 	public String toString() {

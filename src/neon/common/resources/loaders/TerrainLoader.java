@@ -44,7 +44,7 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 	@Override
 	public Element save(RTerrain terrain) {
 		Element root = new Element("terrain");
-		root.setAttribute("id", terrain.getID());
+		root.setAttribute("id", terrain.id);
 		root.setAttribute("name", terrain.getName());
 		
 		Element graphics = new Element("graphics");

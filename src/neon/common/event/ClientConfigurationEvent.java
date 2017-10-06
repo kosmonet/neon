@@ -33,12 +33,12 @@ public class ClientConfigurationEvent extends ClientEvent {
 	/**
 	 * Initializes this event with game configuration data.
 	 * 
-	 * @param cg
+	 * @param config
 	 */
-	public ClientConfigurationEvent(CGame cg) {
-		species = new String[cg.getPlayableSpecies().size()];
-		cg.getPlayableSpecies().toArray(species);
-		title = cg.getTitle();
+	public ClientConfigurationEvent(CGame config) {
+		species = new String[config.getPlayableSpecies().size()];
+		config.getPlayableSpecies().toArray(species);
+		title = config.title;
 	}
 	
 	/**

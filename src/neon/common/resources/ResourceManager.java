@@ -70,7 +70,7 @@ public class ResourceManager implements ResourceProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Resource> void addResource(T resource) throws IOException {
-		String namespace = resource.getNamespace();
+		String namespace = resource.namespace;
 		
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
@@ -79,19 +79,19 @@ public class ResourceManager implements ResourceProvider {
 		}
 		
 		// add resource to the weak value map
-		resources.get(namespace).put(resource.getID(), resource);
+		resources.get(namespace).put(resource.id, resource);
 		
 		// save resource to temp folder
-		String type = resource.getType();
+		String type = resource.type;
 		if (loaders.containsKey(type)) {
 			Document doc = new Document(loaders.get(type).save(resource));
 			if (namespace.equals("global")) {
-				files.saveFile(doc, new XMLTranslator(), resource.getID() + ".xml");			
+				files.saveFile(doc, new XMLTranslator(), resource.id + ".xml");			
 			} else {
-				files.saveFile(doc, new XMLTranslator(), namespace, resource.getID() + ".xml");							
+				files.saveFile(doc, new XMLTranslator(), namespace, resource.id + ".xml");							
 			}
 		} else {
-			throw new IllegalStateException("Loader for resource type <" + resource.getType() + "> was not found.");
+			throw new IllegalStateException("Loader for resource type <" + resource.type + "> was not found.");
 		}
 	}
 	

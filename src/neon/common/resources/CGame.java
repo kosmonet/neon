@@ -23,8 +23,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CGame extends Resource {
+	public final String title;
+	
 	private final Set<String> species = new HashSet<>();
-	private final String title;
 	private final String map;
 	private final int x, y;
 
@@ -44,13 +45,6 @@ public class CGame extends Resource {
 	 */
 	public Set<String> getPlayableSpecies() {
 		return species;
-	}
-	
-	/**
-	 * @return the title of the current game
-	 */
-	public String getTitle() {
-		return title;
 	}
 	
 	public String getStartMap() {

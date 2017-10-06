@@ -56,10 +56,8 @@ public class MovementSystem {
 	
 	@Subscribe
 	private void start(ServerEvent.Start event) throws ResourceException {
-		// add the player to the start map
 		map = event.getMap();
-		map.getEntities().add(0l);
-		
+
 		// collect all necessary resources to start the game
 		Set<Resource> clientResources = new HashSet<>();
 		clientResources.add(resources.getResource("config", "game"));

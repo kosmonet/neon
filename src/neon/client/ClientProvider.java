@@ -54,12 +54,12 @@ public class ClientProvider implements ResourceProvider, EntityProvider {
 	public void addResources(Collection<Resource> collection) {
 		for (Resource resource : collection) {
 			// make sure namespace exists
-			if (!resources.containsKey(resource.getNamespace())) {
-				resources.put(resource.getNamespace(), new HashMap<>());
+			if (!resources.containsKey(resource.namespace)) {
+				resources.put(resource.namespace, new HashMap<>());
 			}
 			
 			// add resource to correct namespace
-			resources.get(resource.getNamespace()).put(resource.getID(), resource);
+			resources.get(resource.namespace).put(resource.id, resource);
 		}
 	}
 	

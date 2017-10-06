@@ -120,7 +120,7 @@ class ServerLoader {
 			try {
 				RModule module = resources.getResource(id);
 				species.addAll(module.getPlayableSpecies());
-				title = module.getTitle().isEmpty() ? title : module.getTitle();
+				title = module.title.isEmpty() ? title : module.title;
 				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
 				x = module.getStartX() >= 0 ? module.getStartX() : x;
 				y = module.getStartY() >= 0 ? module.getStartY() : y;

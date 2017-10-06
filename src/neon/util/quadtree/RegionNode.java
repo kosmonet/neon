@@ -30,10 +30,10 @@ import java.util.Collection;
  *
  * @param <T>
  */
-class Node<T> {
+class RegionNode<T> {
 	private final int x, y, width, height;
 	private T value;
-	private Node<T> NW, NE, SW, SE;
+	private RegionNode<T> NW, NE, SW, SE;
 	
 	/**
 	 * Initializes this {@code Node} without an initial value.
@@ -43,7 +43,7 @@ class Node<T> {
 	 * @param width
 	 * @param height
 	 */
-	Node(int x, int y, int width, int height) {
+	RegionNode(int x, int y, int width, int height) {
 		this(x, y, width, height, null);
 	}
 	
@@ -56,7 +56,7 @@ class Node<T> {
 	 * @param height
 	 * @param value
 	 */
-	Node(int x, int y, int width, int height, T value) {
+	RegionNode(int x, int y, int width, int height, T value) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -75,10 +75,10 @@ class Node<T> {
 		} else if (bounds.intersects(x, y, width, height)) {
 			// if this was a leaf, create children
 			if (isLeaf()) {
-				NW = new Node<T>(x, y, width/2, height/2, this.value); 
-				NE = new Node<T>(x + width/2, y, width - width/2, height/2, this.value);
-				SW = new Node<T>(x, y + height/2, width/2, height - height/2, this.value);
-				SE = new Node<T>(x + width/2, y + height/2, width - width/2, height - height/2, this.value);
+				NW = new RegionNode<T>(x, y, width/2, height/2, this.value); 
+				NE = new RegionNode<T>(x + width/2, y, width - width/2, height/2, this.value);
+				SW = new RegionNode<T>(x, y + height/2, width/2, height - height/2, this.value);
+				SE = new RegionNode<T>(x + width/2, y + height/2, width - width/2, height - height/2, this.value);
 			}
 			
 			// and add value to children
@@ -112,14 +112,14 @@ class Node<T> {
 	 * 
 	 * @return
 	 */
-	Collection<Node<T>> getLeaves() {
+	Collection<RegionNode<T>> getLeaves() {
 		// this leaf may have zero area if the quadtree size is not a power of 2
 		if(width == 0 || height == 0) {
-			return new ArrayList<Node<T>>();
+			return new ArrayList<RegionNode<T>>();
 		} else if(isLeaf()) {
 			return Arrays.asList(this);
 		} else {
-			Collection<Node<T>> list = new ArrayList<>();
+			Collection<RegionNode<T>> list = new ArrayList<>();
 			list.addAll(NW.getLeaves());
 			list.addAll(NE.getLeaves());
 			list.addAll(SW.getLeaves());

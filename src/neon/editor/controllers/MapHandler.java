@@ -50,10 +50,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-import neon.common.resources.RMap;
+import neon.editor.resource.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.MapLoader;
+import neon.editor.resource.MapLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.MapEditor;
@@ -139,9 +139,9 @@ public class MapHandler {
 			root.getChildren().add(new TreeItem<Card>(card));
 			try {
 				RMap map = card.getResource();
-				uids.add(map.uid);
+				uids.add(map.getUID());
 			} catch (ResourceException e) {
-				logger.severe("failed to load map: " + card.toString());
+				logger.severe("could not load map: " + card);
 			}
 		}
 	}

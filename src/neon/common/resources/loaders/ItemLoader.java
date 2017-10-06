@@ -43,9 +43,9 @@ public class ItemLoader implements ResourceLoader<RItem> {
 	
 	@Override
 	public Element save(RItem ri) {
-		Element item = new Element(ri.getType());
-		item.setAttribute("id", ri.getID());
-		item.setAttribute("name", ri.getName());
+		Element item = new Element(ri.type);
+		item.setAttribute("id", ri.id);
+		item.setAttribute("name", ri.name);
 		return item;
 	}
 }

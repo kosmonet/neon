@@ -52,9 +52,9 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 	@Override
 	public Element save(RModule module) {
 		Element root = new Element("module");
-		root.setAttribute("id", module.getID());
+		root.setAttribute("id", module.id);
 		Element title = new Element("title");
-		title.setText(module.getTitle());
+		title.setText(module.title);
 		root.addContent(title);
 		
 		Element start = new Element("start");

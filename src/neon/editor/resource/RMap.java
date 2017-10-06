@@ -16,32 +16,20 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources;
+package neon.editor.resource;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import neon.common.resources.Resource;
 import neon.util.quadtree.RegionQuadTree;
 
-/**
- * 
- * @author mdriesen
- *
- */
 public class RMap extends Resource {
-	/**
-	 * The uid of this map.
-	 */
-	public final short uid;
-	/**
-	 * The fancy display name.
-	 */
-	public final String name;
-	
+	private final String name;
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
-//	private final PointQuadTree<Entity> entities;
-	private final ArrayList<Long> entities = new ArrayList<>();
+	private final ArrayList<Integer> entities = new ArrayList<>();
+	private final short uid;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -61,6 +49,10 @@ public class RMap extends Resource {
 		this.uid = uid;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public int getWidth() {
 		return terrain.getWidth();
 	}
@@ -77,7 +69,11 @@ public class RMap extends Resource {
 		return elevation;
 	}
 	
-	public Collection<Long> getEntities() {
+	public Collection<Integer> getEntities() {
 		return entities;
+	}
+	
+	public short getUID() {
+		return uid;
 	}
 }

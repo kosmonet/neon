@@ -29,9 +29,14 @@ import java.util.Set;
  *
  */
 public class RModule extends Resource {
+	/**
+	 * The title that should be displayed on the start screen. 
+	 */
+	public final String title;
+
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
-	private final String title, map;
+	private final String map;
 	private final int x, y;
 
 	public RModule(String id, String title, String startMap, int startX, int startY) {
@@ -40,14 +45,6 @@ public class RModule extends Resource {
 		map = startMap;
 		x = startX;
 		y = startY;
-	}
-	
-	/**
-	 * 
-	 * @return the title of the current game
-	 */
-	public String getTitle() {
-		return title;
 	}
 	
 	/**

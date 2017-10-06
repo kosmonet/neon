@@ -108,7 +108,7 @@ public class SettingsEditor {
 		
 		try {
 			RModule module = resources.getResource(id);
-			titleField.setText(module.getTitle());
+			titleField.setText(module.title);
 			
 			mapField.setText(module.getStartMap());
 			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));

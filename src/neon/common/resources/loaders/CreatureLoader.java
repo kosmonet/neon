@@ -44,13 +44,13 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 	
 	@Override
 	public Element save(RCreature rc) {
-		Element creature = new Element(rc.getType());
-		creature.setAttribute("id", rc.getID());
-		creature.setAttribute("name", rc.getName());
+		Element creature = new Element(rc.type);
+		creature.setAttribute("id", rc.id);
+		creature.setAttribute("name", rc.name);
 		
 		Element graphics = new Element("graphics");
-		graphics.setAttribute("char", rc.getCharacter());
-		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.getColor()));
+		graphics.setAttribute("char", rc.character);
+		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.color));
 		creature.addContent(graphics);
 		
 		return creature;

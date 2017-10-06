@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources.loaders;
+package neon.editor.resource;
 
 import java.awt.Rectangle;
 import java.util.Map;
@@ -24,7 +24,8 @@ import java.util.Map.Entry;
 
 import org.jdom2.Element;
 
-import neon.common.resources.RMap;
+import neon.editor.resource.RMap;
+import neon.common.resources.loaders.ResourceLoader;
 
 /**
  * A loader for map resources.
@@ -73,9 +74,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	private void initEntities(RMap map, Element entities) {
-		long mod = 0;
 		for (Element entity : entities.getChildren("creature")) {
-			map.getEntities().add(mod | Integer.parseInt(entity.getAttributeValue("uid")));
+			map.getEntities().add(Integer.parseInt(entity.getAttributeValue("uid")));
 		}		
 	}
 
@@ -83,8 +83,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 	public Element save(RMap map) {
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
-		root.setAttribute("name", map.name);
-		root.setAttribute("uid", Short.toString(map.uid));
+		root.setAttribute("name", map.getName());
+		root.setAttribute("uid", Short.toString(map.getUID()));
 		
 		Element size = new Element("size");
 		size.setAttribute("width", Integer.toString(map.getWidth()));

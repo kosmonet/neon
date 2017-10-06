@@ -27,9 +27,18 @@ import javafx.scene.paint.Color;
  *
  */
 public class RItem extends Resource {
-	private final String name;
-	private final String character;
-	private final Color color;
+	/**
+	 * The display name.
+	 */
+	public final String name;
+	/**
+	 * The UTF-8 character to represent the creature on screen.
+	 */
+	public final String character;
+	/**
+	 * The color to render the character with.
+	 */
+	public final Color color;
 	
 	/**
 	 * Creates a new item resource with the given id and type.
@@ -42,20 +51,5 @@ public class RItem extends Resource {
 		this.name = name;
 		this.character = character;
 		this.color = color;
-	}
-	
-	/**
-	 * @return the name of this item
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	public String getCharacter() {
-		return character;
-	}
-	
-	public Color getColor() {
-		return color;
 	}
 }

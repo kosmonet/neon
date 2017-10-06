@@ -115,12 +115,12 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		return new CGame(title, species, map, x, y);
 	}
 
-	private Element saveGame(CGame resource) {
+	private Element saveGame(CGame config) {
 		Element game = new Element("game");
-		game.setAttribute("title", resource.getTitle());
+		game.setAttribute("title", config.title);
 		
 		Element playable = new Element("playable");
-		for (String id : resource.getPlayableSpecies()) {
+		for (String id : config.getPlayableSpecies()) {
 			Element species = new Element("id");
 			species.setText(id);
 			playable.addContent(species);
@@ -128,9 +128,9 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		game.addContent(playable);
 		
 		Element start = new Element("start");
-		start.setAttribute("map", resource.getStartMap());
-		start.setAttribute("x", Integer.toString(resource.getStartX()));
-		start.setAttribute("y", Integer.toString(resource.getStartY()));
+		start.setAttribute("map", config.getStartMap());
+		start.setAttribute("x", Integer.toString(config.getStartX()));
+		start.setAttribute("y", Integer.toString(config.getStartY()));
 		game.addContent(start);
 		
 		return game;

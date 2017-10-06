@@ -209,9 +209,9 @@ public class Editor extends Application {
 	private void saveResource(SaveEvent.Resources event) {	
 		try {
 			resources.addResource(event.getResource());
-			logger.fine("saved resource " + event.getResource().getID());
+			logger.fine("saved resource " + event.getResource().id);
 		} catch (IOException e) {
-			logger.severe("failed to save resource " + event.getResource().getID());
+			logger.severe("failed to save resource " + event.getResource().id);
 		}
 	}
 	

@@ -27,10 +27,22 @@ import javafx.scene.paint.Color;
  *
  */
 public class RCreature extends Resource {
-	private final String name;
-	private final String character;
-	private final Color color;
-	private final int speed;
+	/**
+	 * The display name.
+	 */
+	public final String name;
+	/**
+	 * The UTF-8 character to represent the creature on screen.
+	 */
+	public final String character;
+	/**
+	 * The color to render the character with.
+	 */
+	public final Color color;
+	/**
+	 * The speed stat.
+	 */
+	public final int speed;
 	
 	/**
 	 * Creates a new creature resource with the given id, name, character and color.
@@ -44,30 +56,5 @@ public class RCreature extends Resource {
 		this.color = color;
 		this.character = character;
 		this.speed = speed;
-	}
-	
-	/**
-	 * @return the name of this creature
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * @return the unicode character representing the creature
-	 */
-	public String getCharacter() {
-		return character;
-	}
-	
-	/**
-	 * @return	the color of this creature
-	 */
-	public Color getColor() {
-		return color;
-	}
-	
-	public int getSpeed() {
-		return speed;
 	}
 }
