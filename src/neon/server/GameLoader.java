@@ -30,7 +30,6 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityManager;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 
@@ -45,7 +44,7 @@ class GameLoader {
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
-	private final EntityManager entities;
+	private final EntityTracker entities;
 	
 	/**
 	 * Initializes this game loader.
@@ -54,7 +53,7 @@ class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	GameLoader(EventBus bus, ResourceManager resources, EntityManager entities) {
+	GameLoader(EventBus bus, ResourceManager resources, EntityTracker entities) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
@@ -78,12 +77,12 @@ class GameLoader {
 		player.shape.setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
 		
-		entities.addEntity(new Item(1, resources.getResource("items", "cup")));
+		entities.addEntity(new Item(6, resources.getResource("items", "cup")));
 		entities.addEntity(new Item(2, resources.getResource("items", "cup_gold")));
 		entities.addEntity(new Item(3, resources.getResource("items", "cup_silver")));
 		entities.addEntity(new Item(4, resources.getResource("items", "cup_gold")));
 		entities.addEntity(new Item(5, resources.getResource("items", "cup")));
-		player.inventory.addItem(1);
+		player.inventory.addItem(6);
 		player.inventory.addItem(2);
 		player.inventory.addItem(3);
 		player.inventory.addItem(4);

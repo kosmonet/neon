@@ -25,9 +25,9 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.ClientEvent;
 import neon.common.event.ServerEvent;
-import neon.entity.EntityManager;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
+import neon.server.EntityTracker;
 
 /**
  * This system handles the inventory-related server bits.
@@ -37,9 +37,9 @@ import neon.entity.entities.Player;
  */
 public class InventorySystem {
 	private final EventBus bus;
-	private final EntityManager entities;
+	private final EntityTracker entities;
 	
-	public InventorySystem(EntityManager entities, EventBus bus) {
+	public InventorySystem(EntityTracker entities, EventBus bus) {
 		this.bus = bus;
 		this.entities = entities;
 	}

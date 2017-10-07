@@ -19,6 +19,7 @@
 package neon.common.resources;
 
 import java.util.LinkedHashSet;
+import java.util.logging.Logger;
 
 import com.google.common.collect.HashBiMap;
 
@@ -31,6 +32,8 @@ import com.google.common.collect.HashBiMap;
  *
  */
 public class CServer extends Resource {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final LinkedHashSet<String> modules = new LinkedHashSet<>();
 	private final String level;
 	private final HashBiMap<String, Short> uids = HashBiMap.create();
@@ -52,6 +55,8 @@ public class CServer extends Resource {
 		for(String module : modules) {
 			uids.put(module, index++);
 		}
+		
+		logger.config("module load order: " + uids);
 	}
 	
 	/**

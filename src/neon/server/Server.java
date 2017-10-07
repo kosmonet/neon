@@ -33,9 +33,9 @@ import neon.common.event.NewGameEvent;
 import neon.common.event.ScriptEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
+import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityManager;
 import neon.entity.systems.InventorySystem;
 import neon.entity.systems.MovementSystem;
 
@@ -53,7 +53,7 @@ public class Server implements Runnable {
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");;
 	private final ServerSocket socket;
-	private final EntityManager entities = new EntityManager();
+	private final EntityTracker entities;
 	
 	/**
 	 * Initializes the server.
@@ -70,12 +70,20 @@ public class Server implements Runnable {
 		// configure the server (file system and resource manager)
 		new ServerLoader(bus).configure(files, resources);
 		
+		// initialize the entity tracker
+		try {
+			CServer cs = resources.getResource("config", "server");
+			entities = new EntityTracker(resources, cs);
+		} catch (ResourceException e) {
+			throw new IllegalStateException(e);
+		}
+		
 		// send configuration message to the client
 		try {
 			CGame cg = resources.getResource("config", "game");
 			bus.post(new ClientConfigurationEvent(cg));
 		} catch (ResourceException e) {
-			logger.severe(e.getMessage());
+			throw new IllegalStateException(e);
 		}
 		
 		// add all the systems to the bus

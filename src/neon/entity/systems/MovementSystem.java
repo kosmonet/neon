@@ -31,9 +31,9 @@ import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityManager;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
+import neon.server.EntityTracker;
 
 /**
  * The system that handles all movement-related events.
@@ -42,13 +42,13 @@ import neon.entity.entities.Player;
  *
  */
 public class MovementSystem {
-	private final EntityManager entities;
+	private final EntityTracker entities;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
 	private RMap map;
 	
-	public MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public MovementSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.entities = entities;
 		this.resources = resources;
 		this.bus = bus;
@@ -71,6 +71,10 @@ public class MovementSystem {
 		// collect all the necessary entities
 		Set<Entity> clientEntities = new HashSet<>();
 		clientEntities.add(entities.getEntity(0));
+		
+		for(Long uid : map.getEntities()) {
+			clientEntities.add(entities.getEntity(uid));
+		}
 
 		// tell the client everything is ready
 		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));

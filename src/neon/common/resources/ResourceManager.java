@@ -186,8 +186,7 @@ public class ResourceManager implements ResourceProvider {
 	}
 	
 	/**
-	 * Removes the given resource from the resource manager. The resource 
-	 * might still be reloadable from disk afterwards.
+	 * Removes the given resource from the resource manager. 
 	 * 
 	 * @param namespace
 	 * @param id

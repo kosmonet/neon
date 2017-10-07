@@ -43,7 +43,6 @@ import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.ItemLoader;
-import neon.common.resources.loaders.MapLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
 
@@ -164,10 +163,11 @@ class ServerLoader {
 		resources.addLoader("client", loader);
 		resources.addLoader("game", loader);
 		resources.addLoader("module", new ModuleLoader());
-		resources.addLoader("map", new MapLoader());
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());
 		resources.addLoader("item", new ItemLoader());
+		// maps are treated separately from other resources
+//		resources.addLoader("map", new MapLoader());
 		
 		// check if all required parent modules are present
 		try {

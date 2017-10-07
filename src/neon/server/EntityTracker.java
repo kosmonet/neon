@@ -16,28 +16,44 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity;
+package neon.server;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+
+import neon.common.resources.CServer;
+import neon.common.resources.ResourceManager;
+import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
 /**
+ * This class tracks all loaded entities in the current game (and by extension
+ * all loaded modules and maps). 
  * 
  * @author mdriesen
  *
  */
-public class EntityManager implements EntityProvider {
+public class EntityTracker implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
+	private final MapLoader loader;
+//	private final ResourceManager resources;
+//	private final CServer config;
 
+	EntityTracker(ResourceManager resources, CServer config) {
+//		this.resources = resources;
+		loader = new MapLoader(this, resources);
+		resources.addLoader("map", loader);
+//		this.config = config;
+	}
+	
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
 		return (T) entities.get(uid);
 	}
 	
-	public void addEntity(Entity entity) {
+	void addEntity(Entity entity) {
 		entities.put(entity.uid, entity);
 	}
 	

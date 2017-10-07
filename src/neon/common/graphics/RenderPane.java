@@ -29,6 +29,7 @@ import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
 import neon.entity.EntityProvider;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
 import neon.util.quadtree.RegionQuadTree;
@@ -126,6 +127,12 @@ public class RenderPane extends StackPane {
 			Image image = TextureFactory.getImage(scale, player.graphics.getColor(), player.graphics.getText());
 			gc.clearRect(scale*(player.shape.getX() - xmin) + 1, scale*(player.shape.getY() - ymin) + 1, scale - 1, scale - 1);
 			gc.drawImage(image, scale*(player.shape.getX() - xmin), scale*(player.shape.getY() - ymin));
+		} else if (entity instanceof Creature) {
+			Creature creature = (Creature) entity;
+			GraphicsContext gc = layers.get(creature.shape.getZ()).getGraphicsContext2D();
+			Image image = TextureFactory.getImage(scale, creature.graphics.getColor(), creature.graphics.getText());
+			gc.clearRect(scale*(creature.shape.getX() - xmin) + 1, scale*(creature.shape.getY() - ymin) + 1, scale - 1, scale - 1);
+			gc.drawImage(image, scale*(creature.shape.getX() - xmin), scale*(creature.shape.getY() - ymin));			
 		}
 	}
 }
