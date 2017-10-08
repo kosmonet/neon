@@ -18,10 +18,14 @@
 
 package neon.client;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import com.google.common.eventbus.Subscribe;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -40,6 +44,8 @@ import neon.common.event.MessageEvent;
  *
  */
 public class UserInterface {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final Stage stage;
 	
 	/**
@@ -55,6 +61,18 @@ public class UserInterface {
 		stage.setMinWidth(800);
 		stage.setHeight(720);
 		stage.setMinHeight(600);
+		
+		// show default loading screen
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/Splash.fxml"));
+		loader.setController(this);
+		
+		try {
+			Scene scene = new Scene(loader.load());
+			scene.getStylesheets().add(getClass().getResource("scenes/main.css").toExternalForm());
+			stage.setScene(scene);
+		} catch (IOException e) {
+			logger.severe("failed to load loading screen :-/ " + e.getMessage());
+		}
 		
 		stage.show();
 		stage.centerOnScreen();

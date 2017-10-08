@@ -128,7 +128,6 @@ class MapLoader implements ResourceLoader<RMap> {
 		long base = (long)map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
 			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
-			System.out.println(uid);
 			map.getEntities().add(uid);
 
 			try {
