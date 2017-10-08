@@ -32,7 +32,7 @@ public class RMap extends Resource {
 	/**
 	 * The uid of this map.
 	 */
-	public final short uid;
+	public final int uid;
 	/**
 	 * The fancy display name.
 	 */
@@ -52,7 +52,7 @@ public class RMap extends Resource {
 	 * @param height
 	 * @param uid
 	 */
-	public RMap(String id, String name, int width, int height, short uid) {
+	public RMap(String id, String name, int width, int height, int uid) {
 		super(id, "map", "maps");
 		this.name = name;
 		terrain = new RegionQuadTree<>(width, height);

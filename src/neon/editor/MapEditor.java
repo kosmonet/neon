@@ -72,6 +72,7 @@ public class MapEditor {
 	private final TextField nameField = new TextField();
 	private final Spinner<Integer> widthSpinner, heightSpinner;
 	private final short uid;
+	private final String module;
 	
 	private boolean saved = true;
 	private int scale = 20;
@@ -90,7 +91,8 @@ public class MapEditor {
 		this.bus = bus;
 		this.card = card;
 		RMap map = card.getResource();
-		uid = map.getUID();
+		uid = map.uid;
+		module = map.module;
 		
 		grid.setHgap(10);
 	    grid.setVgap(10);
@@ -99,7 +101,7 @@ public class MapEditor {
 	    Label name = new Label("Name");
 	    grid.add(name, 0, 0);
 	    grid.add(nameField, 1, 0);
-	    nameField.setText(map.getName());
+	    nameField.setText(map.name);
 
 	    Label width = new Label("Width");
 	    grid.add(width, 0, 1);
@@ -237,7 +239,7 @@ public class MapEditor {
 		name = name.isEmpty() ? card.toString() : name;
 		widthSpinner.increment(0);	// trick to commit typed text when enter was not pressed
 		heightSpinner.increment(0);
-		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue(), uid);
+		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue(), uid, module);
 		try {
 			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getLeaves().entrySet()) {
 				map.getTerrain().add(entry.getKey(), entry.getValue());

@@ -46,13 +46,16 @@ class MapLoader implements ResourceLoader<RMap> {
 		this.resources = resources;
 	}
 	
+	@Override
 	public RMap load(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		short uid = Short.parseShort(root.getAttributeValue("uid"));
-		RMap map = new RMap(id, name, width, height, uid);
+		String module = root.getAttributeValue("module");
+		short index = Short.parseShort(root.getAttributeValue("uid"));
+		
+		RMap map = new RMap(id, name, width, height, tracker.getMapUID(index, module));
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
@@ -61,11 +64,12 @@ class MapLoader implements ResourceLoader<RMap> {
 		return map;
 	}
 	
+	@Override
 	public Element save(RMap map) {
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
-		root.setAttribute("uid", Short.toString(map.uid));
+		root.setAttribute("uid", Integer.toString(map.uid));
 		
 		Element size = new Element("size");
 		size.setAttribute("width", Integer.toString(map.getWidth()));
@@ -121,9 +125,10 @@ class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	private void initEntities(RMap map, Element entities) {
-		long mod = 0;	// TODO: juiste mod uid
+		long base = (long)map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
-			long uid = mod | Integer.parseInt(entity.getAttributeValue("uid"));
+			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
+			System.out.println(uid);
 			map.getEntities().add(uid);
 
 			try {

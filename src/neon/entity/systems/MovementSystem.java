@@ -46,17 +46,21 @@ public class MovementSystem {
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	private RMap map;
-	
 	public MovementSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.entities = entities;
 		this.resources = resources;
 		this.bus = bus;
 	}
 	
+	/**
+	 * Puts the player on the starting map at the start of a new game.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void start(ServerEvent.Start event) throws ResourceException {
-		map = event.getMap();
+		RMap map = event.getMap();
 
 		// collect all necessary resources to start the game
 		Set<Resource> clientResources = new HashSet<>();
@@ -80,6 +84,11 @@ public class MovementSystem {
 		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));
 	}
 	
+	/**
+	 * Moves the player on the current map.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void move(InputEvent.Move event) {
 		Player player = (Player) entities.getEntity(0);

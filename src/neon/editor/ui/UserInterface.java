@@ -35,6 +35,7 @@ import neon.editor.controllers.ItemHandler;
 import neon.editor.controllers.MapHandler;
 import neon.editor.controllers.MenuHandler;
 import neon.editor.controllers.TerrainHandler;
+import neon.editor.resource.CEditor;
 
 /**
  * The {@code UserInterface} takes care of most ui-related editor functionality.
@@ -60,11 +61,11 @@ public class UserInterface {
 	 * @param editor
 	 * @param bus
 	 */
-	public UserInterface(ResourceManager resources, EventBus bus) {
+	public UserInterface(ResourceManager resources, EventBus bus, CEditor config) {
 		// separate handlers for all the different ui elements
 		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);
-		mapHandler = new MapHandler(resources, bus);
+		mapHandler = new MapHandler(resources, bus, config);
 		bus.register(mapHandler);
 		creatureHandler = new CreatureHandler(resources, bus);
 		bus.register(creatureHandler);

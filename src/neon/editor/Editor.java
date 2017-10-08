@@ -43,8 +43,10 @@ import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.logging.NeonLogFormatter;
 import neon.common.resources.RModule;
+import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ModuleLoader;
+import neon.editor.resource.CEditor;
 import neon.editor.ui.UserInterface;
 
 /**
@@ -60,15 +62,14 @@ public class Editor extends Application {
 	private final ResourceManager resources = new ResourceManager(files);
 	private final EventBus bus = new EventBus("Editor Bus");
 	private final UserInterface ui;	// where all JavaFX business takes place
-
-	private String id;	// the id of the active module
+	private final CEditor config = new CEditor();
 	
 	/**
 	 * Initializes this {@code Editor}.
 	 */
 	public Editor() {
 		bus.register(this);
-		ui = new UserInterface(resources, bus);
+		ui = new UserInterface(resources, bus, config);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -94,12 +95,14 @@ public class Editor extends Application {
 	@Subscribe
 	private void createModule(LoadEvent.Create event) throws IOException {
 		Path path = event.getPath();
-		id = path.getFileName().toString();
+		String id = path.getFileName().toString();
 
 		// create the new module
 		Files.createDirectories(path);
 		// editing is done in temp, so don't add the actual module folder to the file system
-		resources.addResource(new RModule(id, id, "", -1, -1));
+		RModule module = new RModule(id, id, "", -1, -1);
+		resources.addResource(module);
+		config.setActiveModule(module);
 	}
 	
 	/**
@@ -107,22 +110,23 @@ public class Editor extends Application {
 	 * 
 	 * @param event
 	 * @throws FileNotFoundException
+	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void loadModule(LoadEvent.Load event) throws FileNotFoundException {
+	private void loadModule(LoadEvent.Load event) throws FileNotFoundException, ResourceException {
 		// set the active module id
 		File file = event.getFile();
-		id = file.getName();
+		String module = file.getName();
 		
 		// add the parent modules to the file system
-		Path path = Paths.get(file.getPath(), id + ".xml");
+		Path path = Paths.get(file.getPath(), module + ".xml");
 		try (InputStream in = Files.newInputStream(path)) {
 			Element root = new XMLTranslator().translate(in).getRootElement();
 			for (Element parent : root.getChild("parents").getChildren()) {
 				files.addModule(parent.getText());
 			}
 		} catch (IOException e) {
-			throw new FileNotFoundException("module <" + id + "> not found");
+			throw new FileNotFoundException("module <" + module + "> not found");
 		}
 		
 		// keep track of all resources defined in parent modules
@@ -146,6 +150,7 @@ public class Editor extends Application {
 		
 		// editing is done in temp, so don't add the actual module folder to the file system
 		FileUtils.copyFolder(file.toPath(), Paths.get("temp"));
+		config.setActiveModule(resources.getResource(module));
 		
 		// keep track of all resources (re)defined in the active module
 		for (String id : FileUtils.listFiles(Paths.get("temp", "creatures"))) {
@@ -185,7 +190,7 @@ public class Editor extends Application {
 			cards.put("maps", card);
 		}
 				
-		logger.fine("loaded module " + id);
+		logger.fine("loaded module " + module);
 	}
 
 	/**
@@ -195,6 +200,7 @@ public class Editor extends Application {
 	 */
 	@Subscribe
 	private void saveModule(SaveEvent.Module event) {
+		String id = config.getActiveModule().id;
 		FileUtils.clearFolder(Paths.get("data", id));
 		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
 		logger.fine("saved module " + id);

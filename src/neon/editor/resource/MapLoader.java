@@ -41,7 +41,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
 		short uid = Short.parseShort(root.getAttributeValue("uid"));
-		RMap map = new RMap(id, name, width, height, uid);
+		String module = root.getAttributeValue("module");
+		RMap map = new RMap(id, name, width, height, uid, module);
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
 		initEntities(map, root.getChild("entities"));
@@ -83,8 +84,9 @@ public class MapLoader implements ResourceLoader<RMap> {
 	public Element save(RMap map) {
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
-		root.setAttribute("name", map.getName());
-		root.setAttribute("uid", Short.toString(map.getUID()));
+		root.setAttribute("name", map.name);
+		root.setAttribute("uid", Short.toString(map.uid));
+		root.setAttribute("module", map.module);
 		
 		Element size = new Element("size");
 		size.setAttribute("width", Integer.toString(map.getWidth()));

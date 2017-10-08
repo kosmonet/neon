@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
@@ -38,14 +37,12 @@ import neon.entity.entities.Entity;
 public class EntityTracker implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
 	private final MapLoader loader;
-//	private final ResourceManager resources;
-//	private final CServer config;
+	private final CServer config;
 
 	EntityTracker(ResourceManager resources, CServer config) {
-//		this.resources = resources;
 		loader = new MapLoader(this, resources);
 		resources.addLoader("map", loader);
-//		this.config = config;
+		this.config = config;
 	}
 	
 	@Override @SuppressWarnings("unchecked")
@@ -68,5 +65,17 @@ public class EntityTracker implements EntityProvider {
 	
 	short getModuleUID(long entity) {
 		return (short) (entity >>> 48);		
+	}
+	
+	/**
+	 * Calculates the full map uid given the module name and the base uid
+	 * of the map within the module.
+	 * 
+	 * @param uid
+	 * @param module
+	 * @return
+	 */
+	int getMapUID(short base, String module) {
+		return ((int)config.getModuleUID(module) << 16) | base;
 	}
 }

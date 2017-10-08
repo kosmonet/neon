@@ -53,6 +53,7 @@ import javafx.scene.paint.Color;
 import neon.editor.resource.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.editor.resource.CEditor;
 import neon.editor.resource.MapLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
@@ -80,13 +81,15 @@ public class MapHandler {
 	private final ResourceManager resources;
 	private final EventBus bus;
 	private final HashSet<Short> uids = new HashSet<>();
+	private final CEditor config;
 	
 	private String namespace, id;	// to keep track of the currently selected resource in the resource pane
 	private ImageCursor cursor;
 	
-	public MapHandler(ResourceManager resources, EventBus bus) {
+	public MapHandler(ResourceManager resources, EventBus bus, CEditor config) {
 		this.resources = resources;
 		this.bus = bus;
+		this.config = config;
 	}
 	
 	@FXML public void initialize() {
@@ -139,7 +142,7 @@ public class MapHandler {
 			root.getChildren().add(new TreeItem<Card>(card));
 			try {
 				RMap map = card.getResource();
-				uids.add(map.getUID());
+				uids.add(map.uid);
 			} catch (ResourceException e) {
 				logger.severe("could not load map: " + card);
 			}
@@ -260,7 +263,7 @@ public class MapHandler {
 			}
 
 			// create the map
-			RMap map = new RMap(id, id, 100, 100, getFreeUID());
+			RMap map = new RMap(id, id, 100, 100, getFreeUID(), config.getActiveModule().id);
 
 			try {
 				resources.addResource(map);

@@ -25,11 +25,22 @@ import neon.common.resources.Resource;
 import neon.util.quadtree.RegionQuadTree;
 
 public class RMap extends Resource {
-	private final String name;
+	/**
+	 * The display name.
+	 */
+	public final String name;
+	/**
+	 * The uid of this map.
+	 */
+	public final short uid;
+	/**
+	 * The module this map belongs to.
+	 */
+	public final String module;
+	
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
 	private final ArrayList<Integer> entities = new ArrayList<>();
-	private final short uid;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -39,18 +50,16 @@ public class RMap extends Resource {
 	 * @param width
 	 * @param height
 	 * @param uid
+	 * @param module
 	 */
-	public RMap(String id, String name, int width, int height, short uid) {
+	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "map", "maps");
 		this.name = name;
 		terrain = new RegionQuadTree<>(width, height);
 		// initialize with a ground plane at 0 elevation
 		elevation = new RegionQuadTree<>(width, height, 0);
 		this.uid = uid;
-	}
-	
-	public String getName() {
-		return name;
+		this.module = module;
 	}
 	
 	public int getWidth() {
@@ -71,9 +80,5 @@ public class RMap extends Resource {
 	
 	public Collection<Integer> getEntities() {
 		return entities;
-	}
-	
-	public short getUID() {
-		return uid;
 	}
 }
