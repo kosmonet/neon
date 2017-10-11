@@ -21,10 +21,14 @@ package neon.editor.resource;
 import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import org.jdom2.Element;
 
 import neon.editor.resource.RMap;
+import neon.common.resources.RCreature;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
 
 /**
@@ -34,6 +38,14 @@ import neon.common.resources.loaders.ResourceLoader;
  *
  */
 public class MapLoader implements ResourceLoader<RMap> {
+	private final static Logger logger = Logger.getGlobal();
+	
+	private final ResourceManager resources;
+	
+	public MapLoader(ResourceManager resources) {
+		this.resources = resources;
+	}
+	
 	@Override
 	public RMap load(Element root) {
 		String id = root.getAttributeValue("id");
@@ -58,7 +70,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			String id = region.getAttributeValue("id");
 			
-			map.getTerrain().add(new Rectangle(x, y, width, height), id);
+			map.getTerrain().insert(new Rectangle(x, y, width, height), id);
 		}
 	}
 	
@@ -70,13 +82,23 @@ public class MapLoader implements ResourceLoader<RMap> {
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			int value = Integer.parseInt(region.getAttributeValue("v"));
 			
-			map.getElevation().add(new Rectangle(x, y, width, height), value);
+			map.getElevation().insert(new Rectangle(x, y, width, height), value);
 		}		
 	}
 	
 	private void initEntities(RMap map, Element entities) {
 		for (Element entity : entities.getChildren("creature")) {
-			map.getEntities().add(Integer.parseInt(entity.getAttributeValue("uid")));
+			try {
+				int uid = Integer.parseInt(entity.getAttributeValue("uid"));
+				String id = entity.getAttributeValue("id");
+				RCreature resource = resources.getResource("creatures", id);
+				ECreature creature = new ECreature(uid, id, resource.character, resource.color);
+				creature.shape.setX(Integer.parseInt(entity.getAttributeValue("x")));
+				creature.shape.setY(Integer.parseInt(entity.getAttributeValue("y")));
+				map.add(creature);
+			} catch (ResourceException e) {
+				logger.severe(e.getMessage());
+			}
 		}		
 	}
 
@@ -112,6 +134,13 @@ public class MapLoader implements ResourceLoader<RMap> {
 		root.addContent(height);
 		
 		Element entities = new Element("entities");
+		for(REntity entity : map.getEntities()) {
+			Element element = new Element(entity.getType());
+			element.setAttribute("id", entity.getID());
+			element.setAttribute("x", Integer.toString(entity.shape.getX()));
+			element.setAttribute("y", Integer.toString(entity.shape.getY()));
+			entities.addContent(element);
+		}
 		root.addContent(entities);
 		
 		return root;

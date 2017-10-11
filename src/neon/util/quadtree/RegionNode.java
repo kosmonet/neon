@@ -64,7 +64,7 @@ class RegionNode<T> {
 		this.value = value;
 	}
 	
-	void add(Rectangle bounds, T value) {
+	void insert(Rectangle bounds, T value) {
 		// if this node is completely contained in the bounds, set this as a leaf and discard children
 		if (bounds.contains(x, y, width, height)) {
 			this.value = value;
@@ -82,10 +82,10 @@ class RegionNode<T> {
 			}
 			
 			// and add value to children
-			NW.add(bounds, value);
-			NE.add(bounds, value);
-			SW.add(bounds, value);
-			SE.add(bounds, value);
+			NW.insert(bounds, value);
+			NE.insert(bounds, value);
+			SW.insert(bounds, value);
+			SE.insert(bounds, value);
 		}
 	}
 	

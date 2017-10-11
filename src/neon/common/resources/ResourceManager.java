@@ -144,7 +144,7 @@ public class ResourceManager implements ResourceProvider {
 				throw new IllegalStateException("Loader for resource type <" + resource.getName() + "> was not found.");
 			}
 		} catch (IOException e) {
-			throw new ResourceException("Resource " + namespace + ":" + id + " was not found.", e);
+			throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found.", e);
 		}
 	}
 	

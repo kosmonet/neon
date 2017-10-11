@@ -18,20 +18,12 @@
 
 package neon.entity.systems;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
-import neon.common.event.ServerEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RMap;
-import neon.common.resources.Resource;
-import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
@@ -41,47 +33,13 @@ import neon.server.EntityTracker;
  * @author mdriesen
  *
  */
-public class MovementSystem {
+public class MovementSystem implements NeonSystem {
 	private final EntityTracker entities;
-	private final ResourceManager resources;
 	private final EventBus bus;
 	
 	public MovementSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.entities = entities;
-		this.resources = resources;
 		this.bus = bus;
-	}
-	
-	/**
-	 * Puts the player on the starting map at the start of a new game.
-	 * 
-	 * @param event
-	 * @throws ResourceException
-	 */
-	@Subscribe
-	private void start(ServerEvent.Start event) throws ResourceException {
-		RMap map = event.getMap();
-
-		// collect all necessary resources to start the game
-		Set<Resource> clientResources = new HashSet<>();
-		clientResources.add(resources.getResource("config", "game"));
-		clientResources.add(map);
-		
-		// add all terrain resources
-		for (String terrain : map.getTerrain().getLeaves().values()) {
-			clientResources.add(resources.getResource("terrain", terrain));
-		}
-		
-		// collect all the necessary entities
-		Set<Entity> clientEntities = new HashSet<>();
-		clientEntities.add(entities.getEntity(0));
-		
-		for(Long uid : map.getEntities()) {
-			clientEntities.add(entities.getEntity(uid));
-		}
-
-		// tell the client everything is ready
-		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));
 	}
 	
 	/**

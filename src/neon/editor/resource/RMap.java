@@ -18,8 +18,8 @@
 
 package neon.editor.resource;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import neon.common.resources.Resource;
 import neon.util.quadtree.RegionQuadTree;
@@ -40,7 +40,7 @@ public class RMap extends Resource {
 	
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
-	private final ArrayList<Integer> entities = new ArrayList<>();
+	private final HashMap<Integer, REntity> entities = new HashMap<>();
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -78,7 +78,11 @@ public class RMap extends Resource {
 		return elevation;
 	}
 	
-	public Collection<Integer> getEntities() {
-		return entities;
+	public void add(REntity entity) {
+		entities.put((int)entity.uid, entity);
+	}
+	
+	public Collection<REntity> getEntities() {
+		return entities.values();
 	}
 }

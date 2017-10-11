@@ -26,14 +26,14 @@ public class CGame extends Resource {
 	public final String title;
 	
 	private final Set<String> species = new HashSet<>();
-	private final String map;
+	private final String startMap;
 	private final int x, y;
 
 	public CGame(String title, Collection<String> species, String startMap, int startX, int startY) {
 		super("game", "config", "config");
 		this.species.addAll(species);
 		this.title = title;
-		map = startMap;
+		this.startMap = startMap;
 		x = startX;
 		y = startY;
 	}
@@ -48,7 +48,7 @@ public class CGame extends Resource {
 	}
 	
 	public String getStartMap() {
-		return map;
+		return startMap;
 	}
 	
 	public int getStartX() {

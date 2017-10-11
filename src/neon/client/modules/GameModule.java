@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCodeCombination;
 
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
+import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
@@ -47,7 +48,7 @@ public class GameModule extends Module {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ClientProvider provider = new ClientProvider();
-	private final RenderPane pane = new RenderPane(provider, provider);
+	private final RenderPane pane = new RenderPane(provider, new ClientRenderer());
 	
 	private Scene scene;
 	private int scale = 20;
@@ -89,7 +90,7 @@ public class GameModule extends Module {
 		provider.addResources(event.getResources());
 		provider.addEntities(event.getEntities());
 		
-		pane.setMap(event.getMap().getTerrain(), event.getMap().getElevation());		
+		pane.setMap(event.getMap().getTerrain(), event.getMap().getElevation(), provider.getEntities());		
 		redraw();
 	}
 	
@@ -97,6 +98,7 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Entities event) {
 		// store all changed entities
 		provider.addEntities(event.getEntities());
+		pane.updateMap(provider.getEntities());
 		redraw();
 	}
 	

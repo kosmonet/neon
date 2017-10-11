@@ -18,6 +18,18 @@
 
 package neon.util.quadtree;
 
+/**
+ * 
+ * TODO: naam veranderen, is eigenlijk PR quadtree
+ * 
+ * @author mdriesen
+ *
+ * @param <T>
+ */
 public class PointQuadTree<T> {
-
+	private final PointNode<T> root;
+	
+	public PointQuadTree() {
+		root = new PointNode<>();
+	}
 }

@@ -16,23 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.entity.systems;
 
-import java.util.ArrayList;
-import java.util.Collection;
+public interface NeonSystem {
 
-/**
- * A node in the quadtree.
- * 
- * @author mdriesen
- *
- * @param <T>
- */
-class PointNode<T> {
-	private final ArrayList<T> values = new ArrayList<>();
-	private PointNode<T> NW, NE, SE, SW;
-	
-	Collection<T> getValues() {
-		return values;
-	}
 }

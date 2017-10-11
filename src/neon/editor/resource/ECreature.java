@@ -16,23 +16,20 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.editor.resource;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import javafx.scene.paint.Color;
+import neon.entity.components.GraphicsComponent;
 
-/**
- * A node in the quadtree.
- * 
- * @author mdriesen
- *
- * @param <T>
- */
-class PointNode<T> {
-	private final ArrayList<T> values = new ArrayList<>();
-	private PointNode<T> NW, NE, SE, SW;
+public class ECreature extends REntity {
+	public final GraphicsComponent graphics;
 	
-	Collection<T> getValues() {
-		return values;
+	ECreature(int uid, String id, String character, Color color) {
+		super(uid, id);
+		graphics = new GraphicsComponent(uid, character, color);
+	}
+	
+	String getType() {
+		return "creature";
 	}
 }

@@ -16,23 +16,26 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.common.graphics;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import javafx.scene.canvas.Canvas;
 
-/**
- * A node in the quadtree.
- * 
- * @author mdriesen
- *
- * @param <T>
- */
-class PointNode<T> {
-	private final ArrayList<T> values = new ArrayList<>();
-	private PointNode<T> NW, NE, SE, SW;
+public interface EntityRenderer {
+	/**
+	 * Draws the entities on the map.
+	 * 
+	 * @param entity
+	 * @param xmin
+	 * @param ymin
+	 * @param scale
+	 */	
+	public void drawEntity(Object entity, int xmin, int ymin, int scale);
 	
-	Collection<T> getValues() {
-		return values;
-	}
+	/**
+	 * Sets the JavaFX {@code Canvas}ses to be used for drawing the entities.
+	 * 
+	 * @param layers
+	 */
+	public void setLayers(HashMap<Integer, Canvas> layers);
 }

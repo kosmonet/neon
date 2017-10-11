@@ -53,6 +53,7 @@ import javafx.scene.paint.Color;
 import neon.editor.resource.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.CreatureLoader;
 import neon.editor.resource.CEditor;
 import neon.editor.resource.MapLoader;
 import neon.editor.Card;
@@ -136,7 +137,8 @@ public class MapHandler {
 		mapTree.setShowRoot(false);
 		mapTree.setRoot(root);
 		mapTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("map", new MapLoader());
+		resources.addLoader("map", new MapLoader(resources));
+		resources.addLoader("creature", new CreatureLoader());
 
 		for (Card card : cards.get("maps")) {
 			root.getChildren().add(new TreeItem<Card>(card));

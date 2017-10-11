@@ -108,7 +108,7 @@ class MapLoader implements ResourceLoader<RMap> {
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			String id = region.getAttributeValue("id");
 			
-			map.getTerrain().add(new Rectangle(x, y, width, height), id);
+			map.getTerrain().insert(new Rectangle(x, y, width, height), id);
 		}
 	}
 	
@@ -120,7 +120,7 @@ class MapLoader implements ResourceLoader<RMap> {
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			int value = Integer.parseInt(region.getAttributeValue("v"));
 			
-			map.getElevation().add(new Rectangle(x, y, width, height), value);
+			map.getElevation().insert(new Rectangle(x, y, width, height), value);
 		}		
 	}
 	

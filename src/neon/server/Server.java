@@ -29,7 +29,6 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.client.console.ConsoleEvent;
 import neon.common.event.ClientConfigurationEvent;
-import neon.common.event.NewGameEvent;
 import neon.common.event.ScriptEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
@@ -87,6 +86,7 @@ public class Server implements Runnable {
 		}
 		
 		// add all the systems to the bus
+		bus.register(new GameLoader(bus, resources, entities));
 		bus.register(new MovementSystem(resources, entities, bus));
 		bus.register(new InventorySystem(entities, bus));
 	}
@@ -120,20 +120,6 @@ public class Server implements Runnable {
 			logger.warning("could not evaluate script: " + script);
 		}		
 		return result;
-	}
-	
-	/**
-	 * Loads all data for a new game and sends this back to the client.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void startGame(NewGameEvent event) {
-		try {
-			new GameLoader(bus, resources, entities).startNewGame(event);
-		} catch (ResourceException e) {
-			logger.severe("could not start new game due to missing resources: " + e.getMessage());
-		}
 	}
 	
 	/**

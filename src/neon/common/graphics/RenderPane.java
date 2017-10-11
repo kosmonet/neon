@@ -18,6 +18,7 @@
 
 package neon.common.graphics;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -28,10 +29,6 @@ import javafx.scene.layout.StackPane;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
-import neon.entity.EntityProvider;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Player;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -45,14 +42,15 @@ public class RenderPane extends StackPane {
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceProvider resources;
-	private final EntityProvider entities;
+	private final EntityRenderer renderer;
 	
 	private RegionQuadTree<String> terrain;
 	private RegionQuadTree<Integer> elevation;
+	private Collection<? extends Object> entities;
 	
-	public RenderPane(ResourceProvider resources, EntityProvider entities) {
+	public RenderPane(ResourceProvider resources, EntityRenderer renderer) {
 		this.resources = resources;
-		this.entities = entities;
+		this.renderer = renderer;
 		double parallax = 1.02;
 		
 		for (int i = -5; i < 4; i++) {
@@ -64,11 +62,19 @@ public class RenderPane extends StackPane {
 			canvas.widthProperty().bind(widthProperty());
 			canvas.heightProperty().bind(heightProperty());
 		}
+		
+		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation) {
+	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation, Collection<? extends Object> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
+		this.entities = entities;
+		
+	}
+	
+	public void updateMap(Collection<? extends Object> entities) {
+		this.entities = entities;
 	}
 	
 	/**
@@ -85,8 +91,8 @@ public class RenderPane extends StackPane {
 		
 		drawMap(xmin, ymin, scale);
 		
-		for (Entity entity : entities.getEntities()) {
-			drawEntity(entity, xmin, ymin, scale);
+		for (Object entity : entities) {
+			renderer.drawEntity(entity, xmin, ymin, scale);
 		}
 	}
 	
@@ -110,29 +116,5 @@ public class RenderPane extends StackPane {
 				}
 			}
 		}		
-	}
-	
-	/**
-	 * Draws the entities on the map.
-	 * 
-	 * @param entity
-	 * @param xmin
-	 * @param ymin
-	 * @param scale
-	 */
-	private void drawEntity(Entity entity, int xmin, int ymin, int scale) {
-		if (entity instanceof Player) {
-			Player player = (Player) entity;
-			GraphicsContext gc = layers.get(player.shape.getZ()).getGraphicsContext2D();
-			Image image = TextureFactory.getImage(scale, player.graphics.getColor(), player.graphics.getText());
-			gc.clearRect(scale*(player.shape.getX() - xmin) + 1, scale*(player.shape.getY() - ymin) + 1, scale - 1, scale - 1);
-			gc.drawImage(image, scale*(player.shape.getX() - xmin), scale*(player.shape.getY() - ymin));
-		} else if (entity instanceof Creature) {
-			Creature creature = (Creature) entity;
-			GraphicsContext gc = layers.get(creature.shape.getZ()).getGraphicsContext2D();
-			Image image = TextureFactory.getImage(scale, creature.graphics.getColor(), creature.graphics.getText());
-			gc.clearRect(scale*(creature.shape.getX() - xmin) + 1, scale*(creature.shape.getY() - ymin) + 1, scale - 1, scale - 1);
-			gc.drawImage(image, scale*(creature.shape.getX() - xmin), scale*(creature.shape.getY() - ymin));			
-		}
 	}
 }

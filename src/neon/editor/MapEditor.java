@@ -19,6 +19,7 @@
 package neon.editor;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.Optional;
@@ -40,9 +41,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import neon.client.ClientProvider;
+
 import neon.common.graphics.RenderPane;
 import neon.editor.resource.RMap;
+import neon.editor.ui.EditorRenderer;
+import neon.entity.entities.Entity;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
@@ -119,8 +122,8 @@ public class MapEditor {
 		pane.setStyle("-fx-background-color: black;");
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
-		renderer = new RenderPane(resources, new ClientProvider());
-		renderer.setMap(map.getTerrain(), map.getElevation());
+		renderer = new RenderPane(resources, new EditorRenderer());
+		renderer.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
 	    renderer.setOnMouseExited(event -> mouseExited());
@@ -242,16 +245,16 @@ public class MapEditor {
 		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue(), uid, module);
 		try {
 			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getLeaves().entrySet()) {
-				map.getTerrain().add(entry.getKey(), entry.getValue());
+				map.getTerrain().insert(entry.getKey(), entry.getValue());
 			}
 			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getLeaves().entrySet()) {
-				map.getElevation().add(entry.getKey(), entry.getValue());
+				map.getElevation().insert(entry.getKey(), entry.getValue());
 			}
 		} catch (ResourceException e) {
 			logger.severe("could not save map: " + e.getMessage());
 		}
 
-		renderer.setMap(map.getTerrain(), map.getElevation());
+		renderer.setMap(map.getTerrain(), map.getElevation(), new ArrayList<Entity>());
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;
@@ -306,7 +309,7 @@ public class MapEditor {
 		if (terrain != null) {
 			try {
 				RMap map = card.getResource();
-				map.getTerrain().add(new Rectangle(x - width/2, y - width/2, width, width), terrain);						
+				map.getTerrain().insert(new Rectangle(x - width/2, y - width/2, width, width), terrain);						
 				redraw();
 			} catch (ResourceException e) {
 				e.printStackTrace();

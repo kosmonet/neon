@@ -16,23 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.editor.resource;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import neon.entity.components.ShapeComponent;
+import neon.entity.entities.Entity;
 
-/**
- * A node in the quadtree.
- * 
- * @author mdriesen
- *
- * @param <T>
- */
-class PointNode<T> {
-	private final ArrayList<T> values = new ArrayList<>();
-	private PointNode<T> NW, NE, SE, SW;
+public abstract class REntity extends Entity {
+	public final ShapeComponent shape;
+
+	private final String id;
 	
-	Collection<T> getValues() {
-		return values;
+	REntity(int uid, String id) {
+		super(uid);
+		this.id = id;
+		shape = new ShapeComponent(uid);
 	}
+
+	String getID() {
+		return id;
+	}
+	
+	abstract String getType();
 }

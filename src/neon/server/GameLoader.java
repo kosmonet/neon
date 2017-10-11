@@ -18,18 +18,22 @@
 
 package neon.server;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.NewGameEvent;
-import neon.common.event.ServerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
+import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 
@@ -60,11 +64,12 @@ class GameLoader {
 	}
 	
 	/**
-	 * Prepares all data for a new game and sends this back to the client.
+	 * Loads all data for a new game and sends this back to the client.
 	 * 
-	 * @throws ResourceException 
+	 * @param event
 	 */
-	void startNewGame(NewGameEvent event) throws ResourceException {
+	@Subscribe
+	private void startNewGame(NewGameEvent event) throws ResourceException {
 		logger.info("starting a new game");
 		
 		// get the start map
@@ -88,13 +93,29 @@ class GameLoader {
 		player.inventory.addItem(4);
 		player.inventory.addItem(5);
 
+		// collect all necessary resources to start the game
+		Set<Resource> clientResources = new HashSet<>();
+		clientResources.add(resources.getResource("config", "game"));
+		clientResources.add(map);
+		
+		// add all terrain resources
+		for (String terrain : map.getTerrain().getLeaves().values()) {
+			clientResources.add(resources.getResource("terrain", terrain));
+		}
+		
+		// collect all the necessary entities
+		Set<Entity> clientEntities = new HashSet<>();
+		clientEntities.add(entities.getEntity(0));
+
+		for (Long uid : map.getEntities()) {
+			clientEntities.add(entities.getEntity(uid));
+		}
+
 		// tell the client everything is ready
 		bus.post(new UpdateEvent.Start());
-
-		// let the systems know a new game is about to start
-		bus.post(new ServerEvent.Start(map));
+		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));
 	}
-	
+
 	void startOldGame() {
 		// TODO: correcte mod uid's inlezen uit save folder
 		logger.info("starting an old game");

@@ -40,15 +40,7 @@ public class RegionQuadTree<T> {
 	 * @param height
 	 */
 	public RegionQuadTree(int width, int height) {
-		if(width < 1 || height < 1) {
-			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
-		}		
-
-		this.width = width;
-		this.height = height;
-		int size = Math.max(width, height);
-		// make a square tree
-		root = new RegionNode<T>(0, 0, size, size);
+		this(width, height, null);
 	}
 	
 	/**
@@ -76,8 +68,8 @@ public class RegionQuadTree<T> {
 	 * @param bounds
 	 * @param value
 	 */
-	public void add(Rectangle bounds, T value) {
-		root.add(bounds, value);
+	public void insert(Rectangle bounds, T value) {
+		root.insert(bounds, value);
 	}
 	
 	/**
