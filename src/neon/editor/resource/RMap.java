@@ -74,15 +74,38 @@ public class RMap extends Resource {
 		return terrain;
 	}
 	
+	/**
+	 * 
+	 * @return	the elevation
+	 */
 	public RegionQuadTree<Integer> getElevation() {
 		return elevation;
 	}
 	
+	/**
+	 * Adds an entity to this map.
+	 * 
+	 * @param entity
+	 */
 	public void add(REntity entity) {
-		entities.put((int)entity.uid, entity);
+		entities.put((int) entity.uid, entity);
 	}
 	
+	/**
+	 * 
+	 * @return	all entities on this map
+	 */
 	public Collection<REntity> getEntities() {
 		return entities.values();
+	}
+	
+	/**
+	 * 
+	 * @return	an unused uid
+	 */
+	public int getFreeUID() {
+		int i = 0;
+		while (entities.containsKey(++i));
+		return i;
 	}
 }

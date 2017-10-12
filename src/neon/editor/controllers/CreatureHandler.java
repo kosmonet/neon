@@ -36,7 +36,10 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import neon.common.resources.RCreature;
@@ -72,7 +75,16 @@ public class CreatureHandler {
 	
 	@FXML public void initialize() {		
 		creatureTree.setCellFactory(new CardCellFactory());
+		creatureTree.setOnDragDetected(event -> mouseDragged(event));
 	}
+
+	private void mouseDragged(MouseEvent event) {
+		Dragboard db = creatureTree.startDragAndDrop(TransferMode.ANY);	        
+		ClipboardContent content = new ClipboardContent();
+		content.putString(creatureTree.getSelectionModel().getSelectedItem().getValue().toString());
+		db.setContent(content);
+		event.consume();
+	}		
 	
 	/**
 	 * Populates the creature tree with creatures.

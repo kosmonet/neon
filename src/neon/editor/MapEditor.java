@@ -19,7 +19,6 @@
 package neon.editor;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.Optional;
@@ -36,16 +35,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 import neon.common.graphics.RenderPane;
+import neon.editor.resource.ECreature;
+import neon.editor.resource.REntity;
 import neon.editor.resource.RMap;
 import neon.editor.ui.EditorRenderer;
-import neon.entity.entities.Entity;
+import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
@@ -76,6 +80,7 @@ public class MapEditor {
 	private final Spinner<Integer> widthSpinner, heightSpinner;
 	private final short uid;
 	private final String module;
+	private final ResourceManager resources;
 	
 	private boolean saved = true;
 	private int scale = 20;
@@ -93,6 +98,7 @@ public class MapEditor {
 	public MapEditor(Card card, ResourceManager resources, EventBus bus) throws ResourceException {
 		this.bus = bus;
 		this.card = card;
+		this.resources = resources;
 		RMap map = card.getResource();
 		uid = map.uid;
 		module = map.module;
@@ -127,6 +133,8 @@ public class MapEditor {
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
 	    renderer.setOnMouseExited(event -> mouseExited());
+	    renderer.setOnDragOver(event -> dragOver(event));
+	    renderer.setOnDragDropped(event -> dragDropped(event));
 	    
 	    // redraw when resizing or scrolling the map
 	    renderer.widthProperty().addListener(value -> redraw());
@@ -139,6 +147,37 @@ public class MapEditor {
 	    showInfo();	// show the info pane by default	    
 	}
 	
+	private void dragOver(DragEvent event) {
+        if (event.getDragboard().hasString()) {
+            event.acceptTransferModes(TransferMode.MOVE);
+        }
+        
+        event.consume();
+	}
+	
+	private void dragDropped(DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (db.hasString()) {
+        	addCreature(db.getString(), (int) Math.floor(event.getX()/scale), (int) Math.floor(event.getY()/scale));
+        }
+
+        event.setDropCompleted(true);
+        event.consume();		
+	}
+	
+	private void addCreature(String id, int x, int y) {
+		try {
+			RCreature resource = resources.getResource("creatures", id);
+			RMap map = card.getResource();
+			ECreature creature = new ECreature(map.getFreeUID(), id, resource.character, resource.color);
+			creature.shape.setPosition(x, y, 0);
+			map.add(creature);
+			redraw();
+		} catch (ResourceException e) {
+			logger.warning("could not add creature <" + id + "> to map");
+		}
+	}
+
 	/**
 	 * 
 	 * @return the scrollpane used to display the map
@@ -250,11 +289,14 @@ public class MapEditor {
 			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getLeaves().entrySet()) {
 				map.getElevation().insert(entry.getKey(), entry.getValue());
 			}
+			for (REntity entity : card.<RMap>getResource().getEntities()) {
+				map.add(entity);
+			}
 		} catch (ResourceException e) {
 			logger.severe("could not save map: " + e.getMessage());
 		}
 
-		renderer.setMap(map.getTerrain(), map.getElevation(), new ArrayList<Entity>());
+		renderer.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;

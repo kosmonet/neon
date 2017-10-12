@@ -32,9 +32,17 @@ public abstract class REntity extends Entity {
 		shape = new ShapeComponent(uid);
 	}
 
+	/**
+	 * 
+	 * @return	the id of the resource this entity is based on
+	 */
 	String getID() {
 		return id;
 	}
 	
+	/**
+	 * 
+	 * @return	the xml tag name this entity is saved with
+	 */
 	abstract String getType();
 }

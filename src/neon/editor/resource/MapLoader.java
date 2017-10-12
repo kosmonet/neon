@@ -134,8 +134,10 @@ public class MapLoader implements ResourceLoader<RMap> {
 		root.addContent(height);
 		
 		Element entities = new Element("entities");
-		for(REntity entity : map.getEntities()) {
+		for (REntity entity : map.getEntities()) {
+			System.out.println(entity);
 			Element element = new Element(entity.getType());
+			element.setAttribute("uid", Long.toString(entity.uid));
 			element.setAttribute("id", entity.getID());
 			element.setAttribute("x", Integer.toString(entity.shape.getX()));
 			element.setAttribute("y", Integer.toString(entity.shape.getY()));
