@@ -165,6 +165,13 @@ public class MapEditor {
         event.consume();		
 	}
 	
+	/**
+	 * Adds a creature to the map at the given coordinates.
+	 * 
+	 * @param id
+	 * @param x
+	 * @param y
+	 */
 	private void addCreature(String id, int x, int y) {
 		try {
 			RCreature resource = resources.getResource("creatures", id);

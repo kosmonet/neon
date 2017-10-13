@@ -26,7 +26,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import com.google.common.collect.MapMaker;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -45,8 +47,8 @@ public class ResourceManager implements ResourceProvider {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
-	// TODO: hier een guava table voor gebruiken?
-	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
+//	private final Table<String, String, Resource> resources = HashBasedTable.create();
+	private final Map<String, Cache<String, Resource>> resources = new HashMap<>();
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
 	
 	/**
@@ -75,7 +77,7 @@ public class ResourceManager implements ResourceProvider {
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
 			logger.info("creating namespace " + namespace);
-			resources.put(namespace, new MapMaker().weakValues().makeMap());
+			resources.put(namespace, CacheBuilder.newBuilder().softValues().build());
 		}
 		
 		// add resource to the weak value map
@@ -118,13 +120,13 @@ public class ResourceManager implements ResourceProvider {
 	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
 		if (resources.containsKey(namespace)) {
-			if (resources.get(namespace).containsKey(id)) {
-				return (T) resources.get(namespace).get(id);
+			if (resources.get(namespace).getIfPresent(id) != null) {
+				return (T) resources.get(namespace).getIfPresent(id);
 			} 
 		} else {
 			// namespace did not exist yet, create it now
 			logger.info("creating namespace " + namespace);
-			resources.put(namespace, new MapMaker().weakValues().makeMap());
+			resources.put(namespace, CacheBuilder.newBuilder().softValues().build());
 		}
 
 		// resource was not loaded, do it now
@@ -149,7 +151,7 @@ public class ResourceManager implements ResourceProvider {
 	}
 	
 	/**
-	 * Adds a loader for the given resource type to the manager.
+	 * Adds a loader for the given resource type (including the ones not loaded yet).
 	 * 
 	 * @param type
 	 * @param loader
@@ -193,7 +195,7 @@ public class ResourceManager implements ResourceProvider {
 	 */
 	public void removeResource(String namespace, String id) {
 		if (resources.containsKey(namespace)) {
-			resources.get(namespace).remove(id);
+			resources.get(namespace).invalidate(id);
 		}
 		
 		files.deleteFile(namespace, id + ".xml");

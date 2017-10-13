@@ -21,6 +21,7 @@ package neon.util.quadtree;
 /**
  * 
  * TODO: naam veranderen, is eigenlijk PR quadtree
+ * TODO: efficiente move() methode
  * 
  * @author mdriesen
  *

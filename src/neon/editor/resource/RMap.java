@@ -18,8 +18,12 @@
 
 package neon.editor.resource;
 
+import java.awt.Point;
 import java.util.Collection;
 import java.util.HashMap;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import neon.common.resources.Resource;
 import neon.util.quadtree.RegionQuadTree;
@@ -41,6 +45,7 @@ public class RMap extends Resource {
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
 	private final HashMap<Integer, REntity> entities = new HashMap<>();
+	private final Multimap<Point, REntity> positions = HashMultimap.create();
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -89,6 +94,17 @@ public class RMap extends Resource {
 	 */
 	public void add(REntity entity) {
 		entities.put((int) entity.uid, entity);
+		positions.put(new Point(entity.shape.getX(), entity.shape.getY()), entity);
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return	all entities in a certain position
+	 */
+	public Collection<REntity> getEntities(int x, int y) {
+		return positions.get(new Point(x, y));
 	}
 	
 	/**
