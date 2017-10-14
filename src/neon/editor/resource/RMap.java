@@ -44,7 +44,7 @@ public class RMap extends Resource {
 	
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
-	private final HashMap<Integer, REntity> entities = new HashMap<>();
+	private final HashMap<REntity, Integer> entities = new HashMap<>();
 	private final Multimap<Point, REntity> positions = HashMultimap.create();
 	
 	/**
@@ -93,7 +93,7 @@ public class RMap extends Resource {
 	 * @param entity
 	 */
 	public void add(REntity entity) {
-		entities.put((int) entity.uid, entity);
+		entities.put(entity, (int) entity.uid);
 		positions.put(new Point(entity.shape.getX(), entity.shape.getY()), entity);
 	}
 	
@@ -112,7 +112,12 @@ public class RMap extends Resource {
 	 * @return	all entities on this map
 	 */
 	public Collection<REntity> getEntities() {
-		return entities.values();
+		return entities.keySet();
+	}
+	
+	public void removeEntity(REntity entity) {
+		entities.remove(entity);
+		positions.remove(new Point(entity.shape.getX(), entity.shape.getY()), entity);
 	}
 	
 	/**
@@ -121,7 +126,7 @@ public class RMap extends Resource {
 	 */
 	public int getFreeUID() {
 		int i = 0;
-		while (entities.containsKey(++i));
+		while (entities.containsValue(++i));
 		return i;
 	}
 }

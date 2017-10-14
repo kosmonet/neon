@@ -36,7 +36,7 @@ public abstract class REntity extends Entity {
 	 * 
 	 * @return	the id of the resource this entity is based on
 	 */
-	String getID() {
+	public String getID() {
 		return id;
 	}
 	

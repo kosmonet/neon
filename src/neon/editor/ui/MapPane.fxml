@@ -8,6 +8,8 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="neon.editor.controllers.MapHandler">
@@ -21,6 +23,12 @@
 				<Slider fx:id="slider" majorTickUnit="50.0" max="220" min="20" showTickMarks="true" />
 				<Separator orientation="VERTICAL" />
             	<CheckBox text="Show elevation" disable="true" />
+				<Separator orientation="VERTICAL" />
+				<fx:define>
+  					<ToggleGroup fx:id="modeGroup"/>  
+				</fx:define>
+				<RadioButton text="Edit" selected="true" userData="EDIT" onAction="#toggleMode" toggleGroup="$modeGroup" />
+				<RadioButton text="Paint" userData="PAINT" onAction="#toggleMode" toggleGroup="$modeGroup" />
 			</items>
 		</ToolBar>
 	</top>

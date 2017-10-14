@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.editor;
+package neon.editor.controllers;
 
 import java.awt.Rectangle;
 import java.util.Map.Entry;
@@ -26,17 +26,22 @@ import java.util.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.control.Alert.AlertType;
@@ -45,6 +50,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 import neon.common.graphics.RenderPane;
+import neon.editor.Card;
+import neon.editor.SaveEvent;
+import neon.editor.SelectionEvent;
 import neon.editor.resource.ECreature;
 import neon.editor.resource.REntity;
 import neon.editor.resource.RMap;
@@ -86,6 +94,8 @@ public class MapEditor {
 	private int scale = 20;
 	private String terrain;
 	private ImageCursor cursor;
+	private Mode mode = Mode.EDIT;
+	private ContextMenu menu = new ContextMenu();
 	
 	/**
 	 * Initializes this map editor.
@@ -144,7 +154,7 @@ public class MapEditor {
 	    scroller.vvalueProperty().addListener(value -> redraw());
 	    scroller.hvalueProperty().addListener(value -> redraw());
 		
-	    showInfo();	// show the info pane by default	    
+	    showInfo();	// show the info pane by default
 	}
 	
 	private void dragOver(DragEvent event) {
@@ -233,11 +243,21 @@ public class MapEditor {
 	}
 	
 	/**
+	 * Sets the mode the map editor is working in: painting terrain or editing
+	 * entities.
+	 * 
+	 * @param mode
+	 */
+	void setMode(Mode mode) {
+		this.mode = mode;
+	}
+	
+	/**
 	 * Checks for unsaved changes when the tab is closed.
 	 * 
 	 * @param event
 	 */
-	public void close() {
+	void close() {
 		if (!saved) {
 			Alert alert = new Alert(AlertType.CONFIRMATION, 
 					"Save map before closing?", yes, no);
@@ -257,7 +277,7 @@ public class MapEditor {
 	/**
 	 * Shows the map information pane.
 	 */
-	public void showInfo() {
+	void showInfo() {
 		scroller.setContent(grid);
 	}
 	
@@ -265,7 +285,7 @@ public class MapEditor {
 	 * Shows the map as it is seen in the game (more or less). The map can be 
 	 * edited in this view.
 	 */
-	public void showTerrain() {
+	void showTerrain() {
 		scroller.setContent(pane);
 		pane.getChildren().clear();
 		pane.getChildren().add(renderer);
@@ -275,7 +295,7 @@ public class MapEditor {
 	/**
 	 * Shows the height map.
 	 */
-	public void showElevation() {
+	void showElevation() {
 		scroller.setContent(new Label("showing " + card + " height"));
 	}
 	
@@ -324,7 +344,7 @@ public class MapEditor {
 	 * 
 	 * @param cursor
 	 */
-	public void setCursor(ImageCursor cursor) {
+	void setCursor(ImageCursor cursor) {
 		this.cursor = cursor;
 	}
 	
@@ -332,7 +352,7 @@ public class MapEditor {
 	 * Sets the correct cursor when the mouse enters the terrain view.
 	 */
 	private void mouseEntered() {
-		if (terrain != null && cursor != null) {
+		if (terrain != null && cursor != null && mode == Mode.PAINT) {
 			scroller.getScene().setCursor(cursor);			
 		}
 	}
@@ -348,21 +368,61 @@ public class MapEditor {
 	 * Draws terrain or adds a resource when the mouse is clicked on the 
 	 * terrain view.
 	 * 
-	 * @param event
+	 * @param me
 	 */
-	private void mouseClicked(MouseEvent event) {
-		int x = (int) Math.floor(event.getX()/scale);
-		int y = (int) Math.floor(event.getY()/scale);
-		int width = (int) Math.ceil(cursor.getImage().getWidth()/scale);
-		
-		if (terrain != null) {
-			try {
-				RMap map = card.getResource();
+	private void mouseClicked(MouseEvent me) {
+		menu.hide();
+		int x = (int) Math.floor(me.getX()/scale);
+		int y = (int) Math.floor(me.getY()/scale);
+
+		try {
+			RMap map = card.getResource();
+			
+			if (mode == Mode.PAINT && terrain != null && me.getButton().equals(MouseButton.PRIMARY)) {
+				int width = (int) Math.ceil(cursor.getImage().getWidth()/scale);
 				map.getTerrain().insert(new Rectangle(x - width/2, y - width/2, width, width), terrain);						
 				redraw();
-			} catch (ResourceException e) {
-				e.printStackTrace();
+			} else if (mode == Mode.EDIT && me.getButton().equals(MouseButton.SECONDARY) && !map.getEntities(x, y).isEmpty()) {
+				menu.getItems().clear();
+				for (REntity entity : map.getEntities(x, y)) {
+					MenuItem delete = new MenuItem("delete " + entity.getID());
+					delete.setOnAction(new DeleteHandler(map, entity));
+					menu.getItems().add(delete);
+				}
+				menu.show(pane, me.getScreenX(), me.getScreenY());
 			}
+		} catch (ResourceException e) {
+			logger.warning("could not load map <" + card.toString() + ">");
+		}			
+	}
+	
+	private class DeleteHandler implements EventHandler<ActionEvent> {
+		private final REntity entity;
+		private final RMap map;
+		
+		private DeleteHandler(RMap map, REntity entity) {
+			this.map = map;
+			this.entity = entity;
 		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			map.removeEntity(entity);
+			redraw();
+		}
+	}
+	
+	/**
+	 * The map editor has two modes of operation:
+	 * <ul>
+	 * 	<li>painting terrain</li>
+	 * 	<li>editing entities</li>
+	 * </ul>
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public enum Mode {
+		PAINT, EDIT;
 	}
 }

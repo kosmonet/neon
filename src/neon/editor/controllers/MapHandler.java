@@ -41,6 +41,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Alert.AlertType;
@@ -58,7 +59,6 @@ import neon.editor.resource.CEditor;
 import neon.editor.resource.MapLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
-import neon.editor.MapEditor;
 import neon.editor.SaveEvent;
 import neon.editor.SelectionEvent;
 import neon.editor.ui.CardCellFactory;
@@ -78,6 +78,7 @@ public class MapHandler {
 	@FXML private TreeView<Card> mapTree;
 	@FXML private TabPane tabs;
 	@FXML private Slider slider;
+	@FXML private ToggleGroup modeGroup;
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
@@ -237,6 +238,13 @@ public class MapHandler {
 		}
 	}
 	
+	@FXML private void toggleMode() {
+		for (Tab tab : tabs.getTabs()) {
+			MapEditor editor = (MapEditor) tab.getUserData();
+			editor.setMode(MapEditor.Mode.valueOf(modeGroup.getSelectedToggle().getUserData().toString()));
+		}			
+	}
+	
 	/**
 	 * Adds a map to the currently opened module.
 	 * 
@@ -290,6 +298,7 @@ public class MapHandler {
 	
 	private void createTab(Card card) throws ResourceException {
 		MapEditor editor = new MapEditor(card, resources, bus);
+		editor.setMode(MapEditor.Mode.valueOf(modeGroup.getSelectedToggle().getUserData().toString()));
 		editor.setCursor(cursor);
 		if (namespace == "terrain") {
 			editor.selectTerrain(new SelectionEvent.Terrain(id));
@@ -300,7 +309,7 @@ public class MapHandler {
 		tab.setOnClosed(event -> editor.close());
 		tab.setId(card.toString());
 		tabs.getTabs().add(tab);
-		tabs.getSelectionModel().select(tab);		
+		tabs.getSelectionModel().select(tab);
 	}
 	
 	/**
