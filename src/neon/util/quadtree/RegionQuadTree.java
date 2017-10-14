@@ -26,7 +26,6 @@ import java.util.Map;
  * A region quadtree.
  * 
  * @author mdriesen
- *
  * @param <T>
  */
 public class RegionQuadTree<T> {

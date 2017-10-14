@@ -24,7 +24,6 @@ package neon.util.quadtree;
  * TODO: efficiente move() methode
  * 
  * @author mdriesen
- *
  * @param <T>
  */
 public class PointQuadTree<T> {

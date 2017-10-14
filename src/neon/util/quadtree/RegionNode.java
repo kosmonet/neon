@@ -27,7 +27,6 @@ import java.util.Collection;
  * A node in the quadtree.
  * 
  * @author mdriesen
- *
  * @param <T>
  */
 class RegionNode<T> {

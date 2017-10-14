@@ -89,13 +89,13 @@ public class MapEditor {
 	private final short uid;
 	private final String module;
 	private final ResourceManager resources;
+	private final ContextMenu menu = new ContextMenu();
 	
 	private boolean saved = true;
 	private int scale = 20;
 	private String terrain;
 	private ImageCursor cursor;
 	private Mode mode = Mode.EDIT;
-	private ContextMenu menu = new ContextMenu();
 	
 	/**
 	 * Initializes this map editor.
@@ -157,6 +157,12 @@ public class MapEditor {
 	    showInfo();	// show the info pane by default
 	}
 	
+	/**
+	 * Shows the correct mouse pointer when dragging an entity over the map
+	 * editor.
+	 * 
+	 * @param event
+	 */
 	private void dragOver(DragEvent event) {
         if (event.getDragboard().hasString()) {
             event.acceptTransferModes(TransferMode.MOVE);
@@ -165,6 +171,11 @@ public class MapEditor {
         event.consume();
 	}
 	
+	/**
+	 * Adds a new entity to the map when dragged from the resource tree.
+	 * 
+	 * @param event
+	 */
 	private void dragDropped(DragEvent event) {
         Dragboard db = event.getDragboard();
         if (db.hasString()) {
@@ -385,7 +396,7 @@ public class MapEditor {
 			} else if (mode == Mode.EDIT && me.getButton().equals(MouseButton.SECONDARY) && !map.getEntities(x, y).isEmpty()) {
 				menu.getItems().clear();
 				for (REntity entity : map.getEntities(x, y)) {
-					MenuItem delete = new MenuItem("delete " + entity.getID());
+					MenuItem delete = new MenuItem("Delete " + entity.getID());
 					delete.setOnAction(new DeleteHandler(map, entity));
 					menu.getItems().add(delete);
 				}
@@ -396,6 +407,12 @@ public class MapEditor {
 		}			
 	}
 	
+	/**
+	 * Handles the 'Delete entity' menu items in the context menu.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	private class DeleteHandler implements EventHandler<ActionEvent> {
 		private final REntity entity;
 		private final RMap map;

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -183,7 +184,7 @@ public class Console {
 		public void publish(LogRecord record) {
 			Text text = new Text(getFormatter().format(record));
 			text.setFill(Color.MOCCASIN);
-			flow.getChildren().add(flow.getChildren().size() - offset, text);
+			Platform.runLater(() -> flow.getChildren().add(flow.getChildren().size() - offset, text));
 		}
 	}
 }
