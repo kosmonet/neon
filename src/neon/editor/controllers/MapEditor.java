@@ -124,17 +124,17 @@ public class MapEditor {
 
 	    Label width = new Label("Width");
 	    grid.add(width, 0, 1);
-	    widthSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getWidth());
+	    widthSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getSize());
 	    widthSpinner.setEditable(true);
 	    grid.add(widthSpinner, 1, 1);
 
 	    Label height = new Label("Height");
 	    grid.add(height, 0, 2);
-	    heightSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getHeight());
+	    heightSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getSize());
 	    heightSpinner.setEditable(true);
 	    grid.add(heightSpinner, 1, 2);
 	    
-		pane.setPrefSize(scale*map.getWidth(), scale*map.getHeight());
+		pane.setPrefSize(scale*map.getSize(), scale*map.getSize());
 		pane.setStyle("-fx-background-color: black;");
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		

@@ -18,9 +18,10 @@
 
 package neon.common.resources;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.awt.Point;
+import java.util.Set;
 
+import neon.util.quadtree.PointQuadTree;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -40,8 +41,7 @@ public class RMap extends Resource {
 	
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
-//	private final PointQuadTree<Entity> entities;
-	private final ArrayList<Long> entities = new ArrayList<>();
+	private final PointQuadTree<Long> entities;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -55,18 +55,11 @@ public class RMap extends Resource {
 	public RMap(String id, String name, int width, int height, int uid) {
 		super(id, "map", "maps");
 		this.name = name;
-		terrain = new RegionQuadTree<>(width, height);
+		terrain = new RegionQuadTree<>(Math.max(width, height));
 		// initialize with a ground plane at 0 elevation
-		elevation = new RegionQuadTree<>(width, height, 0);
+		elevation = new RegionQuadTree<>(Math.max(width,  height), 0);
+		entities = new PointQuadTree<>(Math.max(width,  height), 100);
 		this.uid = uid;
-	}
-	
-	public int getWidth() {
-		return terrain.getWidth();
-	}
-	
-	public int getHeight() {
-		return terrain.getHeight();
 	}
 	
 	public RegionQuadTree<String> getTerrain() {
@@ -77,7 +70,22 @@ public class RMap extends Resource {
 		return elevation;
 	}
 	
-	public Collection<Long> getEntities() {
-		return entities;
+	/**
+	 * Adds an entity to the map in the given position.
+	 * 
+	 * @param uid
+	 * @param x
+	 * @param y
+	 */
+	public void addEntity(long uid, int x, int y) {
+		entities.insert(uid, new Point(x, y));
+	}
+	
+	public Set<Long> getEntities() {
+		return entities.getElements();
+	}
+	
+	public int getSize() {
+		return terrain.getSize();
 	}
 }

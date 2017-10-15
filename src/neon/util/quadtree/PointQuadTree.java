@@ -18,6 +18,10 @@
 
 package neon.util.quadtree;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.Set;
+
 /**
  * 
  * TODO: naam veranderen, is eigenlijk PR quadtree
@@ -29,7 +33,43 @@ package neon.util.quadtree;
 public class PointQuadTree<T> {
 	private final PointNode<T> root;
 	
-	public PointQuadTree() {
-		root = new PointNode<>();
+	/**
+	 * 
+	 * @param fill
+	 */
+	public PointQuadTree(int size, int fill) {
+		root = new PointNode<>(0, 0, size, size, fill);
+	}
+	
+	/**
+	 * Inserts a new element at the given position.
+	 * 
+	 * @param element
+	 * @param position
+	 */
+	public void insert(T element, Point position) {
+		root.insert(element, position);
+	}
+	
+	/**
+	 * 
+	 * @param position
+	 * @return	all elements at the given position
+	 */
+	public Set<T> get(Point position) {
+		return root.get(position);
+	}
+	
+	/**
+	 * 
+	 * @param bounds
+	 * @return	all elements within in the given bounds
+	 */
+	public Set<T> get(Rectangle bounds) {
+		return root.get(bounds);
+	}
+	
+	public Set<T> getElements() {
+		return root.getAll();
 	}
 }

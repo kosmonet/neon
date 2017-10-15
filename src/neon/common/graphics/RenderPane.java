@@ -104,8 +104,8 @@ public class RenderPane extends StackPane {
 	 * @param scale
 	 */
 	private void drawMap(int xmin, int ymin, int scale) {
-		for (int x = Math.max(0, xmin); x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
-			for (int y = Math.max(0,  ymin); y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
+		for (int x = Math.max(0, xmin); x < Math.min(terrain.getSize(), xmin + getWidth()/scale); x++) {
+			for (int y = Math.max(0,  ymin); y < Math.min(terrain.getSize(), ymin + getHeight()/scale); y++) {
 				try {
 					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
 					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();

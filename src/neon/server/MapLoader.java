@@ -72,8 +72,8 @@ class MapLoader implements ResourceLoader<RMap> {
 		root.setAttribute("uid", Integer.toString(map.uid));
 		
 		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getWidth()));
-		size.setAttribute("height", Integer.toString(map.getHeight()));
+		size.setAttribute("width", Integer.toString(map.getSize()));
+		size.setAttribute("height", Integer.toString(map.getSize()));
 		root.addContent(size);
 		
 		Element terrain = new Element("terrain");
@@ -128,13 +128,15 @@ class MapLoader implements ResourceLoader<RMap> {
 		long base = (long)map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
 			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
-			map.getEntities().add(uid);
+			int x = Integer.parseInt(entity.getAttributeValue("x"));
+			int y = Integer.parseInt(entity.getAttributeValue("y"));
+			map.addEntity(uid, x, y);
 
 			try {
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
 				Creature creature = new Creature(uid, rc);
-				creature.shape.setX(Integer.parseInt(entity.getAttributeValue("x")));
-				creature.shape.setY(Integer.parseInt(entity.getAttributeValue("y")));
+				creature.shape.setX(x);
+				creature.shape.setY(y);
 				tracker.addEntity(creature);
 			} catch (ResourceException e) {
 				throw new IllegalStateException(e);

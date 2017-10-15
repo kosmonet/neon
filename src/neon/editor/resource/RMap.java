@@ -60,21 +60,13 @@ public class RMap extends Resource {
 	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "map", "maps");
 		this.name = name;
-		terrain = new RegionQuadTree<>(width, height);
+		terrain = new RegionQuadTree<>(Math.max(width, height));
 		// initialize with a ground plane at 0 elevation
-		elevation = new RegionQuadTree<>(width, height, 0);
+		elevation = new RegionQuadTree<>(Math.max(width, height), 0);
 		this.uid = uid;
 		this.module = module;
 	}
-	
-	public int getWidth() {
-		return terrain.getWidth();
-	}
-	
-	public int getHeight() {
-		return terrain.getHeight();
-	}
-	
+
 	public RegionQuadTree<String> getTerrain() {
 		return terrain;
 	}
@@ -85,6 +77,10 @@ public class RMap extends Resource {
 	 */
 	public RegionQuadTree<Integer> getElevation() {
 		return elevation;
+	}
+	
+	public int getSize() {
+		return terrain.getSize();
 	}
 	
 	/**

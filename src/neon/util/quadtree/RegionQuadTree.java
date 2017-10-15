@@ -29,7 +29,7 @@ import java.util.Map;
  * @param <T>
  */
 public class RegionQuadTree<T> {
-	private final int width, height;
+	private final int size;
 	private final RegionNode<T> root;
 	
 	/**
@@ -38,8 +38,8 @@ public class RegionQuadTree<T> {
 	 * @param width
 	 * @param height
 	 */
-	public RegionQuadTree(int width, int height) {
-		this(width, height, null);
+	public RegionQuadTree(int size) {
+		this(size, null);
 	}
 	
 	/**
@@ -49,16 +49,13 @@ public class RegionQuadTree<T> {
 	 * @param height
 	 * @param value
 	 */
-	public RegionQuadTree(int width, int height, T value) {
-		if(width < 1 || height < 1) {
+	public RegionQuadTree(int size, T value) {
+		if(size < 1) {
 			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
-		}		
-
-		this.width = width;
-		this.height = height;
-		int size = Math.max(width, height);
-		// make a square tree
-		root = new RegionNode<T>(0, 0, size, size, value);
+		} else {
+			this.size = size;
+			root = new RegionNode<T>(0, 0, size, size, value);
+		}
 	}
 	
 	/**
@@ -81,19 +78,15 @@ public class RegionQuadTree<T> {
 	 * @return
 	 */
 	public T get(int x, int y) {
-		if (x < 0 || x >= width || y < 0 || y >= height) {
+		if (x < 0 || x >= size || y < 0 || y >= size) {
 			return null;
 		} else {
 			return root.get(x, y);
 		}
 	}
 	
-	public int getWidth() {
-		return width;
-	}
-	
-	public int getHeight() {
-		return height;
+	public int getSize() {
+		return size;
 	}
 	
 	public Map<Rectangle, T> getLeaves() {
