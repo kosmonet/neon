@@ -20,10 +20,8 @@ package neon.util.quadtree;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -36,56 +34,74 @@ class PointNode<T> {
 	private final Map<T, Point> elements;
 	private final int fill;
 	private final int x, y, width, height;
+	private final Set<T> contents;
 	
 	private PointNode<T> NW, NE, SE, SW;
 	
-	PointNode(int x, int y, int width, int height, int fill) {
+	PointNode(int x, int y, int width, int height, int fill, Map<T, Point> elements) {
 		this.fill = fill;
 		this.x = x;
 		this.y = y;
 		this. width = width;
 		this.height = height;
-		elements = new HashMap<>(fill);
+		this.elements = elements;
+		contents = new HashSet<>(fill);
 	}
 	
+	/**
+	 * Inserts an element in this node. This method does not check whether the 
+	 * node actually contains the element, it is assumed the parent node takes
+	 * care of that.
+	 * 
+	 * @param element
+	 * @param position
+	 */
 	void insert(T element, Point position) {
 		// check if this node is full
-		if(elements.size() < fill) {
+		if (contents.size() < fill) {
 			// if not, add element to this node
-			elements.put(element, position);			
+			contents.add(element);
+		} else if (width < 2 && height < 2) {
+			// if the node can't be split any more, add to this node anyway
+			contents.add(element);			
 		} else {
 			// if full, split node
-			NW = new PointNode<T>(x, y, width/2, height/2, fill); 
-			NE = new PointNode<T>(x + width/2, y, width - width/2, height/2, fill);
-			SW = new PointNode<T>(x, y + height/2, width/2, height - height/2, fill);
-			SE = new PointNode<T>(x + width/2, y + height/2, width - width/2, height - height/2, fill);
+			NW = new PointNode<T>(x, y, width/2, height/2, fill, elements); 
+			NE = new PointNode<T>(x + width/2, y, width - width/2, height/2, fill, elements);
+			SW = new PointNode<T>(x, y + height/2, width/2, height - height/2, fill, elements);
+			SE = new PointNode<T>(x + width/2, y + height/2, width - width/2, height - height/2, fill, elements);
 			
 			// and add elements to the child nodes
-			for (Entry<T, Point> entry : elements.entrySet()) {
-				if (NW.contains(entry.getValue())) {
-					NW.insert(entry.getKey(), entry.getValue());
-				} else if (NE.contains(entry.getValue())) {
-					NE.insert(entry.getKey(), entry.getValue());
-				} else if (SW.contains(entry.getValue())) {
-					SW.insert(entry.getKey(), entry.getValue());
-				} else if (SE.contains(entry.getValue())) {
-					SE.insert(entry.getKey(), entry.getValue());
+			for (T el : contents) {
+				if (NW.contains(elements.get(el))) {
+					NW.insert(el, elements.get(el));
+				} else if (NE.contains(elements.get(el))) {
+					NE.insert(el, elements.get(el));
+				} else if (SW.contains(elements.get(el))) {
+					SW.insert(el, elements.get(el));
+				} else if (SE.contains(elements.get(el))) {
+					SE.insert(el, elements.get(el));
 				}
 			}
 			
 			// don't forget to clear this node, it's no longer a leaf
-			elements.clear();
+			contents.clear();
 		}
 	}
 	
+	/**
+	 * 
+	 * @param bounds
+	 * @return	all elements within the given bounds
+	 */
 	Set<T> get(Rectangle bounds) {
 		Set<T> set = new HashSet<T>();
 
 		if(bounds.intersects(x, y, width, height)) {
 			if (isLeaf())  {
-				for (Entry<T, Point> entry : elements.entrySet()) {
-					if (bounds.contains(entry.getValue())) {
-						set.add(entry.getKey());
+				for (T element : contents) {
+					if (bounds.contains(elements.get(element))) {
+						set.add(element);
 					}
 				}			
 			} else {
@@ -99,14 +115,19 @@ class PointNode<T> {
 		return set;
 	}
 	
+	/**
+	 * 
+	 * @param position
+	 * @return	all elements at the given position
+	 */
 	Set<T> get(Point position) {
 		if(!contains(position)) {
 			return new HashSet<T>();
 		} else if (isLeaf()) {
 			Set<T> set = new HashSet<T>();
-			for (Entry<T, Point> entry : elements.entrySet()) {
-				if (entry.getValue().equals(position)) {
-					set.add(entry.getKey());
+			for (T element : contents) {
+				if (elements.get(element).equals(position)) {
+					set.add(element);
 				}
 			}
 			return set;
@@ -130,17 +151,60 @@ class PointNode<T> {
 	private boolean contains(Point position) {
 		return new Rectangle(x, y, width, height).contains(position);
 	}
-	
-	Set<T> getAll() {
-		if(isLeaf()) {
-			return elements.keySet();
+
+	/**
+	 * Tries to move an element to a new position.
+	 * 
+	 * @param element
+	 * @param newPos
+	 * @param oldPos
+	 * @return	{@code true} if the element is still contained in this node after the 
+	 * 			move, {@code false} if the parent should try to re-insert the element 
+	 * 			at a higher level in the tree
+	 */
+	boolean move(T element, Point newPos, Point oldPos) {
+		// check if this node contained the old position
+		if (contains(oldPos)) {
+			// check if this is a leaf
+			if (isLeaf()) {
+				if (contains(newPos)) {
+					// if this node also contains the new position of the element, no further action is needed
+					return true;
+				} else {
+					// if this node does not contain the new position, let the parent node handle re-insertion
+					contents.remove(element);
+					return false;
+				}
+			} else {
+				// if this was not a leaf, check the child nodes
+				if (NW.contains(oldPos)) {
+					return stuff(NW, element, newPos, oldPos);
+				} else if (NE.contains(oldPos)) {
+					return stuff(NE, element, newPos, oldPos);
+				} else if (SE.contains(oldPos)) {
+					return stuff(SE, element, newPos, oldPos);
+				} else if (SW.contains(oldPos)) {
+					return stuff(SW, element, newPos, oldPos);
+				} else {
+					throw new IllegalArgumentException("Could not move element in tree.");
+				}
+			}
 		} else {
-			Set<T> set = new HashSet<T>();
-			set.addAll(NW.getAll());
-			set.addAll(NE.getAll());
-			set.addAll(SE.getAll());
-			set.addAll(SW.getAll());
-			return set;
+			return false;
+		}
+	}
+
+	private boolean stuff(PointNode<T> node, T element, Point oldPos, Point newPos) {
+		if (node.move(element, newPos, oldPos)) {
+			return true;
+		} else {
+			// if the child node doesn't contain the new position any longer, try to re-insert
+			if (contains(newPos)) {
+				insert(element, newPos);
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }

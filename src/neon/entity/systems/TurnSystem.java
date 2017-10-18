@@ -50,7 +50,7 @@ public class TurnSystem implements NeonSystem {
 	}
 	
 	@Subscribe
-	private void handleTurn(TurnEvent te) throws ResourceException {
+	private void handleTurn(TurnEvent event) throws ResourceException {
 		CGame config = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", config.getCurrentMap());
 		
@@ -65,8 +65,11 @@ public class TurnSystem implements NeonSystem {
 			
 			if(entity instanceof Creature) {
 				Creature creature = (Creature) entity;
-				creature.shape.setX(creature.shape.getX() + random.nextInt(3) - 1);
-				creature.shape.setY(creature.shape.getY() + random.nextInt(3) - 1);
+				int x = creature.shape.getX() + random.nextInt(3) - 1;
+				int y = creature.shape.getY() + random.nextInt(3) - 1;
+				creature.shape.setX(x);
+				creature.shape.setY(y);
+				map.moveEntity(uid, x, y);
 			}
 		}
 		

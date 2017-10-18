@@ -20,17 +20,19 @@ package neon.util.quadtree;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * 
  * TODO: naam veranderen, is eigenlijk PR quadtree
- * TODO: efficiente move() methode
  * 
  * @author mdriesen
  * @param <T>
  */
 public class PointQuadTree<T> {
+	private final Map<T, Point> elements = new HashMap<>();
 	private final PointNode<T> root;
 	
 	/**
@@ -38,7 +40,7 @@ public class PointQuadTree<T> {
 	 * @param fill
 	 */
 	public PointQuadTree(int size, int fill) {
-		root = new PointNode<>(0, 0, size, size, fill);
+		root = new PointNode<>(0, 0, size, size, fill, elements);
 	}
 	
 	/**
@@ -48,6 +50,7 @@ public class PointQuadTree<T> {
 	 * @param position
 	 */
 	public void insert(T element, Point position) {
+		elements.put(element, position);
 		root.insert(element, position);
 	}
 	
@@ -63,13 +66,29 @@ public class PointQuadTree<T> {
 	/**
 	 * 
 	 * @param bounds
-	 * @return	all elements within in the given bounds
+	 * @return	all elements within the given bounds
 	 */
 	public Set<T> get(Rectangle bounds) {
 		return root.get(bounds);
 	}
 	
+	/**
+	 * 
+	 * @return	all elements in the tree
+	 */
 	public Set<T> getElements() {
-		return root.getAll();
+		return elements.keySet();
+	}
+	
+	/**
+	 * Tries to move an element to a new position.
+	 * 
+	 * @param element
+	 * @param position
+	 */
+	public void move(T element, Point position) {
+		Point previous = elements.get(element);
+		elements.put(element, position);
+		root.move(element, position, previous);
 	}
 }

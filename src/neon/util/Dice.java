@@ -18,6 +18,35 @@
 
 package neon.util;
 
-public class Dice {
+import java.util.Random;
 
+/**
+ * Polyhedral dice roller.
+ * 
+ * @author mdriesen
+ */
+public class Dice {
+	private final static Random random = new Random();
+	
+	/**
+	 * Rolls dice.
+	 * 
+	 * @param x	the amount of rolls
+	 * @param y	the type of dice
+	 * @param z	a modifier
+	 * @return	the result of the dice roll <i>x</i>d<i>y</i> + <i>z</i>
+	 */
+	public static int roll(int x, int y, int z) {
+		int result = 0;
+		
+		for (int i = 0; i < x; i++) {
+			result += random.nextInt(y) + 1;
+		}
+		
+		return result + z;
+	}
+	
+	public static int roll(String roll) {
+		return 0;
+	}
 }

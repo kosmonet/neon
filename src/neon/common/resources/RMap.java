@@ -109,6 +109,10 @@ public class RMap extends Resource {
 		return entities.get(bounds);
 	}
 	
+	public void moveEntity(Long uid, int x, int y) {
+		entities.move(uid, new Point(x, y));
+	}
+	
 	public int getSize() {
 		return terrain.getSize();
 	}

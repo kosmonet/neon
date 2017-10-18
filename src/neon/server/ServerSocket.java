@@ -21,7 +21,9 @@ package neon.server;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+
 import com.google.common.eventbus.Subscribe;
+
 import neon.client.ClientSocket;
 import neon.common.event.ClientEvent;
 import neon.common.event.ServerEvent;
@@ -38,6 +40,7 @@ public class ServerSocket {
 	
 	private final BlockingQueue<ServerEvent> queue = new LinkedBlockingQueue<>();
 	private final String name;
+	
 	private ClientSocket cs;
 	
 	/**
@@ -49,6 +52,7 @@ public class ServerSocket {
 		this.name = name;
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}

@@ -26,6 +26,7 @@ import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceManager;
 import neon.entity.Action;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
@@ -70,12 +71,12 @@ public class MovementSystem implements NeonSystem {
 		}
 	}
 	
-//	/**
-//	 * Moves a creature on the current map.
-//	 * 
-//	 * @param event
-//	 */
-//	void move(Creature creature) {
-//		
-//	}
+	/**
+	 * Moves a creature on the current map.
+	 * 
+	 * @param event
+	 */
+	void move(Creature creature) {
+		//TODO: alle creature movement langs hier laten gaan, en proberen de quadtree op orde te houden
+	}
 }
