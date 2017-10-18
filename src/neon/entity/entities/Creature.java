@@ -23,12 +23,14 @@ import neon.entity.components.AIComponent;
 import neon.entity.components.GraphicsComponent;
 import neon.entity.components.InventoryComponent;
 import neon.entity.components.ShapeComponent;
+import neon.entity.components.StatsComponent;
 
 public class Creature extends Entity {
 	public final InventoryComponent inventory;
 	public final ShapeComponent shape;
 	public final GraphicsComponent graphics;
 	public final AIComponent ai;
+	public final StatsComponent stats;
 	
 	public Creature(long uid, RCreature species) {
 		super(uid);
@@ -36,5 +38,6 @@ public class Creature extends Entity {
 		shape = new ShapeComponent(uid);
 		graphics = new GraphicsComponent(uid, species.character, species.color);
 		ai = new AIComponent(uid);
+		stats = new StatsComponent(species);
 	}
 }

@@ -19,6 +19,7 @@
 package neon.common.resources;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Set;
 
 import neon.util.quadtree.PointQuadTree;
@@ -81,8 +82,31 @@ public class RMap extends Resource {
 		entities.insert(uid, new Point(x, y));
 	}
 	
+	/**
+	 * 
+	 * @return	all entities on the map
+	 */
 	public Set<Long> getEntities() {
 		return entities.getElements();
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return	all entities at the given coordinates
+	 */
+	public Set<Long> getEntities(int x, int y) {
+		return entities.get(new Point(x, y));
+	}
+	
+	/**
+	 * 
+	 * @param bounds
+	 * @return	all entities in the given bounds
+	 */
+	public Set<Long> getEntities(Rectangle bounds) {
+		return entities.get(bounds);
 	}
 	
 	public int getSize() {

@@ -57,7 +57,7 @@ class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	GameLoader(EventBus bus, ResourceManager resources, EntityTracker entities) {
+	GameLoader(ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
@@ -74,6 +74,7 @@ class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
+		game.setCurrentMap(game.getStartMap());
 		RMap map = resources.getResource("maps", game.getStartMap());
 		
 		// the player character

@@ -93,6 +93,10 @@ public abstract class UpdateEvent extends ClientEvent {
 	 *
 	 */
 	public static class Entities extends UpdateEvent {
+		public Entities(Collection<Entity> entities) {
+			this.entities.addAll(entities);
+		}
+		
 		public Entities(Entity entity) {
 			entities.add(entity);
 		}

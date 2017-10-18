@@ -28,6 +28,8 @@ public class CGame extends Resource {
 	private final Set<String> species = new HashSet<>();
 	private final String startMap;
 	private final int x, y;
+	
+	private String currentMap;
 
 	public CGame(String title, Collection<String> species, String startMap, int startX, int startY) {
 		super("game", "config", "config");
@@ -47,6 +49,10 @@ public class CGame extends Resource {
 		return species;
 	}
 	
+	/**
+	 * 
+	 * @return	the id of the starting map
+	 */
 	public String getStartMap() {
 		return startMap;
 	}
@@ -57,5 +63,22 @@ public class CGame extends Resource {
 	
 	public int getStartY() {
 		return y;
+	}
+	
+	/**
+	 * Sets the id of the current map.
+	 * 
+	 * @param map
+	 */
+	public void setCurrentMap(String map) {
+		currentMap = map;
+	}
+	
+	/**
+	 * 
+	 * @return	the id of the current map
+	 */
+	public String getCurrentMap() {
+		return currentMap;
 	}
 }

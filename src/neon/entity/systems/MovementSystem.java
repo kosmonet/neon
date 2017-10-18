@@ -22,8 +22,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceManager;
+import neon.entity.Action;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
@@ -59,5 +61,21 @@ public class MovementSystem implements NeonSystem {
 		}
 		
 		bus.post(new UpdateEvent.Entities(player));
+
+		// check if the player still has action points left after moving
+		player.stats.perform(Action.MOVE);		
+		if(!player.stats.isActive()) {
+			// if not, go to next turn
+			bus.post(new TurnEvent());
+		}
 	}
+	
+//	/**
+//	 * Moves a creature on the current map.
+//	 * 
+//	 * @param event
+//	 */
+//	void move(Creature creature) {
+//		
+//	}
 }

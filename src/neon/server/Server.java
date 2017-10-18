@@ -18,18 +18,8 @@
 
 package neon.server;
 
-import java.util.logging.Logger;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
-import neon.client.console.ConsoleEvent;
 import neon.common.event.ClientConfigurationEvent;
-import neon.common.event.ScriptEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
@@ -37,6 +27,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.systems.InventorySystem;
 import neon.entity.systems.MovementSystem;
+import neon.entity.systems.TurnSystem;
 
 /**
  * The server part of the neon engine.
@@ -45,19 +36,16 @@ import neon.entity.systems.MovementSystem;
  *
  */
 public class Server implements Runnable {
-	private static final Logger logger = Logger.getGlobal();
-	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
-	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");;
 	private final ServerSocket socket;
 	private final EntityTracker entities;
 	
 	/**
 	 * Initializes the server.
 	 * 
-	 * @param version	the current version of the server
+	 * @param version	the current version of the engine
 	 * @param socket	the socket used to communicate with a client
 	 */
 	public Server(String version, ServerSocket socket) {
@@ -86,40 +74,11 @@ public class Server implements Runnable {
 		}
 		
 		// add all the systems to the bus
-		bus.register(new GameLoader(bus, resources, entities));
+		bus.register(new GameLoader(resources, entities, bus));
+		bus.register(new ScriptHandler(bus));
 		bus.register(new MovementSystem(resources, entities, bus));
 		bus.register(new InventorySystem(entities, bus));
-	}
-	
-	/**
-	 * Executes a script and sends the result to the debug console. To prevent
-	 * server resources from leaking to the client, only the {@code String}
-	 * representation of the result is sent.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void execute(ScriptEvent event) {
-		Object result = execute(event.getScript());
-		if (result != null) {
-			bus.post(new ConsoleEvent(result.toString()));
-		}
-	}
-	
-	/**
-	 * Executes the given script with the nashorn engine.
-	 * 
-	 * @param script the script to execute
-	 * @return the result of the script
-	 */
-	private Object execute(String script) {
-		Object result = null;
-		try {
-			result = engine.eval(script);
-		} catch (ScriptException e) {
-			logger.warning("could not evaluate script: " + script);
-		}		
-		return result;
+		bus.register(new TurnSystem(resources, entities, bus));
 	}
 	
 	/**
