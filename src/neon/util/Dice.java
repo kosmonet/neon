@@ -46,7 +46,7 @@ public class Dice {
 		return result + z;
 	}
 	
-	public static int roll(String roll) {
-		return 0;
-	}
+//	public static int roll(String roll) {
+//		return 0;
+//	}
 }

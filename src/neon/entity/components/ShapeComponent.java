@@ -18,13 +18,15 @@
 
 package neon.entity.components;
 
+import java.util.Observable;
+
 /**
  * A component that represents the shape (including position) of an entity.
  * 
  * @author mdriesen
  *
  */
-public class ShapeComponent implements Component {
+public class ShapeComponent extends Observable implements Component {
 	private final long uid;
 	
 	private int x, y, z;
@@ -60,17 +62,25 @@ public class ShapeComponent implements Component {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void setX(int x) {
 		this.x = x;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void setY(int y) {
 		this.y = y;
+		setChanged();
+		notifyObservers();
 	}
 
 	public void setZ(int z) {
 		this.z = z;
+		setChanged();
+		notifyObservers();
 	}
 }

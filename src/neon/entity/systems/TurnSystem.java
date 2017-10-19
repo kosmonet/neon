@@ -21,11 +21,11 @@ package neon.entity.systems;
 import java.awt.Rectangle;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Random;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.event.ThinkEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
@@ -37,11 +37,16 @@ import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
+/**
+ * System to handle new turns.
+ * 
+ * @author mdriesen
+ * 
+ */
 public class TurnSystem implements NeonSystem {
 	private final ResourceManager resources;
 	private final EntityTracker entities;
 	private final EventBus bus;
-	private final Random random = new Random();
 	
 	public TurnSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.resources = resources;
@@ -54,8 +59,11 @@ public class TurnSystem implements NeonSystem {
 		CGame config = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", config.getCurrentMap());
 		
+		// reset the player's action points
 		Player player = entities.getEntity(0);
+		player.stats.rest();
 		
+		// get all entities in the player's neighbourhood
 		Rectangle bounds = new Rectangle(player.shape.getX() - 50, player.shape.getY() - 50, 100, 100);
 		Collection<Entity> changed = new HashSet<Entity>();
 		
@@ -64,12 +72,12 @@ public class TurnSystem implements NeonSystem {
 			changed.add(entity);
 			
 			if (entity instanceof Creature) {
+				// reset the creature's action points
 				Creature creature = (Creature) entity;
-				int x = creature.shape.getX() + random.nextInt(3) - 1;
-				int y = creature.shape.getY() + random.nextInt(3) - 1;
-				creature.shape.setX(x);
-				creature.shape.setY(y);
-				map.moveEntity(uid, x, y);
+				creature.stats.rest();
+				
+				// let the creature act
+				bus.post(new ThinkEvent(creature));
 			}
 		}
 		

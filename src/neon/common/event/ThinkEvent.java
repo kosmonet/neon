@@ -16,17 +16,14 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.event;
 
-public class AIComponent implements Component {
-	private final long uid;
+import neon.entity.entities.Creature;
+
+public class ThinkEvent extends ServerEvent {
+	public final Creature creature;
 	
-	public AIComponent(long uid) {
-		this.uid = uid;
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
+	public ThinkEvent(Creature creature) {
+		this.creature = creature;
 	}
 }

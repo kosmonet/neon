@@ -22,11 +22,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.event.MoveEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceManager;
 import neon.entity.Action;
-import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
@@ -76,7 +76,10 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	void move(Creature creature) {
-		//TODO: alle creature movement langs hier laten gaan, en proberen de quadtree op orde te houden
+	@Subscribe
+	private void move(MoveEvent.Start event) {
+		System.out.println("move");
+		event.creature.shape.setX(event.position.x);
+		event.creature.shape.setY(event.position.y);
 	}
 }

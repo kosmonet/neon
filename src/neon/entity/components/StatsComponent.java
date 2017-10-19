@@ -21,13 +21,15 @@ package neon.entity.components;
 import neon.common.resources.RCreature;
 import neon.entity.Action;
 
-public class StatsComponent {
+public class StatsComponent implements Component {
 	private final RCreature species;
+	private final long uid;
 	
 	private int AP;	// action points
 	
-	public StatsComponent(RCreature species) {
+	public StatsComponent(long uid, RCreature species) {
 		this.species = species;
+		this.uid = uid;
 	}
 	
 	/**
@@ -61,5 +63,10 @@ public class StatsComponent {
 	
 	public RCreature getSpecies() {
 		return species;
+	}
+
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 }

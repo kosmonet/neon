@@ -20,8 +20,11 @@ package neon.common.resources;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
+import neon.entity.components.ShapeComponent;
 import neon.util.quadtree.PointQuadTree;
 import neon.util.quadtree.RegionQuadTree;
 
@@ -30,7 +33,7 @@ import neon.util.quadtree.RegionQuadTree;
  * @author mdriesen
  *
  */
-public class RMap extends Resource {
+public class RMap extends Resource implements Observer {
 	/**
 	 * The uid of this map.
 	 */
@@ -109,11 +112,19 @@ public class RMap extends Resource {
 		return entities.get(bounds);
 	}
 	
-	public void moveEntity(Long uid, int x, int y) {
+	private void moveEntity(Long uid, int x, int y) {
 		entities.move(uid, new Point(x, y));
 	}
 	
 	public int getSize() {
 		return terrain.getSize();
+	}
+
+	@Override
+	public void update(Observable observable, Object arg) {
+		if (observable instanceof ShapeComponent) {
+			ShapeComponent shape = (ShapeComponent) observable;
+			moveEntity(shape.getEntity(), shape.getX(), shape.getY());
+		}
 	}
 }

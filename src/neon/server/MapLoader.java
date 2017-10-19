@@ -137,6 +137,7 @@ class MapLoader implements ResourceLoader<RMap> {
 				Creature creature = new Creature(uid, rc);
 				creature.shape.setX(x);
 				creature.shape.setY(y);
+				creature.shape.addObserver(map);
 				tracker.addEntity(creature);
 			} catch (ResourceException e) {
 				throw new IllegalStateException(e);

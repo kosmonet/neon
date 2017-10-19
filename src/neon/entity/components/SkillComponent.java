@@ -16,33 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.entity.components;
 
-import java.awt.Point;
-import java.util.Random;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
-import neon.common.event.MoveEvent;
-import neon.common.event.ThinkEvent;
-import neon.entity.entities.Creature;
-
-public class AISystem {
-	private final Random random = new Random();
-	private final EventBus bus;
+public class SkillComponent implements Component {
+	private final long uid;
 	
-	public AISystem(EventBus bus) {
-		this.bus = bus;
+	public SkillComponent(long uid) {
+		this.uid = uid;
 	}
 	
-	@Subscribe
-	private void act(ThinkEvent event) {
-		Creature creature = event.creature;
-		
-		// move the creature
-		int x = creature.shape.getX() + random.nextInt(3) - 1;
-		int y = creature.shape.getY() + random.nextInt(3) - 1;
-		bus.post(new MoveEvent.Start(creature, new Point(x, y)));		
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 }
