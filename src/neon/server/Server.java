@@ -77,10 +77,11 @@ public class Server implements Runnable {
 		// add all the systems and various other stuff to the bus
 		bus.register(new GameLoader(resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
-		bus.register(new MovementSystem(resources, entities, bus));
+		MovementSystem movement = new MovementSystem(resources, entities, bus);
+		bus.register(movement);
 		bus.register(new InventorySystem(entities, bus));
 		bus.register(new TurnSystem(resources, entities, bus));
-		bus.register(new AISystem(bus));
+		bus.register(new AISystem(movement));
 	}
 	
 	/**

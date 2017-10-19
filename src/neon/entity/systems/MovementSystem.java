@@ -61,12 +61,13 @@ public class MovementSystem implements NeonSystem {
 		case "down": player.shape.setY(player.shape.getY() + 1); break;
 		}
 		
+		// signal the client that an entity was updated
 		bus.post(new UpdateEvent.Entities(player));
 
 		// check if the player still has action points left after moving
-		player.stats.perform(Action.MOVE);		
+		player.stats.perform(Action.MOVE);	
 		if(!player.stats.isActive()) {
-			// if not, go to next turn
+			// if not, go to the next turn
 			bus.post(new TurnEvent());
 		}
 	}
@@ -77,9 +78,9 @@ public class MovementSystem implements NeonSystem {
 	 * @param event
 	 */
 	@Subscribe
-	private void move(MoveEvent.Start event) {
-		System.out.println("move");
+	void move(MoveEvent.Start event) {
 		event.creature.shape.setX(event.position.x);
 		event.creature.shape.setY(event.position.y);
+		event.creature.stats.perform(Action.MOVE);
 	}
 }

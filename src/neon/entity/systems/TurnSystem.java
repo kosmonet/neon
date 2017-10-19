@@ -75,12 +75,14 @@ public class TurnSystem implements NeonSystem {
 				// reset the creature's action points
 				Creature creature = (Creature) entity;
 				creature.stats.rest();
-				
+
 				// let the creature act
 				bus.post(new ThinkEvent(creature));
+				// beware: these events are handled AFTER handleTurn has finished
 			}
 		}
 		
+		// let the client know that entities have changed and should be redrawn
 		bus.post(new UpdateEvent.Entities(changed));
 	}
 }

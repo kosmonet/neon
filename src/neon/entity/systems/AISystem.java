@@ -21,7 +21,6 @@ package neon.entity.systems;
 import java.awt.Point;
 import java.util.Random;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.MoveEvent;
@@ -30,19 +29,21 @@ import neon.entity.entities.Creature;
 
 public class AISystem {
 	private final Random random = new Random();
-	private final EventBus bus;
+	private final MovementSystem movement;
 	
-	public AISystem(EventBus bus) {
-		this.bus = bus;
+	public AISystem(MovementSystem movement) {
+		this.movement = movement;
 	}
 	
 	@Subscribe
 	private void act(ThinkEvent event) {
 		Creature creature = event.creature;
 		
-		// move the creature
-		int x = creature.shape.getX() + random.nextInt(3) - 1;
-		int y = creature.shape.getY() + random.nextInt(3) - 1;
-		bus.post(new MoveEvent.Start(creature, new Point(x, y)));		
+		while(creature.stats.isActive()) {
+			// move the creature
+			int x = creature.shape.getX() + random.nextInt(3) - 1;
+			int y = creature.shape.getY() + random.nextInt(3) - 1;
+			movement.move(new MoveEvent.Start(creature, new Point(x, y)));
+		}
 	}
 }

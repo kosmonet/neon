@@ -48,7 +48,7 @@ public class StatsComponent implements Component {
 	 * turn.
 	 * 
 	 * @return	{@code true} if the action point total is larger than 0, 
-	 * 				{@code false} otherwise
+	 * 			{@code false} otherwise
 	 */
 	public boolean isActive() {
 		return AP > 0;
