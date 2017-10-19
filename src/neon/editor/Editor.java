@@ -202,7 +202,7 @@ public class Editor extends Application {
 	private void saveModule(SaveEvent.Module event) {
 		String id = config.getActiveModule().id;
 		FileUtils.clearFolder(Paths.get("data", id));
-		FileUtils.copyFolder(Paths.get("temp"), Paths.get("data", id));
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("data", id));
 		logger.fine("saved module " + id);
 	}
 	

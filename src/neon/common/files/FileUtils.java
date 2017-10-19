@@ -74,6 +74,25 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Moves a folder to a new destination. If the destination folder already
+	 * exists, it will be overwritten.
+	 * 
+	 * @param from
+	 * @param to
+	 */
+	public static void moveFolder(Path from, Path to) {
+		if(to.toFile().exists()) {
+			to.toFile().delete();
+		}
+		
+		try {
+			Files.move(from.toFile(), to.toFile());
+		} catch (IOException e) {
+			logger.severe("failed to move folder " + from + "to destination " + to);
+		}
+	}
+	
+	/**
 	 * Clears all content from the given folder.
 	 * 
 	 * @param folder

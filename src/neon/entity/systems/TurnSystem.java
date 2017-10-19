@@ -63,7 +63,7 @@ public class TurnSystem implements NeonSystem {
 			Entity entity = entities.getEntity(uid);
 			changed.add(entity);
 			
-			if(entity instanceof Creature) {
+			if (entity instanceof Creature) {
 				Creature creature = (Creature) entity;
 				int x = creature.shape.getX() + random.nextInt(3) - 1;
 				int y = creature.shape.getY() + random.nextInt(3) - 1;
