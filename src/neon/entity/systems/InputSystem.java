@@ -24,16 +24,16 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.InputEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
+import neon.entity.EntityProvider;
 import neon.entity.MovementService;
 import neon.entity.entities.Player;
-import neon.server.EntityTracker;
 
 public class InputSystem implements NeonSystem {
-	private final EntityTracker entities;
+	private final EntityProvider entities;
 	private final EventBus bus;
 	private final MovementService mover;
 	
-	public InputSystem(EntityTracker entities, EventBus bus, MovementService mover) {
+	public InputSystem(EntityProvider entities, EventBus bus, MovementService mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;

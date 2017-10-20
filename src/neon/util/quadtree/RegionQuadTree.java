@@ -38,8 +38,8 @@ public class RegionQuadTree<T> {
 	 * @param width
 	 * @param height
 	 */
-	public RegionQuadTree(int size) {
-		this(size, null);
+	public RegionQuadTree(int width, int height) {
+		this(width, height, null);
 	}
 	
 	/**
@@ -49,7 +49,9 @@ public class RegionQuadTree<T> {
 	 * @param height
 	 * @param value
 	 */
-	public RegionQuadTree(int size, T value) {
+	public RegionQuadTree(int width, int height, T value) {
+		// make a square tree with power of two size
+		int size = Math.max(1, Integer.highestOneBit(Math.max(width, height) - 1) << 1);
 		if(size < 1) {
 			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
 		} else {

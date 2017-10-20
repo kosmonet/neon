@@ -39,7 +39,9 @@ public class PointQuadTree<T> {
 	 * 
 	 * @param fill
 	 */
-	public PointQuadTree(int size, int fill) {
+	public PointQuadTree(int width, int height, int fill) {
+		// make a square tree with power of two size
+		int size = Math.max(1, Integer.highestOneBit(Math.max(width, height) - 1) << 1);
 		root = new PointNode<>(0, 0, size, size, fill, elements);
 	}
 	

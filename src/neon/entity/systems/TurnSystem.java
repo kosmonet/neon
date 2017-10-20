@@ -32,10 +32,10 @@ import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
-import neon.server.EntityTracker;
 
 /**
  * System to handle new turns.
@@ -45,10 +45,10 @@ import neon.server.EntityTracker;
  */
 public class TurnSystem implements NeonSystem {
 	private final ResourceManager resources;
-	private final EntityTracker entities;
+	private final EntityProvider entities;
 	private final EventBus bus;
 	
-	public TurnSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
+	public TurnSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;

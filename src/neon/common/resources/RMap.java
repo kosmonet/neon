@@ -59,10 +59,10 @@ public class RMap extends Resource implements Observer {
 	public RMap(String id, String name, int width, int height, int uid) {
 		super(id, "map", "maps");
 		this.name = name;
-		terrain = new RegionQuadTree<>(Math.max(width, height));
+		terrain = new RegionQuadTree<>(width, height);
 		// initialize with a ground plane at 0 elevation
-		elevation = new RegionQuadTree<>(Math.max(width,  height), 0);
-		entities = new PointQuadTree<>(Math.max(width,  height), 100);
+		elevation = new RegionQuadTree<>(width,  height, 0);
+		entities = new PointQuadTree<>(width,  height, 100);
 		this.uid = uid;
 	}
 	
