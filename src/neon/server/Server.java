@@ -67,14 +67,6 @@ public class Server implements Runnable {
 			throw new IllegalStateException(e);
 		}
 		
-		// send configuration message to the client
-		try {
-			CGame cg = resources.getResource("config", "game");
-			bus.post(new ClientConfigurationEvent(cg));
-		} catch (ResourceException e) {
-			throw new IllegalStateException(e);
-		}
-		
 		// add all the systems and various other stuff to the bus
 		MovementService mover = new MovementService();
 
@@ -84,6 +76,14 @@ public class Server implements Runnable {
 		bus.register(new TurnSystem(resources, entities, bus));
 		bus.register(new AISystem(mover));
 		bus.register(new InputSystem(entities, bus, mover));
+		
+		// send configuration message to the client
+		try {
+			CGame cg = resources.getResource("config", "game");
+			bus.post(new ClientConfigurationEvent(cg));
+		} catch (ResourceException e) {
+			throw new IllegalStateException(e);
+		}		
 	}
 	
 	/**

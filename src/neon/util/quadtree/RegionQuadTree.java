@@ -95,7 +95,9 @@ public class RegionQuadTree<T> {
 		Map<Rectangle, T> leaves = new HashMap<>();
 		if(!root.isLeaf()) {
 			for(RegionNode<T> node : root.getLeaves()) {
-				leaves.put(node.getBounds(), node.getValue());
+				if (node.getValue() != null) {
+					leaves.put(node.getBounds(), node.getValue());
+				}
 			}
 		}
 		return leaves;
