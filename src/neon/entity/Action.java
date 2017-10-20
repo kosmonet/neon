@@ -19,7 +19,7 @@
 package neon.entity;
 
 public enum Action {
-	MOVE(10), ATTACK(10);
+	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10);
 	
 	public final int points;
 	

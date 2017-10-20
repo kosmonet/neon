@@ -36,6 +36,7 @@ import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.entity.entities.Player;
+import neon.util.Direction;
 
 /**
  * 
@@ -67,10 +68,10 @@ public class GameModule extends Module {
 			logger.severe("failed to load new game: " + e.getMessage());
 		}
 		
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move("left"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move("right"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move("up"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move("down"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move(Direction.LEFT));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.RIGHT), () -> move(Direction.RIGHT));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move(Direction.UP));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
 	}
@@ -102,7 +103,7 @@ public class GameModule extends Module {
 		redraw();
 	}
 	
-	private void move(String direction) {
+	private void move(Direction direction) {
 		bus.post(new InputEvent.Move(direction));
 	}
 	

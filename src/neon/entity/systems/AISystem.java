@@ -23,16 +23,16 @@ import java.util.Random;
 
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.MoveEvent;
 import neon.common.event.ThinkEvent;
+import neon.entity.MovementService;
 import neon.entity.entities.Creature;
 
-public class AISystem {
+public class AISystem implements NeonSystem {
 	private final Random random = new Random();
-	private final MovementSystem movement;
+	private final MovementService mover;
 	
-	public AISystem(MovementSystem movement) {
-		this.movement = movement;
+	public AISystem(MovementService mover) {
+		this.mover = mover;
 	}
 	
 	@Subscribe
@@ -43,7 +43,7 @@ public class AISystem {
 			// move the creature
 			int x = creature.shape.getX() + random.nextInt(3) - 1;
 			int y = creature.shape.getY() + random.nextInt(3) - 1;
-			movement.move(new MoveEvent.Start(creature, new Point(x, y)));
+			mover.move(creature, new Point(x, y));
 		}
 	}
 }

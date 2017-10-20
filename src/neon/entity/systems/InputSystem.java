@@ -22,27 +22,21 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
-import neon.common.event.MoveEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.ResourceManager;
-import neon.entity.Action;
+import neon.entity.MovementService;
 import neon.entity.entities.Player;
 import neon.server.EntityTracker;
 
-/**
- * The system that handles all movement-related events.
- * 
- * @author mdriesen
- *
- */
-public class MovementSystem implements NeonSystem {
+public class InputSystem implements NeonSystem {
 	private final EntityTracker entities;
 	private final EventBus bus;
+	private final MovementService mover;
 	
-	public MovementSystem(ResourceManager resources, EntityTracker entities, EventBus bus) {
-		this.entities = entities;
+	public InputSystem(EntityTracker entities, EventBus bus, MovementService mover) {
 		this.bus = bus;
+		this.entities = entities;
+		this.mover = mover;
 	}
 	
 	/**
@@ -53,34 +47,15 @@ public class MovementSystem implements NeonSystem {
 	@Subscribe
 	private void move(InputEvent.Move event) {
 		Player player = (Player) entities.getEntity(0);
-		
-		switch(event.getDirection()) {
-		case "left": player.shape.setX(Math.max(0, player.shape.getX() - 1)); break;
-		case "right": player.shape.setX(player.shape.getX() + 1); break;
-		case "up": player.shape.setY(Math.max(0, player.shape.getY() - 1)); break;
-		case "down": player.shape.setY(player.shape.getY() + 1); break;
-		}
+		mover.move(player, event.getDirection());
 		
 		// signal the client that an entity was updated
 		bus.post(new UpdateEvent.Entities(player));
 
 		// check if the player still has action points left after moving
-		player.stats.perform(Action.MOVE);	
 		if(!player.stats.isActive()) {
 			// if not, go to the next turn
 			bus.post(new TurnEvent());
 		}
-	}
-	
-	/**
-	 * Moves a creature on the current map.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	void move(MoveEvent.Start event) {
-		event.creature.shape.setX(event.position.x);
-		event.creature.shape.setY(event.position.y);
-		event.creature.stats.perform(Action.MOVE);
 	}
 }

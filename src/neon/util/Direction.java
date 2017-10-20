@@ -16,26 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.util;
 
-import neon.util.Direction;
-
-/**
- * An event containing client input for the server.
- * 
- * @author mdriesen
- *
- */
-public class InputEvent extends ServerEvent {
-	public static class Move extends InputEvent {
-		private final Direction direction;
-		
-		public Move(Direction direction) {
-			this.direction = direction;
-		}
-		
-		public Direction getDirection() {
-			return direction;
-		}
-	}
+public enum Direction {
+	LEFT, RIGHT, UP, DOWN;
 }

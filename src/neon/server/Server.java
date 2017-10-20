@@ -25,9 +25,10 @@ import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.MovementService;
 import neon.entity.systems.AISystem;
+import neon.entity.systems.InputSystem;
 import neon.entity.systems.InventorySystem;
-import neon.entity.systems.MovementSystem;
 import neon.entity.systems.TurnSystem;
 
 /**
@@ -75,13 +76,14 @@ public class Server implements Runnable {
 		}
 		
 		// add all the systems and various other stuff to the bus
+		MovementService mover = new MovementService();
+
 		bus.register(new GameLoader(resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
-		MovementSystem movement = new MovementSystem(resources, entities, bus);
-		bus.register(movement);
 		bus.register(new InventorySystem(entities, bus));
 		bus.register(new TurnSystem(resources, entities, bus));
-		bus.register(new AISystem(movement));
+		bus.register(new AISystem(mover));
+		bus.register(new InputSystem(entities, bus, mover));
 	}
 	
 	/**
