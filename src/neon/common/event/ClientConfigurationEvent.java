@@ -26,7 +26,7 @@ import neon.common.resources.CGame;
  * @author mdriesen
  *
  */
-public class ClientConfigurationEvent extends ClientEvent {
+public class ClientConfigurationEvent implements ClientEvent {
 	private final String[] species;
 	private final String title;
 	

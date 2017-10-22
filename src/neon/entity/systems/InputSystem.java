@@ -22,11 +22,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
-import neon.common.event.TurnEvent;
-import neon.common.event.UpdateEvent;
 import neon.entity.EntityProvider;
 import neon.entity.MovementService;
 import neon.entity.entities.Player;
+import neon.entity.events.TurnEvent;
+import neon.entity.events.UpdateEvent;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;

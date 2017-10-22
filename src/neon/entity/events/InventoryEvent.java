@@ -16,14 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.entity.events;
 
-import neon.entity.entities.Creature;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class ThinkEvent extends ServerEvent {
-	public final Creature creature;
+import neon.common.event.ClientEvent;
+import neon.entity.entities.Item;
+
+public class InventoryEvent implements ClientEvent {
+	private final ArrayList<Item> items;
 	
-	public ThinkEvent(Creature creature) {
-		this.creature = creature;
+	public InventoryEvent(Collection<Item> items) {
+		this.items = new ArrayList<>(items);
+	}
+	
+	public Collection<Item> getItems() {
+		return items;
 	}
 }

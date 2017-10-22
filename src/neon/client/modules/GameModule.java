@@ -33,9 +33,9 @@ import neon.client.ClientProvider;
 import neon.client.UserInterface;
 import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
-import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.entity.entities.Player;
+import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
 
 /**

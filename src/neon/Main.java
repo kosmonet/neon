@@ -27,9 +27,9 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import neon.client.Client;
-import neon.client.ClientSocket;
 import neon.common.logging.NeonLogFormatter;
-import neon.server.ServerSocket;
+import neon.common.net.ClientSocket;
+import neon.common.net.ServerSocket;
 import neon.server.Server;
 
 /**

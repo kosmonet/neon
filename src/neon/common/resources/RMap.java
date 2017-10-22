@@ -21,10 +21,14 @@ package neon.common.resources;
 import java.awt.Rectangle;
 import java.util.Set;
 
+import neon.util.quadtree.RegionQuadTree;
+
 public abstract class RMap extends Resource {
 	public RMap(String id) {
 		super(id, "map", "maps");
 	}
 
 	public abstract Set<Long> getEntities(Rectangle bounds);
+	public abstract RegionQuadTree<String> getTerrain();
+	public abstract RegionQuadTree<Integer> getElevation();
 }

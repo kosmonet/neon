@@ -26,7 +26,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.NewGameEvent;
-import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RCreature;
 import neon.common.resources.Resource;
@@ -35,6 +34,7 @@ import neon.common.resources.ResourceManager;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
+import neon.entity.events.UpdateEvent;
 
 /**
  * This class takes care of preparing the engine for a new or saved game.

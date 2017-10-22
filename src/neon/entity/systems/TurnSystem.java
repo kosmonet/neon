@@ -25,9 +25,6 @@ import java.util.HashSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ThinkEvent;
-import neon.common.event.TurnEvent;
-import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
@@ -36,6 +33,9 @@ import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
+import neon.entity.events.ThinkEvent;
+import neon.entity.events.TurnEvent;
+import neon.entity.events.UpdateEvent;
 
 /**
  * System to handle new turns.

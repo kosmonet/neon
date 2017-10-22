@@ -43,6 +43,13 @@ public class PointQuadTree<T> {
 	 * @param fill	the maximum amount of elements in a leaf node
 	 */
 	public PointQuadTree(int x, int y, int width, int height, int fill) {
+		int size = Math.max(1, Integer.highestOneBit(Math.max(width, height)));
+		// bounds are somewhat bigger than the actual needed area, calculate how much bigger
+		int dx = (size - width)/2;
+		int dy = (size - height)/2;
+		// shift the root node a bit so we have some margin around the needed area for adding other elements
+		root = new PointNode<T>(x - dx, y - dy, size, fill, elements);
+		
 		this.fill = fill;
 	}
 	

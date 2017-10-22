@@ -16,14 +16,15 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.entity.events;
 
 import java.util.Collection;
 import java.util.HashSet;
 
+import neon.common.event.ClientEvent;
+import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.entity.entities.Entity;
-import neon.server.RServerMap;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
@@ -32,7 +33,7 @@ import neon.util.quadtree.RegionQuadTree;
  * @author mdriesen
  *
  */
-public abstract class UpdateEvent extends ClientEvent {
+public abstract class UpdateEvent implements ClientEvent {
 	protected final Collection<Resource> resources = new HashSet<>();
 	protected final Collection<Entity> entities = new HashSet<>();
 	
@@ -67,9 +68,9 @@ public abstract class UpdateEvent extends ClientEvent {
 	 *
 	 */
 	public static class Map extends UpdateEvent {
-		private final neon.server.RServerMap map;
+		private final RMap map;
 		
-		public Map(RServerMap map, Collection<Resource> resources, Collection<Entity> entities) {
+		public Map(RMap map, Collection<Resource> resources, Collection<Entity> entities) {
 			this.map = map;
 			this.resources.addAll(resources);
 			this.entities.addAll(entities);

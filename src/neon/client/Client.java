@@ -35,6 +35,7 @@ import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
 import neon.client.modules.TransitionEvent;
 import neon.common.event.ClientEvent;
+import neon.common.net.ClientSocket;
 
 public class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();

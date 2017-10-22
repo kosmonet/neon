@@ -26,7 +26,7 @@ import neon.common.event.ClientEvent;
  * @author mdriesen
  *
  */
-public class TransitionEvent extends ClientEvent {
+public class TransitionEvent implements ClientEvent {
 	private final String condition;
 	private boolean consumed = false;
 	

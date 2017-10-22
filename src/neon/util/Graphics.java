@@ -16,6 +16,21 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.util;
 
-public class TurnEvent extends ServerEvent {}
+import javafx.scene.paint.Color;
+
+public class Graphics {
+	/**
+	 * Converts the given color to a hexadecimal RGB value.
+	 * 
+	 * @param color
+	 * @return
+	 */
+	public static String getColorString(Color color) {
+		return String.format("#%02X%02X%02X", 
+				(int) (color.getRed()*255),
+	            (int) (color.getGreen()*255),
+	            (int) (color.getBlue()*255));
+	}
+}

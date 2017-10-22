@@ -18,27 +18,10 @@
 
 package neon.common.event;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import neon.entity.entities.Item;
-
 /**
  * An event that is sent to the client.
  * 
  * @author mdriesen
  *
  */
-public class ClientEvent extends NeonEvent {
-	public static class Inventory extends ClientEvent {
-		private final ArrayList<Item> items;
-		
-		public Inventory(Collection<Item> items) {
-			this.items = new ArrayList<>(items);
-		}
-		
-		public Collection<Item> getItems() {
-			return items;
-		}
-	}
-}
+public interface ClientEvent extends NeonEvent {}

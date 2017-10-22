@@ -21,9 +21,8 @@ package neon.common.resources.loaders;
 import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
-
-import neon.common.graphics.GraphicsUtils;
 import neon.common.resources.RTerrain;
+import neon.util.Graphics;
 
 /**
  * This resource loader takes care of loading and saving terrain resources 
@@ -50,7 +49,7 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 		
 		Element graphics = new Element("graphics");
 		graphics.setAttribute("text", terrain.getText());
-		graphics.setAttribute("color", GraphicsUtils.getColorString(terrain.getColor()));
+		graphics.setAttribute("color", Graphics.getColorString(terrain.getColor()));
 		root.addContent(graphics);
 		
 		return root;

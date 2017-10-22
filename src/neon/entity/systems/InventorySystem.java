@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ClientEvent;
 import neon.common.event.ServerEvent;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
+import neon.entity.events.InventoryEvent;
 
 /**
  * This system handles the inventory-related server bits.
@@ -45,13 +45,13 @@ public class InventorySystem {
 	}
 	
 	@Subscribe
-	private void getInventory(ServerEvent.Inventory event) {
+	private void postInventory(ServerEvent.Inventory event) {
 		Player player = entities.getEntity(0);
 		ArrayList<Item> items = new ArrayList<>();
 		for (long uid : player.inventory.getItems()) {
 			items.add(entities.getEntity(uid));
 		}
 		
-		bus.post(new ClientEvent.Inventory(items));
+		bus.post(new InventoryEvent(items));
 	}
 }

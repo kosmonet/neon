@@ -23,9 +23,9 @@ import java.util.Random;
 
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ThinkEvent;
 import neon.entity.MovementService;
 import neon.entity.entities.Creature;
+import neon.entity.events.ThinkEvent;
 
 public class AISystem implements NeonSystem {
 	private final Random random = new Random();

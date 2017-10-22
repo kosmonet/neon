@@ -35,9 +35,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
 import neon.client.ui.DescriptionLabel;
-import neon.common.event.ClientEvent;
 import neon.common.event.ServerEvent;
 import neon.entity.entities.Item;
+import neon.entity.events.InventoryEvent;
 
 public class InventoryModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
@@ -80,7 +80,7 @@ public class InventoryModule extends Module {
 	}
 	
 	@Subscribe
-	private void showInventory(ClientEvent.Inventory event) {
+	private void showInventory(InventoryEvent event) {
 		playerList.getItems().clear();
 		playerList.getItems().addAll(event.getItems());
 		playerList.getSelectionModel().selectFirst();

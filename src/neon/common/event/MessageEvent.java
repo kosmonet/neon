@@ -25,7 +25,7 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public class MessageEvent extends ClientEvent{
+public class MessageEvent implements ClientEvent {
 	private final String message;
 	private final String header;
 	

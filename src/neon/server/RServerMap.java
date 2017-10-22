@@ -63,14 +63,16 @@ public class RServerMap extends RMap implements Observer {
 		terrain = new RegionQuadTree<>(width, height);
 		// initialize with a ground plane at 0 elevation
 		elevation = new RegionQuadTree<>(width,  height, 0);
-		entities = new PointQuadTree<>(100);
+		entities = new PointQuadTree<>(0, 0, width, height, 100);
 		this.uid = uid;
 	}
 	
+	@Override
 	public RegionQuadTree<String> getTerrain() {
 		return terrain;
 	}
 	
+	@Override
 	public RegionQuadTree<Integer> getElevation() {
 		return elevation;
 	}
@@ -109,6 +111,7 @@ public class RServerMap extends RMap implements Observer {
 	 * @param bounds
 	 * @return	all entities in the given bounds
 	 */
+	@Override
 	public Set<Long> getEntities(Rectangle bounds) {
 		return entities.get(bounds);
 	}

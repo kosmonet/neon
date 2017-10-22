@@ -21,9 +21,8 @@ package neon.common.resources.loaders;
 import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
-
-import neon.common.graphics.GraphicsUtils;
 import neon.common.resources.RCreature;
+import neon.util.Graphics;
 
 /**
  * A resource loader specifically for creatures.
@@ -51,7 +50,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		
 		Element graphics = new Element("graphics");
 		graphics.setAttribute("char", rc.character);
-		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.color));
+		graphics.setAttribute("color", Graphics.getColorString(rc.color));
 		creature.addContent(graphics);
 		
 		return creature;

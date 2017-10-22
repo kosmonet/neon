@@ -24,6 +24,4 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public abstract class NeonEvent {
-	
-}
+public interface NeonEvent {}

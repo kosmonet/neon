@@ -21,6 +21,7 @@ package neon.server;
 import com.google.common.eventbus.EventBus;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.files.NeonFileSystem;
+import neon.common.net.ServerSocket;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;

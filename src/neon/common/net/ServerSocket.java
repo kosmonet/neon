@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.common.net;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
 
-import neon.client.ClientSocket;
 import neon.common.event.ClientEvent;
 import neon.common.event.ServerEvent;
 
@@ -81,7 +80,7 @@ public class ServerSocket {
 	/**
 	 * @return the next event on the queue
 	 */
-	ServerEvent getEvent() {
+	public ServerEvent getEvent() {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {

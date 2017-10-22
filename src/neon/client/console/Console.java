@@ -41,6 +41,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+
 import neon.common.event.ScriptEvent;
 import neon.common.logging.NeonLogFormatter;
 
