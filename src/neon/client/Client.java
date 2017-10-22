@@ -27,6 +27,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
 import neon.client.modules.GameModule;
 import neon.client.modules.InventoryModule;
 import neon.client.modules.MainMenuModule;

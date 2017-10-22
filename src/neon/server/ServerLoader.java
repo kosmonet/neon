@@ -166,7 +166,7 @@ class ServerLoader {
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());
 		resources.addLoader("item", new ItemLoader());
-		// maps are treated separately from other resources
+		// maps are treated separately from other resources (in EntityTracker)
 //		resources.addLoader("map", new MapLoader());
 		
 		// check if all required parent modules are present

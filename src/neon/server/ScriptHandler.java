@@ -27,7 +27,7 @@ import javax.script.ScriptException;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.client.console.ConsoleEvent;
+import neon.common.console.ConsoleEvent;
 import neon.common.event.ScriptEvent;
 
 class ScriptHandler {

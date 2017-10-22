@@ -29,6 +29,8 @@ import org.jdom2.Element;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -43,13 +45,14 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class ResourceManager implements ResourceProvider {
+public class ResourceManager implements ResourceProvider, RemovalListener<String, Resource> {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
 //	private final Table<String, String, Resource> resources = HashBasedTable.create();
 	private final Map<String, Cache<String, Resource>> resources = new HashMap<>();
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
+	private final Map<String, Boolean> saved = new HashMap<>();
 	
 	/**
 	 * Creates a resource manager that uses the given filesystem to load its
@@ -62,6 +65,18 @@ public class ResourceManager implements ResourceProvider {
 	}
 	
 	/**
+	 * Sets whether a resource type should be automatically saved to temp in 
+	 * case it is evicted from cache. Saving is done by the loader that was set
+	 * for the resource type.
+	 * 
+	 * @param type
+	 * @param save
+	 */
+	public void setAutoSave(String type, boolean save) {
+		saved.put(type, save);
+	}
+	
+	/**
 	 * Adds a new resource to the manager. The resource is stored in the 
 	 * temporary folder. If this resource already existed, it will be 
 	 * overwritten without warning. 
@@ -70,20 +85,23 @@ public class ResourceManager implements ResourceProvider {
 	 * @param resource
 	 * @throws IOException 
 	 */
-	@SuppressWarnings("unchecked")
 	public <T extends Resource> void addResource(T resource) throws IOException {
 		String namespace = resource.namespace;
 		
 		// create namespace if necessary
 		if (!resources.containsKey(namespace)) {
-			logger.info("creating namespace " + namespace);
-			resources.put(namespace, CacheBuilder.newBuilder().softValues().build());
+			createNamespace(namespace);
 		}
 		
-		// add resource to the weak value map
+		// add resource to the soft value map
 		resources.get(namespace).put(resource.id, resource);
 		
 		// save resource to temp folder
+		saveToTemp(namespace, resource);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends Resource> void saveToTemp(String namespace, T resource) throws IOException {
 		String type = resource.type;
 		if (loaders.containsKey(type)) {
 			Document doc = new Document(loaders.get(type).save(resource));
@@ -94,7 +112,12 @@ public class ResourceManager implements ResourceProvider {
 			}
 		} else {
 			throw new IllegalStateException("Loader for resource type <" + resource.type + "> was not found.");
-		}
+		}		
+	}
+	
+	private void createNamespace(String namespace) {
+		logger.info("creating namespace " + namespace);
+		resources.put(namespace, CacheBuilder.newBuilder().removalListener(this).softValues().build());
 	}
 	
 	/**
@@ -125,8 +148,7 @@ public class ResourceManager implements ResourceProvider {
 			} 
 		} else {
 			// namespace did not exist yet, create it now
-			logger.info("creating namespace " + namespace);
-			resources.put(namespace, CacheBuilder.newBuilder().softValues().build());
+			createNamespace(namespace);
 		}
 
 		// resource was not loaded, do it now
@@ -194,10 +216,21 @@ public class ResourceManager implements ResourceProvider {
 	 * @param id
 	 */
 	public void removeResource(String namespace, String id) {
+		files.deleteFile(namespace, id + ".xml");
 		if (resources.containsKey(namespace)) {
 			resources.get(namespace).invalidate(id);
 		}
-		
-		files.deleteFile(namespace, id + ".xml");
+	}
+
+	@Override
+	public void onRemoval(RemovalNotification<String, Resource> notification) {
+		if (saved.containsKey(notification.getValue().type)) {
+			logger.fine("resource <" + notification.getKey() + "> evicted (" + notification.getCause() + ") and saved");
+			try {
+				saveToTemp(notification.getValue().namespace, notification.getValue());
+			} catch (IOException e) {
+				logger.severe("resource <" + notification.getKey() + "> could not be saved");
+			}
+		}
 	}
 }

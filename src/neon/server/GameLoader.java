@@ -76,6 +76,8 @@ class GameLoader {
 		game.setCurrentMap(game.getStartMap());
 		RServerMap map = resources.getResource("maps", game.getStartMap());
 		
+		resources.removeResource("maps", map.id);
+
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());
 		Player player = new Player(event.getName(), event.getGender(), species);

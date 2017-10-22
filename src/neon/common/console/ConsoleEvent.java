@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.console;
+package neon.common.console;
 
 import neon.common.event.ClientEvent;
 

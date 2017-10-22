@@ -47,6 +47,7 @@ public class RServerMap extends RMap implements Observer {
 	private final RegionQuadTree<String> terrain;
 	private final RegionQuadTree<Integer> elevation;
 	private final PointQuadTree<Long> entities;
+	private final int width, height;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -60,6 +61,8 @@ public class RServerMap extends RMap implements Observer {
 	public RServerMap(String id, String name, int width, int height, int uid) {
 		super(id);
 		this.name = name;
+		this.width = width;
+		this.height = height;
 		terrain = new RegionQuadTree<>(width, height);
 		// initialize with a ground plane at 0 elevation
 		elevation = new RegionQuadTree<>(width,  height, 0);
@@ -120,8 +123,12 @@ public class RServerMap extends RMap implements Observer {
 		entities.move(uid, new Point(x, y));
 	}
 	
-	public int getSize() {
-		return terrain.getSize();
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
 	}
 
 	@Override

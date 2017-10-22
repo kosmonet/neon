@@ -42,6 +42,7 @@ public class EntityTracker implements EntityProvider {
 	EntityTracker(ResourceManager resources, CServer config) {
 		loader = new MapLoader(this, resources);
 		resources.addLoader("map", loader);
+		resources.setAutoSave("map", true);
 		this.config = config;
 	}
 	

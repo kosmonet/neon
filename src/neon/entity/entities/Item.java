@@ -20,17 +20,14 @@ package neon.entity.entities;
 
 import neon.common.resources.RItem;
 import neon.entity.components.GraphicsComponent;
-import neon.entity.components.ShapeComponent;
 
 public class Item extends Entity {
-	public final ShapeComponent shape;
 	public final GraphicsComponent graphics;
 	
 	private final String name;
 
 	public Item(long uid, RItem item) {
 		super(uid);
-		shape = new ShapeComponent(uid);
 		graphics = new GraphicsComponent(uid, item.character, item.color);
 		name = item.name;
 	}

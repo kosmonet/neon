@@ -52,9 +52,9 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
 		String module = root.getAttributeValue("module");
-		short index = Short.parseShort(root.getAttributeValue("uid"));
+		short uid = Short.parseShort(root.getAttributeValue("uid"));
 		
-		RServerMap map = new RServerMap(id, name, width, height, tracker.getMapUID(index, module));
+		RServerMap map = new RServerMap(id, name, width, height, tracker.getMapUID(uid, module));
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
@@ -71,14 +71,14 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		root.setAttribute("uid", Integer.toString(map.uid));
 		
 		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getSize()));
-		size.setAttribute("height", Integer.toString(map.getSize()));
+		size.setAttribute("width", Integer.toString(map.getWidth()));
+		size.setAttribute("height", Integer.toString(map.getHeight()));
 		root.addContent(size);
 		
 		Element terrain = new Element("terrain");
 		root.addContent(terrain);
-		Map<Rectangle, String> leaves = map.getTerrain().getLeaves();
-		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
+		Map<Rectangle, String> terrainLeaves = map.getTerrain().getLeaves();
+		for (Entry<Rectangle, String> entry : terrainLeaves.entrySet()) {
 			if(entry.getValue() != null) {
 				Element region = new Element("region");
 				region.setAttribute("x", Integer.toString(entry.getKey().x));
@@ -90,11 +90,35 @@ class MapLoader implements ResourceLoader<RServerMap> {
 			}
 		}
 		
-		Element height = new Element("height");
+		Element height = new Element("elevation");
 		root.addContent(height);
+		Map<Rectangle, Integer> heightLeaves = map.getElevation().getLeaves();
+		for (Entry<Rectangle, Integer> entry : heightLeaves.entrySet()) {
+			if(entry.getValue() != null) {
+				Element region = new Element("region");
+				region.setAttribute("x", Integer.toString(entry.getKey().x));
+				region.setAttribute("y", Integer.toString(entry.getKey().y));
+				region.setAttribute("w", Integer.toString(entry.getKey().width));
+				region.setAttribute("h", Integer.toString(entry.getKey().height));
+				region.setAttribute("z", Integer.toString(entry.getValue()));
+				terrain.addContent(region);
+			}
+		}
 		
 		Element entities = new Element("entities");
 		root.addContent(entities);
+		for (Long uid : map.getEntities()) {
+			String type = "entity";
+			
+			if (tracker.getEntity(uid) instanceof Creature) {
+				type = "creature";
+			}
+			
+			Element entity = new Element(type);
+			entity.setAttribute("uid", Long.toString(uid));
+			// we don't need to set the position, this is saved by the entity itself
+			entities.addContent(entity);
+		}
 		
 		return root;
 	}
@@ -124,7 +148,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 	}
 	
 	private void initEntities(RServerMap map, Element entities) {
-		long base = (long)map.uid << 32;
+		long base = (long) map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
 			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 			int x = Integer.parseInt(entity.getAttributeValue("x"));

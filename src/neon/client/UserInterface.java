@@ -33,6 +33,7 @@ import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.MessageEvent;
 

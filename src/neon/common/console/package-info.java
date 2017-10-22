@@ -4,4 +4,4 @@
  * @author mdriesen
  *
  */
-package neon.client.console;
+package neon.common.console;
