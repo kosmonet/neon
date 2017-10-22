@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-import neon.common.resources.RMap;
+import neon.server.RServerMap;
 
 /**
  * An event that is sent to the server.
@@ -28,13 +28,13 @@ import neon.common.resources.RMap;
  */
 public class ServerEvent extends NeonEvent { 
 	public static class Start extends ServerEvent {
-		private final RMap map;
+		private final RServerMap map;
 		
-		public Start(RMap map) {
+		public Start(RServerMap map) {
 			this.map = map;
 		}
 		
-		public RMap getMap() {
+		public RServerMap getMap() {
 			return map;
 		}
 	}

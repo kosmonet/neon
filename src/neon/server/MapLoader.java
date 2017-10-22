@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import org.jdom2.Element;
 
 import neon.common.resources.RCreature;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
@@ -37,7 +36,7 @@ import neon.entity.entities.Creature;
  * @author mdriesen
  *
  */
-class MapLoader implements ResourceLoader<RMap> {
+class MapLoader implements ResourceLoader<RServerMap> {
 	private final EntityTracker tracker;
 	private final ResourceManager resources;
 	
@@ -47,7 +46,7 @@ class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	@Override
-	public RMap load(Element root) {
+	public RServerMap load(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
@@ -55,7 +54,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		String module = root.getAttributeValue("module");
 		short index = Short.parseShort(root.getAttributeValue("uid"));
 		
-		RMap map = new RMap(id, name, width, height, tracker.getMapUID(index, module));
+		RServerMap map = new RServerMap(id, name, width, height, tracker.getMapUID(index, module));
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
@@ -65,7 +64,7 @@ class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	@Override
-	public Element save(RMap map) {
+	public Element save(RServerMap map) {
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
@@ -100,7 +99,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		return root;
 	}
 
-	private void initTerrain(RMap map, Element terrain) {
+	private void initTerrain(RServerMap map, Element terrain) {
 		for (Element region : terrain.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
 			int height = Integer.parseInt(region.getAttributeValue("h"));
@@ -112,7 +111,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		}
 	}
 	
-	private void initElevation(RMap map, Element elevation) {
+	private void initElevation(RServerMap map, Element elevation) {
 		for (Element region : elevation.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
 			int height = Integer.parseInt(region.getAttributeValue("h"));
@@ -124,7 +123,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		}		
 	}
 	
-	private void initEntities(RMap map, Element entities) {
+	private void initEntities(RServerMap map, Element entities) {
 		long base = (long)map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
 			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));

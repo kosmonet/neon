@@ -21,9 +21,10 @@ package neon.common.event;
 import java.util.Collection;
 import java.util.HashSet;
 
-import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.entity.entities.Entity;
+import neon.server.RServerMap;
+import neon.util.quadtree.RegionQuadTree;
 
 /**
  * An event containing updates for the client.
@@ -66,16 +67,20 @@ public abstract class UpdateEvent extends ClientEvent {
 	 *
 	 */
 	public static class Map extends UpdateEvent {
-		private final RMap map;
+		private final neon.server.RServerMap map;
 		
-		public Map(RMap map, Collection<Resource> resources, Collection<Entity> entities) {
+		public Map(RServerMap map, Collection<Resource> resources, Collection<Entity> entities) {
 			this.map = map;
 			this.resources.addAll(resources);
 			this.entities.addAll(entities);
 		}
 		
-		public RMap getMap() {
-			return map;
+		public RegionQuadTree<String> getTerrain() {
+			return map.getTerrain();
+		}
+		
+		public RegionQuadTree<Integer> getElevation() {
+			return map.getElevation();
 		}
 	}
 	

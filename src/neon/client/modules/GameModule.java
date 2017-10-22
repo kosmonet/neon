@@ -91,7 +91,7 @@ public class GameModule extends Module {
 		provider.addResources(event.getResources());
 		provider.addEntities(event.getEntities());
 		
-		pane.setMap(event.getMap().getTerrain(), event.getMap().getElevation(), provider.getEntities());		
+		pane.setMap(event.getTerrain(), event.getElevation(), provider.getEntities());		
 		redraw();
 	}
 	

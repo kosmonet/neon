@@ -29,7 +29,6 @@ import neon.common.event.NewGameEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RCreature;
-import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -75,7 +74,7 @@ class GameLoader {
 		// get the start map
 		CGame game = resources.getResource("config", "game");
 		game.setCurrentMap(game.getStartMap());
-		RMap map = resources.getResource("maps", game.getStartMap());
+		RServerMap map = resources.getResource("maps", game.getStartMap());
 		
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());

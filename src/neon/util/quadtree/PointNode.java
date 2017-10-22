@@ -33,17 +33,16 @@ import java.util.Set;
 class PointNode<T> {
 	private final Map<T, Point> elements;
 	private final int fill;
-	private final int x, y, width, height;
+	private final int x, y, size;
 	private final Set<T> contents;
 	
 	private PointNode<T> NW, NE, SE, SW;
 	
-	PointNode(int x, int y, int width, int height, int fill, Map<T, Point> elements) {
+	PointNode(int x, int y, int size, int fill, Map<T, Point> elements) {
 		this.fill = fill;
 		this.x = x;
 		this.y = y;
-		this. width = width;
-		this.height = height;
+		this.size = size;
 		this.elements = elements;
 		contents = new HashSet<>(fill);
 	}
@@ -61,15 +60,15 @@ class PointNode<T> {
 		if (contents.size() < fill) {
 			// if not, add element to this node
 			contents.add(element);
-		} else if (width < 2 && height < 2) {
+		} else if (size < 2) {
 			// if the node can't be split any more, add to this node anyway
 			contents.add(element);			
 		} else {
 			// if full, split node
-			NW = new PointNode<T>(x, y, width/2, height/2, fill, elements); 
-			NE = new PointNode<T>(x + width/2, y, width - width/2, height/2, fill, elements);
-			SW = new PointNode<T>(x, y + height/2, width/2, height - height/2, fill, elements);
-			SE = new PointNode<T>(x + width/2, y + height/2, width - width/2, height - height/2, fill, elements);
+			NW = new PointNode<T>(x, y, size/2, fill, elements); 
+			NE = new PointNode<T>(x + size/2, y, size/2, fill, elements);
+			SW = new PointNode<T>(x, y + size/2, size/2, fill, elements);
+			SE = new PointNode<T>(x + size/2, y + size/2, size/2, fill, elements);
 			
 			// and add elements to the child nodes
 			for (T el : contents) {
@@ -97,7 +96,7 @@ class PointNode<T> {
 	Set<T> get(Rectangle bounds) {
 		Set<T> set = new HashSet<T>();
 
-		if(bounds.intersects(x, y, width, height)) {
+		if(bounds.intersects(x, y, size, size)) {
 			if (isLeaf())  {
 				for (T element : contents) {
 					if (bounds.contains(elements.get(element))) {
@@ -144,12 +143,16 @@ class PointNode<T> {
 		}
 	}
 	
+	Rectangle getBounds() {
+		return new Rectangle(x, y, size, size);
+	}
+	
 	private boolean isLeaf() {
 		return NW == null;
 	}
 	
-	private boolean contains(Point position) {
-		return new Rectangle(x, y, width, height).contains(position);
+	boolean contains(Point position) {
+		return new Rectangle(x, y, size, size).contains(position);
 	}
 
 	/**
