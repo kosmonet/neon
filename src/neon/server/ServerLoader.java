@@ -73,12 +73,12 @@ class ServerLoader {
 	 * @param files
 	 * @param manager
 	 */
-	void configure(NeonFileSystem files, ResourceManager resources) {
+	void configure(NeonFileSystem files, ResourceManager resources, EntityTracker entities) {
 		try {
 			CServer configuration = initConfiguration();
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
 			initFileSystem(files, configuration.getModules());
-			initResources(resources, configuration);
+			initResources(resources, configuration, entities);
 			initClient(resources);
 			initGame(resources, configuration.getModules());
 			logger.info("server succesfully configured");
@@ -155,7 +155,7 @@ class ServerLoader {
 		}
 	}
 	
-	private void initResources(ResourceManager resources, CServer configuration) {
+	private void initResources(ResourceManager resources, CServer configuration, EntityTracker entities) {
 		// add all necessary resource loaders to the manager
 		ConfigurationLoader loader = new ConfigurationLoader();
 		resources.addLoader("config", loader);
@@ -166,8 +166,9 @@ class ServerLoader {
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());
 		resources.addLoader("item", new ItemLoader());
-		// maps are treated separately from other resources (in EntityTracker)
-//		resources.addLoader("map", new MapLoader());
+		resources.addLoader("map", new MapLoader(entities, resources, configuration));
+		// because they're dynamic, maps should be autosaved when evicted from cache
+		resources.setAutoSave("map", true);	
 		
 		// check if all required parent modules are present
 		try {

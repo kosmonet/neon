@@ -29,6 +29,7 @@ import org.jdom2.Element;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
@@ -39,7 +40,8 @@ import neon.common.resources.loaders.ResourceLoader;
 /**
  * Manages all game resources. Resources are stored with weak references and 
  * (re)loaded on demand. Beware: changes to a resource should be explicitly
- * saved. Any changes will otherwise be lost if the resource is discarded and
+ * saved, unless the auto save option was set for that particular resource 
+ * type. Any changes will otherwise be lost if the resource is discarded and
  * later reloaded.
  * 
  * @author mdriesen
@@ -85,7 +87,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	 * @param resource
 	 * @throws IOException 
 	 */
-	public <T extends Resource> void addResource(T resource) throws IOException {
+	public void addResource(Resource resource) throws IOException {
 		String namespace = resource.namespace;
 		
 		// create namespace if necessary
@@ -101,7 +103,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends Resource> void saveToTemp(String namespace, T resource) throws IOException {
+	private void saveToTemp(String namespace, Resource resource) throws IOException {
 		String type = resource.type;
 		if (loaders.containsKey(type)) {
 			Document doc = new Document(loaders.get(type).save(resource));
@@ -224,7 +226,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 
 	@Override
 	public void onRemoval(RemovalNotification<String, Resource> notification) {
-		if (saved.containsKey(notification.getValue().type)) {
+		if (saved.containsKey(notification.getValue().type) && notification.getCause() != RemovalCause.EXPLICIT) {
 			logger.fine("resource <" + notification.getKey() + "> evicted (" + notification.getCause() + ") and saved");
 			try {
 				saveToTemp(notification.getValue().namespace, notification.getValue());

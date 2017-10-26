@@ -24,7 +24,6 @@ import neon.common.event.ClientConfigurationEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ServerSocket;
 import neon.common.resources.CGame;
-import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.MovementService;
@@ -44,7 +43,7 @@ public class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ServerSocket socket;
-	private final EntityTracker entities;
+	private final EntityTracker entities = new EntityTracker();
 	
 	/**
 	 * Initializes the server.
@@ -58,16 +57,8 @@ public class Server implements Runnable {
 		bus.register(socket);
 		bus.register(this);
 		
-		// configure the server (file system and resource manager)
-		new ServerLoader(bus).configure(files, resources);
-		
-		// initialize the entity tracker
-		try {
-			CServer cs = resources.getResource("config", "server");
-			entities = new EntityTracker(resources, cs);
-		} catch (ResourceException e) {
-			throw new IllegalStateException(e);
-		}
+		// configure the server (file system, resource manager and entity tracker)
+		new ServerLoader(bus).configure(files, resources, entities);
 		
 		// add all the systems and various other stuff to the bus
 		MovementService mover = new MovementService();

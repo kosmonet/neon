@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 
 import org.jdom2.Element;
 
+import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -39,10 +40,12 @@ import neon.entity.entities.Creature;
 class MapLoader implements ResourceLoader<RServerMap> {
 	private final EntityTracker tracker;
 	private final ResourceManager resources;
+	private final CServer config;
 	
-	MapLoader(EntityTracker entities, ResourceManager resources) {
+	MapLoader(EntityTracker entities, ResourceManager resources, CServer config) {
 		tracker = entities;
 		this.resources = resources;
+		this.config = config;
 	}
 	
 	@Override
@@ -54,7 +57,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		String module = root.getAttributeValue("module");
 		short uid = Short.parseShort(root.getAttributeValue("uid"));
 		
-		RServerMap map = new RServerMap(id, name, width, height, tracker.getMapUID(uid, module));
+		RServerMap map = new RServerMap(id, name, width, height, getMapUID(uid, module));
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
@@ -166,5 +169,18 @@ class MapLoader implements ResourceLoader<RServerMap> {
 				throw new IllegalStateException(e);
 			}
 		}		
+	}
+	
+	
+	/**
+	 * Calculates the full map uid given the module name and the base uid
+	 * of the map within the module.
+	 * 
+	 * @param uid
+	 * @param module
+	 * @return
+	 */
+	private int getMapUID(short base, String module) {
+		return ((int)config.getModuleUID(module) << 16) | base;
 	}
 }
