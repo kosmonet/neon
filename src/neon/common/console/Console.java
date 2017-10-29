@@ -80,7 +80,7 @@ public class Console {
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("console.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
 			logger.severe("failed to load console: " + e.getMessage());

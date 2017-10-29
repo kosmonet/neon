@@ -98,47 +98,6 @@ class ServerLoader {
 	}
 	
 	/**
-	 * Initializes the game resource. If an old game is loaded, the game 
-	 * resource will be overwritten later by the one from the loaded game.
-	 * 
-	 * @param resources
-	 * @param modules
-	 */
-	private void initGame(ResourceManager resources, String[] modules) {
-		// use a set to prevent doubles
-		HashSet<String> species = new HashSet<>();
-		// default game title
-		String title = "neon";
-		// default start position
-		String map = "";
-		int x = 0;
-		int y = 0;
-		
-		// go through the loaded modules to check if any redefined the title or start position
-		for (String id : modules) {
-			try {
-				RModule module = resources.getResource(id);
-				species.addAll(module.getPlayableSpecies());
-				title = module.title.isEmpty() ? title : module.title;
-				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
-				x = module.getStartX() >= 0 ? module.getStartX() : x;
-				y = module.getStartY() >= 0 ? module.getStartY() : y;
-			} catch (ResourceException e) {
-				// something went wrong loading the module, try to continue anyway
-				logger.warning("problem loading module " + id);
-			}
-		}
-		
-		// add game configuration resource to the manager
-		try {
-			CGame game = new CGame(title, species, map, x, y);			
-			resources.addResource(game);
-		} catch (IOException e) {
-			logger.severe(e.getMessage());
-		}		
-	}
-	
-	/**
 	 * Initializes the file system with required modules and temporary folder.
 	 * 
 	 * @param files
@@ -205,5 +164,46 @@ class ServerLoader {
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
 		}
+	}
+
+	/**
+	 * Initializes the game resource. If an old game is loaded, the game 
+	 * resource will be overwritten later by the one from the loaded game.
+	 * 
+	 * @param resources
+	 * @param modules
+	 */
+	private void initGame(ResourceManager resources, String[] modules) {
+		// use a set to prevent doubles
+		HashSet<String> species = new HashSet<>();
+		// default game title
+		String title = "neon";
+		// default start position
+		String map = "";
+		int x = 0;
+		int y = 0;
+		
+		// go through the loaded modules to check if any redefined the title or start position
+		for (String id : modules) {
+			try {
+				RModule module = resources.getResource(id);
+				species.addAll(module.getPlayableSpecies());
+				title = module.title.isEmpty() ? title : module.title;
+				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
+				x = module.getStartX() >= 0 ? module.getStartX() : x;
+				y = module.getStartY() >= 0 ? module.getStartY() : y;
+			} catch (ResourceException e) {
+				// something went wrong loading the module, try to continue anyway
+				logger.warning("problem loading module " + id);
+			}
+		}
+		
+		// add game configuration resource to the manager
+		try {
+			CGame game = new CGame(title, species, map, x, y);			
+			resources.addResource(game);
+		} catch (IOException e) {
+			logger.severe(e.getMessage());
+		}		
 	}
 }

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -88,7 +89,7 @@ public class MainMenuModule extends Module {
 		optionLink.setOnAction(event -> bus.post(new TransitionEvent("options")));
 
 		quitLink.setOnMouseEntered(event -> quitLink.requestFocus());
-		quitLink.setOnAction(event -> System.exit(0));
+		quitLink.setOnAction(event -> Platform.exit());
 		// also quit when pressing esc
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
 		
@@ -136,7 +137,7 @@ public class MainMenuModule extends Module {
 	
 	@FXML private void quitKeyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ENTER)) {
-			System.exit(0);
+			Platform.exit();;
 		}
 	}
 	

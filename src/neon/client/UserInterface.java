@@ -19,6 +19,7 @@
 package neon.client;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
@@ -29,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -122,6 +124,25 @@ public class UserInterface {
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(duration), event -> dialog.setResult(true)));
 		timeline.setCycleCount(1);
 		timeline.play();
+	}
+	
+	/**
+	 * Shows a question and possible answers.
+	 * 
+	 * @param message
+	 * @return
+	 */
+	public Optional<ButtonType> showQuestion(String message, ButtonType... buttons) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.initOwner(stage);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.getButtonTypes().setAll(buttons);
+		alert.getDialogPane().getScene().setFill(null);
+		alert.initStyle(StageStyle.TRANSPARENT);
+		alert.setGraphic(null);
+
+		return alert.showAndWait();
 	}
 
 	/**

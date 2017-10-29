@@ -19,6 +19,7 @@
 package neon.client.modules;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -26,6 +27,8 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 
@@ -33,6 +36,8 @@ import neon.client.ClientProvider;
 import neon.client.UserInterface;
 import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
+import neon.common.event.QuitEvent;
+import neon.common.event.SaveEvent;
 import neon.common.graphics.RenderPane;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
@@ -74,6 +79,7 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 	}
 	
 	@Subscribe
@@ -116,6 +122,23 @@ public class GameModule extends Module {
 	
 	private void showInventory() {
 		bus.post(new TransitionEvent("inventory"));
+	}
+	
+	private void quit() {
+		// define two buttons as NO to prevent enter defaulting to the yes button
+		ButtonType yes = new ButtonType("yes", ButtonData.NO);
+		ButtonType no = new ButtonType("no", ButtonData.NO);
+		ButtonType cancel = new ButtonType("cancel", ButtonData.CANCEL_CLOSE);
+		
+		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", yes, no, cancel);
+		
+		if (result.get().equals(yes)) {
+			// server takes care of saving
+			bus.post(new SaveEvent());	
+		} else if (result.get().equals(no)) {
+			// server takes care of quitting
+		    bus.post(new QuitEvent());
+		}
 	}
 	
 	@Override
