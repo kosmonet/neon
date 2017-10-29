@@ -37,7 +37,7 @@ public class FileUtils {
 	private final static Logger logger = Logger.getGlobal();
 
 	/**
-	 * Move the contents of a folder to another folder. This method will 
+	 * Copy the contents of a folder to another folder. This method will 
 	 * overwrite existing items in the destination folder.
 	 * 
 	 * @param from

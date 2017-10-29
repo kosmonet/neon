@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -41,8 +43,8 @@ import neon.common.resources.loaders.ResourceLoader;
  * Manages all game resources. Resources are stored with weak references and 
  * (re)loaded on demand. Beware: changes to a resource should be explicitly
  * saved, unless the auto save option was set for that particular resource 
- * type. Any changes will otherwise be lost if the resource is discarded and
- * later reloaded.
+ * namespace. Any changes will otherwise be lost if the resource is discarded 
+ * and later reloaded.
  * 
  * @author mdriesen
  *
@@ -67,15 +69,15 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	}
 	
 	/**
-	 * Sets whether a resource type should be automatically saved to temp in 
-	 * case it is evicted from cache. Saving is done by the loader that was set
-	 * for the resource type.
+	 * Sets whether resources from a certain namespace should be automatically 
+	 * saved to temp in case it is evicted from cache. Saving is done by the 
+	 * loader that was set for the resource type.
 	 * 
-	 * @param type
+	 * @param namespace
 	 * @param save
 	 */
-	public void setAutoSave(String type, boolean save) {
-		saved.put(type, save);
+	public void setAutoSave(String namespace, boolean save) {
+		saved.put(namespace, save);
 	}
 	
 	/**
@@ -120,6 +122,9 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	private void createNamespace(String namespace) {
 		logger.info("creating namespace " + namespace);
 		resources.put(namespace, CacheBuilder.newBuilder().removalListener(this).softValues().build());
+		if(!saved.containsKey(namespace)) {
+			saved.put(namespace, false);
+		}
 	}
 	
 	/**
@@ -224,9 +229,25 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 		}
 	}
 
+	/**
+	 * Forces the resource manager to save all autosave-enabled resources to
+	 * disk.
+	 * 
+	 * @throws IOException 
+	 */
+	public void flush() throws IOException {
+		for (Entry<String, Boolean> entry : saved.entrySet()) {
+			if (entry.getValue()) {
+				for (Resource resource : resources.get(entry.getKey()).asMap().values()) {
+					saveToTemp(resource.namespace, resource);
+				}
+			}
+		}
+	}
+	
 	@Override
-	public void onRemoval(RemovalNotification<String, Resource> notification) {
-		if (saved.containsKey(notification.getValue().type) && notification.getCause() != RemovalCause.EXPLICIT) {
+	public void onRemoval(RemovalNotification<String, Resource> notification) {	
+		if (saved.get(notification.getValue().namespace) && notification.getCause() != RemovalCause.EXPLICIT) {
 			logger.fine("resource <" + notification.getKey() + "> evicted (" + notification.getCause() + ") and saved");
 			try {
 				saveToTemp(notification.getValue().namespace, notification.getValue());

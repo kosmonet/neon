@@ -18,6 +18,8 @@
 
 package neon.server;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -25,7 +27,13 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
+
+import neon.common.event.LoadEvent;
 import neon.common.event.NewGameEvent;
+import neon.common.event.QuitEvent;
+import neon.common.event.SaveEvent;
+import neon.common.files.FileUtils;
 import neon.common.resources.CGame;
 import neon.common.resources.RCreature;
 import neon.common.resources.Resource;
@@ -37,7 +45,8 @@ import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
 
 /**
- * This class takes care of preparing the engine for a new or saved game.
+ * This class takes care of starting new games, loading old games and saving
+ * games. 
  * 
  * @author mdriesen
  *
@@ -116,7 +125,23 @@ class GameLoader {
 		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));
 	}
 
-	void startOldGame() {
+	@Subscribe
+	private void startOldGame(LoadEvent event) {
 		logger.info("starting an old game");
+	}
+	
+	@Subscribe
+	private void saveGame(SaveEvent event) throws IOException {
+		logger.info("save game");
+		resources.flush();
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves"));
+		logger.info("quit game");
+		Platform.exit();		
+	}
+	
+	@Subscribe
+	private void quitGame(QuitEvent event) {
+		logger.info("quit game");
+		Platform.exit();
 	}
 }
