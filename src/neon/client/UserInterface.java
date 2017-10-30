@@ -66,12 +66,12 @@ public class UserInterface {
 		stage.setMinHeight(600);
 		
 		// show default loading screen
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/Splash.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Splash.fxml"));
 		loader.setController(this);
 		
 		try {
 			Scene scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("scenes/main.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
 			logger.severe("failed to load loading screen :-/ " + e.getMessage());

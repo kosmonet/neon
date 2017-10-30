@@ -56,12 +56,12 @@ public class NewGameModule extends Module {
 		this.ui = ui;
 		this.bus = bus;
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("../scenes/NewGame.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/NewGame.fxml"));
 		loader.setController(this);
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.severe("failed to load new game menu: " + e.getMessage());

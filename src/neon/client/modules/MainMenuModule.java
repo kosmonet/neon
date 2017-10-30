@@ -68,12 +68,12 @@ public class MainMenuModule extends Module {
 		this.ui = ui;
 		this.bus = bus;
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("../scenes/MainMenu.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/MainMenu.fxml"));
 		loader.setController(this);
 		
 		try {
 			scene = new Scene(loader.load());
-			scene.getStylesheets().add(getClass().getResource("../scenes/main.css").toExternalForm());
+			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
 			logger.severe("failed to load main menu " + e.getMessage());
 		}

@@ -24,5 +24,10 @@ import neon.entity.entities.Entity;
 
 public interface EntityProvider {
 	public <T extends Entity> T getEntity(long uid);
+	
+	/**
+	 * 
+	 * @return	all entities currently in the provider
+	 */
 	public Collection<Entity> getEntities();
 }

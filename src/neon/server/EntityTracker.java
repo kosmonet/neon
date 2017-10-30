@@ -19,8 +19,13 @@
 package neon.server;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
@@ -32,13 +37,17 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-public class EntityTracker implements EntityProvider {
-	private final Map<Long, Entity> entities = new HashMap<>();
-
+public class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
+	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
+	private final EntityLoader loader = new EntityLoader();
 	
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
-		return (T) entities.get(uid);
+		try {
+			return (T) entities.get(uid, loader);
+		} catch (ExecutionException e) {
+			throw new IllegalArgumentException("No entity with uid <" + uid + "> found", e);
+		}
 	}
 	
 	void addEntity(Entity entity) {
@@ -47,7 +56,7 @@ public class EntityTracker implements EntityProvider {
 	
 	@Override
 	public Collection<Entity> getEntities() {
-		return entities.values();
+		return entities.asMap().values();
 	}
 	
 	short getModuleUID(Entity entity) {
@@ -56,5 +65,17 @@ public class EntityTracker implements EntityProvider {
 	
 	short getModuleUID(long entity) {
 		return (short) (entity >>> 48);		
+	}
+
+	@Override
+	public void onRemoval(RemovalNotification<Long, Entity> notification) {
+		System.out.println("entity removed from tracker");
+	}
+	
+	private class EntityLoader implements Callable<Entity> {
+		@Override
+		public Entity call() {
+			return null;
+		}
 	}
 }

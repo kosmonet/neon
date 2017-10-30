@@ -58,6 +58,8 @@ class GameLoader {
 	private final ResourceManager resources;
 	private final EntityTracker entities;
 	
+	private Player player;
+	
 	/**
 	 * Initializes this game loader.
 	 * 
@@ -87,7 +89,7 @@ class GameLoader {
 		
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());
-		Player player = new Player(event.getName(), event.getGender(), species);
+		player = new Player(event.getName(), event.getGender(), species);
 		player.shape.setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
 		
@@ -134,7 +136,7 @@ class GameLoader {
 	private void saveGame(SaveEvent event) throws IOException {
 		logger.info("save game");
 		resources.flush();
-		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves"));
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", player.toString()));
 		logger.info("quit game");
 		Platform.exit();		
 	}

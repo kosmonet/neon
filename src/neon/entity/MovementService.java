@@ -19,6 +19,7 @@
 package neon.entity;
 
 import java.awt.Point;
+
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.entity.systems.NeonSystem;

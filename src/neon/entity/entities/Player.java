@@ -27,11 +27,23 @@ import neon.common.resources.RCreature;
  *
  */
 public class Player extends Creature {
+	private final String name;
+	
 	/**
 	 * Initializes the player character. No uid is needed, the player 
 	 * character always has uid 0.
+	 * 
+	 * @param name
+	 * @param gender
+	 * @param species
 	 */
 	public Player(String name, String gender, RCreature species) {
 		super(0, species);
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

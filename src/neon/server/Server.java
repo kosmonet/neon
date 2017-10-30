@@ -75,8 +75,8 @@ public class Server implements Runnable {
 			CGame cg = resources.getResource("config", "game");
 			bus.post(new ClientConfigurationEvent(cg));
 		} catch (ResourceException e) {
-			throw new IllegalStateException(e);
-		}		
+			throw new IllegalStateException("Could not load game configuration", e);
+		}
 	}
 	
 	/**
