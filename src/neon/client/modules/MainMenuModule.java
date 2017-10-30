@@ -84,7 +84,6 @@ public class MainMenuModule extends Module {
 		loadLink.setOnMouseEntered(event -> loadLink.requestFocus());
 		loadLink.setOnAction(event -> bus.post(new TransitionEvent("load game")));
 
-
 		optionLink.setOnMouseEntered(event -> optionLink.requestFocus());
 		optionLink.setOnAction(event -> bus.post(new TransitionEvent("options")));
 

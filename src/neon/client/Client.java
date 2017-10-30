@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 
 import neon.client.modules.GameModule;
 import neon.client.modules.InventoryModule;
+import neon.client.modules.LoadModule;
 import neon.client.modules.MainMenuModule;
 import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
@@ -87,6 +88,10 @@ public class Client implements Runnable {
 		modules.add(newGame);
 		bus.register(newGame);
 		
+		LoadModule loadGame = new LoadModule(ui, bus);
+		modules.add(loadGame);
+		bus.register(loadGame);
+		
 		GameModule game = new GameModule(ui, bus);
 		modules.add(game);
 		bus.register(game);
@@ -99,6 +104,11 @@ public class Client implements Runnable {
 		bus.register(new Transition(mainMenu, newGame, "new game"));
 		bus.register(new Transition(newGame, mainMenu, "cancel"));
 		bus.register(new Transition(newGame, game, "start game"));
+		
+		bus.register(new Transition(mainMenu, loadGame, "load game"));
+		bus.register(new Transition(loadGame, mainMenu, "cancel"));
+		bus.register(new Transition(loadGame, game, "start game"));
+		
 		bus.register(new Transition(game, inventory, "inventory"));
 		bus.register(new Transition(inventory, game, "cancel"));
 	}

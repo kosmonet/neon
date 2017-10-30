@@ -18,6 +18,24 @@
 
 package neon.common.event;
 
-public class LoadEvent extends ServerEvent {
+/**
+ * This event is used to signal game loading-related information.
+ * 
+ * @author mdriesen
+ *
+ */
+public class ServerLoadEvent extends ServerEvent {
+	/**
+	 * This event is used to request of list of saved games from the server.
+	 * 
+	 * @author mdriesen
+	 */
+	public static class List extends ServerLoadEvent {}
 
+	/**
+	 * This event requests the server to start a loaded game.
+	 * 
+	 * @author mdriesen
+	 */
+	public static class Start extends ServerLoadEvent {}
 }

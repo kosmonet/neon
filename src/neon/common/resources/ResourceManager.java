@@ -119,6 +119,12 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 		}		
 	}
 	
+	/**
+	 * Creates a new namespace and (if not set previously) sets the initial 
+	 * autosave status to {@code false}.
+	 * 
+	 * @param namespace
+	 */
 	private void createNamespace(String namespace) {
 		logger.info("creating namespace " + namespace);
 		resources.put(namespace, CacheBuilder.newBuilder().removalListener(this).softValues().build());

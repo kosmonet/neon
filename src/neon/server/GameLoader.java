@@ -20,6 +20,7 @@ package neon.server;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -29,7 +30,8 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 
-import neon.common.event.LoadEvent;
+import neon.common.event.ServerLoadEvent;
+import neon.common.event.ClientLoadEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
@@ -128,10 +130,28 @@ class GameLoader {
 	}
 
 	@Subscribe
-	private void startOldGame(LoadEvent event) {
+	private void startOldGame(ServerLoadEvent.Start event) {
 		logger.info("starting an old game");
 	}
 	
+	/**
+	 * Sends a list of all saved characters to the client.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	private void listSavedGames(ServerLoadEvent.List event) {
+		String[] saves = FileUtils.listFiles(Paths.get("saves"));
+		logger.info("saved characters: " + Arrays.deepToString(saves));
+		bus.post(new ClientLoadEvent.List(saves));
+	}
+	
+	/**
+	 * Saves the currently running game.
+	 * 
+	 * @param event
+	 * @throws IOException
+	 */
 	@Subscribe
 	private void saveGame(SaveEvent event) throws IOException {
 		logger.info("save game");
@@ -146,6 +166,11 @@ class GameLoader {
 		Platform.exit();		
 	}
 	
+	/**
+	 * Requests the JavaFX runtime to exit the application.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void quitGame(QuitEvent event) {
 		logger.info("quit game");
