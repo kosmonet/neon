@@ -135,8 +135,13 @@ class GameLoader {
 	@Subscribe
 	private void saveGame(SaveEvent event) throws IOException {
 		logger.info("save game");
+		// store all cached resources (the maps, basically)
 		resources.flush();
+		// store all cached entities
+		entities.flush();
+		// move the temp folder to the saves folder
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", player.toString()));
+		// and request JavaFX to quit
 		logger.info("quit game");
 		Platform.exit();		
 	}

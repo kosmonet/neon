@@ -43,7 +43,7 @@ public class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ServerSocket socket;
-	private final EntityTracker entities = new EntityTracker();
+	private final EntityTracker entities = new EntityTracker(files);
 	
 	/**
 	 * Initializes the server.

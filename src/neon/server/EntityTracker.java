@@ -18,15 +18,21 @@
 
 package neon.server;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
@@ -40,6 +46,11 @@ import neon.entity.entities.Entity;
 public class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final EntityLoader loader = new EntityLoader();
+	private final NeonFileSystem files;
+	
+	public EntityTracker(NeonFileSystem files) {
+		this.files = files;
+	}
 	
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
@@ -59,10 +70,11 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 		return entities.asMap().values();
 	}
 	
-	short getModuleUID(Entity entity) {
-		return getModuleUID(entity.uid);
-	}
-	
+	/**
+	 * 
+	 * @param entity
+	 * @return	the uid of the module an entity belongs to
+	 */
 	short getModuleUID(long entity) {
 		return (short) (entity >>> 48);		
 	}
@@ -70,6 +82,26 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 	@Override
 	public void onRemoval(RemovalNotification<Long, Entity> notification) {
 		System.out.println("entity removed from tracker");
+		saveEntity(notification.getValue());
+	}
+	
+	/**
+	 * Stores all remaining entities in the cache in the temp folder on disk.
+	 */
+	void flush() {
+		for (Entity entity : entities.asMap().values()) {
+			saveEntity(entity);
+		}
+	}
+	
+	private void saveEntity(Entity entity) {
+		Document doc = new Document();
+		doc.setRootElement(new Element("root"));
+		try {
+			files.saveFile(doc, new XMLTranslator(), "entities", Long.toString(entity.uid) + ".xml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	private class EntityLoader implements Callable<Entity> {
