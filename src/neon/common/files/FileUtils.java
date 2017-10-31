@@ -26,6 +26,8 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.TreeTraverser;
 import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 /**
  * A collection of utility methods to work with the file system.
@@ -75,21 +77,45 @@ public class FileUtils {
 	
 	/**
 	 * Moves a folder to a new destination. If the destination folder already
-	 * exists, it will be overwritten.
+	 * exists, the contents will be overwritten.
 	 * 
 	 * @param from
 	 * @param to
+	 * @throws IOException 
 	 */
 	public static void moveFolder(Path from, Path to) {
-		if(to.toFile().exists()) {
-			to.toFile().delete();
+		logger.info("moving files from " + from + " to " + to);
+		
+		TreeTraverser<File> traverser = Files.fileTreeTraverser();
+		
+		// first move all the files
+		for (File file : traverser.preOrderTraversal(from.toFile())) {
+			// parent folder should not be moved!
+			if (!file.isDirectory()) {
+				// construct the destination path from the origin path
+				Path origin = Paths.get(file.getPath());
+				Path relative = from.relativize(origin);
+				Path destination = to.resolve(relative);
+
+				try {
+					destination.toFile().delete();
+					Files.move(file, destination.toFile());
+				} catch (IOException e) {
+					logger.severe("could not write file " + destination);
+				}
+			} else if (!file.equals(from.toFile())) {
+				Path origin = Paths.get(file.getPath());
+				Path relative = from.relativize(origin);
+				Path destination = to.resolve(relative);
+
+				if (!destination.toFile().exists()) {
+					destination.toFile().mkdirs();
+				}
+			}
 		}
 		
-		try {
-			Files.move(from.toFile(), to.toFile());
-		} catch (IOException e) {
-			logger.severe("failed to move folder " + from + "to destination " + to);
-		}
+		// then clean up all the leftovers
+		clearFolder(from);
 	}
 	
 	/**
@@ -98,13 +124,13 @@ public class FileUtils {
 	 * @param folder
 	 */
 	public static void clearFolder(Path folder) {
-		// delete folder
-		if (folder.toFile().exists()) {
-			delete(folder.toFile());
+		logger.info("clearing folder " + folder);
+
+		try {
+			MoreFiles.deleteDirectoryContents(folder, RecursiveDeleteOption.ALLOW_INSECURE);
+		} catch (IOException e) {
+			throw new IllegalArgumentException("can't clear folder " + folder, e);
 		}
-		
-		// recreate folder
-		folder.toFile().mkdir();
 	}
 	
 	/**
@@ -121,14 +147,5 @@ public class FileUtils {
 		} else {
 			return new String[0];
 		}
-	}
-	
-	private static void delete(File file) {
-		if (file.isDirectory()) {
-			for (File f : file.listFiles()) {
-				delete(f);
-			}
-		}
-		file.delete();
 	}
 }

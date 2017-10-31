@@ -30,11 +30,12 @@ import neon.util.quadtree.PointQuadTree;
 import neon.util.quadtree.RegionQuadTree;
 
 /**
+ * TODO: observer en observable zijn blijkbaar deprecated
  * 
  * @author mdriesen
  *
  */
-public class RServerMap extends RMap implements Observer {
+class RServerMap extends RMap implements Observer {
 	/**
 	 * The uid of this map.
 	 */
@@ -58,7 +59,7 @@ public class RServerMap extends RMap implements Observer {
 	 * @param height
 	 * @param uid
 	 */
-	public RServerMap(String id, String name, int width, int height, int uid) {
+	RServerMap(String id, String name, int width, int height, int uid) {
 		super(id);
 		this.name = name;
 		this.width = width;

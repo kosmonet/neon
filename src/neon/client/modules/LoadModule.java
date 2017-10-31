@@ -53,6 +53,12 @@ public class LoadModule extends Module {
 	
 	private Scene scene;
 	
+	/**
+	 * Initializes this module.
+	 * 
+	 * @param ui
+	 * @param bus	the client event bus
+	 */
 	public LoadModule(UserInterface ui, EventBus bus) {
 		this.bus = bus;
 		this.ui = ui;
@@ -75,9 +81,16 @@ public class LoadModule extends Module {
 	}
 	
 	@FXML private void startGame() {
-		System.out.println("start game");
+		if(saveList.getSelectionModel().getSelectedItem() != null) {
+			bus.post(new ServerLoadEvent.Start(saveList.getSelectionModel().getSelectedItem()));
+		}
 	}
 	
+	/**
+	 * Shows the saved characters in the list.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void list(ClientLoadEvent.List event) {
 		saveList.getItems().clear();

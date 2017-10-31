@@ -131,7 +131,7 @@ class GameLoader {
 
 	@Subscribe
 	private void startOldGame(ServerLoadEvent.Start event) {
-		logger.info("starting an old game");
+		logger.info("loading save character <" + event.save + ">");
 	}
 	
 	/**

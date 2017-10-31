@@ -37,5 +37,11 @@ public class ServerLoadEvent extends ServerEvent {
 	 * 
 	 * @author mdriesen
 	 */
-	public static class Start extends ServerLoadEvent {}
+	public static class Start extends ServerLoadEvent {
+		public final String save;
+		
+		public Start(String save) {
+			this.save = save;
+		}
+	}
 }

@@ -126,8 +126,9 @@ class ServerLoader {
 		resources.addLoader("creature", new CreatureLoader());
 		resources.addLoader("item", new ItemLoader());
 		resources.addLoader("map", new MapLoader(entities, resources, configuration));
-		// because they're dynamic, maps should be autosaved when evicted from cache
-		resources.setAutoSave("maps", true);	
+		// because they're dynamic, maps and config should be autosaved when evicted from cache
+		resources.setAutoSave("maps", true);
+		resources.setAutoSave("config", true);
 		
 		// check if all required parent modules are present
 		try {

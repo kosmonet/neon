@@ -102,11 +102,6 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		String title = root.getAttributeValue("title");
 		HashSet<String> species = new HashSet<>();
 		
-		Element playable = root.getChild("playable");
-		for (Element id : playable.getChildren()) {
-			species.add(id.getText());
-		}
-		
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
 		int x = Integer.parseInt(start.getAttributeValue("x"));
@@ -118,14 +113,6 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	private Element saveGame(CGame config) {
 		Element game = new Element("game");
 		game.setAttribute("title", config.title);
-		
-		Element playable = new Element("playable");
-		for (String id : config.getPlayableSpecies()) {
-			Element species = new Element("id");
-			species.setText(id);
-			playable.addContent(species);
-		}
-		game.addContent(playable);
 		
 		Element start = new Element("start");
 		start.setAttribute("map", config.getStartMap());

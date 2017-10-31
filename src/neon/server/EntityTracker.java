@@ -24,7 +24,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.jdom2.Document;
-import org.jdom2.Element;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -43,12 +42,13 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-public class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
+class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final EntityLoader loader = new EntityLoader();
+	private final EntitySaver saver = new EntitySaver();
 	private final NeonFileSystem files;
 	
-	public EntityTracker(NeonFileSystem files) {
+	EntityTracker(NeonFileSystem files) {
 		this.files = files;
 	}
 	
@@ -95,8 +95,7 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 	}
 	
 	private void saveEntity(Entity entity) {
-		Document doc = new Document();
-		doc.setRootElement(new Element("root"));
+		Document doc = new Document(saver.save(entity));
 		try {
 			files.saveFile(doc, new XMLTranslator(), "entities", Long.toString(entity.uid) + ".xml");
 		} catch (IOException e) {
