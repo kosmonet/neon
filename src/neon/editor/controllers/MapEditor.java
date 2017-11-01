@@ -53,7 +53,7 @@ import neon.common.graphics.RenderPane;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
 import neon.editor.SelectionEvent;
-import neon.editor.resource.ECreature;
+import neon.editor.resource.ICreature;
 import neon.editor.resource.REntity;
 import neon.editor.resource.RMap;
 import neon.editor.ui.EditorRenderer;
@@ -124,17 +124,17 @@ public class MapEditor {
 
 	    Label width = new Label("Width");
 	    grid.add(width, 0, 1);
-	    widthSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getSize());
+	    widthSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getWidth());
 	    widthSpinner.setEditable(true);
 	    grid.add(widthSpinner, 1, 1);
 
 	    Label height = new Label("Height");
 	    grid.add(height, 0, 2);
-	    heightSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getSize());
+	    heightSpinner = new Spinner<>(1, Integer.MAX_VALUE, map.getHeight());
 	    heightSpinner.setEditable(true);
 	    grid.add(heightSpinner, 1, 2);
 	    
-		pane.setPrefSize(scale*map.getSize(), scale*map.getSize());
+		pane.setPrefSize(scale*map.getWidth(), scale*map.getHeight());
 		pane.setStyle("-fx-background-color: black;");
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
@@ -197,7 +197,7 @@ public class MapEditor {
 		try {
 			RCreature resource = resources.getResource("creatures", id);
 			RMap map = card.getResource();
-			ECreature creature = new ECreature(map.getFreeUID(), id, resource.character, resource.color);
+			ICreature creature = new ICreature(map.getFreeUID(), id, resource.character, resource.color);
 			creature.shape.setPosition(x, y, 0);
 			map.add(creature);
 			redraw();

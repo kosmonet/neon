@@ -19,6 +19,7 @@
 package neon.client.modules;
 
 import neon.common.event.ClientEvent;
+import neon.common.resources.RMap;
 
 /**
  * An event to signal the transition between two client states.
@@ -28,10 +29,31 @@ import neon.common.event.ClientEvent;
  */
 public class TransitionEvent implements ClientEvent {
 	private final String condition;
+	private final RMap map;
+	
 	private boolean consumed = false;
 	
 	public TransitionEvent(String condition) {
 		this.condition = condition;
+		this.map = null;
+	}
+	
+	/**
+	 * Initializes a new transition event.
+	 * 
+	 * @param condition
+	 * @param map		the current map the player is on
+	 */
+	public TransitionEvent(String condition, RMap map) {
+		this.condition = condition;
+		this.map = map;
+	}
+	
+	/**
+	 * @return	the current map
+	 */
+	public RMap getMap() {
+		return map;
 	}
 	
 	/**

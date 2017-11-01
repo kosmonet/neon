@@ -93,8 +93,8 @@ class MapLoader implements ResourceLoader<RServerMap> {
 			}
 		}
 		
-		Element height = new Element("elevation");
-		root.addContent(height);
+		Element elevation = new Element("elevation");
+		root.addContent(elevation);
 		Map<Rectangle, Integer> heightLeaves = map.getElevation().getLeaves();
 		for (Entry<Rectangle, Integer> entry : heightLeaves.entrySet()) {
 			if(entry.getValue() != null) {

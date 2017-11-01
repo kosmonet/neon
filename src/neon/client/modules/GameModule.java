@@ -39,6 +39,7 @@ import neon.common.event.InputEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
 import neon.common.graphics.RenderPane;
+import neon.common.resources.RMap;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
@@ -53,15 +54,19 @@ public class GameModule extends Module {
 	
 	private final UserInterface ui;
 	private final EventBus bus;
-	private final ClientProvider provider = new ClientProvider();
-	private final RenderPane pane = new RenderPane(provider, new ClientRenderer());
+	private final ClientProvider provider;
+	private final RenderPane pane;
 	
 	private Scene scene;
 	private int scale = 20;
+	private RMap map;
 	
-	public GameModule(UserInterface ui, EventBus bus) {
+	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider) {
 		this.ui = ui;
 		this.bus = bus;
+		this.provider = provider;
+		
+		pane = new RenderPane(provider, new ClientRenderer());
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -79,6 +84,7 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> showMap());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 	}
 	
@@ -96,6 +102,8 @@ public class GameModule extends Module {
 		provider.clear();
 		provider.addResources(event.getResources());
 		provider.addEntities(event.getEntities());
+		
+		map = event.getMap();
 		
 		pane.setMap(event.getTerrain(), event.getElevation(), provider.getEntities());		
 		redraw();
@@ -122,6 +130,10 @@ public class GameModule extends Module {
 	
 	private void showInventory() {
 		bus.post(new TransitionEvent("inventory"));
+	}
+	
+	private void showMap() {
+		bus.post(new TransitionEvent("map", map));
 	}
 	
 	private void quit() {

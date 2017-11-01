@@ -92,7 +92,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 				int uid = Integer.parseInt(entity.getAttributeValue("uid"));
 				String id = entity.getAttributeValue("id");
 				RCreature resource = resources.getResource("creatures", id);
-				ECreature creature = new ECreature(uid, id, resource.character, resource.color);
+				ICreature creature = new ICreature(uid, id, resource.character, resource.color);
 				creature.shape.setX(Integer.parseInt(entity.getAttributeValue("x")));
 				creature.shape.setY(Integer.parseInt(entity.getAttributeValue("y")));
 				map.add(creature);
@@ -111,8 +111,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 		root.setAttribute("module", map.module);
 		
 		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getSize()));
-		size.setAttribute("height", Integer.toString(map.getSize()));
+		size.setAttribute("width", Integer.toString(map.getWidth()));
+		size.setAttribute("height", Integer.toString(map.getHeight()));
 		root.addContent(size);
 		
 		Element terrain = new Element("terrain");
@@ -130,8 +130,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 			}
 		}
 		
-		Element height = new Element("height");
-		root.addContent(height);
+		Element elevation = new Element("elevation");
+		root.addContent(elevation);
 		
 		Element entities = new Element("entities");
 		for (REntity entity : map.getEntities()) {

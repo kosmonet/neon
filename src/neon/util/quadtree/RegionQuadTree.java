@@ -29,7 +29,7 @@ import java.util.Map;
  * @param <T>
  */
 public class RegionQuadTree<T> {
-	private final int size;
+	private final int width, height;
 	private final RegionNode<T> root;
 	
 	/**
@@ -55,7 +55,8 @@ public class RegionQuadTree<T> {
 		if(size < 1) {
 			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
 		} else {
-			this.size = size;
+			this.width = width;
+			this.height = height;
 			root = new RegionNode<T>(0, 0, size, size, value);
 		}
 	}
@@ -80,15 +81,19 @@ public class RegionQuadTree<T> {
 	 * @return
 	 */
 	public T get(int x, int y) {
-		if (x < 0 || x >= size || y < 0 || y >= size) {
+		if (x < 0 || x >= width || y < 0 || y >= height) {
 			return null;
 		} else {
 			return root.get(x, y);
 		}
 	}
 	
-	public int getSize() {
-		return size;
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
 	}
 	
 	public Map<Rectangle, T> getLeaves() {

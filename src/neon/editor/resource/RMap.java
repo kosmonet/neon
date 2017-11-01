@@ -79,8 +79,12 @@ public class RMap extends Resource {
 		return elevation;
 	}
 	
-	public int getSize() {
-		return terrain.getSize();
+	public int getWidth() {
+		return terrain.getWidth();
+	}
+	
+	public int getHeight() {
+		return terrain.getHeight();
 	}
 	
 	/**

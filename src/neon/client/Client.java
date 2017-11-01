@@ -32,6 +32,7 @@ import neon.client.modules.GameModule;
 import neon.client.modules.InventoryModule;
 import neon.client.modules.LoadModule;
 import neon.client.modules.MainMenuModule;
+import neon.client.modules.MapModule;
 import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
@@ -79,6 +80,8 @@ public class Client implements Runnable {
 	}
 	
 	private void initModules(String version) {
+		ClientProvider provider = new ClientProvider();
+		
 		// client uses the first module in the list as the start state
 		MainMenuModule mainMenu = new MainMenuModule(ui, version, bus);
 		modules.add(mainMenu);
@@ -92,13 +95,17 @@ public class Client implements Runnable {
 		modules.add(loadGame);
 		bus.register(loadGame);
 		
-		GameModule game = new GameModule(ui, bus);
+		GameModule game = new GameModule(ui, bus, provider);
 		modules.add(game);
 		bus.register(game);
 		
 		InventoryModule inventory = new InventoryModule(ui, bus);
 		modules.add(inventory);
 		bus.register(inventory);
+		
+		MapModule map = new MapModule(ui, bus, provider);
+		modules.add(map);
+		bus.register(map);
 		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
@@ -111,6 +118,9 @@ public class Client implements Runnable {
 		
 		bus.register(new Transition(game, inventory, "inventory"));
 		bus.register(new Transition(inventory, game, "cancel"));
+
+		bus.register(new Transition(game, map, "map"));
+		bus.register(new Transition(map, game, "cancel"));
 	}
 	
 	private class BusListener {

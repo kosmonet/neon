@@ -21,10 +21,10 @@ package neon.editor.resource;
 import javafx.scene.paint.Color;
 import neon.entity.components.GraphicsComponent;
 
-public class ECreature extends REntity {
+public class ICreature extends REntity {
 	public final GraphicsComponent graphics;
 	
-	public ECreature(int uid, String id, String character, Color color) {
+	public ICreature(int uid, String id, String character, Color color) {
 		super(uid, id);
 		graphics = new GraphicsComponent(uid, character, color);
 	}

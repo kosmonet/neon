@@ -57,7 +57,7 @@ public class SVGConverter {
 		int height = Integer.parseInt(svg.getAttributeValue("height"));
 		
 		System.out.println("creating map");
-		RMap map = new RMap("neon", "neon", width, height, (short) 0, "neon");
+		RMap map = new RMap("aneirin", "Aneirin", width, height, (short) 1, "aneirin");
 		
 		for (Element e : svg.getChildren()) {
 			System.out.println(e.getName());
@@ -73,7 +73,14 @@ public class SVGConverter {
 			int w = Integer.parseInt(rect.getAttributeValue("width"));
 			int h = Integer.parseInt(rect.getAttributeValue("height"));
 			
-			map.getTerrain().insert(new Rectangle(x, y, w, h), "grass");
+			String id = "grass";
+			String style = rect.getAttributeValue("style");
+			
+			if (!style.contains("#008000")) {
+				id="sand";
+			}
+			
+			map.getTerrain().insert(new Rectangle(x, y, w, h), id);
 		}
 		
 		System.out.println("saving map");
@@ -88,8 +95,8 @@ public class SVGConverter {
 		root.setAttribute("module", map.module);
 		
 		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getSize()));
-		size.setAttribute("height", Integer.toString(map.getSize()));
+		size.setAttribute("width", Integer.toString(map.getWidth()));
+		size.setAttribute("height", Integer.toString(map.getHeight()));
 		root.addContent(size);
 		
 		Element terrain = new Element("terrain");
@@ -107,7 +114,7 @@ public class SVGConverter {
 			}
 		}
 		
-		Element height = new Element("height");
+		Element height = new Element("elevation");
 		root.addContent(height);
 		
 		Element entities = new Element("entities");

@@ -83,6 +83,10 @@ public abstract class UpdateEvent implements ClientEvent {
 		public RegionQuadTree<Integer> getElevation() {
 			return map.getElevation();
 		}
+		
+		public RMap getMap() {
+			return map;
+		}
 	}
 	
 	/**

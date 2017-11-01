@@ -26,15 +26,15 @@ import javafx.scene.image.Image;
 
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
-import neon.editor.resource.ECreature;
+import neon.editor.resource.ICreature;
 
 public class EditorRenderer implements EntityRenderer {
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 
 	@Override
 	public void drawEntity(Object entity, int xmin, int ymin, int scale) {
-		if (entity instanceof ECreature) {
-			ECreature creature = (ECreature) entity;
+		if (entity instanceof ICreature) {
+			ICreature creature = (ICreature) entity;
 			GraphicsContext gc = layers.get(creature.shape.getZ()).getGraphicsContext2D();
 			Image image = TextureFactory.getImage(scale, creature.graphics.getColor(), creature.graphics.getText());
 			gc.clearRect(scale*(creature.shape.getX() - xmin) + 1, scale*(creature.shape.getY() - ymin) + 1, scale - 1, scale - 1);
