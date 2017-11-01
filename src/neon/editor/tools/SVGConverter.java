@@ -38,7 +38,7 @@ import org.jdom2.output.XMLOutputter;
 import neon.editor.resource.RMap;
 
 /**
- * A small tool to convert SVG images to a quadtree map file.
+ * A tool to convert SVG images to a quadtree map file.
  * 
  * @author mdriesen
  *
@@ -67,6 +67,8 @@ public class SVGConverter {
 		int dx = 0;
 		int dy = 13700;
 		
+		map.getTerrain().insert(new Rectangle(0, 0, width, height), "sea");
+
 		for (Element rect : terrain.getChildren("rect", ns)) {
 			int x = Integer.parseInt(rect.getAttributeValue("x")) + dx;
 			int y = Integer.parseInt(rect.getAttributeValue("y")) + dy;
@@ -76,15 +78,26 @@ public class SVGConverter {
 			String id = "grass";
 			String style = rect.getAttributeValue("style");
 			
-			if (!style.contains("#008000")) {
-				id="sand";
+			if (style.contains("#ffff00")) {
+				id = "sand";
+			} else if (style.contains("#ff0000")) {
+				id = "mud";
+			} else if (style.contains("#550000")) {
+				id = "rock";
+			} else if (style.contains("#22cc51")) {
+				id = "moss";
+			} else if (style.contains("#008080")) {
+				id = "marsh";
+			} else if (style.contains("#bcff00")) {
+				id = "meadow";
 			}
-			
+
 			map.getTerrain().insert(new Rectangle(x, y, w, h), id);
 		}
-		
+
 		System.out.println("saving map");
 		save(map);
+		System.out.println("finished");
 	}
 	
 	private static void save(RMap map) throws IOException {

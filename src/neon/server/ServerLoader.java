@@ -35,7 +35,6 @@ import com.google.common.eventbus.EventBus;
 import neon.common.event.MessageEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CClient;
-import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
@@ -79,8 +78,7 @@ class ServerLoader {
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
 			initFileSystem(files, configuration.getModules());
 			initResources(resources, configuration, entities);
-			initClient(resources);
-			initGame(resources, configuration.getModules());
+			initClient(resources, configuration.getModules());
 			logger.info("server succesfully configured");
 		} catch (JDOMException e) {
 			logger.severe("JDOMException in server configuration");
@@ -157,54 +155,30 @@ class ServerLoader {
 		}
 	}
 	
-	private void initClient(ResourceManager resources) {
-		// add client configuration resource to the manager
-		try {
-			CClient client = new CClient();			
-			resources.addResource(client);
-		} catch (IOException e) {
-			logger.severe(e.getMessage());
-		}
-	}
-
-	/**
-	 * Initializes the game resource. If an old game is loaded, the game 
-	 * resource will be overwritten later by the one from the loaded game.
-	 * 
-	 * @param resources
-	 * @param modules
-	 */
-	private void initGame(ResourceManager resources, String[] modules) {
+	private void initClient(ResourceManager resources, String[] modules) {
 		// use a set to prevent doubles
 		HashSet<String> species = new HashSet<>();
 		// default game title
 		String title = "neon";
-		// default start position
-		String map = "";
-		int x = 0;
-		int y = 0;
 		
-		// go through the loaded modules to check if any redefined the title or start position
+		// go through the loaded modules to check if any redefined the title or added playable species
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
 				species.addAll(module.getPlayableSpecies());
 				title = module.title.isEmpty() ? title : module.title;
-				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
-				x = module.getStartX() >= 0 ? module.getStartX() : x;
-				y = module.getStartY() >= 0 ? module.getStartY() : y;
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);
 			}
 		}
-		
-		// add game configuration resource to the manager
+
+		// add client configuration resource to the manager
 		try {
-			CGame game = new CGame(title, species, map, x, y);			
-			resources.addResource(game);
+			CClient client = new CClient(title, species);			
+			resources.addResource(client);
 		} catch (IOException e) {
 			logger.severe(e.getMessage());
-		}		
+		}
 	}
 }

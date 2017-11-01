@@ -50,6 +50,15 @@ class MapLoader implements ResourceLoader<RServerMap> {
 	
 	@Override
 	public RServerMap load(Element root) {
+		// check whether this is an original map from a module, or a map from a saved game
+		if (root.getAttributeValue("module").equals("save")) {
+			return loadFromSave(root);
+		} else {
+			return loadFromModule(root);
+		}
+	}
+	
+	private RServerMap loadFromModule(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
@@ -63,7 +72,24 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		initElevation(map, root.getChild("elevation"));
 		initEntities(map, root.getChild("entities"));
 		
-		return map;
+		return map;	
+	}
+	
+	private RServerMap loadFromSave(Element root) {
+		String id = root.getAttributeValue("id");
+		String name = root.getAttributeValue("name");
+		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
+		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
+		String module = root.getAttributeValue("module");
+		short uid = Short.parseShort(root.getAttributeValue("uid"));
+		
+		RServerMap map = new RServerMap(id, name, width, height, getMapUID(uid, module));
+		
+		initTerrain(map, root.getChild("terrain"));
+		initElevation(map, root.getChild("elevation"));
+		initEntities(map, root.getChild("entities"));
+		
+		return map;			
 	}
 	
 	@Override
@@ -72,11 +98,27 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
 		root.setAttribute("uid", Integer.toString(map.uid));
+		root.setAttribute("module", "save");
 		
 		Element size = new Element("size");
 		size.setAttribute("width", Integer.toString(map.getWidth()));
 		size.setAttribute("height", Integer.toString(map.getHeight()));
 		root.addContent(size);
+		
+		Element entities = new Element("entities");
+		root.addContent(entities);
+		for (Long uid : map.getEntities()) {
+			String type = "entity";
+			
+			if (tracker.getEntity(uid) instanceof Creature) {
+				type = "creature";
+			}
+			
+			Element entity = new Element(type);
+			entity.setAttribute("uid", Long.toString(uid));
+			// we don't need to set the position, this is saved by the entity itself
+			entities.addContent(entity);
+		}
 		
 		Element terrain = new Element("terrain");
 		root.addContent(terrain);
@@ -106,21 +148,6 @@ class MapLoader implements ResourceLoader<RServerMap> {
 				region.setAttribute("z", Integer.toString(entry.getValue()));
 				terrain.addContent(region);
 			}
-		}
-		
-		Element entities = new Element("entities");
-		root.addContent(entities);
-		for (Long uid : map.getEntities()) {
-			String type = "entity";
-			
-			if (tracker.getEntity(uid) instanceof Creature) {
-				type = "creature";
-			}
-			
-			Element entity = new Element(type);
-			entity.setAttribute("uid", Long.toString(uid));
-			// we don't need to set the position, this is saved by the entity itself
-			entities.addContent(entity);
 		}
 		
 		return root;

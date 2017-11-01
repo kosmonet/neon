@@ -18,6 +18,10 @@
 
 package neon.common.resources;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Configuration information for the client. This resource should be created 
  * by the server when a new game is started and sent to the client, it cannot 
@@ -27,10 +31,25 @@ package neon.common.resources;
  *
  */
 public class CClient extends Resource {
+	public final String title;
+	
+	private final Set<String> species = new HashSet<>();
+	
 	/**
 	 * Initializes the client configuration resource.
 	 */
-	public CClient() {
+	public CClient(String title, Collection<String> species) {
 		super("client", "config", "config");
+		this.title = title;
+		this.species.addAll(species);
+	}
+
+	/**
+	 * Returns the id's of all playable species.
+	 * 
+	 * @return a {@code Set<String>} with id's
+	 */
+	public Set<String> getPlayableSpecies() {
+		return species;
 	}
 }

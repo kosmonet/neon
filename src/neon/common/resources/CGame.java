@@ -18,35 +18,17 @@
 
 package neon.common.resources;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 public class CGame extends Resource {
-	public final String title;
-	
-	private final Set<String> species = new HashSet<>();
 	private final String startMap;
 	private final int x, y;
 	
 	private String currentMap;
 
-	public CGame(String title, Collection<String> species, String startMap, int startX, int startY) {
+	public CGame(String startMap, int startX, int startY) {
 		super("game", "config", "config");
-		this.species.addAll(species);
-		this.title = title;
 		this.startMap = startMap;
 		x = startX;
 		y = startY;
-	}
-	
-	/**
-	 * Returns the id's of all playable species.
-	 * 
-	 * @return a {@code Set<String>} with id's
-	 */
-	public Set<String> getPlayableSpecies() {
-		return species;
 	}
 	
 	/**

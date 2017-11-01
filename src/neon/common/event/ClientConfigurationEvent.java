@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-import neon.common.resources.CGame;
+import neon.common.resources.CClient;
 
 /**
  * An event containing all configuration information for the client.
@@ -35,7 +35,7 @@ public class ClientConfigurationEvent implements ClientEvent {
 	 * 
 	 * @param config
 	 */
-	public ClientConfigurationEvent(CGame config) {
+	public ClientConfigurationEvent(CClient config) {
 		species = new String[config.getPlayableSpecies().size()];
 		config.getPlayableSpecies().toArray(species);
 		title = config.title;

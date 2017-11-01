@@ -41,7 +41,7 @@ public abstract class Module {
 	 * 
 	 * @return whether this module is active or not
 	 */
-	public boolean isActive() {
+	boolean isActive() {
 		return active;
 	}
 	

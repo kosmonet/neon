@@ -23,7 +23,7 @@ import com.google.common.eventbus.EventBus;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ServerSocket;
-import neon.common.resources.CGame;
+import neon.common.resources.CClient;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.MovementService;
@@ -63,7 +63,7 @@ public class Server implements Runnable {
 		// add all the systems and various other stuff to the bus
 		MovementService mover = new MovementService();
 
-		bus.register(new GameLoader(resources, entities, bus));
+		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
 		bus.register(new InventorySystem(entities, bus));
 		bus.register(new TurnSystem(resources, entities, bus));
@@ -72,8 +72,8 @@ public class Server implements Runnable {
 		
 		// send configuration message to the client
 		try {
-			CGame cg = resources.getResource("config", "game");
-			bus.post(new ClientConfigurationEvent(cg));
+			CClient cc = resources.getResource("config", "client");
+			bus.post(new ClientConfigurationEvent(cc));
 		} catch (ResourceException e) {
 			throw new IllegalStateException("Could not load game configuration", e);
 		}

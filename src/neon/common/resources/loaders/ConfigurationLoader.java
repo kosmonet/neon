@@ -90,36 +90,32 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	}		
 
 	private CClient loadClient(Element root) {
-		return new CClient();
+		String title = root.getAttributeValue("title");
+		HashSet<String> species = new HashSet<>();		
+		return new CClient(title, species);
 	}
 
-	private Element saveClient(CClient resource) {
-		Element element = new Element("client");
-		return element;
+	private Element saveClient(CClient config) {
+		Element client = new Element("client");
+		client.setAttribute("title", config.title);
+		return client;
 	}
 
 	private CGame loadGame(Element root) {
-		String title = root.getAttributeValue("title");
-		HashSet<String> species = new HashSet<>();
-		
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
 		int x = Integer.parseInt(start.getAttributeValue("x"));
 		int y = Integer.parseInt(start.getAttributeValue("y"));
-		
-		return new CGame(title, species, map, x, y);
+		return new CGame(map, x, y);
 	}
 
 	private Element saveGame(CGame config) {
 		Element game = new Element("game");
-		game.setAttribute("title", config.title);
-		
 		Element start = new Element("start");
 		start.setAttribute("map", config.getStartMap());
 		start.setAttribute("x", Integer.toString(config.getStartX()));
 		start.setAttribute("y", Integer.toString(config.getStartY()));
 		game.addContent(start);
-		
 		return game;
 	}
 }

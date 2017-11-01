@@ -19,6 +19,7 @@
 package neon.server;
 
 import java.io.IOException;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,8 +37,11 @@ import neon.common.event.NewGameEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
 import neon.common.files.FileUtils;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
+import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
+import neon.common.resources.RModule;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -59,6 +63,7 @@ class GameLoader {
 	private final EventBus bus;
 	private final ResourceManager resources;
 	private final EntityTracker entities;
+	private final NeonFileSystem files;
 	
 	private Player player;
 	
@@ -69,23 +74,28 @@ class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	GameLoader(ResourceManager resources, EntityTracker entities, EventBus bus) {
+	GameLoader(NeonFileSystem files, ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
+		this.files = files;
 	}
 	
 	/**
 	 * Loads all data for a new game and sends this back to the client.
 	 * 
 	 * @param event
+	 * @throws ResourceException
+	 * @throws IOException 
 	 */
 	@Subscribe
-	private void startNewGame(NewGameEvent event) throws ResourceException {
+	private void startNewGame(NewGameEvent event) throws ResourceException, IOException {
 		logger.info("starting a new game");
 		
 		// get the start map
-		CGame game = resources.getResource("config", "game");
+		CServer config = resources.getResource("config", "server");
+		CGame game = initGame(resources, config.getModules());
+		resources.addResource(game);
 		game.setCurrentMap(game.getStartMap());
 		RServerMap map = resources.getResource("maps", game.getStartMap());
 		
@@ -132,6 +142,11 @@ class GameLoader {
 	@Subscribe
 	private void startOldGame(ServerLoadEvent.Start event) {
 		logger.info("loading save character <" + event.save + ">");
+		try {
+			files.setSaveFolder(Paths.get("saves", event.save));
+		} catch (NotDirectoryException e) {
+			logger.warning("<" + event.save + "> is not a valid saved game");
+		}
 	}
 	
 	/**
@@ -175,5 +190,34 @@ class GameLoader {
 	private void quitGame(QuitEvent event) {
 		logger.info("quit game");
 		Platform.exit();
+	}
+
+	/**
+	 * Initializes the game resource. If an old game is loaded, the game 
+	 * resource will be overwritten later by the one from the loaded game.
+	 * 
+	 * @param resources
+	 * @param modules
+	 */
+	private CGame initGame(ResourceManager resources, String[] modules) {
+		// default start position
+		String map = "";
+		int x = 0;
+		int y = 0;
+		
+		// go through the loaded modules to check if any redefined the start position
+		for (String id : modules) {
+			try {
+				RModule module = resources.getResource(id);
+				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
+				x = module.getStartX() >= 0 ? module.getStartX() : x;
+				y = module.getStartY() >= 0 ? module.getStartY() : y;
+			} catch (ResourceException e) {
+				// something went wrong loading the module, try to continue anyway
+				logger.warning("problem loading module " + id);
+			}
+		}
+
+		return new CGame(map, x, y);	
 	}
 }

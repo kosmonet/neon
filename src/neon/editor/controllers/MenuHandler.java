@@ -93,10 +93,20 @@ public class MenuHandler {
 
 		// check if id is valid
 		if (result.isPresent() && !result.get().isEmpty()) {
+			// check if no reserved id is used
 			String id = result.get();
-			Path path = Paths.get("data", id);
+			if (id.equals("save")) {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.initOwner(ui.getWindow());
+				alert.setTitle("Warning");
+				alert.setHeaderText("Module conflict");
+				alert.setContentText("Module id <save> is reserved, use another id.");
+				alert.showAndWait();
+				return;
+			}
 
 			// check if id didn't exist already
+			Path path = Paths.get("data", id);
 			if (Files.exists(path)) {
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.initOwner(ui.getWindow());
