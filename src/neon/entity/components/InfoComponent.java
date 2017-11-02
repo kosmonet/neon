@@ -16,24 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.entity.components;
 
-import neon.common.resources.RItem;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.InfoComponent;
+import neon.common.resources.Resource;
 
-public class Item extends Entity {
-	public final GraphicsComponent graphics;
-	public final InfoComponent<RItem> info;
+public class InfoComponent<T extends Resource> implements Component {
+	private final T resource;
+	private final long uid;
 	
-	public Item(long uid, RItem item) {
-		super(uid);
-		graphics = new GraphicsComponent(uid, item.character, item.color);
-		info = new InfoComponent<>(uid, item);
+	public InfoComponent(long uid, T resource) {
+		this.resource = resource;
+		this.uid = uid;
 	}
 	
 	@Override
-	public String toString() {
-		return info.getResource().name;
+	public long getEntity() {
+		return uid;
+	}
+	
+	public T getResource() {
+		return resource;
 	}
 }

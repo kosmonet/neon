@@ -82,7 +82,10 @@ public class LoadModule extends Module {
 	
 	@FXML private void startGame() {
 		if(saveList.getSelectionModel().getSelectedItem() != null) {
+			// let the server know we want to load a saved game
 			bus.post(new ServerLoadEvent.Start(saveList.getSelectionModel().getSelectedItem()));
+			// transition to the actual game module
+			bus.post(new TransitionEvent("start game"));
 		}
 	}
 	

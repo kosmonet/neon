@@ -19,6 +19,7 @@
 package neon.entity.entities;
 
 import neon.common.resources.RCreature;
+import neon.entity.components.RecordComponent;
 
 /**
  * An entity representing the player character.
@@ -27,7 +28,7 @@ import neon.common.resources.RCreature;
  *
  */
 public class Player extends Creature {
-	private final String name;
+	public final RecordComponent record;
 	
 	/**
 	 * Initializes the player character. No uid is needed, the player 
@@ -39,11 +40,11 @@ public class Player extends Creature {
 	 */
 	public Player(String name, String gender, RCreature species) {
 		super(0, species);
-		this.name = name;
+		record = new RecordComponent(uid, name, gender);
 	}
 	
 	@Override
 	public String toString() {
-		return name;
+		return "player";
 	}
 }

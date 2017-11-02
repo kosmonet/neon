@@ -22,7 +22,7 @@ import neon.common.resources.RCreature;
 import neon.entity.components.BehaviorComponent;
 import neon.entity.components.GraphicsComponent;
 import neon.entity.components.InventoryComponent;
-import neon.entity.components.ResourceComponent;
+import neon.entity.components.InfoComponent;
 import neon.entity.components.ShapeComponent;
 import neon.entity.components.SkillComponent;
 import neon.entity.components.StatsComponent;
@@ -35,7 +35,7 @@ public class Creature extends Entity {
 	public final StatsComponent stats;
 	public final SkillComponent skills;
 	public final BehaviorComponent brain;
-	public final ResourceComponent<RCreature> info;
+	public final InfoComponent<RCreature> info;
 	
 	public Creature(long uid, RCreature species) {
 		super(uid);
@@ -46,6 +46,6 @@ public class Creature extends Entity {
 		stats = new StatsComponent(uid, species);
 		skills = new SkillComponent(uid);
 		brain = new BehaviorComponent(uid);
-		info = new ResourceComponent<>(uid, species);
+		info = new InfoComponent<>(uid, species);
 	}
 }

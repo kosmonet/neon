@@ -77,7 +77,7 @@ public class TurnSystem implements NeonSystem {
 				creature.stats.rest();
 
 				// let the creature act
-				bus.post(new ThinkEvent(creature));
+				bus.post(new ThinkEvent(creature, map));
 				// beware: these events are handled AFTER handleTurn has finished
 			}
 		}

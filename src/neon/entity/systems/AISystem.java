@@ -43,7 +43,7 @@ public class AISystem implements NeonSystem {
 			// move the creature
 			int x = creature.shape.getX() + random.nextInt(3) - 1;
 			int y = creature.shape.getY() + random.nextInt(3) - 1;
-			mover.move(creature, new Point(x, y));
+			mover.move(creature, new Point(x, y), event.map);
 		}
 	}
 }

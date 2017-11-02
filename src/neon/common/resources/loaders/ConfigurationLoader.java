@@ -77,6 +77,7 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 
 	private Element saveServer(CServer server) {
 		Element root = new Element("server");
+
 		Element modules = new Element("modules");
 		for(String id : server.getModules()) {
 			Element module = new Element("module");
@@ -84,8 +85,12 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 			module.setAttribute("uid", Short.toString(server.getModuleUID(id)));
 			modules.addContent(module);
 		}
-		
 		root.addContent(modules);
+		
+		Element log = new Element("log");
+		log.setText(server.getLogLevel());
+		root.addContent(log);
+		
 		return root;
 	}		
 
@@ -104,17 +109,13 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	private CGame loadGame(Element root) {
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
-		int x = Integer.parseInt(start.getAttributeValue("x"));
-		int y = Integer.parseInt(start.getAttributeValue("y"));
-		return new CGame(map, x, y);
+		return new CGame(map, -1, -1);
 	}
 
 	private Element saveGame(CGame config) {
 		Element game = new Element("game");
 		Element start = new Element("start");
-		start.setAttribute("map", config.getStartMap());
-		start.setAttribute("x", Integer.toString(config.getStartX()));
-		start.setAttribute("y", Integer.toString(config.getStartY()));
+		start.setAttribute("map", config.getCurrentMap());
 		game.addContent(start);
 		return game;
 	}

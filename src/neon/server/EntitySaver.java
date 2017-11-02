@@ -20,6 +20,10 @@ package neon.server;
 
 import org.jdom2.Element;
 
+import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.components.InventoryComponent;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
@@ -27,6 +31,12 @@ import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 
 class EntitySaver {
+	private final ResourceManager resources;
+	
+	EntitySaver(ResourceManager resources) {
+		this.resources = resources;
+	}
+	
 	Element save(Entity entity) {
 		if (entity instanceof Player) {
 			return savePlayer((Player) entity);
@@ -43,12 +53,10 @@ class EntitySaver {
 		Element root = new Element("player");
 		root.setAttribute("id", player.info.getResource().id);
 		root.addContent(saveInventory(player.inventory));
+		root.setAttribute("name", player.record.getName());
 		
-//		Element position = new Element("position");
-//		position.setAttribute("x", Integer.toString(player.shape.getX()));
-//		position.setAttribute("y", Integer.toString(player.shape.getY()));
-//		root.addContent(position);
-		
+		root.setAttribute("x", Integer.toString(player.shape.getX()));
+		root.setAttribute("y", Integer.toString(player.shape.getY()));
 		return root;			
 	}
 
@@ -56,6 +64,9 @@ class EntitySaver {
 		Element root = new Element("creature");
 		root.setAttribute("id", creature.info.getResource().id);
 		root.addContent(saveInventory(creature.inventory));
+
+		root.setAttribute("x", Integer.toString(creature.shape.getX()));
+		root.setAttribute("y", Integer.toString(creature.shape.getY()));		
 		return root;			
 	}
 
@@ -73,5 +84,35 @@ class EntitySaver {
 			inventory.addContent(item);
 		}
 		return inventory;
+	}
+	
+	Entity load(long uid, Element root) throws ResourceException {
+		String id = root.getAttributeValue("id");
+		
+		if (root.getName().equals("item")) {
+			RItem item = resources.getResource("items", id);
+			return new Item(uid, item);
+		} else if (root.getName().equals("creature")) {
+			RCreature species = resources.getResource("creatures", id);
+			Creature creature = new Creature(uid, species);
+			creature.shape.setX(Integer.parseInt(root.getAttributeValue("x")));
+			creature.shape.setY(Integer.parseInt(root.getAttributeValue("y")));
+			return creature;
+		} else if (root.getName().equals("player")) {
+			RCreature species = resources.getResource("creatures", id);
+			Player player = new Player(root.getAttributeValue("name"), "gender", species);
+			player.shape.setX(Integer.parseInt(root.getAttributeValue("x")));
+			player.shape.setY(Integer.parseInt(root.getAttributeValue("y")));
+			loadInventory(root.getChild("items"), player.inventory);
+			return player;
+		} else {
+			throw new IllegalArgumentException("Entity <" + uid + "> does not exist");
+		}
+	}
+	
+	private void loadInventory(Element items, InventoryComponent inventory) {
+		for (Element item : items.getChildren()) {
+			inventory.addItem(Long.parseLong(item.getAttributeValue("uid")));
+		}
 	}
 }

@@ -20,6 +20,7 @@ package neon.entity;
 
 import java.awt.Point;
 
+import neon.common.resources.RMap;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.entity.systems.NeonSystem;
@@ -53,7 +54,7 @@ public class MovementService implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	public void move(Creature creature, Point position) {
+	public void move(Creature creature, Point position, RMap map) {
 		if(creature.shape.getX() == position.x || creature.shape.getY() == position.y) {
 			creature.stats.perform(Action.MOVE_STRAIGHT);			
 		} else {

@@ -26,6 +26,7 @@ import org.jdom2.Element;
 
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
+import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
@@ -37,7 +38,7 @@ import neon.entity.entities.Creature;
  * @author mdriesen
  *
  */
-class MapLoader implements ResourceLoader<RServerMap> {
+class MapLoader implements ResourceLoader<RMap> {
 	private final EntityTracker tracker;
 	private final ResourceManager resources;
 	private final CServer config;
@@ -49,7 +50,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 	}
 	
 	@Override
-	public RServerMap load(Element root) {
+	public RMap load(Element root) {
 		// check whether this is an original map from a module, or a map from a saved game
 		if (root.getAttributeValue("module").equals("save")) {
 			return loadFromSave(root);
@@ -58,7 +59,13 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		}
 	}
 	
-	private RServerMap loadFromModule(Element root) {
+	/**
+	 * Loads a map that comes straight from a module.
+	 * 
+	 * @param root
+	 * @return
+	 */
+	private RMap loadFromModule(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
@@ -66,34 +73,39 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		String module = root.getAttributeValue("module");
 		short uid = Short.parseShort(root.getAttributeValue("uid"));
 		
-		RServerMap map = new RServerMap(id, name, width, height, getMapUID(uid, module));
+		RMap map = new RMap(id, name, width, height, getMapUID(uid, module));
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
-		initEntities(map, root.getChild("entities"));
+		initEntitiesFromModule(map, root.getChild("entities"));
 		
 		return map;	
 	}
 	
-	private RServerMap loadFromSave(Element root) {
+	/**
+	 * Loads a map that comes from a saved game.
+	 * 
+	 * @param root
+	 * @return
+	 */
+	private RMap loadFromSave(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		String module = root.getAttributeValue("module");
-		short uid = Short.parseShort(root.getAttributeValue("uid"));
+		int uid = Integer.parseInt(root.getAttributeValue("uid"));
 		
-		RServerMap map = new RServerMap(id, name, width, height, getMapUID(uid, module));
+		RMap map = new RMap(id, name, width, height, uid);
 		
 		initTerrain(map, root.getChild("terrain"));
 		initElevation(map, root.getChild("elevation"));
-		initEntities(map, root.getChild("entities"));
+		initEntitiesFromSave(map, root.getChild("entities"));
 		
 		return map;			
 	}
 	
 	@Override
-	public Element save(RServerMap map) {
+	public Element save(RMap map) {
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
@@ -153,7 +165,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		return root;
 	}
 
-	private void initTerrain(RServerMap map, Element terrain) {
+	private void initTerrain(RMap map, Element terrain) {
 		for (Element region : terrain.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
 			int height = Integer.parseInt(region.getAttributeValue("h"));
@@ -165,7 +177,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		}
 	}
 	
-	private void initElevation(RServerMap map, Element elevation) {
+	private void initElevation(RMap map, Element elevation) {
 		for (Element region : elevation.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
 			int height = Integer.parseInt(region.getAttributeValue("h"));
@@ -177,7 +189,7 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		}		
 	}
 	
-	private void initEntities(RServerMap map, Element entities) {
+	private void initEntitiesFromModule(RMap map, Element entities) {
 		long base = (long) map.uid << 32;
 		for (Element entity : entities.getChildren("creature")) {
 			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
@@ -190,7 +202,6 @@ class MapLoader implements ResourceLoader<RServerMap> {
 				Creature creature = new Creature(uid, rc);
 				creature.shape.setX(x);
 				creature.shape.setY(y);
-				creature.shape.addObserver(map);
 				tracker.addEntity(creature);
 			} catch (ResourceException e) {
 				throw new IllegalStateException(e);
@@ -198,6 +209,13 @@ class MapLoader implements ResourceLoader<RServerMap> {
 		}		
 	}
 	
+	private void initEntitiesFromSave(RMap map, Element entities) {
+		for (Element entity : entities.getChildren("creature")) {
+			long uid = Integer.parseInt(entity.getAttributeValue("uid"));
+			Creature creature = tracker.getEntity(uid);
+			map.addEntity(uid, creature.shape.getX(), creature.shape.getY());
+		}		
+	}
 	
 	/**
 	 * Calculates the full map uid given the module name and the base uid

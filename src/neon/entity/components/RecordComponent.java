@@ -18,15 +18,15 @@
 
 package neon.entity.components;
 
-import neon.common.resources.Resource;
-
-public class ResourceComponent<T extends Resource> implements Component {
-	private final T resource;
+public class RecordComponent implements Component {
 	private final long uid;
+	private final String name;
+	private final String gender;
 	
-	public ResourceComponent(long uid, T resource) {
-		this.resource = resource;
+	public RecordComponent(long uid, String name, String gender) {
 		this.uid = uid;
+		this.name = name;
+		this.gender = gender;
 	}
 	
 	@Override
@@ -34,7 +34,11 @@ public class ResourceComponent<T extends Resource> implements Component {
 		return uid;
 	}
 	
-	public T getResource() {
-		return resource;
+	public String getName() {
+		return name;
+	}
+	
+	public String getGender() {
+		return gender;
 	}
 }

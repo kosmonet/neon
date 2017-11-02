@@ -20,7 +20,6 @@ package neon.server;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.jdom2.Document;
@@ -32,6 +31,8 @@ import com.google.common.cache.RemovalNotification;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
@@ -44,18 +45,18 @@ import neon.entity.entities.Entity;
  */
 class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
-	private final EntityLoader loader = new EntityLoader();
-	private final EntitySaver saver = new EntitySaver();
+	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
-	EntityTracker(NeonFileSystem files) {
+	EntityTracker(NeonFileSystem files, ResourceManager resources) {
 		this.files = files;
+		saver = new EntitySaver(resources);	
 	}
 	
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
 		try {
-			return (T) entities.get(uid, loader);
+			return (T) entities.get(uid, () -> loadEntity(uid));
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("No entity with uid <" + uid + "> found", e);
 		}
@@ -102,11 +103,9 @@ class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 			e.printStackTrace();
 		}		
 	}
-	
-	private class EntityLoader implements Callable<Entity> {
-		@Override
-		public Entity call() {
-			return null;
-		}
+
+	private Entity loadEntity(long uid) throws IOException, ResourceException {
+		Document doc = files.loadFile(new XMLTranslator(), "entities", Long.toString(uid) + ".xml");
+		return saver.load(uid, doc.getRootElement());
 	}
 }
