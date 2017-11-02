@@ -18,14 +18,11 @@
 
 package neon.editor.tools;
 
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -34,8 +31,6 @@ import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
-import neon.editor.resource.RMap;
 
 /**
  * A tool to convert SVG images to a quadtree map file.
@@ -56,20 +51,40 @@ public class SVGConverter {
 		int width = Integer.parseInt(svg.getAttributeValue("width"));
 		int height = Integer.parseInt(svg.getAttributeValue("height"));
 		
-		System.out.println("creating map");
-		RMap map = new RMap("aneirin", "Aneirin", width, height, (short) 1, "aneirin");
+		Element terrain = svg.getChild("g", ns);		
+
+		System.out.println("saving map");
+		save(terrain, width, height);
+		System.out.println("finished");
+	}
+	
+	private static void save(Element shapes, int width, int height) throws IOException {
+		Element root = new Element("map");
+		root.setAttribute("id", "aneirin");
+		root.setAttribute("name", "Aneirin");
+		root.setAttribute("uid", "1");
+		root.setAttribute("module", "aneirin");
 		
-		for (Element e : svg.getChildren()) {
-			System.out.println(e.getName());
-		}
+		Element size = new Element("size");
+		size.setAttribute("width", Integer.toString(width));
+		size.setAttribute("height", Integer.toString(height));
+		root.addContent(size);
 		
-		Element terrain = svg.getChild("g", ns);
 		int dx = 0;
 		int dy = 13700;
 		
-		map.getTerrain().insert(new Rectangle(0, 0, width, height), "sea");
-
-		for (Element rect : terrain.getChildren("rect", ns)) {
+		Element terrain = new Element("terrain");
+		root.addContent(terrain);
+		
+		Element base = new Element("region");
+		base.setAttribute("x", "0");
+		base.setAttribute("y", "0");
+		base.setAttribute("w", Integer.toString(width));
+		base.setAttribute("h", Integer.toString(height));
+		base.setAttribute("id", "sea");
+		terrain.addContent(base);
+		
+		for (Element rect : shapes.getChildren("rect", ns)) {
 			int x = Integer.parseInt(rect.getAttributeValue("x")) + dx;
 			int y = Integer.parseInt(rect.getAttributeValue("y")) + dy;
 			int w = Integer.parseInt(rect.getAttributeValue("width"));
@@ -92,43 +107,17 @@ public class SVGConverter {
 				id = "meadow";
 			}
 
-			map.getTerrain().insert(new Rectangle(x, y, w, h), id);
-		}
-
-		System.out.println("saving map");
-		save(map);
-		System.out.println("finished");
-	}
-	
-	private static void save(RMap map) throws IOException {
-		Element root = new Element("map");
-		root.setAttribute("id", map.id);
-		root.setAttribute("name", map.name);
-		root.setAttribute("uid", Short.toString(map.uid));
-		root.setAttribute("module", map.module);
-		
-		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getWidth()));
-		size.setAttribute("height", Integer.toString(map.getHeight()));
-		root.addContent(size);
-		
-		Element terrain = new Element("terrain");
-		root.addContent(terrain);
-		Map<Rectangle, String> leaves = map.getTerrain().getLeaves();
-		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
-			if(entry.getValue() != null) {
-				Element region = new Element("region");
-				region.setAttribute("x", Integer.toString(entry.getKey().x));
-				region.setAttribute("y", Integer.toString(entry.getKey().y));
-				region.setAttribute("w", Integer.toString(entry.getKey().width));
-				region.setAttribute("h", Integer.toString(entry.getKey().height));
-				region.setAttribute("id", entry.getValue());
-				terrain.addContent(region);
-			}
+			Element region = new Element("region");
+			region.setAttribute("x", Integer.toString(x));
+			region.setAttribute("y", Integer.toString(y));
+			region.setAttribute("w", Integer.toString(w));
+			region.setAttribute("h", Integer.toString(h));
+			region.setAttribute("id", id);
+			terrain.addContent(region);
 		}
 		
-		Element height = new Element("elevation");
-		root.addContent(height);
+		Element elevation = new Element("elevation");
+		root.addContent(elevation);
 		
 		Element entities = new Element("entities");
 		root.addContent(entities);

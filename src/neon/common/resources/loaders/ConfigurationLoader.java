@@ -46,7 +46,7 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		case "game":
 			return loadGame(root);
 		default:
-			throw new IllegalArgumentException("argument is not a configuration resource");
+			throw new IllegalArgumentException("Argument is not a configuration resource");
 		}
 	}
 
@@ -59,7 +59,7 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		} else if (resource instanceof CServer) {
 			return saveServer((CServer)resource);
 		} else {
-			throw new IllegalArgumentException("argument is not a configuration resource");			
+			throw new IllegalArgumentException("Argument is not a configuration resource");			
 		}
 	}	
 
@@ -71,7 +71,16 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		}
 		
 		String level = root.getChildText("log").toUpperCase();
-		return new CServer(modules, level);
+		CServer cs = new CServer(modules, level);
+
+		// extra step in case this was a saved configuration file
+		if(root.getName().equals("server")) {
+			for (Element module : root.getChild("modules").getChildren()) {
+				cs.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+			}
+		}
+
+		return cs; 
 	}
 
 

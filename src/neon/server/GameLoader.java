@@ -25,6 +25,7 @@ import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -39,6 +40,7 @@ import javafx.application.Platform;
 
 import neon.common.event.ServerLoadEvent;
 import neon.common.event.ClientLoadEvent;
+import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
@@ -63,7 +65,7 @@ import neon.entity.events.UpdateEvent;
  * games. 
  * 
  * @author mdriesen
- *
+ * 
  */
 class GameLoader {
 	private static final Logger logger = Logger.getGlobal();
@@ -166,14 +168,25 @@ class GameLoader {
 		} catch (NotDirectoryException e) {
 			logger.warning("<" + event.save + "> is not a valid saved game");
 		}
+
+		// load the server configuration file from the save folder and check each module uid
+		CServer currentConfig = resources.getResource("config", "server");
+		CServer oldConfig = getConfiguration(event.save);
+		for (String module : oldConfig.getModules()) {
+			if(currentConfig.hasModule(module)) {
+				// make sure the current module uid is the same as in the saved game
+				currentConfig.setModuleUID(module, oldConfig.getModuleUID(module));
+			} else {
+				logger.warning("missing module <" + module + "> in saved game");
+				bus.post(new MessageEvent("Module <" + module + "> is missing from the load order. "
+						+ "This module was present when the game was originally saved. The game may "
+						+ "behave in unexpected ways.", "Module warning"));
+			}
+		}
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", game.getStartMap());
-
-		// load the server configuration file from the save folder to check each module uid
-		CServer currentConfig = resources.getResource("config", "server");
-		CServer oldConfig = getConfiguration(event.save);
 
 		// tell the client everything is ready
 		notifyClient(map);

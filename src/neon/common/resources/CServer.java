@@ -60,6 +60,9 @@ public class CServer extends Resource {
 	}
 	
 	/**
+	 * The returned array preserves the correct load order of modules, as 
+	 * defined in the neon.ini configuration file.
+	 * 
 	 * @return the list of modules to be loaded
 	 */
 	public String[] getModules() {
@@ -82,5 +85,32 @@ public class CServer extends Resource {
 	 */
 	public short getModuleUID(String module) {
 		return uids.get(module);
+	}
+	
+	/**
+	 * Sets the uid of the given module. If another module with the same uid 
+	 * was already present, this module is moved to the next free uid.
+	 * 
+	 * @param module
+	 * @param uid
+	 */
+	public void setModuleUID(String module, short uid) {
+		if (uids.containsValue(uid)) {
+			String mod = uids.inverse().get(uid);
+			short index = 0;
+			while(uids.containsValue(++index));
+			uids.put(mod, index);
+		}
+		
+		uids.put(module, uid);
+	}
+	
+	/**
+	 * 
+	 * @param module
+	 * @return	whether the given module was loaded
+	 */
+	public boolean hasModule(String module) {
+		return modules.contains(module);
 	}
 }
