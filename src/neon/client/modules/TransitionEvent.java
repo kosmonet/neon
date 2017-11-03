@@ -18,7 +18,7 @@
 
 package neon.client.modules;
 
-import neon.common.event.ClientEvent;
+import neon.common.event.NeonEvent;
 import neon.common.resources.RMap;
 
 /**
@@ -27,7 +27,7 @@ import neon.common.resources.RMap;
  * @author mdriesen
  *
  */
-public class TransitionEvent implements ClientEvent {
+public class TransitionEvent extends NeonEvent {
 	private final String condition;
 	private final RMap map;
 	

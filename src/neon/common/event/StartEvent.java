@@ -18,10 +18,22 @@
 
 package neon.common.event;
 
+import neon.common.resources.RMap;
+
 /**
- * An event that is sent to the client.
+ * An event to signal the start of a game.
  * 
  * @author mdriesen
  *
  */
-public interface ClientEvent extends NeonEvent {}
+public class StartEvent extends NeonEvent {
+	private final RMap map;
+
+	public StartEvent(RMap map) {
+		this.map = map;
+	}
+
+	public RMap getMap() {
+		return map;
+	}
+}

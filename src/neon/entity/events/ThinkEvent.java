@@ -18,11 +18,11 @@
 
 package neon.entity.events;
 
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 import neon.common.resources.RMap;
 import neon.entity.entities.Creature;
 
-public class ThinkEvent extends ServerEvent {
+public class ThinkEvent extends NeonEvent {
 	public final Creature creature;
 	public final RMap map;
 	

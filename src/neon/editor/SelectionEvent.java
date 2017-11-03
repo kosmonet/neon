@@ -2,7 +2,7 @@ package neon.editor;
 
 import neon.common.event.NeonEvent;
 
-public class SelectionEvent implements NeonEvent {
+public class SelectionEvent extends NeonEvent {
 	private final String id;
 	private final String namespace;
 	

@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-public class ClientLoadEvent implements ClientEvent {
+public class ClientLoadEvent extends NeonEvent {
 	public static class List extends ClientLoadEvent {
 		private final String[] saves;
 		

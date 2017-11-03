@@ -21,10 +21,10 @@ package neon.entity.events;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import neon.common.event.ClientEvent;
+import neon.common.event.NeonEvent;
 import neon.entity.entities.Item;
 
-public class InventoryEvent implements ClientEvent {
+public class InventoryEvent extends NeonEvent {
 	private final ArrayList<Item> items;
 	
 	public InventoryEvent(Collection<Item> items) {

@@ -26,7 +26,7 @@ import neon.common.resources.CClient;
  * @author mdriesen
  *
  */
-public class ClientConfigurationEvent implements ClientEvent {
+public class ClientConfigurationEvent extends NeonEvent {
 	private final String[] species;
 	private final String title;
 	

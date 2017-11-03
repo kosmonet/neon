@@ -18,6 +18,6 @@
 
 package neon.entity.events;
 
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 
-public class TurnEvent extends ServerEvent {}
+public class TurnEvent extends NeonEvent {}

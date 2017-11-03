@@ -19,9 +19,29 @@
 package neon.common.event;
 
 /**
- * An event that can be posted on the server or client bus.
+ * An event that can be posted on the server or client bus. To prevent an 
+ * event from bouncing back and forth through the client and server buses, an
+ * event should be blocked when passing through a socket for the first time.
  * 
  * @author mdriesen
  *
  */
-public interface NeonEvent {}
+public abstract class NeonEvent {
+	boolean blocked = false;
+	
+	/**
+	 * Blocks this event from passing through a socket.
+	 */
+	public void block() {
+		blocked = true;
+	}
+	
+	/**
+	 * Indicates whether this event is blocked from passing through a socket.
+	 * 
+	 * @return
+	 */
+	public boolean isBlocked() {
+		return blocked;
+	}
+}

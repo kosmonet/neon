@@ -21,7 +21,7 @@ package neon.entity.events;
 import java.util.Collection;
 import java.util.HashSet;
 
-import neon.common.event.ClientEvent;
+import neon.common.event.NeonEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.entity.entities.Entity;
@@ -33,7 +33,7 @@ import neon.util.quadtree.RegionQuadTree;
  * @author mdriesen
  *
  */
-public abstract class UpdateEvent implements ClientEvent {
+public abstract class UpdateEvent extends NeonEvent {
 	protected final Collection<Resource> resources = new HashSet<>();
 	protected final Collection<Entity> entities = new HashSet<>();
 	

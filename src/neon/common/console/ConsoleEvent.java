@@ -18,7 +18,7 @@
 
 package neon.common.console;
 
-import neon.common.event.ClientEvent;
+import neon.common.event.NeonEvent;
 
 /**
  * An event to signal that a message should be shown on the console.
@@ -26,7 +26,7 @@ import neon.common.event.ClientEvent;
  * @author mdriesen
  *
  */
-public class ConsoleEvent implements ClientEvent{
+public class ConsoleEvent extends NeonEvent{
 	private final String message;
 	
 	public ConsoleEvent(String message) {

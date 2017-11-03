@@ -18,4 +18,4 @@
 
 package neon.common.event;
 
-public class TimerEvent extends ServerEvent {}
+public class TimerEvent extends NeonEvent {}

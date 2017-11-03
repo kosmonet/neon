@@ -25,7 +25,7 @@ import com.google.common.collect.Multimap;
 
 import neon.common.event.NeonEvent;
 
-public class LoadEvent implements NeonEvent {	
+public class LoadEvent extends NeonEvent {	
 	private final String id;
 	private final Multimap<String, Card> cards;
 	

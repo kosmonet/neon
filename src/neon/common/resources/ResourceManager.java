@@ -40,7 +40,7 @@ import neon.common.files.XMLTranslator;
 import neon.common.resources.loaders.ResourceLoader;
 
 /**
- * Manages all game resources. Resources are stored with weak references and 
+ * Manages all game resources. Resources are stored with soft references and 
  * (re)loaded on demand. Beware: changes to a resource should be explicitly
  * saved, unless the auto save option was set for that particular resource 
  * namespace. Any changes will otherwise be lost if the resource is discarded 

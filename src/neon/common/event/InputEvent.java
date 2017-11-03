@@ -26,7 +26,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class InputEvent extends ServerEvent {
+public class InputEvent extends NeonEvent {
 	public static class Move extends InputEvent {
 		private final Direction direction;
 		

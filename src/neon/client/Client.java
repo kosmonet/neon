@@ -37,7 +37,7 @@ import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
 import neon.client.modules.TransitionEvent;
-import neon.common.event.ClientEvent;
+import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.net.ClientSocket;
 
@@ -78,7 +78,7 @@ public class Client implements Runnable {
 	 */
 	public void run() {
 		while (true) {
-			ClientEvent event = socket.getEvent();
+			NeonEvent event = socket.getEvent();
 			Platform.runLater(() -> bus.post(event));
 		}
 	}

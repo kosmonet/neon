@@ -27,7 +27,7 @@ import neon.common.resources.Resource;
  * @author mdriesen
  *
  */
-public class SaveEvent implements NeonEvent {
+public class SaveEvent extends NeonEvent {
 	/**
 	 * An event to signal that a resource should be saved.
 	 * 

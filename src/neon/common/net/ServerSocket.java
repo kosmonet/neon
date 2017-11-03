@@ -24,8 +24,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ClientEvent;
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 
 /**
  * The server socket receives messages from a client socket and stores them on 
@@ -37,7 +36,7 @@ import neon.common.event.ServerEvent;
 public class ServerSocket {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final BlockingQueue<ServerEvent> queue = new LinkedBlockingQueue<>();
+	private final BlockingQueue<NeonEvent> queue = new LinkedBlockingQueue<>();
 	private final String name;
 	
 	private ClientSocket cs;
@@ -59,12 +58,14 @@ public class ServerSocket {
 	/**
 	 * Sends a message to the connected client socket.
 	 * 
-	 * @param event
+	 * @param message
 	 */
 	@Subscribe
-	public void send(ClientEvent event) {
-		if(cs != null) {
-			cs.receive(event);
+	public void send(NeonEvent message) {
+		if(cs == null) {
+			logger.warning("client socket not yet connected to a server socket");			
+		} else if(!message.isBlocked()) {
+			cs.receive(message);
 		}
 	}
 	
@@ -73,20 +74,21 @@ public class ServerSocket {
 	 * 
 	 * @param event
 	 */
-	public void receive(ServerEvent event) {
-		queue.offer(event);
+	public void receive(NeonEvent message) {
+		message.block();
+		queue.offer(message);
 	}
 	
 	/**
 	 * @return the next event on the queue
 	 */
-	public ServerEvent getEvent() {
+	public NeonEvent getEvent() {
 		try {
 			return queue.take();
 		} catch (InterruptedException e) {
 			logger.warning("server event queue interrupted");
 			// return an empty event instead
-			return new ServerEvent();
+			return new NeonEvent(){};
 		}
 	}
 	

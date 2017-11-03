@@ -18,6 +18,4 @@
 
 package neon.common.event;
 
-public class QuitEvent extends ServerEvent {
-
-}
+public class QuitEvent extends NeonEvent {}

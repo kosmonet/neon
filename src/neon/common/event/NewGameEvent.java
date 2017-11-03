@@ -24,7 +24,7 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public class NewGameEvent extends ServerEvent {
+public class NewGameEvent extends NeonEvent {
 	private final String name, species, gender;
 	
 	public NewGameEvent(String name, String species, String gender) {
