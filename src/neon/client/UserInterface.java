@@ -59,7 +59,6 @@ public class UserInterface {
 	 */
 	UserInterface(Stage stage) {
 		this.stage = stage;
-		
 		stage.setWidth(1280);
 		stage.setMinWidth(800);
 		stage.setHeight(720);

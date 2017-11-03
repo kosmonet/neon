@@ -18,9 +18,18 @@
 
 package neon.server;
 
-import com.google.common.eventbus.EventBus;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import javafx.application.Platform;
 import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.QuitEvent;
+import neon.common.event.TimerEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ServerSocket;
 import neon.common.resources.CClient;
@@ -39,11 +48,14 @@ import neon.entity.systems.TurnSystem;
  *
  */
 public class Server implements Runnable {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ServerSocket socket;
 	private final EntityTracker entities = new EntityTracker(files, resources);
+	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**
 	 * Initializes the server.
@@ -69,14 +81,18 @@ public class Server implements Runnable {
 		bus.register(new TurnSystem(resources, entities, bus));
 		bus.register(new AISystem(mover));
 		bus.register(new InputSystem(entities, bus, mover));
+		bus.register(new Loop());
 		
 		// send configuration message to the client
 		try {
 			CClient cc = resources.getResource("config", "client");
 			bus.post(new ClientConfigurationEvent(cc));
 		} catch (ResourceException e) {
-			throw new IllegalStateException("Could not load game configuration", e);
+			throw new IllegalStateException("Could not load client configuration", e);
 		}
+		
+		// start the timer for the game loop
+		executor.scheduleAtFixedRate(() -> socket.receive(new TimerEvent()), 500, 500, TimeUnit.MILLISECONDS);
 	}
 	
 	/**
@@ -87,5 +103,17 @@ public class Server implements Runnable {
 		while(true) {
 			bus.post(socket.getEvent());
 		}
+	}
+	
+	/**
+	 * Exits the application in an orderly fashion.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	private void quitGame(QuitEvent event) {
+		logger.info("quit game");
+		executor.shutdown();
+		Platform.exit();
 	}
 }

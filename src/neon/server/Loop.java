@@ -16,28 +16,29 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.server;
 
-import neon.common.resources.RMap;
+import com.google.common.eventbus.Subscribe;
 
-/**
- * An event that is sent to the server.
- * 
- * @author mdriesen
- *
- */
-public class ServerEvent implements NeonEvent {
-	public static class Start extends ServerEvent {
-		private final RMap map;
-		
-		public Start(RMap map) {
-			this.map = map;
-		}
-		
-		public RMap getMap() {
-			return map;
+import neon.common.event.TimerEvent;
+
+class Loop {
+	private GameMode mode = GameMode.TURN_BASED;
+	
+	@Subscribe
+	private void tick(TimerEvent event) {
+		switch (mode) {
+		case TURN_BASED:
+			System.out.println("printing test from " + Thread.currentThread() + " in turns");
+			break;
+		case REAL_TIME:
+			System.out.println("printing test from " + Thread.currentThread() + " in real time");
+			break;			
 		}
 	}
 	
-	public static class Inventory extends ServerEvent {}
+	@Subscribe
+	private void setMode(GameMode mode) {
+		this.mode = mode;
+	}
 }

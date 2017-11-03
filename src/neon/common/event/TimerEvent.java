@@ -18,26 +18,4 @@
 
 package neon.common.event;
 
-import neon.common.resources.RMap;
-
-/**
- * An event that is sent to the server.
- * 
- * @author mdriesen
- *
- */
-public class ServerEvent implements NeonEvent {
-	public static class Start extends ServerEvent {
-		private final RMap map;
-		
-		public Start(RMap map) {
-			this.map = map;
-		}
-		
-		public RMap getMap() {
-			return map;
-		}
-	}
-	
-	public static class Inventory extends ServerEvent {}
-}
+public class TimerEvent extends ServerEvent {}

@@ -40,6 +40,7 @@ import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
 import neon.common.console.Console;
 import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.QuitEvent;
 
 /**
  * The module for the main menu screen in the game.
@@ -136,7 +137,7 @@ public class MainMenuModule extends Module {
 	
 	@FXML private void quitKeyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ENTER)) {
-			Platform.exit();;
+			bus.post(new QuitEvent());
 		}
 	}
 	

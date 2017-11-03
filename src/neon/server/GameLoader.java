@@ -25,7 +25,6 @@ import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -35,8 +34,6 @@ import org.jdom2.input.SAXBuilder;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-
-import javafx.application.Platform;
 
 import neon.common.event.ServerLoadEvent;
 import neon.common.event.ClientLoadEvent;
@@ -158,6 +155,14 @@ class GameLoader {
 		return new CGame(map, x, y);	
 	}
 
+	/**
+	 * Loads all data from a previously saved game and sends this back to the 
+	 * client.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 * @throws IOException
+	 */
 	@Subscribe
 	private void startOldGame(ServerLoadEvent.Start event) throws ResourceException, IOException {
 		logger.info("loading save character <" + event.save + ">");
@@ -177,6 +182,7 @@ class GameLoader {
 				// make sure the current module uid is the same as in the saved game
 				currentConfig.setModuleUID(module, oldConfig.getModuleUID(module));
 			} else {
+				// give a warning when a module was removed from the load order
 				logger.warning("missing module <" + module + "> in saved game");
 				bus.post(new MessageEvent("Module <" + module + "> is missing from the load order. "
 						+ "This module was present when the game was originally saved. The game may "
@@ -268,18 +274,6 @@ class GameLoader {
 		// move the temp folder to the saves folder
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", player.record.getName()));
 		// and request JavaFX to quit
-		logger.info("quit game");
-		Platform.exit();		
-	}
-	
-	/**
-	 * Requests the JavaFX runtime to exit the application.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void quitGame(QuitEvent event) {
-		logger.info("quit game");
-		Platform.exit();
+		bus.post(new QuitEvent());
 	}
 }

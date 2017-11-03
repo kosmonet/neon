@@ -38,6 +38,7 @@ import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
 import neon.client.modules.TransitionEvent;
 import neon.common.event.ClientEvent;
+import neon.common.event.QuitEvent;
 import neon.common.net.ClientSocket;
 
 public class Client implements Runnable {
@@ -61,6 +62,9 @@ public class Client implements Runnable {
 		bus.register(new BusListener());
 		ui = new UserInterface(stage);
 		bus.register(ui);
+		
+		// server should cleanly shut down if client is closed
+		stage.setOnCloseRequest(event -> bus.post(new QuitEvent()));
 		
 		// initialize all modules and enter the first one
 		initModules(version);

@@ -16,28 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.server;
 
-import neon.common.resources.RMap;
-
-/**
- * An event that is sent to the server.
- * 
- * @author mdriesen
- *
- */
-public class ServerEvent implements NeonEvent {
-	public static class Start extends ServerEvent {
-		private final RMap map;
-		
-		public Start(RMap map) {
-			this.map = map;
-		}
-		
-		public RMap getMap() {
-			return map;
-		}
-	}
-	
-	public static class Inventory extends ServerEvent {}
+public enum GameMode {
+	TURN_BASED, REAL_TIME;
 }
