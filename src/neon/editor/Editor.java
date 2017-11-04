@@ -100,7 +100,7 @@ public class Editor extends Application {
 		// create the new module
 		Files.createDirectories(path);
 		// editing is done in temp, so don't add the actual module folder to the file system
-		RModule module = new RModule(id, id, "", -1, -1);
+		RModule module = new RModule(id, id, "", "", -1, -1);
 		resources.addResource(module);
 		config.setActiveModule(module);
 	}

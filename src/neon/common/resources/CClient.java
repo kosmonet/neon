@@ -32,15 +32,17 @@ import java.util.Set;
  */
 public class CClient extends Resource {
 	public final String title;
+	public final String subtitle;
 	
 	private final Set<String> species = new HashSet<>();
 	
 	/**
 	 * Initializes the client configuration resource.
 	 */
-	public CClient(String title, Collection<String> species) {
+	public CClient(String title, String subtitle, Collection<String> species) {
 		super("client", "config", "config");
 		this.title = title;
+		this.subtitle = subtitle;
 		this.species.addAll(species);
 	}
 

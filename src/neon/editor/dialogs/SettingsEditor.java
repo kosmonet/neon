@@ -72,7 +72,7 @@ public class SettingsEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Label instructionLabel;
-	@FXML private TextField titleField, mapField;
+	@FXML private TextField titleField, subtitleField, mapField;
 	@FXML private ListView<String> speciesList, parentList;
 	@FXML private Spinner<Integer> xSpinner, ySpinner;
 	
@@ -109,6 +109,7 @@ public class SettingsEditor {
 		try {
 			RModule module = resources.getResource(id);
 			titleField.setText(module.title);
+			subtitleField.setText(module.subtitle);
 			
 			mapField.setText(module.getStartMap());
 			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
@@ -179,10 +180,11 @@ public class SettingsEditor {
 	@FXML private void applyPressed(ActionEvent event) {
 		// save changes to a new module resource
 		String title = titleField.getText();
+		String subtitle = subtitleField.getText();
 		String map = mapField.getText();
 		xSpinner.increment(0);
 		ySpinner.increment(0);
-		RModule module = new RModule(id, title, map, xSpinner.getValue(), ySpinner.getValue());
+		RModule module = new RModule(id, title, subtitle, map, xSpinner.getValue(), ySpinner.getValue());
 		module.addPlayableSpecies(speciesList.getItems());
 		parentList.getItems().forEach(parent -> module.addParent(parent));
 		// an RModule is in the global namespace

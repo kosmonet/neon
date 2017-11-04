@@ -62,5 +62,6 @@ public class MovementService implements NeonSystem {
 		}
 		creature.shape.setX(position.x);
 		creature.shape.setY(position.y);
+		map.moveEntity(creature.uid, position.x, position.y);
 	}
 }

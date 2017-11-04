@@ -29,6 +29,7 @@ import neon.common.resources.CClient;
 public class ClientConfigurationEvent extends NeonEvent {
 	private final String[] species;
 	private final String title;
+	private final String subtitle;
 	
 	/**
 	 * Initializes this event with game configuration data.
@@ -39,6 +40,7 @@ public class ClientConfigurationEvent extends NeonEvent {
 		species = new String[config.getPlayableSpecies().size()];
 		config.getPlayableSpecies().toArray(species);
 		title = config.title;
+		subtitle = config.subtitle;
 	}
 	
 	/**
@@ -47,6 +49,14 @@ public class ClientConfigurationEvent extends NeonEvent {
 	 */
 	public String getTitle() {
 		return title;
+	}
+	
+	/**
+	 * 
+	 * @return the subtitle of the current game
+	 */
+	public String getSubtitle() {
+		return subtitle;
 	}
 	
 	/**

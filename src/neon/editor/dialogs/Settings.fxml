@@ -41,20 +41,22 @@
 		<children>
             <Label text="Game title:" />
             <TextField fx:id="titleField" GridPane.columnIndex="1" GridPane.columnSpan="4" />
-            <Separator GridPane.columnSpan="5" GridPane.rowIndex="1" />
-            <Label text="Start map:" GridPane.rowIndex="2" />
-            <TextField fx:id="mapField" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="2" />
-            <Label text="Start position:" GridPane.rowIndex="3" />
-            <Label text="x" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="y" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <Spinner editable="true" prefWidth="75.0" GridPane.columnIndex="2" GridPane.rowIndex="3" fx:id="xSpinner" />
-            <Spinner fx:id="ySpinner" editable="true" prefWidth="75.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-            <Separator GridPane.columnSpan="5" GridPane.rowIndex="4" />
-            <Label text="Parent modules" GridPane.columnSpan="5" GridPane.rowIndex="5" />
-            <ListView fx:id="parentList" prefHeight="300.0" GridPane.columnSpan="4" GridPane.rowIndex="6" />
-            <Label text="Playable species" GridPane.columnSpan="5" GridPane.rowIndex="7" />
-            <ListView fx:id="speciesList" GridPane.columnSpan="5" GridPane.rowIndex="8" />
-            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="4" GridPane.rowIndex="6">
+            <Label text="Subtitle:" GridPane.rowIndex="1" />
+            <TextField fx:id="subtitleField" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="1" />
+            <Separator GridPane.columnSpan="5" GridPane.rowIndex="2" />
+            <Label text="Start map:" GridPane.rowIndex="3" />
+            <TextField fx:id="mapField" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.rowIndex="3" />
+            <Label text="Start position:" GridPane.rowIndex="4" />
+            <Label text="x" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="y" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <Spinner editable="true" prefWidth="75.0" GridPane.columnIndex="2" GridPane.rowIndex="4" fx:id="xSpinner" />
+            <Spinner fx:id="ySpinner" editable="true" prefWidth="75.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <Separator GridPane.columnSpan="5" GridPane.rowIndex="5" />
+            <Label text="Parent modules" GridPane.columnSpan="5" GridPane.rowIndex="6" />
+            <ListView fx:id="parentList" prefHeight="300.0" GridPane.columnSpan="4" GridPane.rowIndex="7" />
+            <Label text="Playable species" GridPane.columnSpan="5" GridPane.rowIndex="8" />
+            <ListView fx:id="speciesList" GridPane.columnSpan="5" GridPane.rowIndex="9" />
+            <VBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="4" GridPane.rowIndex="7">
                <children>
                   <Button prefHeight="40.0" prefWidth="40.0" text="↑" style="-fx-font-size: 16" onAction="#moveUp" />
                   <Button prefHeight="40.0" prefWidth="40.0" text="↓" style="-fx-font-size: 16" onAction="#moveDown" />

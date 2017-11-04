@@ -33,15 +33,17 @@ public class RModule extends Resource {
 	 * The title that should be displayed on the start screen. 
 	 */
 	public final String title;
+	public final String subtitle;
 
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
 	private final String map;
 	private final int x, y;
 
-	public RModule(String id, String title, String startMap, int startX, int startY) {
+	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY) {
 		super(id, "module", "global");
 		this.title = title;
+		this.subtitle = subtitle;
 		map = startMap;
 		x = startX;
 		y = startY;

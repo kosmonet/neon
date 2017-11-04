@@ -32,6 +32,7 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
+import neon.entity.GameMode;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
@@ -59,17 +60,6 @@ public class TurnSystem implements NeonSystem {
 	}
 	
 	@Subscribe
-	private void tick(TimerEvent event) throws ResourceException {
-		switch (mode) {
-		case TURN_BASED:
-			break;
-		case REAL_TIME:
-			handleTick();
-			break;			
-		}
-	}
-
-	@Subscribe
 	private void setMode(ServerEvent.Pause event) {
 		mode = GameMode.TURN_BASED;
 	}
@@ -79,21 +69,20 @@ public class TurnSystem implements NeonSystem {
 		mode = GameMode.REAL_TIME;
 	}
 	
-	private void handleTick() throws ResourceException {
-		// update the world
-		Collection<Entity> changed = update(5);
-		
-		// let the client know that entities have changed and should be redrawn
-		bus.post(new UpdateEvent.Entities(changed));
+	@Subscribe
+	private void handleTick(TimerEvent event) throws ResourceException {
+		if (mode == GameMode.REAL_TIME) {
+			// update the world
+			update(5);
+		}
 	}
 
 	@Subscribe
 	private void handleTurn(TurnEvent event) throws ResourceException {
-		// update the world
-		Collection<Entity> changed = update(1);
-		
-		// let the client know that entities have changed and should be redrawn
-		bus.post(new UpdateEvent.Entities(changed));
+		if (mode == GameMode.TURN_BASED) {
+			// update the world
+			update(1);
+		}
 	}
 	
 	/**
@@ -102,7 +91,7 @@ public class TurnSystem implements NeonSystem {
 	 * @param fraction
 	 * @throws ResourceException 
 	 */
-	private Collection<Entity> update(int fraction) throws ResourceException {
+	private void update(int fraction) throws ResourceException {
 		CGame config = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", config.getCurrentMap());
 		
@@ -130,7 +119,8 @@ public class TurnSystem implements NeonSystem {
 				}
 			}
 		}
-		
-		return changed;
+
+		// let the client know that entities have changed and should be redrawn
+		bus.post(new UpdateEvent.Entities(changed));
 	}
 }

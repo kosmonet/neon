@@ -53,10 +53,17 @@
 }
 
 #title {	/* the title text on the main menu */
-	-fx-font-size: 64px;
+	-fx-font-size: 96px;
 	-fx-text-fill: #FF3020;
 	-fx-effect: innershadow(three-pass-box , rgba(0, 0, 0, 0.7) , 6, 0.0 , 0 , 2);
 	-fx-padding: 80 0 0 0;
+}
+
+#subtitle {	/* the title text on the main menu */
+	-fx-font-size: 32px;
+	-fx-text-fill: #FF3020;
+	-fx-effect: innershadow(three-pass-box , rgba(0, 0, 0, 0.7) , 6, 0.0 , 0 , 2);
+	-fx-padding: 0 0 60 0;
 }
 
 #neon-link {	/* the link to the project website */

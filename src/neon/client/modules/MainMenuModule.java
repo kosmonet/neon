@@ -52,7 +52,7 @@ public class MainMenuModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Hyperlink newLink, loadLink, optionLink, quitLink;
-	@FXML private Label versionLabel, titleLabel;
+	@FXML private Label versionLabel, titleLabel, subtitleLabel;
 
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -93,8 +93,9 @@ public class MainMenuModule extends Module {
 		// also quit when pressing esc
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
 		
-		// show console when pressing F1
+		// other key bindings
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new Console(bus).show());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.H), () -> help());
 		
 		versionLabel.setText("release " + version);
 	}
@@ -141,6 +142,10 @@ public class MainMenuModule extends Module {
 		}
 	}
 	
+	private void help() {
+		
+	}
+	
 	/**
 	 * Configures the scene of this main menu module.
 	 * 
@@ -149,5 +154,6 @@ public class MainMenuModule extends Module {
 	@Subscribe
 	public void configure(ClientConfigurationEvent event) {
 		titleLabel.setText(event.getTitle());
+		subtitleLabel.setText(event.getSubtitle());
 	}	
 }

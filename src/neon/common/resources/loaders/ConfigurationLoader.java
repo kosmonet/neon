@@ -105,13 +105,15 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 
 	private CClient loadClient(Element root) {
 		String title = root.getAttributeValue("title");
+		String subtitle = root.getAttributeValue("subtitle");
 		HashSet<String> species = new HashSet<>();		
-		return new CClient(title, species);
+		return new CClient(title, subtitle, species);
 	}
 
 	private Element saveClient(CClient config) {
 		Element client = new Element("client");
 		client.setAttribute("title", config.title);
+		client.setAttribute("subtitle", config.subtitle);
 		return client;
 	}
 

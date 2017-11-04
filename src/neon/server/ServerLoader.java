@@ -160,6 +160,7 @@ class ServerLoader {
 		HashSet<String> species = new HashSet<>();
 		// default game title
 		String title = "neon";
+		String subtitle = "";
 		
 		// go through the loaded modules to check if any redefined the title or added playable species
 		for (String id : modules) {
@@ -167,6 +168,7 @@ class ServerLoader {
 				RModule module = resources.getResource(id);
 				species.addAll(module.getPlayableSpecies());
 				title = module.title.isEmpty() ? title : module.title;
+				subtitle = module.subtitle.isEmpty() ? subtitle : module.subtitle;
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);
@@ -175,7 +177,7 @@ class ServerLoader {
 
 		// add client configuration resource to the manager
 		try {
-			CClient client = new CClient(title, species);			
+			CClient client = new CClient(title, subtitle, species);			
 			resources.addResource(client);
 		} catch (IOException e) {
 			logger.severe(e.getMessage());

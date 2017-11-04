@@ -33,10 +33,11 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 	public RModule load(Element root) {
 		String id = root.getAttributeValue("id");
 		String title = root.getChildText("title");
+		String subtitle = root.getChildText("subtitle");
 		String map = root.getChild("start").getAttributeValue("map");
 		int x = Integer.parseInt(root.getChild("start").getAttributeValue("x"));
 		int y = Integer.parseInt(root.getChild("start").getAttributeValue("y"));
-		RModule module = new RModule(id, title, map, x, y);
+		RModule module = new RModule(id, title, subtitle, map, x, y);
 		
 		for (Element species : root.getChild("playable").getChildren()) {
 			module.addPlayableSpecies(species.getText());

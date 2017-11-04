@@ -152,6 +152,7 @@ public class GameModule extends Module {
 	private void quit() {
 		// pause the server
 		bus.post(new ServerEvent.Pause());
+		paused = true;
 		
 		// define two buttons as NO to prevent enter defaulting to the yes button
 		ButtonType yes = new ButtonType("yes", ButtonData.NO);

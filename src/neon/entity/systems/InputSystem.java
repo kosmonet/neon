@@ -22,7 +22,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
-import neon.common.event.ServerEvent;
 import neon.entity.EntityProvider;
 import neon.entity.MovementService;
 import neon.entity.entities.Player;
@@ -34,34 +33,12 @@ public class InputSystem implements NeonSystem {
 	private final EventBus bus;
 	private final MovementService mover;
 	
-	private GameMode mode = GameMode.TURN_BASED;
-	
 	public InputSystem(EntityProvider entities, EventBus bus, MovementService mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;
 	}
 	
-	/**
-	 * Puts the input system in turn-based mode.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void setMode(ServerEvent.Pause event) {
-		mode = GameMode.TURN_BASED;
-	}
-	
-	/**
-	 * Puts the input system in real-time mode.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void setMode(ServerEvent.Unpause event) {
-		mode = GameMode.REAL_TIME;
-	}
-
 	/**
 	 * Moves the player on the current map.
 	 * 
@@ -79,7 +56,7 @@ public class InputSystem implements NeonSystem {
 		}
 
 		// check if the player still has action points left after moving
-		if(!player.stats.isActive() && mode == GameMode.TURN_BASED) {
+		if(!player.stats.isActive()) {
 			// if not, go to the next turn
 			bus.post(new TurnEvent());
 		}
