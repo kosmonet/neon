@@ -30,9 +30,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.common.event.ClientLoadEvent;
 import neon.common.event.ServerLoadEvent;
 
@@ -75,6 +77,7 @@ public class LoadModule extends Module {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		
 		// list catches the esc and enter keys, we need a separate listener
 		saveList.setOnKeyPressed(event -> keyPressed(event));
@@ -106,7 +109,13 @@ public class LoadModule extends Module {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			startGame();
+		} else if (event.getCode().equals(KeyCode.F2)) {
+			showHelp();
 		}
+	}
+	
+	@FXML private void showHelp() {
+		new HelpWindow().show("load.html");
 	}
 	
 	@Override

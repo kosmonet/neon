@@ -27,6 +27,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
+
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.TimerEvent;

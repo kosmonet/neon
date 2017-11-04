@@ -32,9 +32,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.ServerEvent;
 import neon.entity.entities.Item;
@@ -62,6 +64,7 @@ public class InventoryModule extends Module {
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
+			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		} catch (IOException e) {
 			logger.severe("failed to load inventory interface: " + e.getMessage());
 		}
@@ -77,6 +80,8 @@ public class InventoryModule extends Module {
 	private void keyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
+		} else if (event.getCode().equals(KeyCode.F2)) {
+			showHelp();
 		}
 	}
 	
@@ -97,6 +102,10 @@ public class InventoryModule extends Module {
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting inventory module");
+	}
+	
+	@FXML private void showHelp() {
+		new HelpWindow().show("inventory.html");
 	}
 	
 	private class ListListener implements ChangeListener<Item> {

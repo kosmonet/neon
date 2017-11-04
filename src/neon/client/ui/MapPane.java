@@ -20,8 +20,7 @@ package neon.client.ui;
 
 import java.util.logging.Logger;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 
 import neon.common.graphics.RenderCanvas;
 import neon.common.resources.RMap;
@@ -34,37 +33,37 @@ import neon.common.resources.ResourceProvider;
  * 
  * @author mdriesen
  */
-public class MapPane extends AnchorPane {
+public class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final Canvas canvas = new RenderCanvas();
 	private final ResourceProvider provider;
+	private final RenderCanvas canvas = new RenderCanvas();
 		
 	public MapPane(ResourceProvider provider) {
 		this.provider = provider;
-		getChildren().add(canvas);
-		setBottomAnchor(canvas, 0d);
-		setTopAnchor(canvas, 0d);
-		setLeftAnchor(canvas, 0d);
-		setRightAnchor(canvas, 0d);
-		
-		canvas.widthProperty().bind(widthProperty());
-		canvas.heightProperty().bind(heightProperty());
+	    canvas.widthProperty().bind(widthProperty());
+	    canvas.heightProperty().bind(heightProperty());
+	    getChildren().add(canvas);
 	}
 	
 	public void drawMap(RMap map) {
-		int width = map.getTerrain().getWidth();
-		int height = map.getTerrain().getWidth();
-		double scale = Math.max(width/canvas.getWidth(), height/canvas.getHeight());
+		double width = map.getTerrain().getWidth();
+		double height = map.getTerrain().getHeight();
+		double scale = Math.max(width/getWidth(), height/getHeight());
 		
-		for (int x = 0; x < canvas.getWidth(); x++) {
-			for (int y = 0; y < canvas.getHeight(); y++) {
+		double xOffset = (int)(getWidth() - width/scale)/2;
+		double yOffset = (int)(getHeight() - height/scale)/2;
+		
+		System.out.println(xOffset + ", " + yOffset);
+		
+		for (int x = 0; x < getWidth(); x++) {
+			for (int y = 0; y < getHeight(); y++) {
 				String id = map.getTerrain().get((int) (x*scale), (int) (y*scale));
 				if(id != null) {
 					try {
 						RTerrain terrain = provider.getResource("terrain", id);
 						canvas.getGraphicsContext2D().setFill(terrain.getColor());
-						canvas.getGraphicsContext2D().fillRect(x, y, 1, 1);
+						canvas.getGraphicsContext2D().fillRect(x + xOffset, y + yOffset, 1, 1);
 					} catch (ResourceException e) {
 						logger.warning("unknown terrain type: " + id);
 					}

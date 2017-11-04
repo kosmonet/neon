@@ -38,6 +38,7 @@ public class ClientSocket {
 
 	private final BlockingQueue<NeonEvent> queue = new LinkedBlockingQueue<>();
 	private final String name;
+	
 	private ServerSocket ss;
 
 	/**
@@ -61,9 +62,9 @@ public class ClientSocket {
 	 */
 	@Subscribe
 	public void send(NeonEvent message) {
-		if(ss == null) {
+		if (ss == null) {
 			logger.warning("client socket not yet connected to a server socket");			
-		} else if(!message.isBlocked()) {
+		} else if (!message.isBlocked()) {
 			ss.receive(message);
 		}
 	}
@@ -97,7 +98,7 @@ public class ClientSocket {
 	 * @param socket
 	 */
 	public void connect(ServerSocket socket) {
-		if(socket.equals(ss)) {
+		if (socket.equals(ss)) {
 			logger.warning("socket " + socket + " already connected to client socket");			
 		} else {
 			ss = socket;

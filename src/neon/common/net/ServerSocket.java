@@ -62,9 +62,9 @@ public class ServerSocket {
 	 */
 	@Subscribe
 	public void send(NeonEvent message) {
-		if(cs == null) {
+		if (cs == null) {
 			logger.warning("client socket not yet connected to a server socket");			
-		} else if(!message.isBlocked()) {
+		} else if (!message.isBlocked()) {
 			cs.receive(message);
 		}
 	}
@@ -98,7 +98,7 @@ public class ServerSocket {
 	 * @param socket
 	 */
 	public void connect(ClientSocket socket) {
-		if(socket.equals(cs)) {
+		if (socket.equals(cs)) {
 			logger.warning("socket " + socket + " already connected to server socket");
 		} else {
 			cs = socket;

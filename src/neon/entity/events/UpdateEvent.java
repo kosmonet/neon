@@ -54,14 +54,6 @@ public abstract class UpdateEvent extends NeonEvent {
 	public static class Start extends UpdateEvent {}
 	
 	/**
-	 * An event to indicate a new turn.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Turn extends UpdateEvent {}
-	
-	/**
 	 * An event to indicate a change of map.
 	 * 
 	 * @author mdriesen
@@ -90,15 +82,8 @@ public abstract class UpdateEvent extends NeonEvent {
 	}
 	
 	/**
-	 * An event to signal a resource update.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Resources extends UpdateEvent {}
-	
-	/**
 	 * An event to signal an entity update.
+	 * 
 	 * @author mdriesen
 	 *
 	 */

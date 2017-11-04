@@ -33,9 +33,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NewGameEvent;
 
@@ -68,9 +70,12 @@ public class NewGameModule extends Module {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 
-		// list catches the esc and enter keys, we need a separate listener
-		speciesList.setOnKeyPressed(event -> keyPressed(event));
+		// list catches the esc, enter and F2 keys, we need a separate listener
+		speciesList.setOnKeyPressed(event -> listKeyPressed(event));
+		// text field catches the F2 key, another listener
+		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));
 	}
 	
 	@Override
@@ -86,12 +91,24 @@ public class NewGameModule extends Module {
 		logger.finest("exiting new game module");
 	}
 	
-	private void keyPressed(KeyEvent event) {
+	private void listKeyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			startGame();
+		} else if (event.getCode().equals(KeyCode.F2)) {
+			showHelp();
 		}
+	}
+	
+	private void fieldKeyPressed(KeyEvent event) {
+		if (event.getCode().equals(KeyCode.F2)) {
+			showHelp();
+		}
+	}
+	
+	@FXML private void showHelp() {
+		new HelpWindow().show("load.html");
 	}
 	
 	@FXML private void startGame() {

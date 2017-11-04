@@ -45,7 +45,7 @@ public class XMLTranslator implements Translator<Document> {
 		
 		try {
 			doc = new SAXBuilder().build(input);
-		} catch(JDOMException e) {
+		} catch (JDOMException e) {
 			logger.severe("JDOMException in XMLTranslator");
 		} 
 		

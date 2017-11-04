@@ -30,6 +30,7 @@ public class StatsComponent implements Component {
 	public StatsComponent(long uid, RCreature species) {
 		this.species = species;
 		this.uid = uid;
+		AP = species.speed;
 	}
 	
 	/**

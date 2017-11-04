@@ -23,12 +23,16 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.layout.BorderPane;
 
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
 import neon.common.resources.ResourceProvider;
 
@@ -40,14 +44,17 @@ import neon.common.resources.ResourceProvider;
  */
 public class MapModule extends Module {
 	private static final Logger logger = Logger.getGlobal();
-
+	
 	private final UserInterface ui;
 	private final MapPane pane;
+	
+	@FXML private Button cancelButton;
+	@FXML private BorderPane root;
+	
 	private Scene scene;
 
 	public MapModule(UserInterface ui, EventBus bus, ResourceProvider provider) {
 		this.ui = ui;
-
 		pane = new MapPane(provider);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Map.fxml"));
@@ -60,16 +67,23 @@ public class MapModule extends Module {
 			logger.severe("failed to load map viewer: " + e.getMessage());
 		}
 		
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> bus.post(new TransitionEvent("cancel")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("cancel")));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+
+		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 	}
 
+	@FXML private void showHelp() {
+		new HelpWindow().show("map.html");
+	}
+	
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering map module");
+	    root.setCenter(pane);
+	    pane.widthProperty().addListener(observable -> pane.drawMap(event.getMap()));
+	    pane.heightProperty().addListener(observable -> pane.drawMap(event.getMap()));
 		ui.showScene(scene);
-		scene.setRoot(pane);
-		pane.drawMap(event.getMap());	
 	}
 
 	@Override

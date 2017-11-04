@@ -34,6 +34,7 @@ import javafx.scene.input.KeyCodeCombination;
 
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
 import neon.common.event.QuitEvent;
@@ -67,7 +68,6 @@ public class GameModule extends Module {
 		this.ui = ui;
 		this.bus = bus;
 		this.provider = provider;
-		
 		pane = new RenderPane(provider, new ClientRenderer());
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
@@ -87,6 +87,7 @@ public class GameModule extends Module {
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> showMap());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 	}
@@ -137,6 +138,10 @@ public class GameModule extends Module {
 	
 	private void showMap() {
 		bus.post(new TransitionEvent("map", map));
+	}
+	
+	private void showHelp() {
+		new HelpWindow().show("game.html");
 	}
 	
 	private void pause() {
