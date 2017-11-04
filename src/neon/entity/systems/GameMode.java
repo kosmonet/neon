@@ -16,29 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.entity.systems;
 
-import com.google.common.eventbus.Subscribe;
-
-import neon.common.event.TimerEvent;
-
-class Loop {
-	private GameMode mode = GameMode.TURN_BASED;
-	
-	@Subscribe
-	private void tick(TimerEvent event) {
-		switch (mode) {
-		case TURN_BASED:
-			System.out.println("printing test from " + Thread.currentThread() + " in turns");
-			break;
-		case REAL_TIME:
-			System.out.println("printing test from " + Thread.currentThread() + " in real time");
-			break;			
-		}
-	}
-	
-	@Subscribe
-	private void setMode(GameMode mode) {
-		this.mode = mode;
-	}
+public enum GameMode {
+	TURN_BASED, REAL_TIME;
 }

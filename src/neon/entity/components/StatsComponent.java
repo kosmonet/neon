@@ -25,7 +25,7 @@ public class StatsComponent implements Component {
 	private final RCreature species;
 	private final long uid;
 	
-	private int AP;	// action points
+	private double AP;	// action points
 	
 	public StatsComponent(long uid, RCreature species) {
 		this.species = species;
@@ -55,10 +55,20 @@ public class StatsComponent implements Component {
 	}
 	
 	/**
-	 * Restores part of the action points.
+	 * Restores a part of the action points equal to the creature's speed.
 	 */
-	public void rest() {
+	public void restoreAP() {
 		AP = Math.min(species.speed, AP + species.speed);
+	}
+	
+	/**
+	 * Restores a fraction of the action points. A fraction of e.g. 5 means 
+	 * that 1/5 of the action points are restored.
+	 * 
+	 * @param fraction
+	 */
+	public void restoreAP(int fraction) {
+		AP = Math.min(species.speed, AP + species.speed/fraction);
 	}
 	
 	public RCreature getSpecies() {

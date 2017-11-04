@@ -38,6 +38,7 @@ import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
+import neon.common.event.ServerEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.entity.entities.Player;
@@ -60,6 +61,7 @@ public class GameModule extends Module {
 	private Scene scene;
 	private int scale = 20;
 	private RMap map;
+	private boolean paused = true;
 	
 	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider) {
 		this.ui = ui;
@@ -85,6 +87,7 @@ public class GameModule extends Module {
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> showMap());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 	}
 	
@@ -136,7 +139,20 @@ public class GameModule extends Module {
 		bus.post(new TransitionEvent("map", map));
 	}
 	
+	private void pause() {
+		if (paused) {
+			paused = false;
+			bus.post(new ServerEvent.Unpause());
+		} else {
+			paused = true;
+			bus.post(new ServerEvent.Pause());
+		}
+	}
+	
 	private void quit() {
+		// pause the server
+		bus.post(new ServerEvent.Pause());
+		
 		// define two buttons as NO to prevent enter defaulting to the yes button
 		ButtonType yes = new ButtonType("yes", ButtonData.NO);
 		ButtonType no = new ButtonType("no", ButtonData.NO);
@@ -157,10 +173,17 @@ public class GameModule extends Module {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering game module");
 		ui.showScene(scene);
+		
+		// unpause the server when returning to the game module
+		if(!paused) {
+			bus.post(new ServerEvent.Unpause());
+		}
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting game module");
+		// pause the server when leaving the game module
+		bus.post(new ServerEvent.Pause());
 	}
 }

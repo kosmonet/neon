@@ -18,6 +18,37 @@
 
 package neon.common.event;
 
+/**
+ * A general event meant to be handled by the server.
+ * 
+ * @author mdriesen
+ *
+ */
 public class ServerEvent extends NeonEvent {
+	/**
+	 * An event to request the server to send a list of items in the player's
+	 * inventory to the client.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Inventory extends ServerEvent {}
+	
+	/**
+	 * Event to signal the server to pause the game. This means in practice 
+	 * that the server switches to turn-based mode.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Pause extends ServerEvent {}
+
+	/**
+	 * Event to signal the server to unpause the game. This means in practice 
+	 * that the server switches to real-time mode.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Unpause extends ServerEvent {}
 }

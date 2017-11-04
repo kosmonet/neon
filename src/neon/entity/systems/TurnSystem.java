@@ -25,6 +25,8 @@ import java.util.HashSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.event.ServerEvent;
+import neon.common.event.TimerEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
@@ -48,6 +50,8 @@ public class TurnSystem implements NeonSystem {
 	private final EntityProvider entities;
 	private final EventBus bus;
 	
+	private GameMode mode = GameMode.TURN_BASED;
+	
 	public TurnSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
@@ -55,13 +59,56 @@ public class TurnSystem implements NeonSystem {
 	}
 	
 	@Subscribe
+	private void tick(TimerEvent event) throws ResourceException {
+		switch (mode) {
+		case TURN_BASED:
+			break;
+		case REAL_TIME:
+			handleTick();
+			break;			
+		}
+	}
+
+	@Subscribe
+	private void setMode(ServerEvent.Pause event) {
+		mode = GameMode.TURN_BASED;
+	}
+	
+	@Subscribe
+	private void setMode(ServerEvent.Unpause event) {
+		mode = GameMode.REAL_TIME;
+	}
+	
+	private void handleTick() throws ResourceException {
+		// update the world
+		Collection<Entity> changed = update(5);
+		
+		// let the client know that entities have changed and should be redrawn
+		bus.post(new UpdateEvent.Entities(changed));
+	}
+
+	@Subscribe
 	private void handleTurn(TurnEvent event) throws ResourceException {
+		// update the world
+		Collection<Entity> changed = update(1);
+		
+		// let the client know that entities have changed and should be redrawn
+		bus.post(new UpdateEvent.Entities(changed));
+	}
+	
+	/**
+	 * Updates the game for the given fraction of a full turn.
+	 * 
+	 * @param fraction
+	 * @throws ResourceException 
+	 */
+	private Collection<Entity> update(int fraction) throws ResourceException {
 		CGame config = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", config.getCurrentMap());
 		
-		// reset the player's action points
+		// restore the player's action points
 		Player player = entities.getEntity(0);
-		player.stats.rest();
+		player.stats.restoreAP(fraction);
 		
 		// get all entities in the player's neighbourhood
 		Rectangle bounds = new Rectangle(player.shape.getX() - 50, player.shape.getY() - 50, 100, 100);
@@ -70,19 +117,20 @@ public class TurnSystem implements NeonSystem {
 		for (long uid : map.getEntities(bounds)) {
 			Entity entity = entities.getEntity(uid);
 			changed.add(entity);
-			
+
 			if (entity instanceof Creature) {
 				// reset the creature's action points
 				Creature creature = (Creature) entity;
-				creature.stats.rest();
+				creature.stats.restoreAP(fraction);
 
 				// let the creature act
-				bus.post(new ThinkEvent(creature, map));
-				// beware: these events are handled AFTER handleTurn has finished
+				if(creature.stats.isActive()) {
+					// beware: these events are handled AFTER handleTurn has finished
+					bus.post(new ThinkEvent(creature, map));
+				}
 			}
 		}
 		
-		// let the client know that entities have changed and should be redrawn
-		bus.post(new UpdateEvent.Entities(changed));
+		return changed;
 	}
 }

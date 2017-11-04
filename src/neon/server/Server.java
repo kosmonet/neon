@@ -81,7 +81,6 @@ public class Server implements Runnable {
 		bus.register(new TurnSystem(resources, entities, bus));
 		bus.register(new AISystem(mover));
 		bus.register(new InputSystem(entities, bus, mover));
-		bus.register(new Loop());
 		
 		// send configuration message to the client
 		try {
@@ -92,7 +91,7 @@ public class Server implements Runnable {
 		}
 		
 		// start the timer for the game loop
-		executor.scheduleAtFixedRate(() -> socket.receive(new TimerEvent()), 500, 500, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(() -> socket.receive(new TimerEvent()), 500, 100, TimeUnit.MILLISECONDS);
 	}
 	
 	/**
