@@ -38,6 +38,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 
 import neon.client.UserInterface;
+import neon.client.help.HelpWindow;
 import neon.common.console.Console;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.QuitEvent;
@@ -143,7 +144,7 @@ public class MainMenuModule extends Module {
 	}
 	
 	private void help() {
-		
+		new HelpWindow().show("main.html");
 	}
 	
 	/**

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <Label styleClass="instructions" text="Press esc to close the help window." />
+   </top>
+   <center>
+      <WebView fx:id="view" />
+   </center>
+</BorderPane>
