@@ -16,23 +16,20 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.client.ui;
 
-import neon.entity.entities.Creature;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar.ButtonData;
 
-public class BehaviorComponent implements Component {
-	private final long uid;
+public class ButtonTypes {
+	public final static ButtonType talk = new ButtonType("Talk");
+	public final static ButtonType attack = new ButtonType("Attack");
+	public final static ButtonType pick = new ButtonType("Pick pocket");
+	public final static ButtonType ride = new ButtonType("Ride animal");
+	public final static ButtonType swap = new ButtonType("Swap position");
 	
-	public BehaviorComponent(long uid) {
-		this.uid = uid;
-	}
+	public final static ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+	public final static ButtonType yes = new ButtonType("Yes", ButtonData.NO);
+	public final static ButtonType no = new ButtonType("No", ButtonData.NO);
 	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public boolean isFriendly(Creature other) {
-		return true;
-	}
 }

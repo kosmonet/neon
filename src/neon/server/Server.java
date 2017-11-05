@@ -38,6 +38,8 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.MovementService;
 import neon.entity.systems.AISystem;
+import neon.entity.systems.CombatSystem;
+import neon.entity.systems.ConversationSystem;
 import neon.entity.systems.InputSystem;
 import neon.entity.systems.InventorySystem;
 import neon.entity.systems.TurnSystem;
@@ -74,14 +76,17 @@ public class Server implements Runnable {
 		new ServerLoader(bus).configure(files, resources, entities);
 		
 		// add all the systems and various other stuff to the bus
-		MovementService mover = new MovementService();
-
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
+		
+		MovementService mover = new MovementService(entities, bus);
+
 		bus.register(new InventorySystem(entities, bus));
 		bus.register(new TurnSystem(resources, entities, bus));
 		bus.register(new AISystem(mover));
 		bus.register(new InputSystem(entities, bus, mover));
+		bus.register(new CombatSystem());
+		bus.register(new ConversationSystem());
 		
 		// send configuration message to the client
 		try {

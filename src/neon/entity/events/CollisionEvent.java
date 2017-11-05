@@ -16,23 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.entity.events;
 
+import neon.common.event.NeonEvent;
 import neon.entity.entities.Creature;
 
-public class BehaviorComponent implements Component {
-	private final long uid;
+public class CollisionEvent extends NeonEvent {
+	private final Creature one;
+	private final Creature two;
 	
-	public BehaviorComponent(long uid) {
-		this.uid = uid;
+	public CollisionEvent(Creature one, Creature two) {
+		this.one = one;
+		this.two = two;
 	}
 	
-	@Override
-	public long getEntity() {
-		return uid;
+	public Creature getBumper() {
+		return one;
 	}
 	
-	public boolean isFriendly(Creature other) {
-		return true;
+	public Creature getBumped() {
+		return two;
 	}
 }

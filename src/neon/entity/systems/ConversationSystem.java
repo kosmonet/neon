@@ -16,23 +16,15 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.entity.systems;
 
-import neon.entity.entities.Creature;
+import com.google.common.eventbus.Subscribe;
 
-public class BehaviorComponent implements Component {
-	private final long uid;
-	
-	public BehaviorComponent(long uid) {
-		this.uid = uid;
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public boolean isFriendly(Creature other) {
-		return true;
+import neon.entity.events.ConversationEvent;
+
+public class ConversationSystem implements NeonSystem {
+	@Subscribe
+	private void talk(ConversationEvent event) {
+		System.out.println(event.getFirst() + " is talking to " + event.getSecond());
 	}
 }

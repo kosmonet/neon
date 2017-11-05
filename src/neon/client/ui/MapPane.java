@@ -29,7 +29,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
 
 /**
- * Pane to draw miniature maps.
+ * A pane to draw miniature maps.
  * 
  * @author mdriesen
  */
@@ -53,8 +53,6 @@ public class MapPane extends Pane {
 		
 		double xOffset = (int)(getWidth() - width/scale)/2;
 		double yOffset = (int)(getHeight() - height/scale)/2;
-		
-		System.out.println(xOffset + ", " + yOffset);
 		
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {

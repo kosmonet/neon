@@ -25,16 +25,20 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
 import neon.client.ClientProvider;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
+import neon.client.ui.ButtonTypes;
 import neon.client.ui.ClientRenderer;
 import neon.common.event.InputEvent;
 import neon.common.event.QuitEvent;
@@ -42,7 +46,11 @@ import neon.common.event.SaveEvent;
 import neon.common.event.ServerEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
+import neon.entity.events.CollisionEvent;
+import neon.entity.events.CombatEvent;
+import neon.entity.events.ConversationEvent;
 import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
 
@@ -58,6 +66,10 @@ public class GameModule extends Module {
 	private final EventBus bus;
 	private final ClientProvider provider;
 	private final RenderPane pane;
+	
+	@FXML private StackPane stack;
+	@FXML private BorderPane infoPane;
+	@FXML private Label modeLabel;
 	
 	private Scene scene;
 	private int scale = 20;
@@ -95,9 +107,11 @@ public class GameModule extends Module {
 	@Subscribe
 	private void update(UpdateEvent.Start event) {
 		// prepare the scene
-		scene.setRoot(pane);
-		scene.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
-		scene.heightProperty().addListener((observable, oldHeight, newHeight) -> redraw());		
+		stack.getChildren().clear();
+		pane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
+		pane.heightProperty().addListener((observable, oldHeight, newHeight) -> redraw());
+		stack.getChildren().add(pane);
+		stack.getChildren().add(infoPane);
 	}
 	
 	@Subscribe
@@ -127,6 +141,7 @@ public class GameModule extends Module {
 	
 	private void redraw() {
 		Player player = (Player) provider.getEntity(0);
+		modeLabel.setText(player.record.getMode().toString());
 		int xpos = Math.max(0, (int) (player.shape.getX() - pane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (player.shape.getY() - pane.getHeight()/(2*scale)));
 		pane.draw(xpos, ypos, scale);
@@ -156,22 +171,73 @@ public class GameModule extends Module {
 	
 	private void quit() {
 		// pause the server
-		bus.post(new ServerEvent.Pause());
-		paused = true;
+		if (!paused) {
+			bus.post(new ServerEvent.Pause());
+		}
 		
-		// define two buttons as NO to prevent enter defaulting to the yes button
-		ButtonType yes = new ButtonType("yes", ButtonData.NO);
-		ButtonType no = new ButtonType("no", ButtonData.NO);
-		ButtonType cancel = new ButtonType("cancel", ButtonData.CANCEL_CLOSE);
+		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
+				ButtonTypes.yes, ButtonTypes.no, ButtonTypes.cancel);
 		
-		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", yes, no, cancel);
-		
-		if (result.get().equals(yes)) {
+		if (result.get().equals(ButtonTypes.yes)) {
 			// server takes care of saving
 			bus.post(new SaveEvent());	
-		} else if (result.get().equals(no)) {
+		} else if (result.get().equals(ButtonTypes.no)) {
 			// server takes care of quitting
 		    bus.post(new QuitEvent());
+		}
+		
+		// unpause if necessary
+		if (!paused) {
+			bus.post(new ServerEvent.Unpause());
+		}
+	}
+	
+	@Subscribe
+	private void collide(CollisionEvent event) {
+		// pause the server
+		if (!paused) {
+			bus.post(new ServerEvent.Pause());
+		}
+		
+		Creature one = event.getBumper();
+		Creature two = event.getBumped();
+		
+		if (one instanceof Player) {
+			Player player = (Player) one;
+			switch (player.record.getMode()) {
+			case NONE:
+				if (two.brain.isFriendly(player)) {
+					bus.post(new ConversationEvent(player, two));
+				} else {
+					bus.post(new CombatEvent(player, two));	
+				}
+				break;
+			case STEALTH:
+				if (two.brain.isFriendly(player)) {
+					bus.post(new ConversationEvent(player, two));
+				} else {
+					bus.post(new CombatEvent(player, two));	
+				}
+				break;
+			case AGGRESSION:
+				if (two.brain.isFriendly(player)) {
+					Optional<ButtonType> result = ui.showQuestion("What action do you wish to take?", 
+							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
+					if (result.get().equals(ButtonTypes.talk)) {
+						bus.post(new ConversationEvent(player, two));
+					} else if (result.get().equals(ButtonTypes.attack)) {
+						bus.post(new CombatEvent(player, two));	
+					}
+				} else {
+					bus.post(new CombatEvent(player, two));	
+				}
+				break;
+			}
+		}
+
+		// unpause if necessary
+		if (!paused) {
+			bus.post(new ServerEvent.Unpause());
 		}
 	}
 	

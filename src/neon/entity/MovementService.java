@@ -20,9 +20,12 @@ package neon.entity;
 
 import java.awt.Point;
 
+import com.google.common.eventbus.EventBus;
+
 import neon.common.resources.RMap;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
+import neon.entity.events.CollisionEvent;
 import neon.entity.systems.NeonSystem;
 import neon.util.Direction;
 
@@ -33,20 +36,41 @@ import neon.util.Direction;
  *
  */
 public class MovementService implements NeonSystem {
+	private final EventBus bus;
+	private final EntityProvider entities;
+	
+	public MovementService(EntityProvider entities, EventBus bus) {
+		this.entities = entities;
+		this.bus = bus;
+	}
+	
 	/**
 	 * Moves the player on the current map.
 	 * 
 	 * @param event
 	 */
-	public void move(Player player, Direction direction) {
-		switch(direction) {
-		case LEFT: player.shape.setX(Math.max(0, player.shape.getX() - 1)); break;
-		case RIGHT: player.shape.setX(player.shape.getX() + 1); break;
-		case UP: player.shape.setY(Math.max(0, player.shape.getY() - 1)); break;
-		case DOWN: player.shape.setY(player.shape.getY() + 1); break;
+	public void move(Player player, Direction direction, RMap map) {
+		int x = player.shape.getX();
+		int y = player.shape.getY();
+		int z = player.shape.getZ();
+		
+		switch (direction) {
+		case LEFT: x = Math.max(0, x - 1); break;
+		case RIGHT: x = Math.min(map.getWidth(), x + 1); break;
+		case UP: y = Math.max(0, y - 1); break;
+		case DOWN: y = Math.min(map.getHeight(), y + 1); break;
 		}
-
-		player.stats.perform(Action.MOVE_STRAIGHT);	
+		
+		if (!map.getEntities(x, y).isEmpty()) {
+			for (long uid : map.getEntities(x, y)) {
+				if (entities.getEntity(uid) instanceof Creature) {
+					bus.post(new CollisionEvent(player, entities.getEntity(uid)));
+				}
+			}
+		} else {
+			player.shape.setPosition(x, y, z);
+			player.stats.perform(Action.MOVE_STRAIGHT);			
+		}
 	}
 
 	/**
@@ -55,7 +79,7 @@ public class MovementService implements NeonSystem {
 	 * @param event
 	 */
 	public void move(Creature creature, Point position, RMap map) {
-		if(creature.shape.getX() == position.x || creature.shape.getY() == position.y) {
+		if (creature.shape.getX() == position.x || creature.shape.getY() == position.y) {
 			creature.stats.perform(Action.MOVE_STRAIGHT);			
 		} else {
 			creature.stats.perform(Action.MOVE_DIAGONAL);				

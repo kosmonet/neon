@@ -127,3 +127,12 @@
 	-fx-border-color: silver;	
 }
 
+/* styles for the various info nodes on the game screen */
+#mode {
+	-fx-text-fill: silver;
+	-fx-font-size:0.0 18;
+    -fx-background-color: #333333AA;
+	-fx-background-radius: 5;
+	-fx-border-color: transparent;
+	-fx-padding: 5 10 5 10;
+}

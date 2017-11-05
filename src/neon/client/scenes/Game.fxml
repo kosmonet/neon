@@ -2,10 +2,22 @@
 
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
-
-<HBox alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+<StackPane fx:id="stack" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<Label maxHeight="Infinity" maxWidth="Infinity" text="Loading map..." style="-fx-font-size: 24px" />
+		<HBox alignment="CENTER">
+			<Label maxHeight="Infinity" maxWidth="Infinity" text="Loading map..." style="-fx-font-size: 24px" />
+		</HBox>
+		<BorderPane fx:id="infoPane">
+			<bottom>
+				<HBox alignment="CENTER_RIGHT" >
+					<padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+					<Label fx:id="modeLabel" id="mode" text="test" />
+				</HBox>
+			</bottom>
+		</BorderPane>
 	</children>
-</HBox>
+</StackPane>

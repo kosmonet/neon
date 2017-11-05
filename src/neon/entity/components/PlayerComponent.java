@@ -18,13 +18,25 @@
 
 package neon.entity.components;
 
-import neon.entity.entities.Creature;
+import neon.entity.PlayerMode;
 
-public class BehaviorComponent implements Component {
+/**
+ * Component that contains all player-specific information.
+ * 
+ * @author mdriesen
+ *
+ */
+public class PlayerComponent implements Component {
 	private final long uid;
+	private final String name;
+	private final String gender;
 	
-	public BehaviorComponent(long uid) {
+	private PlayerMode mode = PlayerMode.NONE;
+	
+	public PlayerComponent(long uid, String name, String gender) {
 		this.uid = uid;
+		this.name = name;
+		this.gender = gender;
 	}
 	
 	@Override
@@ -32,7 +44,19 @@ public class BehaviorComponent implements Component {
 		return uid;
 	}
 	
-	public boolean isFriendly(Creature other) {
-		return true;
+	public String getName() {
+		return name;
+	}
+	
+	public String getGender() {
+		return gender;
+	}
+	
+	public void setMode(PlayerMode mode) {
+		this.mode = mode;
+	}
+	
+	public PlayerMode getMode() {
+		return mode;
 	}
 }

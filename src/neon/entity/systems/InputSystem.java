@@ -22,6 +22,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
 import neon.entity.MovementService;
 import neon.entity.entities.Player;
@@ -33,10 +34,17 @@ public class InputSystem implements NeonSystem {
 	private final EventBus bus;
 	private final MovementService mover;
 	
+	private RMap map;
+	
 	public InputSystem(EntityProvider entities, EventBus bus, MovementService mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;
+	}
+	
+	@Subscribe
+	private void changeMap(UpdateEvent.Map event) {
+		map = event.getMap();
 	}
 	
 	/**
@@ -49,7 +57,7 @@ public class InputSystem implements NeonSystem {
 		Player player = (Player) entities.getEntity(0);
 		
 		if(player.stats.isActive()) {
-			mover.move(player, event.getDirection());
+			mover.move(player, event.getDirection(), map);
 
 			// signal the client that an entity was updated
 			bus.post(new UpdateEvent.Entities(player));

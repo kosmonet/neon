@@ -16,29 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.entity;
 
-public class RecordComponent implements Component {
-	private final long uid;
-	private final String name;
-	private final String gender;
+public enum PlayerMode {
+	STEALTH("sneaky"), AGGRESSION("aggressive"), NONE("normal");
+
+	private String name;
 	
-	public RecordComponent(long uid, String name, String gender) {
-		this.uid = uid;
+	private PlayerMode(String name) {
 		this.name = name;
-		this.gender = gender;
 	}
 	
 	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public String getName() {
+	public String toString() {
 		return name;
-	}
-	
-	public String getGender() {
-		return gender;
 	}
 }
