@@ -34,6 +34,7 @@ import javafx.scene.layout.BorderPane;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
+import neon.common.resources.RMap;
 import neon.common.resources.ResourceProvider;
 
 /**
@@ -81,8 +82,9 @@ public class MapModule extends Module {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering map module");
 	    root.setCenter(pane);
-	    pane.widthProperty().addListener(observable -> pane.drawMap(event.getMap()));
-	    pane.heightProperty().addListener(observable -> pane.drawMap(event.getMap()));
+	    RMap map = event.getParameter("map");
+	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
+	    pane.heightProperty().addListener(observable -> pane.drawMap(map));
 		ui.showScene(scene);
 	}
 

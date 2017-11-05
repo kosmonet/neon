@@ -25,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.TextAlignment;
 
 import neon.common.graphics.TextureFactory;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 
 /**
@@ -55,6 +56,29 @@ public class DescriptionLabel extends Label {
 			StringBuffer description = new StringBuffer();
 			description.append("\n");
 			description.append(item);
+			description.append("\n");
+
+			setText(description.toString());
+		} else {
+			setGraphic(null);
+			setText(null);
+		}
+	}
+	
+	/**
+	 * Updates the description.
+	 * 
+	 * @param creature	the creature to describe
+	 */
+	public void update(Creature creature) {
+		if(creature != null) {
+			// create the image like it would show in-game on the ground
+			Image image = TextureFactory.getImage(60, creature.graphics.getColor(), creature.graphics.getText());
+			setGraphic(new ImageView(image));
+			
+			StringBuffer description = new StringBuffer();
+			description.append("\n");
+			description.append(creature.info.getResource().name);
 			description.append("\n");
 
 			setText(description.toString());

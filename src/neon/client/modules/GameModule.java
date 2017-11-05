@@ -50,7 +50,6 @@ import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.entity.events.CollisionEvent;
 import neon.entity.events.CombatEvent;
-import neon.entity.events.ConversationEvent;
 import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
 
@@ -65,7 +64,7 @@ public class GameModule extends Module {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ClientProvider provider;
-	private final RenderPane pane;
+	private final RenderPane renderPane;
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
@@ -80,7 +79,7 @@ public class GameModule extends Module {
 		this.ui = ui;
 		this.bus = bus;
 		this.provider = provider;
-		pane = new RenderPane(provider, new ClientRenderer());
+		renderPane = new RenderPane(provider, new ClientRenderer());
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -108,9 +107,9 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Start event) {
 		// prepare the scene
 		stack.getChildren().clear();
-		pane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
-		pane.heightProperty().addListener((observable, oldHeight, newHeight) -> redraw());
-		stack.getChildren().add(pane);
+		renderPane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
+		renderPane.heightProperty().addListener((observable, oldHeight, newHeight) -> redraw());
+		stack.getChildren().add(renderPane);
 		stack.getChildren().add(infoPane);
 	}
 	
@@ -123,7 +122,7 @@ public class GameModule extends Module {
 		
 		map = event.getMap();
 		
-		pane.setMap(event.getTerrain(), event.getElevation(), provider.getEntities());		
+		renderPane.setMap(event.getTerrain(), event.getElevation(), provider.getEntities());		
 		redraw();
 	}
 	
@@ -131,7 +130,7 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Entities event) {
 		// store all changed entities
 		provider.addEntities(event.getEntities());
-		pane.updateMap(provider.getEntities());
+		renderPane.updateMap(provider.getEntities());
 		redraw();
 	}
 	
@@ -142,9 +141,9 @@ public class GameModule extends Module {
 	private void redraw() {
 		Player player = (Player) provider.getEntity(0);
 		modeLabel.setText(player.record.getMode().toString());
-		int xpos = Math.max(0, (int) (player.shape.getX() - pane.getWidth()/(2*scale)));
-		int ypos = Math.max(0, (int) (player.shape.getY() - pane.getHeight()/(2*scale)));
-		pane.draw(xpos, ypos, scale);
+		int xpos = Math.max(0, (int) (player.shape.getX() - renderPane.getWidth()/(2*scale)));
+		int ypos = Math.max(0, (int) (player.shape.getY() - renderPane.getHeight()/(2*scale)));
+		renderPane.draw(xpos, ypos, scale);
 	}
 	
 	private void showInventory() {
@@ -152,7 +151,7 @@ public class GameModule extends Module {
 	}
 	
 	private void showMap() {
-		bus.post(new TransitionEvent("map", map));
+		bus.post(new TransitionEvent("map", "map", map));
 	}
 	
 	private void showHelp() {
@@ -204,27 +203,28 @@ public class GameModule extends Module {
 		
 		if (one instanceof Player) {
 			Player player = (Player) one;
+			
 			switch (player.record.getMode()) {
 			case NONE:
 				if (two.brain.isFriendly(player)) {
-					bus.post(new ConversationEvent(player, two));
+					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
 					bus.post(new CombatEvent(player, two));	
 				}
 				break;
 			case STEALTH:
 				if (two.brain.isFriendly(player)) {
-					bus.post(new ConversationEvent(player, two));
+					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
 					bus.post(new CombatEvent(player, two));	
 				}
 				break;
 			case AGGRESSION:
 				if (two.brain.isFriendly(player)) {
-					Optional<ButtonType> result = ui.showQuestion("What action do you wish to take?", 
+					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new ConversationEvent(player, two));
+						bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 					} else if (result.get().equals(ButtonTypes.attack)) {
 						bus.post(new CombatEvent(player, two));	
 					}
@@ -247,7 +247,7 @@ public class GameModule extends Module {
 		ui.showScene(scene);
 		
 		// unpause the server when returning to the game module
-		if(!paused) {
+		if (!paused) {
 			bus.post(new ServerEvent.Unpause());
 		}
 	}

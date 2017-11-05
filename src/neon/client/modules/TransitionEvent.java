@@ -18,8 +18,9 @@
 
 package neon.client.modules;
 
+import java.util.HashMap;
+
 import neon.common.event.NeonEvent;
-import neon.common.resources.RMap;
 
 /**
  * An event to signal the transition between two client states.
@@ -29,31 +30,49 @@ import neon.common.resources.RMap;
  */
 public class TransitionEvent extends NeonEvent {
 	private final String condition;
-	private final RMap map;
+	private final HashMap<String, Object> parameters = new HashMap<>();
 	
 	private boolean consumed = false;
 	
-	public TransitionEvent(String condition) {
-		this.condition = condition;
-		this.map = null;
-	}
-	
 	/**
-	 * Initializes a new transition event.
+	 * Initializes a transition event.
 	 * 
 	 * @param condition
-	 * @param map		the current map the player is on
 	 */
-	public TransitionEvent(String condition, RMap map) {
+	public TransitionEvent(String condition) {
 		this.condition = condition;
-		this.map = map;
 	}
 	
 	/**
-	 * @return	the current map
+	 * Initializes a new transition event with a single parameter.
+	 * 
+	 * @param condition
+	 * @param key
+	 * @param parameter
 	 */
-	public RMap getMap() {
-		return map;
+	public TransitionEvent(String condition, String key, Object parameter) {
+		this(condition);
+		parameters.put(key, parameter);
+	}
+	
+	/**
+	 * Initializes a new transition event with two parameters.
+	 * 
+	 * @param condition
+	 * @param key1
+	 * @param parameter1
+	 * @param key2
+	 * @param parameter2
+	 */
+	public TransitionEvent(String condition, String key1, Object parameter1, String key2, Object parameter2) {
+		this(condition);
+		parameters.put(key1, parameter1);
+		parameters.put(key2, parameter2);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getParameter(String key) {
+		return (T) parameters.get(key);
 	}
 	
 	/**
