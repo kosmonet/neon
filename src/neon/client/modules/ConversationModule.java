@@ -57,6 +57,7 @@ public class ConversationModule extends Module {
 	@FXML private ScrollPane scroller;
 	
 	private Scene scene;
+	private int index;
 	
 	public ConversationModule(UserInterface ui, EventBus bus) {
 		this.bus = bus;
@@ -85,98 +86,45 @@ public class ConversationModule extends Module {
 		Creature creature = event.getParameter("creature");
 		bus.post(new ConversationEvent(player, creature));
 		
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?"));
+		flow.getChildren().clear();
+		flow.getChildren().add(new Text("Hello stranger, what can I help you with?\n"));
 		
+		subjects.getChildren().clear();
 		Hyperlink link = new Hyperlink("Where am I?");
 		subjects.getChildren().add(link);
+		link.setOnAction(action -> System.out.println("clickety"));
 		subjects.getChildren().add(new Hyperlink("Who are you?"));
 		subjects.getChildren().add(new Hyperlink("What time is it?"));
 		description.update(creature);
 		ui.showScene(scene);
 		scroller.setVvalue(scroller.getVmax());
+		index = 0;
 		Platform.runLater(() -> link.requestFocus());
 	}
 
+	/**
+	 * Makes the scroll pane and list of subjects scroll in an orderly manner.
+	 * 
+	 * @param event
+	 */
 	private void scrollKeyPressed(KeyEvent event) {
 		switch (event.getCode()) {
 		case DOWN:
+			if (scroller.getVvalue() < scroller.getVmax()) {
+				scroller.setVvalue(scroller.getVvalue() + 0.1);
+			} else {
+				index = Math.min(index + 1, subjects.getChildren().size() - 1);
+				subjects.getChildren().get(index).requestFocus();				
+			}
 			event.consume();
 			break;
 		case UP: 
+			if (index == 0) {
+				scroller.setVvalue(scroller.getVvalue() - 0.1);
+			} else {
+				index = Math.max(index - 1, 0);
+				subjects.getChildren().get(index).requestFocus();
+			}
 			event.consume();
 			break;
 		default:
