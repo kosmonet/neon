@@ -30,7 +30,8 @@ import javafx.scene.layout.StackPane;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
-import neon.util.quadtree.RegionQuadTree;
+import neon.util.spatial.RegionQuadTree;
+import neon.util.spatial.RegionSpatialIndex;
 
 /**
  * A {@code StackPane} for rendering the game world in multiple layers.
@@ -46,7 +47,7 @@ public class RenderPane extends StackPane {
 	private final EntityRenderer renderer;
 	
 	private RegionQuadTree<String> terrain;
-	private RegionQuadTree<Integer> elevation;
+	private RegionSpatialIndex<Integer> elevation;
 	private Collection<? extends Object> entities;
 	
 	public RenderPane(ResourceProvider resources, EntityRenderer renderer) {
@@ -67,7 +68,7 @@ public class RenderPane extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionQuadTree<String> terrain, RegionQuadTree<Integer> elevation, Collection<? extends Object> entities) {
+	public void setMap(RegionQuadTree<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Object> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
 		this.entities = entities;

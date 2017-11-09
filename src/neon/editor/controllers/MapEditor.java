@@ -321,10 +321,10 @@ public class MapEditor {
 		heightSpinner.increment(0);
 		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue(), uid, module);
 		try {
-			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getLeaves().entrySet()) {
+			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getElements().entrySet()) {
 				map.getTerrain().insert(entry.getKey(), entry.getValue());
 			}
-			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getLeaves().entrySet()) {
+			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getElements().entrySet()) {
 				map.getElevation().insert(entry.getKey(), entry.getValue());
 			}
 			for (REntity entity : card.<RMap>getResource().getEntities()) {

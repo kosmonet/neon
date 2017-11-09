@@ -117,7 +117,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		
 		Element terrain = new Element("terrain");
 		root.addContent(terrain);
-		Map<Rectangle, String> leaves = map.getTerrain().getLeaves();
+		Map<Rectangle, String> leaves = map.getTerrain().getElements();
 		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
 			if(entry.getValue() != null) {
 				Element region = new Element("region");

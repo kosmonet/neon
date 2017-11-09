@@ -25,7 +25,8 @@ import neon.common.event.NeonEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.Resource;
 import neon.entity.entities.Entity;
-import neon.util.quadtree.RegionQuadTree;
+import neon.util.spatial.RegionQuadTree;
+import neon.util.spatial.RegionSpatialIndex;
 
 /**
  * An event containing updates for the client.
@@ -72,7 +73,7 @@ public abstract class UpdateEvent extends NeonEvent {
 			return map.getTerrain();
 		}
 		
-		public RegionQuadTree<Integer> getElevation() {
+		public RegionSpatialIndex<Integer> getElevation() {
 			return map.getElevation();
 		}
 		

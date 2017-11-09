@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.util.spatial;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @author mdriesen
  * @param <T>
  */
-public class RegionQuadTree<T> {
+public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 	private final int width, height;
 	private final RegionNode<T> root;
 	
@@ -52,7 +52,7 @@ public class RegionQuadTree<T> {
 	public RegionQuadTree(int width, int height, T value) {
 		// make a square tree with power of two size
 		int size = Math.max(1, Integer.highestOneBit(Math.max(width, height) - 1) << 1);
-		if(size < 1) {
+		if (size < 1) {
 			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
 		} else {
 			this.width = width;
@@ -61,12 +61,7 @@ public class RegionQuadTree<T> {
 		}
 	}
 	
-	/**
-	 * Adds a value to the tree.
-	 * 
-	 * @param bounds
-	 * @param value
-	 */
+	@Override
 	public void insert(Rectangle bounds, T value) {
 		root.insert(bounds, value);
 	}
@@ -80,6 +75,7 @@ public class RegionQuadTree<T> {
 	 * @param y
 	 * @return
 	 */
+	@Override
 	public T get(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) {
 			return null;
@@ -96,10 +92,11 @@ public class RegionQuadTree<T> {
 		return height;
 	}
 	
-	public Map<Rectangle, T> getLeaves() {
+	@Override
+	public Map<Rectangle, T> getElements() {
 		Map<Rectangle, T> leaves = new HashMap<>();
-		if(!root.isLeaf()) {
-			for(RegionNode<T> node : root.getLeaves()) {
+		if (!root.isLeaf()) {
+			for (RegionNode<T> node : root.getLeaves()) {
 				if (node.getValue() != null) {
 					leaves.put(node.getBounds(), node.getValue());
 				}

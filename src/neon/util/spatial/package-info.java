@@ -2,4 +2,4 @@
  * @author mdriesen
  *
  */
-package neon.util.quadtree;
+package neon.util.spatial;

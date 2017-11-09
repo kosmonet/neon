@@ -134,7 +134,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		
 		Element terrain = new Element("terrain");
 		root.addContent(terrain);
-		Map<Rectangle, String> terrainLeaves = map.getTerrain().getLeaves();
+		Map<Rectangle, String> terrainLeaves = map.getTerrain().getElements();
 		for (Entry<Rectangle, String> entry : terrainLeaves.entrySet()) {
 			if(entry.getValue() != null) {
 				Element region = new Element("region");
@@ -149,7 +149,7 @@ class MapLoader implements ResourceLoader<RMap> {
 		
 		Element elevation = new Element("elevation");
 		root.addContent(elevation);
-		Map<Rectangle, Integer> heightLeaves = map.getElevation().getLeaves();
+		Map<Rectangle, Integer> heightLeaves = map.getElevation().getElements();
 		for (Entry<Rectangle, Integer> entry : heightLeaves.entrySet()) {
 			if(entry.getValue() != null) {
 				Element region = new Element("region");

@@ -22,8 +22,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Set;
 
-import neon.util.quadtree.PointQuadTree;
-import neon.util.quadtree.RegionQuadTree;
+import neon.util.spatial.PointQuadTree;
+import neon.util.spatial.PointSpatialIndex;
+import neon.util.spatial.RegionQuadTree;
+import neon.util.spatial.RegionSpatialIndex;
 
 /**
  * @author mdriesen
@@ -40,8 +42,8 @@ public class RMap extends Resource{
 	public final String name;
 	
 	private final RegionQuadTree<String> terrain;
-	private final RegionQuadTree<Integer> elevation;
-	private final PointQuadTree<Long> entities;
+	private final RegionSpatialIndex<Integer> elevation;
+	private final PointSpatialIndex<Long> entities;
 	private final int width, height;
 	
 	/**
@@ -69,7 +71,7 @@ public class RMap extends Resource{
 		return terrain;
 	}
 	
-	public RegionQuadTree<Integer> getElevation() {
+	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}
 	
@@ -81,7 +83,7 @@ public class RMap extends Resource{
 	 * @param y
 	 */
 	public void addEntity(long uid, int x, int y) {
-		entities.insert(uid, new Point(x, y));
+		entities.insert(uid, x, y);
 	}
 	
 	/**
@@ -99,7 +101,7 @@ public class RMap extends Resource{
 	 * @return	all entities at the given coordinates
 	 */
 	public Set<Long> getEntities(int x, int y) {
-		return entities.get(new Point(x, y));
+		return entities.get(x, y);
 	}
 	
 	/**

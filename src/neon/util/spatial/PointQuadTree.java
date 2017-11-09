@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.util.spatial;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -32,7 +32,7 @@ import java.util.Set;
  * @author mdriesen
  * @param <T>
  */
-public class PointQuadTree<T> {
+public class PointQuadTree<T> implements PointSpatialIndex<T> {
 	private final Map<T, Point> elements = new HashMap<>();
 	private final int fill;
 	
@@ -61,19 +61,16 @@ public class PointQuadTree<T> {
 		this.fill = fill;
 	}
 	
-	/**
-	 * Inserts a new element at the given position.
-	 * 
-	 * @param element
-	 * @param position
-	 */
-	public void insert(T element, Point position) {
+	@Override
+	public void insert(T element, int x, int y) {
+		Point position = new Point(x, y);
+		
 		if (root == null) {
 			// root is null if this is the first element to be inserted
-			root = new PointNode<T>(position.x, position.y, 1, fill, elements);
+			root = new PointNode<T>(x, y, 1, fill, elements);
 		} else if(!root.contains(position)) {
 			// if root isn't big enough to contain the new element, we have to enlarge the tree
-			enlargeTree(position);
+			enlargeTree(x, y);
 		}
 		
 		elements.put(element, position);
@@ -85,9 +82,9 @@ public class PointQuadTree<T> {
 	 * 
 	 * @param position
 	 */
-	private void enlargeTree(Point position) {
+	private void enlargeTree(int x, int y) {
 		// find the minimum bounds needed to contain the new position
-		Rectangle bounds = root.getBounds().union(new Rectangle(position.x, position.y, 1, 1));
+		Rectangle bounds = root.getBounds().union(new Rectangle(x, y, 1, 1));
 		int size = Math.max(1, Integer.highestOneBit(Math.max(bounds.width, bounds.height) - 1) << 1);
 		
 		// bounds are somewhat bigger than the actual needed area, calculate how much bigger
@@ -102,41 +99,25 @@ public class PointQuadTree<T> {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param position
-	 * @return	all elements at the given position
-	 */
-	public Set<T> get(Point position) {
-		return root.get(position);
+	@Override
+	public Set<T> get(int x , int y) {
+		return root.get(new Point(x, y));
 	}
 	
-	/**
-	 * 
-	 * @param bounds
-	 * @return	all elements within the given bounds
-	 */
+	@Override
 	public Set<T> get(Rectangle bounds) {
 		return root.get(bounds);
 	}
 	
-	/**
-	 * 
-	 * @return	all elements in the tree
-	 */
+	@Override
 	public Set<T> getElements() {
 		return elements.keySet();
 	}
-	
-	/**
-	 * Tries to move an element to a new position.
-	 * 
-	 * @param element
-	 * @param position
-	 */
+
+	@Override
 	public void move(T element, Point position) {
 		if(!root.contains(position)) {
-			enlargeTree(position);
+			enlargeTree(position.x, position.y);
 		}
 		
 		Point previous = elements.get(element);

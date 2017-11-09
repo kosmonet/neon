@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util.quadtree;
+package neon.util.spatial;
 
 import java.awt.Point;
 import java.awt.Rectangle;

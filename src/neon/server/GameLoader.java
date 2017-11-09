@@ -228,7 +228,7 @@ class GameLoader {
 		clientResources.add(map);
 		
 		// add all terrain resources
-		for (String terrain : map.getTerrain().getLeaves().values()) {
+		for (String terrain : map.getTerrain().getElements().values()) {
 			clientResources.add(resources.getResource("terrain", terrain));
 		}
 		

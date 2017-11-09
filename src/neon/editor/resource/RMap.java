@@ -26,7 +26,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import neon.common.resources.Resource;
-import neon.util.quadtree.RegionQuadTree;
+import neon.util.spatial.RegionQuadTree;
 
 public class RMap extends Resource {
 	/**
