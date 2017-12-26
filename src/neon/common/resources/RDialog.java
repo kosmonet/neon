@@ -18,8 +18,45 @@
 
 package neon.common.resources;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class RDialog extends Resource {
-	public RDialog(String id) {
+	private final Topic root;
+	
+	public RDialog(String id, Topic root) {
 		super(id, "dialog", "dialog");
+		this.root = root;
+	}
+	
+	public Topic getRoot() {
+		return root;
+	}
+	
+	public static class Topic {
+		private final Collection<Topic> topics = new ArrayList<Topic>();
+		private final String text;
+		private final String id;
+		
+		public Topic(String id, String text) {
+			this.id = id;
+			this.text = text;
+		}
+		
+		public String getID() {
+			return id;
+		}
+		
+		public Collection<Topic> getSubtopics() {
+			return topics;
+		}
+		
+		public String getText() {
+			return text;
+		}
+		
+		public void addTopic(Topic topic) {
+			topics.add(topic);
+		}
 	}
 }

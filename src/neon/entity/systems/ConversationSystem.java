@@ -18,23 +18,54 @@
 
 package neon.entity.systems;
 
+import java.util.HashMap;
+
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.resources.RDialog;
+import neon.common.resources.RDialog.Topic;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceProvider;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 import neon.entity.events.ConversationEvent;
 
 public class ConversationSystem implements NeonSystem {
 	private final EntityProvider entities;
+	private final ResourceProvider resources;
+	private final EventBus bus;
 	
-	public ConversationSystem(EntityProvider entities) {
+	public ConversationSystem(ResourceProvider resources, EntityProvider entities, EventBus bus) {
 		this.entities = entities;
+		this.bus = bus;
+		this.resources = resources;
 	}
 	
+	/**
+	 * Collects the initial list of topics when a new conversation with a 
+	 * creature is started.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
-	private void talk(ConversationEvent event) {
+	private void talk(ConversationEvent.Start event) throws ResourceException {
 		Creature speaker = entities.getEntity(event.getFirst());
 		Creature listener = entities.getEntity(event.getSecond());
 		System.out.println(speaker + " is talking to " + listener);
+		
+		RDialog dialog = resources.getResource("dialog", "test1");
+		HashMap<String, String> topics = new HashMap<>();
+		for (Topic topic : dialog.getRoot().getSubtopics()) {
+			topics.put(topic.getID(), topic.getText());
+		}
+		
+		bus.post(new ConversationEvent.Update(dialog.getRoot().getText(), topics));
+	}
+
+	@Subscribe
+	private void answer(ConversationEvent event) {
+		
 	}
 }

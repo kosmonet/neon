@@ -41,6 +41,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
@@ -123,6 +124,7 @@ class ServerLoader {
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());
 		resources.addLoader("item", new ItemLoader());
+		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("map", new MapLoader(entities, resources, configuration));
 		// because they're dynamic, maps and config should be autosaved when evicted from cache
 		resources.setAutoSave("maps", true);

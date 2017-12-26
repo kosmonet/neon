@@ -18,22 +18,66 @@
 
 package neon.entity.events;
 
+import java.util.HashMap;
+
 import neon.common.event.NeonEvent;
 
 public class ConversationEvent extends NeonEvent {
-	private final long one;
-	private final long two;
-	
-	public ConversationEvent(long one, long two) {
-		this.one = one;
-		this.two = two;
+	/**
+	 * Event to start a conversation.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Start extends ConversationEvent {
+		private final long one;
+		private final long two;
+		
+		public Start(long one, long two) {
+			this.one = one;
+			this.two = two;
+		}
+		
+		public long getFirst() {
+			return one;
+		}
+		
+		public long getSecond() {
+			return two;
+		}		
 	}
 	
-	public long getFirst() {
-		return one;
+	/**
+	 * Event to send an updated list of topics to the client.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Update extends ConversationEvent {
+		private final String answer;
+		private final HashMap<String, String> topics = new HashMap<>();
+		
+		public Update(String answer, HashMap<String, String> topics) {
+			this.answer = answer;
+			this.topics.putAll(topics);
+		}
+		
+		public String getAnswer() {
+			return answer;
+		}
+		
+		public HashMap<String, String> getTopics() {
+			return topics;
+		}
 	}
 	
-	public long getSecond() {
-		return two;
+	/**
+	 * Event to send the player's chosen answer to the server.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Answer extends ConversationEvent {
+		
 	}
 }

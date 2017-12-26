@@ -19,9 +19,11 @@
 package neon.client.modules;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -84,24 +86,30 @@ public class ConversationModule extends Module {
 
 		Player player = event.getParameter("player");
 		Creature creature = event.getParameter("creature");
-		bus.post(new ConversationEvent(player.uid, creature.uid));
+		bus.post(new ConversationEvent.Start(player.uid, creature.uid));
 		
 		flow.getChildren().clear();
-		flow.getChildren().add(new Text("Hello stranger, what can I help you with?\n"));
-		
-		subjects.getChildren().clear();
-		Hyperlink link = new Hyperlink("Where am I?");
-		subjects.getChildren().add(link);
-		link.setOnAction(action -> System.out.println("clickety"));
-		subjects.getChildren().add(new Hyperlink("Who are you?"));
-		subjects.getChildren().add(new Hyperlink("What time is it?"));
+
 		description.update(creature);
 		ui.showScene(scene);
-		scroller.setVvalue(scroller.getVmax());
-		index = 0;
-		Platform.runLater(() -> link.requestFocus());
 	}
 
+	@Subscribe
+	public void update(ConversationEvent.Update event) {
+		flow.getChildren().add(new Text(event.getAnswer()));
+		subjects.getChildren().clear();
+		
+		for (Entry<String, String> topic : event.getTopics().entrySet()) {
+			Hyperlink link = new Hyperlink(topic.getValue());
+			subjects.getChildren().add(link);
+			link.setOnAction(action -> System.out.println("clickety"));			
+		}
+		
+		index = 0;
+		scroller.setVvalue(scroller.getVmax());
+		Platform.runLater(subjects.getChildren().get(0)::requestFocus);
+	}
+	
 	/**
 	 * Makes the scroll pane and list of subjects scroll in an orderly manner.
 	 * 
