@@ -18,22 +18,17 @@
 
 package neon.common.event;
 
-import neon.common.resources.RMap;
-
 /**
- * An event to signal the start of a game.
+ * An event that is confined to the client. The server shouldn't generate or
+ * react to client events. Client events are not transmitted between server and
+ * client.
  * 
  * @author mdriesen
  *
  */
-public class StartEvent extends NeonEvent {
-	private final RMap map;
-
-	public StartEvent(RMap map) {
-		this.map = map;
-	}
-
-	public RMap getMap() {
-		return map;
+public class ClientEvent extends NeonEvent {
+	@Override
+	public boolean isBlocked() {
+		return true;
 	}
 }

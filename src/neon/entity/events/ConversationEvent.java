@@ -19,22 +19,21 @@
 package neon.entity.events;
 
 import neon.common.event.NeonEvent;
-import neon.entity.entities.Creature;
 
 public class ConversationEvent extends NeonEvent {
-	private final Creature one;
-	private final Creature two;
+	private final long one;
+	private final long two;
 	
-	public ConversationEvent(Creature one, Creature two) {
+	public ConversationEvent(long one, long two) {
 		this.one = one;
 		this.two = two;
 	}
 	
-	public Creature getFirst() {
+	public long getFirst() {
 		return one;
 	}
 	
-	public Creature getSecond() {
+	public long getSecond() {
 		return two;
 	}
 }

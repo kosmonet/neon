@@ -19,22 +19,21 @@
 package neon.entity.events;
 
 import neon.common.event.NeonEvent;
-import neon.entity.entities.Creature;
 
 public class CombatEvent extends NeonEvent {
-	private final Creature one;
-	private final Creature two;
+	private final long one;
+	private final long two;
 	
-	public CombatEvent(Creature attacker, Creature defender) {
+	public CombatEvent(long attacker, long defender) {
 		one = attacker;
 		two = defender;
 	}
 	
-	public Creature getAttacker() {
+	public long getAttacker() {
 		return one;
 	}
 	
-	public Creature getDefender() {
+	public long getDefender() {
 		return two;
 	}
 }

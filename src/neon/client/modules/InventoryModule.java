@@ -39,6 +39,7 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.ServerEvent;
+import neon.entity.EntityProvider;
 import neon.entity.entities.Item;
 import neon.entity.events.InventoryEvent;
 
@@ -47,6 +48,7 @@ public class InventoryModule extends Module {
 	
 	private final UserInterface ui;
 	private final EventBus bus;
+	private final EntityProvider entities;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Item> playerList, followerList;
@@ -54,9 +56,10 @@ public class InventoryModule extends Module {
 	
 	private Scene scene;
 	
-	public InventoryModule(UserInterface ui, EventBus bus) {
+	public InventoryModule(UserInterface ui, EventBus bus, EntityProvider entities) {
 		this.ui = ui;
 		this.bus = bus;
+		this.entities = entities;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
@@ -88,7 +91,11 @@ public class InventoryModule extends Module {
 	@Subscribe
 	private void showInventory(InventoryEvent event) {
 		playerList.getItems().clear();
-		playerList.getItems().addAll(event.getItems());
+		
+		for (long item : event.getItems()) {
+			playerList.getItems().add(entities.getEntity(item));
+		}
+		
 		playerList.getSelectionModel().selectFirst();
 	}
 	

@@ -19,22 +19,21 @@
 package neon.entity.events;
 
 import neon.common.event.NeonEvent;
-import neon.entity.entities.Creature;
 
 public class CollisionEvent extends NeonEvent {
-	private final Creature one;
-	private final Creature two;
+	private final long one;
+	private final long two;
 	
-	public CollisionEvent(Creature one, Creature two) {
+	public CollisionEvent(long one, long two) {
 		this.one = one;
 		this.two = two;
 	}
 	
-	public Creature getBumper() {
+	public long getBumper() {
 		return one;
 	}
 	
-	public Creature getBumped() {
+	public long getBumped() {
 		return two;
 	}
 }

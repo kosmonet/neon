@@ -20,7 +20,7 @@ package neon.client.modules;
 
 import java.util.HashMap;
 
-import neon.common.event.NeonEvent;
+import neon.common.event.ClientEvent;
 
 /**
  * An event to signal the transition between two client states.
@@ -28,7 +28,7 @@ import neon.common.event.NeonEvent;
  * @author mdriesen
  *
  */
-public class TransitionEvent extends NeonEvent {
+public class TransitionEvent extends ClientEvent {
 	private final String condition;
 	private final HashMap<String, Object> parameters = new HashMap<>();
 	

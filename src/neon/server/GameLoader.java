@@ -234,7 +234,12 @@ class GameLoader {
 		
 		// collect all the necessary entities
 		Set<Entity> clientEntities = new HashSet<>();
-		clientEntities.add(entities.getEntity(0));
+		
+		Player player = entities.getEntity(0);
+		clientEntities.add(player);
+		for (long item : player.inventory.getItems()) {
+			clientEntities.add(entities.getEntity(item));			
+		}
 
 		for (Long uid : map.getEntities()) {
 			clientEntities.add(entities.getEntity(uid));
@@ -253,7 +258,7 @@ class GameLoader {
 	@Subscribe
 	private void listSavedGames(ServerLoadEvent.List event) {
 		String[] saves = FileUtils.listFiles(Paths.get("saves"));
-		logger.info("saved characters: " + Arrays.deepToString(saves));
+		logger.info("saved characters: " + Arrays.toString(saves));
 		bus.post(new ClientLoadEvent.List(saves));
 	}
 	

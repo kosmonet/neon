@@ -22,16 +22,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import neon.common.event.NeonEvent;
-import neon.entity.entities.Item;
 
 public class InventoryEvent extends NeonEvent {
-	private final ArrayList<Item> items;
+	private final ArrayList<Long> items;
 	
-	public InventoryEvent(Collection<Item> items) {
+	public InventoryEvent(Collection<Long> items) {
 		this.items = new ArrayList<>(items);
 	}
 	
-	public Collection<Item> getItems() {
+	public Collection<Long> getItems() {
 		return items;
 	}
 }

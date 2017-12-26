@@ -20,11 +20,21 @@ package neon.entity.systems;
 
 import com.google.common.eventbus.Subscribe;
 
+import neon.entity.EntityProvider;
+import neon.entity.entities.Creature;
 import neon.entity.events.CombatEvent;
 
 public class CombatSystem implements NeonSystem {
+	private final EntityProvider entities;
+	
+	public CombatSystem(EntityProvider entities) {
+		this.entities = entities;
+	}
+	
 	@Subscribe
 	private void fight(CombatEvent event) {
-		System.out.println(event.getAttacker() + " attacks " + event.getDefender());
+		Creature attacker = entities.getEntity(event.getAttacker());
+		Creature defender = entities.getEntity(event.getDefender());
+		System.out.println(attacker + " attacks " + defender);
 	}
 }

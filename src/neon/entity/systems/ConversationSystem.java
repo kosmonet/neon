@@ -20,11 +20,21 @@ package neon.entity.systems;
 
 import com.google.common.eventbus.Subscribe;
 
+import neon.entity.EntityProvider;
+import neon.entity.entities.Creature;
 import neon.entity.events.ConversationEvent;
 
 public class ConversationSystem implements NeonSystem {
+	private final EntityProvider entities;
+	
+	public ConversationSystem(EntityProvider entities) {
+		this.entities = entities;
+	}
+	
 	@Subscribe
 	private void talk(ConversationEvent event) {
-		System.out.println(event.getFirst() + " is talking to " + event.getSecond());
+		Creature speaker = entities.getEntity(event.getFirst());
+		Creature listener = entities.getEntity(event.getSecond());
+		System.out.println(speaker + " is talking to " + listener);
 	}
 }

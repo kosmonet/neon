@@ -85,8 +85,8 @@ public class Server implements Runnable {
 		bus.register(new TurnSystem(resources, entities, bus));
 		bus.register(new AISystem(mover));
 		bus.register(new InputSystem(entities, bus, mover));
-		bus.register(new CombatSystem());
-		bus.register(new ConversationSystem());
+		bus.register(new CombatSystem(entities));
+		bus.register(new ConversationSystem(entities));
 		
 		// send configuration message to the client
 		try {

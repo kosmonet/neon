@@ -198,8 +198,8 @@ public class GameModule extends Module {
 			bus.post(new ServerEvent.Pause());
 		}
 		
-		Creature one = event.getBumper();
-		Creature two = event.getBumped();
+		Creature one = provider.getEntity(event.getBumper());
+		Creature two = provider.getEntity(event.getBumped());
 		
 		if (one instanceof Player) {
 			Player player = (Player) one;
@@ -209,14 +209,14 @@ public class GameModule extends Module {
 				if (two.brain.isFriendly(player)) {
 					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
-					bus.post(new CombatEvent(player, two));	
+					bus.post(new CombatEvent(player.uid, two.uid));	
 				}
 				break;
 			case STEALTH:
 				if (two.brain.isFriendly(player)) {
 					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
-					bus.post(new CombatEvent(player, two));	
+					bus.post(new CombatEvent(player.uid, two.uid));	
 				}
 				break;
 			case AGGRESSION:
@@ -226,10 +226,10 @@ public class GameModule extends Module {
 					if (result.get().equals(ButtonTypes.talk)) {
 						bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent(player, two));	
+						bus.post(new CombatEvent(player.uid, two.uid));	
 					}
 				} else {
-					bus.post(new CombatEvent(player, two));	
+					bus.post(new CombatEvent(player.uid, two.uid));	
 				}
 				break;
 			}

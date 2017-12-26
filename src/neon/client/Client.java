@@ -103,7 +103,7 @@ public class Client implements Runnable {
 		modules.add(game);
 		bus.register(game);
 		
-		InventoryModule inventory = new InventoryModule(ui, bus);
+		InventoryModule inventory = new InventoryModule(ui, bus, provider);
 		modules.add(inventory);
 		bus.register(inventory);
 		

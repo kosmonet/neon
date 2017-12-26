@@ -64,7 +64,7 @@ public class MovementService implements NeonSystem {
 		if (!map.getEntities(x, y).isEmpty()) {
 			for (long uid : map.getEntities(x, y)) {
 				if (entities.getEntity(uid) instanceof Creature) {
-					bus.post(new CollisionEvent(player, entities.getEntity(uid)));
+					bus.post(new CollisionEvent(player.uid, uid));
 				}
 			}
 		} else {

@@ -84,7 +84,7 @@ public class ConversationModule extends Module {
 
 		Player player = event.getParameter("player");
 		Creature creature = event.getParameter("creature");
-		bus.post(new ConversationEvent(player, creature));
+		bus.post(new ConversationEvent(player.uid, creature.uid));
 		
 		flow.getChildren().clear();
 		flow.getChildren().add(new Text("Hello stranger, what can I help you with?\n"));
