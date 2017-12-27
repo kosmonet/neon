@@ -16,11 +16,9 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.events;
+package neon.common.event;
 
 import java.util.HashMap;
-
-import neon.common.event.NeonEvent;
 
 public class ConversationEvent extends NeonEvent {
 	/**

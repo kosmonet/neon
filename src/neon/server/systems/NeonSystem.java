@@ -16,24 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.events;
+package neon.server.systems;
 
-import neon.common.event.NeonEvent;
+public interface NeonSystem {
 
-public class CombatEvent extends NeonEvent {
-	private final long one;
-	private final long two;
-	
-	public CombatEvent(long attacker, long defender) {
-		one = attacker;
-		two = defender;
-	}
-	
-	public long getAttacker() {
-		return one;
-	}
-	
-	public long getDefender() {
-		return two;
-	}
 }

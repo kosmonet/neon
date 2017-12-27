@@ -36,13 +36,13 @@ import neon.common.net.ServerSocket;
 import neon.common.resources.CClient;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.MovementService;
-import neon.entity.systems.AISystem;
-import neon.entity.systems.CombatSystem;
-import neon.entity.systems.ConversationSystem;
-import neon.entity.systems.InputSystem;
-import neon.entity.systems.InventorySystem;
-import neon.entity.systems.TurnSystem;
+import neon.server.services.MovementService;
+import neon.server.systems.AISystem;
+import neon.server.systems.CombatSystem;
+import neon.server.systems.ConversationSystem;
+import neon.server.systems.InputSystem;
+import neon.server.systems.InventorySystem;
+import neon.server.systems.TurnSystem;
 
 /**
  * The server part of the neon engine.

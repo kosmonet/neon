@@ -16,18 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.events;
+package neon.common.event;
 
-import neon.common.event.ServerEvent;
-import neon.common.resources.RMap;
-import neon.entity.entities.Creature;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class ThinkEvent extends ServerEvent {
-	public final Creature creature;
-	public final RMap map;
+public class InventoryEvent extends NeonEvent {
+	private final ArrayList<Long> items;
 	
-	public ThinkEvent(Creature creature, RMap map) {
-		this.creature = creature;
-		this.map = map;
+	public InventoryEvent(Collection<Long> items) {
+		this.items = new ArrayList<>(items);
+	}
+	
+	public Collection<Long> getItems() {
+		return items;
 	}
 }

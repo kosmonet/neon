@@ -16,18 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.server.systems;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.event.TurnEvent;
 import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
-import neon.entity.MovementService;
 import neon.entity.entities.Player;
-import neon.entity.events.TurnEvent;
 import neon.entity.events.UpdateEvent;
+import neon.server.services.MovementService;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;

@@ -16,36 +16,38 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.server.systems;
 
-import java.awt.Point;
-import java.util.Random;
+import java.util.ArrayList;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.entity.MovementService;
-import neon.entity.entities.Creature;
-import neon.entity.events.ThinkEvent;
+import neon.common.event.InventoryEvent;
+import neon.common.event.ServerEvent;
+import neon.entity.EntityProvider;
+import neon.entity.entities.Player;
 
-public class AISystem implements NeonSystem {
-	private final Random random = new Random();
-	private final MovementService mover;
+/**
+ * This system handles the inventory-related server bits.
+ * 
+ * @author mdriesen
+ *
+ */
+public class InventorySystem {
+	private final EventBus bus;
+	private final EntityProvider entities;
 	
-	public AISystem(MovementService mover) {
-		this.mover = mover;
+	public InventorySystem(EntityProvider entities, EventBus bus) {
+		this.bus = bus;
+		this.entities = entities;
 	}
 	
 	@Subscribe
-	private void act(ThinkEvent event) {
-		Creature creature = event.creature;
-		
-		while(creature.stats.isActive()) {
-			// move the creature
-			int x = creature.shape.getX() + random.nextInt(3) - 1;
-			int y = creature.shape.getY() + random.nextInt(3) - 1;
-			x = creature.shape.getX();
-			y = creature.shape.getY();
-			mover.move(creature, new Point(x, y), event.map);
-		}
+	private void postInventory(ServerEvent.Inventory event) {
+		Player player = entities.getEntity(0);
+		ArrayList<Long> items = new ArrayList<>();
+		items.addAll(player.inventory.getItems());
+		bus.post(new InventoryEvent(items));
 	}
 }

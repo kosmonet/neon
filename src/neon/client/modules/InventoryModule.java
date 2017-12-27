@@ -38,10 +38,10 @@ import javafx.scene.input.KeyEvent;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
+import neon.common.event.InventoryEvent;
 import neon.common.event.ServerEvent;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Item;
-import neon.entity.events.InventoryEvent;
 
 public class InventoryModule extends Module {
 	private static final Logger logger = Logger.getGlobal();

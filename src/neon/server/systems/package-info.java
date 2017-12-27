@@ -4,4 +4,4 @@
  * @author mdriesen
  *
  */
-package neon.entity.systems;
+package neon.server.systems;

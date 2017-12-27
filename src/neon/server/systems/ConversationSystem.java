@@ -16,20 +16,20 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.server.systems;
 
 import java.util.HashMap;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.event.ConversationEvent;
 import neon.common.resources.RDialog;
 import neon.common.resources.RDialog.Topic;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceProvider;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
-import neon.entity.events.ConversationEvent;
 
 public class ConversationSystem implements NeonSystem {
 	private final EntityProvider entities;

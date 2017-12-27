@@ -16,25 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.common.event;
 
-import com.google.common.eventbus.Subscribe;
-
-import neon.entity.EntityProvider;
-import neon.entity.entities.Creature;
-import neon.entity.events.CombatEvent;
-
-public class CombatSystem implements NeonSystem {
-	private final EntityProvider entities;
+public class CombatEvent extends NeonEvent {
+	private final long one;
+	private final long two;
 	
-	public CombatSystem(EntityProvider entities) {
-		this.entities = entities;
+	public CombatEvent(long attacker, long defender) {
+		one = attacker;
+		two = defender;
 	}
 	
-	@Subscribe
-	private void fight(CombatEvent event) {
-		Creature attacker = entities.getEntity(event.getAttacker());
-		Creature defender = entities.getEntity(event.getDefender());
-		System.out.println(attacker + " attacks " + defender);
+	public long getAttacker() {
+		return one;
+	}
+	
+	public long getDefender() {
+		return two;
 	}
 }

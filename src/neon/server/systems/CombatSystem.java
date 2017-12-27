@@ -16,38 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.server.systems;
 
-import java.util.ArrayList;
-
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ServerEvent;
+import neon.common.event.CombatEvent;
 import neon.entity.EntityProvider;
-import neon.entity.entities.Player;
-import neon.entity.events.InventoryEvent;
+import neon.entity.entities.Creature;
 
-/**
- * This system handles the inventory-related server bits.
- * 
- * @author mdriesen
- *
- */
-public class InventorySystem {
-	private final EventBus bus;
+public class CombatSystem implements NeonSystem {
 	private final EntityProvider entities;
 	
-	public InventorySystem(EntityProvider entities, EventBus bus) {
-		this.bus = bus;
+	public CombatSystem(EntityProvider entities) {
 		this.entities = entities;
 	}
 	
 	@Subscribe
-	private void postInventory(ServerEvent.Inventory event) {
-		Player player = entities.getEntity(0);
-		ArrayList<Long> items = new ArrayList<>();
-		items.addAll(player.inventory.getItems());
-		bus.post(new InventoryEvent(items));
+	private void fight(CombatEvent event) {
+		Creature attacker = entities.getEntity(event.getAttacker());
+		Creature defender = entities.getEntity(event.getDefender());
+		System.out.println(attacker + " attacks " + defender);
 	}
 }

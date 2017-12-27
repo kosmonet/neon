@@ -16,8 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.events;
+package neon.server.events;
 
 import neon.common.event.ServerEvent;
+import neon.common.resources.RMap;
+import neon.entity.entities.Creature;
 
-public class TurnEvent extends ServerEvent {}
+public class ThinkEvent extends ServerEvent {
+	public final Creature creature;
+	public final RMap map;
+	
+	public ThinkEvent(Creature creature, RMap map) {
+		this.creature = creature;
+		this.map = map;
+	}
+}

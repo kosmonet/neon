@@ -42,9 +42,9 @@ import javafx.scene.text.TextFlow;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
+import neon.common.event.ConversationEvent;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
-import neon.entity.events.ConversationEvent;
 
 public class ConversationModule extends Module {
 	private static final Logger logger = Logger.getGlobal();

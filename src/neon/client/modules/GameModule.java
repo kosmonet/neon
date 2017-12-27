@@ -40,6 +40,8 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.ClientRenderer;
+import neon.common.event.CollisionEvent;
+import neon.common.event.CombatEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
@@ -48,8 +50,6 @@ import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
-import neon.entity.events.CollisionEvent;
-import neon.entity.events.CombatEvent;
 import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
 

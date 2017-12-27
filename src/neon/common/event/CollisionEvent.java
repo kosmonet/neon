@@ -16,8 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.common.event;
 
-public interface NeonSystem {
-
+public class CollisionEvent extends NeonEvent {
+	private final long one;
+	private final long two;
+	
+	public CollisionEvent(long one, long two) {
+		this.one = one;
+		this.two = two;
+	}
+	
+	public long getBumper() {
+		return one;
+	}
+	
+	public long getBumped() {
+		return two;
+	}
 }

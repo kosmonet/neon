@@ -16,17 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity;
+package neon.server.services;
 
 import java.awt.Point;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.event.CollisionEvent;
 import neon.common.resources.RMap;
+import neon.entity.Action;
+import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
-import neon.entity.events.CollisionEvent;
-import neon.entity.systems.NeonSystem;
 import neon.util.Direction;
 
 /**
@@ -35,7 +36,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class MovementService implements NeonSystem {
+public class MovementService {
 	private final EventBus bus;
 	private final EntityProvider entities;
 	

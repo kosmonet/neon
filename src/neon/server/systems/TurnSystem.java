@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.systems;
+package neon.server.systems;
 
 import java.awt.Rectangle;
 import java.util.Collection;
@@ -27,18 +27,18 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.ServerEvent;
 import neon.common.event.TimerEvent;
+import neon.common.event.TurnEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
-import neon.entity.GameMode;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
-import neon.entity.events.ThinkEvent;
-import neon.entity.events.TurnEvent;
 import neon.entity.events.UpdateEvent;
+import neon.server.GameMode;
+import neon.server.events.ThinkEvent;
 
 /**
  * System to handle new turns.
