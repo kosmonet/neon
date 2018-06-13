@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public class CClient extends Resource {
 	 * Initializes the client configuration resource.
 	 */
 	public CClient(String title, String subtitle, Collection<String> species) {
-		super("client", "config", "config");
+		super("client", "client", "config");
 		this.title = title;
 		this.subtitle = subtitle;
 		this.species.addAll(species);

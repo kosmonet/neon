@@ -30,10 +30,12 @@ public abstract class Resource {
 	 * The resource id.
 	 */
 	public final String id;
+	
 	/**
 	 * The resource type (e.g. a creature, item, terrain, ...).
 	 */
 	public final String type;
+	
 	/**
 	 * The namespace this resource belongs to.
 	 */
@@ -45,7 +47,7 @@ public abstract class Resource {
 	 * @param id
 	 * @param type
 	 */
-	public Resource(String id, String type, String namespace) {
+	protected Resource(String id, String type, String namespace) {
 		this.id = id;
 		this.type = type;
 		this.namespace = namespace;

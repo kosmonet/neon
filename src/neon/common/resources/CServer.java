@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public class CServer extends Resource {
 
 	/**
 	 * Initializes this server configuration resource with the given set of
-	 * modules. A {@source LinkedHashSet} is used to prevent doubles and to 
+	 * modules. A {@code LinkedHashSet} is used to prevent doubles and to 
 	 * preserve the correct load order of the modules. 
 	 * 
 	 * @param modules

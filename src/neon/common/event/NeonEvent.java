@@ -23,6 +23,8 @@ package neon.common.event;
  * event from bouncing back and forth through the client and server buses, an
  * event should be blocked when passing through a socket for the first time.
  * 
+ * TODO: alle data tussen client en server serialiseren
+ * 
  * @author mdriesen
  *
  */

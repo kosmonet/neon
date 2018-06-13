@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
+import neon.common.resources.loaders.ServerConfigurationLoader;
 import neon.common.resources.loaders.TerrainLoader;
 
 /**
@@ -59,6 +60,7 @@ class ServerLoader {
 	
 	/**
 	 * Initializes this loader with an {@code EventBus}.
+	 * 
 	 * @param bus
 	 */
 	ServerLoader(EventBus bus) {
@@ -92,7 +94,7 @@ class ServerLoader {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
-			return (CServer) new ConfigurationLoader().load(doc.getRootElement());
+			return new ServerConfigurationLoader().load(doc.getRootElement());
 		} 	
 	}
 	
@@ -116,10 +118,13 @@ class ServerLoader {
 	private void initResources(ResourceManager resources, CServer configuration, EntityTracker entities) {
 		// add all necessary resource loaders to the manager
 		ConfigurationLoader loader = new ConfigurationLoader();
-		resources.addLoader("config", loader);
-		resources.addLoader("server", loader);
 		resources.addLoader("client", loader);
 		resources.addLoader("game", loader);
+
+		ServerConfigurationLoader server = new ServerConfigurationLoader();
+		resources.addLoader("config", server);
+		resources.addLoader("server", server);
+		
 		resources.addLoader("module", new ModuleLoader());
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creature", new CreatureLoader());

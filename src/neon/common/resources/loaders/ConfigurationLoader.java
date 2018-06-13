@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,17 +19,15 @@
 package neon.common.resources.loaders;
 
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 import org.jdom2.Element;
 
 import neon.common.resources.CClient;
 import neon.common.resources.CGame;
-import neon.common.resources.CServer;
 import neon.common.resources.Resource;
 
 /**
- * A resource loader for server, client and game configuration files.
+ * A resource loader for client and game configuration files.
  * 
  * @author mdriesen
  *
@@ -38,9 +36,6 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	@Override
 	public Resource load(Element root) {
 		switch (root.getName()) {
-		case "config":
-		case "server":
-			return loadServer(root);
 		case "client":
 			return loadClient(root);
 		case "game":
@@ -56,52 +51,10 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 			return saveGame((CGame)resource);
 		} else if (resource instanceof CClient) {
 			return saveClient((CClient)resource);
-		} else if (resource instanceof CServer) {
-			return saveServer((CServer)resource);
 		} else {
 			throw new IllegalArgumentException("Argument is not a configuration resource");			
 		}
 	}	
-
-	private CServer loadServer(Element root) {
-		// LinkedHashSet to preserve module load order and to prevent doubles
-		LinkedHashSet<String> modules = new LinkedHashSet<String>();
-		for (Element module : root.getChild("modules").getChildren()) {
-			modules.add(module.getText());
-		}
-		
-		String level = root.getChildText("log").toUpperCase();
-		CServer cs = new CServer(modules, level);
-
-		// extra step in case this was a saved configuration file
-		if(root.getName().equals("server")) {
-			for (Element module : root.getChild("modules").getChildren()) {
-				cs.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
-			}
-		}
-
-		return cs; 
-	}
-
-
-	private Element saveServer(CServer server) {
-		Element root = new Element("server");
-
-		Element modules = new Element("modules");
-		for(String id : server.getModules()) {
-			Element module = new Element("module");
-			module.setText(id);
-			module.setAttribute("uid", Short.toString(server.getModuleUID(id)));
-			modules.addContent(module);
-		}
-		root.addContent(modules);
-		
-		Element log = new Element("log");
-		log.setText(server.getLogLevel());
-		root.addContent(log);
-		
-		return root;
-	}		
 
 	private CClient loadClient(Element root) {
 		String title = root.getAttributeValue("title");

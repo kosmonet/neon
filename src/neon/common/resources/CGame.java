@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public class CGame extends Resource {
 	private String currentMap;
 
 	public CGame(String startMap, int startX, int startY) {
-		super("game", "config", "config");
+		super("game", "game", "config");
 		this.startMap = startMap;
 		currentMap = startMap;
 		x = startX;
