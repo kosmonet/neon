@@ -49,15 +49,6 @@ public class CGame extends Resource {
 	}
 	
 	/**
-	 * Sets the id of the current map.
-	 * 
-	 * @param map
-	 */
-	public void setCurrentMap(String map) {
-		currentMap = map;
-	}
-	
-	/**
 	 * 
 	 * @return	the id of the current map
 	 */

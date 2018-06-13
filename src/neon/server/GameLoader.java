@@ -189,6 +189,8 @@ class GameLoader {
 						+ "behave in unexpected ways.", "Module warning"));
 			}
 		}
+		// save all changes to the current configuration
+		resources.addResource(currentConfig);
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
@@ -272,8 +274,7 @@ class GameLoader {
 	@Subscribe
 	private void saveGame(SaveEvent event) throws IOException, ResourceException {
 		logger.info("save game");
-		// store all cached resources (maps and configuration)
-		resources.flush();
+		// TODO: config en maps opslaan
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder

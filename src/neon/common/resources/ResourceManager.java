@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,21 +19,18 @@
 package neon.common.resources;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalCause;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -42,21 +39,18 @@ import neon.common.resources.loaders.ResourceLoader;
 /**
  * Manages all game resources. Resources are stored with soft references and 
  * (re)loaded on demand. Beware: changes to a resource should be explicitly
- * saved, unless the auto save option was set for that particular resource 
- * namespace. Any changes will otherwise be lost if the resource is discarded 
+ * saved. Any changes will otherwise be lost if the resource is discarded 
  * and later reloaded.
  * 
  * @author mdriesen
  *
  */
-public class ResourceManager implements ResourceProvider, RemovalListener<String, Resource> {
+public class ResourceManager implements ResourceProvider {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
-//	private final Table<String, String, Resource> resources = HashBasedTable.create();
-	private final Map<String, Cache<String, Resource>> resources = new HashMap<>();
+	private final Table<String, String, SoftReference<Resource>> resources = HashBasedTable.create();
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
-	private final Map<String, Boolean> saved = new HashMap<>();
 	
 	/**
 	 * Creates a resource manager that uses the given filesystem to load its
@@ -66,18 +60,6 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	 */
 	public ResourceManager(NeonFileSystem files) {
 		this.files = files;
-	}
-	
-	/**
-	 * Sets whether resources from a certain namespace should be automatically 
-	 * saved to temp in case it is evicted from cache. Saving is done by the 
-	 * loader that was set for the resource type.
-	 * 
-	 * @param namespace
-	 * @param save
-	 */
-	public void setAutoSave(String namespace, boolean save) {
-		saved.put(namespace, save);
 	}
 	
 	/**
@@ -92,13 +74,8 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	public void addResource(Resource resource) throws IOException {
 		String namespace = resource.namespace;
 		
-		// create namespace if necessary
-		if (!resources.containsKey(namespace)) {
-			createNamespace(namespace);
-		}
-		
-		// add resource to the soft value map
-		resources.get(namespace).put(resource.id, resource);
+		// add resource to the table
+		resources.put(namespace, resource.id, new SoftReference<Resource>(resource));
 		
 		// save resource to temp folder
 		saveToTemp(namespace, resource);
@@ -117,20 +94,6 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 		} else {
 			throw new IllegalStateException("Loader for resource type <" + resource.type + "> was not found.");
 		}		
-	}
-	
-	/**
-	 * Creates a new namespace and (if not set previously) sets the initial 
-	 * autosave status to {@code false}.
-	 * 
-	 * @param namespace
-	 */
-	private void createNamespace(String namespace) {
-		logger.info("creating namespace " + namespace);
-		resources.put(namespace, CacheBuilder.newBuilder().removalListener(this).softValues().build());
-		if(!saved.containsKey(namespace)) {
-			saved.put(namespace, false);
-		}
 	}
 	
 	/**
@@ -155,14 +118,13 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
-		if (resources.containsKey(namespace)) {
-			if (resources.get(namespace).getIfPresent(id) != null) {
-				return (T) resources.get(namespace).getIfPresent(id);
-			} 
-		} else {
-			// namespace did not exist yet, create it now
-			createNamespace(namespace);
-		}
+		if (resources.contains(namespace, id)) {
+			if (resources.get(namespace, id).get() != null) {
+				return (T) resources.get(namespace, id).get();
+			} else {
+				logger.finest("Resource <" + namespace + ":" + id + "> was evicted from cache, reloading.");
+			}
+		} 
 
 		// resource was not loaded, do it now
 		try {
@@ -175,7 +137,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 			String type = resource.getName();
 			if(loaders.containsKey(type)) {
 				T value = (T) loaders.get(type).load(resource);
-				resources.get(namespace).put(id, value);
+				resources.put(namespace, id, new SoftReference<Resource>(value));
 				return value;
 			} else {
 				throw new IllegalStateException("Loader for resource type <" + resource.getName() + "> was not found.");
@@ -186,7 +148,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	}
 	
 	/**
-	 * Adds a loader for the given resource type (including the ones not loaded yet).
+	 * Adds a loader for the given resource type.
 	 * 
 	 * @param type
 	 * @param loader
@@ -196,7 +158,7 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	}
 	
 	/**
-	 * List all resources of a given type.
+	 * List all resources in a namespace.
 	 * 
 	 * @param namespace
 	 * @return
@@ -223,43 +185,14 @@ public class ResourceManager implements ResourceProvider, RemovalListener<String
 	}
 	
 	/**
-	 * Removes the given resource from the resource manager. 
+	 * Removes the given resource from the resource manager (and the temporary
+	 * folder). 
 	 * 
 	 * @param namespace
 	 * @param id
 	 */
 	public void removeResource(String namespace, String id) {
 		files.deleteFile(namespace, id + ".xml");
-		if (resources.containsKey(namespace)) {
-			resources.get(namespace).invalidate(id);
-		}
-	}
-
-	/**
-	 * Forces the resource manager to save all autosave-enabled resources to
-	 * disk.
-	 * 
-	 * @throws IOException 
-	 */
-	public void flush() throws IOException {
-		for (Entry<String, Boolean> entry : saved.entrySet()) {
-			if (entry.getValue()) {
-				for (Resource resource : resources.get(entry.getKey()).asMap().values()) {
-					saveToTemp(resource.namespace, resource);
-				}
-			}
-		}
-	}
-	
-	@Override
-	public void onRemoval(RemovalNotification<String, Resource> notification) {	
-		if (saved.get(notification.getValue().namespace) && notification.getCause() != RemovalCause.EXPLICIT) {
-			logger.fine("resource <" + notification.getKey() + "> evicted (" + notification.getCause() + ") and saved");
-			try {
-				saveToTemp(notification.getValue().namespace, notification.getValue());
-			} catch (IOException e) {
-				logger.severe("resource <" + notification.getKey() + "> could not be saved");
-			}
-		}
+		resources.remove(namespace,  id);
 	}
 }

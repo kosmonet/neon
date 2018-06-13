@@ -123,7 +123,7 @@ class ServerLoader {
 
 		ServerConfigurationLoader server = new ServerConfigurationLoader();
 		resources.addLoader("config", server);
-		resources.addLoader("server", server);
+//		resources.addLoader("server", server);
 		
 		resources.addLoader("module", new ModuleLoader());
 		resources.addLoader("terrain", new TerrainLoader());
@@ -131,9 +131,6 @@ class ServerLoader {
 		resources.addLoader("item", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("map", new MapLoader(entities, resources, configuration));
-		// because they're dynamic, maps and config should be autosaved when evicted from cache
-		resources.setAutoSave("maps", true);
-		resources.setAutoSave("config", true);
 		
 		// check if all required parent modules are present
 		try {
