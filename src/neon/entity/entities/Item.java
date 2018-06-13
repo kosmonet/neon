@@ -28,7 +28,7 @@ public class Item extends Entity {
 	
 	public Item(long uid, RItem item) {
 		super(uid);
-		graphics = new GraphicsComponent(uid, item.character, item.color);
+		graphics = new GraphicsComponent(uid, item.glyph, item.color);
 		info = new InfoComponent<>(uid, item);
 	}
 	

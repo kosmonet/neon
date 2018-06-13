@@ -31,14 +31,17 @@ public class RCreature extends Resource {
 	 * The display name.
 	 */
 	public final String name;
+	
 	/**
 	 * The UTF-8 character to represent the creature on screen.
 	 */
-	public final String character;
+	public final String glyph;
+	
 	/**
 	 * The color to render the character with.
 	 */
 	public final Color color;
+	
 	/**
 	 * The speed stat.
 	 */
@@ -50,11 +53,11 @@ public class RCreature extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RCreature(String id, String name, String character, Color color, int speed) {
+	public RCreature(String id, String name, String glyph, Color color, int speed) {
 		super(id, "creature", "creatures");
 		this.name = name;
 		this.color = color;
-		this.character = character;
+		this.glyph = glyph;
 		this.speed = speed;
 	}
 }

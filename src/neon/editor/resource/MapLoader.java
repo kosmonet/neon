@@ -92,7 +92,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 				int uid = Integer.parseInt(entity.getAttributeValue("uid"));
 				String id = entity.getAttributeValue("id");
 				RCreature resource = resources.getResource("creatures", id);
-				ICreature creature = new ICreature(uid, id, resource.character, resource.color);
+				ICreature creature = new ICreature(uid, id, resource.glyph, resource.color);
 				creature.shape.setX(Integer.parseInt(entity.getAttributeValue("x")));
 				creature.shape.setY(Integer.parseInt(entity.getAttributeValue("y")));
 				map.add(creature);

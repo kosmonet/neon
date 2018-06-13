@@ -41,7 +41,7 @@ public class Creature extends Entity {
 		super(uid);
 		inventory = new InventoryComponent(uid);
 		shape = new ShapeComponent(uid);
-		graphics = new GraphicsComponent(uid, species.character, species.color);
+		graphics = new GraphicsComponent(uid, species.glyph, species.color);
 		ai = new BehaviorComponent(uid);
 		stats = new StatsComponent(uid, species);
 		skills = new SkillComponent(uid);

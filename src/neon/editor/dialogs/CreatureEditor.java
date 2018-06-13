@@ -99,10 +99,10 @@ public class CreatureEditor {
 		
 		previewLabel.setStyle("-fx-background-color: black;");
 		previewLabel.setTextFill(creature.color);
-		previewLabel.setText(creature.character);
+		previewLabel.setText(creature.glyph);
 
 		nameField.setText(creature.name);
-		textField.setText(creature.character);
+		textField.setText(creature.glyph);
 		colorBox.setValue(creature.color);
 		speedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
 		speedSpinner.getValueFactory().setValue(creature.speed);
@@ -141,15 +141,15 @@ public class CreatureEditor {
 		RCreature rc = card.getResource();
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
-		String text = textField.getText();
+		String glyph = textField.getText();
 		speedSpinner.increment(0);	// stupid way to validate spinner value
 		int speed = speedSpinner.getValue();
 		// check if anything was actually changed
-		if (!name.equals(rc.name) || !text.equals(rc.character) || !color.equals(rc.color) ||
+		if (!name.equals(rc.name) || !glyph.equals(rc.glyph) || !color.equals(rc.color) ||
 				speed != rc.speed) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature(card.toString(), name, text, color, speed);
+			RCreature creature = new RCreature(card.toString(), name, glyph, color, speed);
 			bus.post(new SaveEvent.Resources(creature));
 			card.setChanged(true);				
 		}

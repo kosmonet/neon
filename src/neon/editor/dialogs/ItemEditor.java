@@ -96,10 +96,10 @@ public class ItemEditor {
 		
 		previewLabel.setStyle("-fx-background-color: black;");
 		previewLabel.setTextFill(item.color);
-		previewLabel.setText(item.character);
+		previewLabel.setText(item.glyph);
 
 		nameField.setText(item.name);
-		textField.setText(item.character);
+		textField.setText(item.glyph);
 		colorBox.setValue(item.color);
 		
 		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
@@ -136,12 +136,12 @@ public class ItemEditor {
 		RItem rc = card.getResource();
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
-		String character = textField.getText();
+		String glyph = textField.getText();
 		// check if anything was actually changed
-		if (!name.equals(rc.name) || !character.equals(rc.character) || !color.equals(rc.color)) {
+		if (!name.equals(rc.name) || !glyph.equals(rc.glyph) || !color.equals(rc.color)) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RItem item = new RItem(card.toString(), "item", name, character, color);
+			RItem item = new RItem(card.toString(), "item", name, glyph, color);
 			bus.post(new SaveEvent.Resources(item));
 			card.setChanged(true);				
 		}

@@ -36,9 +36,9 @@ public class ItemLoader implements ResourceLoader<RItem> {
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
 		String type = root.getName();
-		String character = root.getChild("graphics").getAttributeValue("char");
+		String glyph = root.getChild("graphics").getAttributeValue("char");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
-		RItem item = new RItem(id, type, name, character, color);
+		RItem item = new RItem(id, type, name, glyph, color);
 		return item;
 	}
 	

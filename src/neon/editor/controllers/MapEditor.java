@@ -197,7 +197,7 @@ public class MapEditor {
 		try {
 			RCreature resource = resources.getResource("creatures", id);
 			RMap map = card.getResource();
-			ICreature creature = new ICreature(map.getFreeUID(), id, resource.character, resource.color);
+			ICreature creature = new ICreature(map.getFreeUID(), id, resource.glyph, resource.color);
 			creature.shape.setPosition(x, y, 0);
 			map.add(creature);
 			redraw();

@@ -24,9 +24,9 @@ import neon.entity.components.GraphicsComponent;
 public class ICreature extends REntity {
 	public final GraphicsComponent graphics;
 	
-	public ICreature(int uid, String id, String character, Color color) {
+	public ICreature(int uid, String id, String glyph, Color color) {
 		super(uid, id);
-		graphics = new GraphicsComponent(uid, character, color);
+		graphics = new GraphicsComponent(uid, glyph, color);
 	}
 	
 	String getType() {

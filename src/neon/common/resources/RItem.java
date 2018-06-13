@@ -31,10 +31,12 @@ public class RItem extends Resource {
 	 * The display name.
 	 */
 	public final String name;
+	
 	/**
 	 * The UTF-8 character to represent the creature on screen.
 	 */
-	public final String character;
+	public final String glyph;
+	
 	/**
 	 * The color to render the character with.
 	 */
@@ -46,10 +48,10 @@ public class RItem extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RItem(String id, String type, String name, String character, Color color) {
+	public RItem(String id, String type, String name, String glyph, Color color) {
 		super(id, type, "items");
 		this.name = name;
-		this.character = character;
+		this.glyph = glyph;
 		this.color = color;
 	}
 }
