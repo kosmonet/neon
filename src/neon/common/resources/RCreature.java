@@ -54,7 +54,7 @@ public class RCreature extends Resource {
 	 * @param type
 	 */
 	public RCreature(String id, String name, String glyph, Color color, int speed) {
-		super(id, "creature", "creatures");
+		super(id, "creatures");
 		this.name = name;
 		this.color = color;
 		this.glyph = glyph;

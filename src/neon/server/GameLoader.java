@@ -51,7 +51,7 @@ import neon.common.resources.RModule;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.ServerConfigurationLoader;
+import neon.common.resources.loaders.ConfigurationLoader;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
@@ -211,7 +211,7 @@ class GameLoader {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("saves", save, "config", "server.xml"))) {
 			Document doc = new SAXBuilder().build(in);
-			return new ServerConfigurationLoader().load(doc.getRootElement());
+			return new ConfigurationLoader().loadServer(doc.getRootElement());
 		} catch (JDOMException e) {
 			throw new IllegalStateException("failed to load server configuration file", e);
 		}

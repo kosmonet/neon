@@ -19,6 +19,7 @@
 package neon.common.event;
 
 import neon.common.resources.CClient;
+import neon.common.resources.CServer;
 
 /**
  * An event containing all configuration information for the client.
@@ -30,17 +31,19 @@ public class ClientConfigurationEvent extends NeonEvent {
 	private final String[] species;
 	private final String title;
 	private final String subtitle;
+	private final String[] modules;
 	
 	/**
 	 * Initializes this event with game configuration data.
 	 * 
 	 * @param config
 	 */
-	public ClientConfigurationEvent(CClient config) {
-		species = new String[config.getPlayableSpecies().size()];
-		config.getPlayableSpecies().toArray(species);
-		title = config.title;
-		subtitle = config.subtitle;
+	public ClientConfigurationEvent(CClient cc, CServer cs) {
+		species = new String[cc.getPlayableSpecies().size()];
+		cc.getPlayableSpecies().toArray(species);
+		title = cc.title;
+		subtitle = cc.subtitle;
+		modules = cs.getModules();
 	}
 	
 	/**
@@ -65,5 +68,13 @@ public class ClientConfigurationEvent extends NeonEvent {
 	 */
 	public String[] getPlayableSpecies() {
 		return species;
+	}
+	
+	/**
+	 * 
+	 * @return	the modules loaded in this game
+	 */
+	public String[] getModules() {
+		return modules;
 	}
 }

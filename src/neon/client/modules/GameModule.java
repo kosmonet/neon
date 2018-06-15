@@ -48,6 +48,7 @@ import neon.common.event.SaveEvent;
 import neon.common.event.ServerEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceManager;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
@@ -75,11 +76,11 @@ public class GameModule extends Module {
 	private RMap map;
 	private boolean paused = true;
 	
-	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider) {
+	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
 		this.provider = provider;
-		renderPane = new RenderPane(provider, new ClientRenderer());
+		renderPane = new RenderPane(resources, new ClientRenderer());
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -117,7 +118,6 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Map event) {
 		// store all resources and entities
 		provider.clear();
-		provider.addResources(event.getResources());
 		provider.addEntities(event.getEntities());
 		
 		map = event.getMap();

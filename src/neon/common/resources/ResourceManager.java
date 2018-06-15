@@ -45,7 +45,7 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class ResourceManager implements ResourceProvider {
+public class ResourceManager {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
@@ -83,16 +83,15 @@ public class ResourceManager implements ResourceProvider {
 
 	@SuppressWarnings("unchecked")
 	private void saveToTemp(String namespace, Resource resource) throws IOException {
-		String type = resource.type;
-		if (loaders.containsKey(type)) {
-			Document doc = new Document(loaders.get(type).save(resource));
+		if (loaders.containsKey(namespace)) {
+			Document doc = new Document(loaders.get(namespace).save(resource));
 			if (namespace.equals("global")) {
 				files.saveFile(doc, new XMLTranslator(), resource.id + ".xml");			
 			} else {
 				files.saveFile(doc, new XMLTranslator(), namespace, resource.id + ".xml");							
 			}
 		} else {
-			throw new IllegalStateException("Loader for resource type <" + resource.type + "> was not found.");
+			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found.");
 		}		
 	}
 	
@@ -115,7 +114,7 @@ public class ResourceManager implements ResourceProvider {
 	 * @return the requested resource
 	 * @throws ResourceException 
 	 */
-	@Override @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
 		if (resources.contains(namespace, id)) {
@@ -129,18 +128,19 @@ public class ResourceManager implements ResourceProvider {
 		// resource was not loaded, do it now
 		try {
 			Element resource;
+			
 			if (namespace.equals("global")) {
 				resource = files.loadFile(new XMLTranslator(), id + ".xml").getRootElement();				
 			} else {
 				resource = files.loadFile(new XMLTranslator(), namespace, id + ".xml").getRootElement();				
 			}
-			String type = resource.getName();
-			if(loaders.containsKey(type)) {
-				T value = (T) loaders.get(type).load(resource);
+			
+			if(loaders.containsKey(namespace)) {
+				T value = (T) loaders.get(namespace).load(resource);
 				resources.put(namespace, id, new SoftReference<Resource>(value));
 				return value;
 			} else {
-				throw new IllegalStateException("Loader for resource type <" + resource.getName() + "> was not found.");
+				throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");
 			}
 		} catch (IOException e) {
 			throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found.", e);
@@ -192,7 +192,11 @@ public class ResourceManager implements ResourceProvider {
 	 * @param id
 	 */
 	public void removeResource(String namespace, String id) {
-		files.deleteFile(namespace, id + ".xml");
+		try {
+			files.deleteFile(namespace, id + ".xml");
+		} catch (IOException e) {
+			logger.finer("could not remove resource <" + namespace + ":" + id + ">"); 
+		}
 		resources.remove(namespace,  id);
 	}
 }

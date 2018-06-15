@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 
 package neon.client;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -27,6 +30,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
 import neon.client.modules.ConversationModule;
 import neon.client.modules.GameModule;
 import neon.client.modules.InventoryModule;
@@ -37,9 +41,16 @@ import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
 import neon.client.modules.TransitionEvent;
+import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
+import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
+import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.DialogLoader;
+import neon.common.resources.loaders.ItemLoader;
+import neon.common.resources.loaders.TerrainLoader;
 
 public class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
@@ -48,6 +59,8 @@ public class Client implements Runnable {
 	private final ArrayList<Module> modules = new ArrayList<>();
 	private final ClientSocket socket;
 	private final UserInterface ui;
+	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
+	private final ResourceManager resources = new ResourceManager(files);
 	
 	/**
 	 * Initializes the client.
@@ -57,6 +70,7 @@ public class Client implements Runnable {
 	 * @param stage		the JavaFX stage used for drawing the user interface
 	 */
 	public Client(String version, ClientSocket socket, Stage stage) {
+		// add all required listeners to the event bus
 		this.socket = socket;
 		bus.register(socket);
 		bus.register(new BusListener());
@@ -65,6 +79,19 @@ public class Client implements Runnable {
 		
 		// server should cleanly shut down if client is closed
 		stage.setOnCloseRequest(event -> bus.post(new QuitEvent()));
+		
+		// initialize file system
+		try {
+			files.setTemporaryFolder(Paths.get("temp"));
+		} catch (IOException e) {
+			logger.severe("could not initialize temporary folder in file system");			
+		}
+		
+		// add all loaders to the resource manager
+		resources.addLoader("terrain", new TerrainLoader());
+		resources.addLoader("creatures", new CreatureLoader());
+		resources.addLoader("items", new ItemLoader());
+		resources.addLoader("dialog", new DialogLoader());
 		
 		// initialize all modules and enter the first one
 		initModules(version);
@@ -99,7 +126,7 @@ public class Client implements Runnable {
 		modules.add(loadGame);
 		bus.register(loadGame);
 		
-		GameModule game = new GameModule(ui, bus, provider);
+		GameModule game = new GameModule(ui, bus, provider, resources);
 		modules.add(game);
 		bus.register(game);
 		
@@ -107,7 +134,7 @@ public class Client implements Runnable {
 		modules.add(inventory);
 		bus.register(inventory);
 		
-		MapModule map = new MapModule(ui, bus, provider);
+		MapModule map = new MapModule(ui, bus, resources);
 		modules.add(map);
 		bus.register(map);
 		
@@ -139,5 +166,18 @@ public class Client implements Runnable {
 		private void monitor(DeadEvent event) {
 			logger.warning("client received a dead event: " + event.getEvent());
 		}
+		
+		/**
+		 * Configures the file system with the required modules.
+		 * 
+		 * @param event
+		 * @throws FileNotFoundException
+		 */
+		@Subscribe
+		private void configure(ClientConfigurationEvent event) throws FileNotFoundException {
+			for(String module : event.getModules()) {
+				files.addModule(module);
+			}
+		}	
 	}
 }

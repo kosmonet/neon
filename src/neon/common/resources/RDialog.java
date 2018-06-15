@@ -25,7 +25,7 @@ public class RDialog extends Resource {
 	private final Topic root;
 	
 	public RDialog(String id, Topic root) {
-		super(id, "dialog", "dialog");
+		super(id, "dialog");
 		this.root = root;
 	}
 	

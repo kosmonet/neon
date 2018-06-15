@@ -34,6 +34,7 @@ import neon.common.event.TimerEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ServerSocket;
 import neon.common.resources.CClient;
+import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.services.MovementService;
@@ -91,7 +92,8 @@ public class Server implements Runnable {
 		// send configuration message to the client
 		try {
 			CClient cc = resources.getResource("config", "client");
-			bus.post(new ClientConfigurationEvent(cc));
+			CServer cs = resources.getResource("config", "server");
+			bus.post(new ClientConfigurationEvent(cc, cs));
 		} catch (ResourceException e) {
 			throw new IllegalStateException("Could not load client configuration", e);
 		}

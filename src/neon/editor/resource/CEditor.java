@@ -25,7 +25,7 @@ public class CEditor extends Resource {
 	private RModule active;
 	
 	public CEditor() {
-		super("editor", "config", "config");
+		super("editor", "config");
 	}
 	
 	public void setActiveModule(RModule module) {

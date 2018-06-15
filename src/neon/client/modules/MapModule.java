@@ -35,7 +35,7 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
 import neon.common.resources.RMap;
-import neon.common.resources.ResourceProvider;
+import neon.common.resources.ResourceManager;
 
 /**
  * Map viewer.
@@ -54,9 +54,9 @@ public class MapModule extends Module {
 	
 	private Scene scene;
 
-	public MapModule(UserInterface ui, EventBus bus, ResourceProvider provider) {
+	public MapModule(UserInterface ui, EventBus bus, ResourceManager resources) {
 		this.ui = ui;
-		pane = new MapPane(provider);
+		pane = new MapPane(resources);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Map.fxml"));
 		loader.setController(this);

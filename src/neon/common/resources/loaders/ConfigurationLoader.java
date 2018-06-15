@@ -19,11 +19,13 @@
 package neon.common.resources.loaders;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import org.jdom2.Element;
 
 import neon.common.resources.CClient;
 import neon.common.resources.CGame;
+import neon.common.resources.CServer;
 import neon.common.resources.Resource;
 
 /**
@@ -40,6 +42,8 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 			return loadClient(root);
 		case "game":
 			return loadGame(root);
+		case "server":
+			return loadServer(root);
 		default:
 			throw new IllegalArgumentException("Argument is not a configuration resource");
 		}
@@ -51,10 +55,32 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 			return saveGame((CGame)resource);
 		} else if (resource instanceof CClient) {
 			return saveClient((CClient)resource);
+		} else if (resource instanceof CServer) {
+			return saveServer((CServer)resource);
 		} else {
 			throw new IllegalArgumentException("Argument is not a configuration resource");			
 		}
 	}	
+
+	public CServer loadServer(Element root) {
+		// LinkedHashSet to preserve module load order and to prevent doubles
+		LinkedHashSet<String> modules = new LinkedHashSet<String>();
+		for (Element module : root.getChild("modules").getChildren()) {
+			modules.add(module.getText());
+		}
+		
+		String level = root.getChildText("log").toUpperCase();
+		CServer cs = new CServer(modules, level);
+
+		// extra step in case this was a saved configuration file
+		if(root.getName().equals("server")) {
+			for (Element module : root.getChild("modules").getChildren()) {
+				cs.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+			}
+		}
+
+		return cs; 
+	}
 
 	private CClient loadClient(Element root) {
 		String title = root.getAttributeValue("title");
@@ -62,6 +88,25 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		HashSet<String> species = new HashSet<>();		
 		return new CClient(title, subtitle, species);
 	}
+
+	private Element saveServer(CServer server) {
+		Element root = new Element("server");
+
+		Element modules = new Element("modules");
+		for(String id : server.getModules()) {
+			Element module = new Element("module");
+			module.setText(id);
+			module.setAttribute("uid", Short.toString(server.getModuleUID(id)));
+			modules.addContent(module);
+		}
+		root.addContent(modules);
+		
+		Element log = new Element("log");
+		log.setText(server.getLogLevel());
+		root.addContent(log);
+		
+		return root;
+	}		
 
 	private Element saveClient(CClient config) {
 		Element client = new Element("client");

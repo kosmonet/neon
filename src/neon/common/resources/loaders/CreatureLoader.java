@@ -44,7 +44,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 	
 	@Override
 	public Element save(RCreature rc) {
-		Element creature = new Element(rc.type);
+		Element creature = new Element("creature");
 		creature.setAttribute("id", rc.id);
 		creature.setAttribute("name", rc.name);
 		

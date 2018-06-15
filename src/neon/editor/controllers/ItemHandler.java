@@ -145,7 +145,7 @@ public class ItemHandler {
 
 			// create the item
 			try {
-				resources.addResource(new RItem(id, "item", id, "?", Color.BLUE));
+				resources.addResource(new RItem(id, id, "?", Color.BLUE));
 				Card card = new Card("items", id, resources, false);
 				card.setChanged(true);
 				TreeItem<Card> item = new TreeItem<>(card);

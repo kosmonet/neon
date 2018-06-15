@@ -27,16 +27,16 @@ import neon.common.event.ConversationEvent;
 import neon.common.resources.RDialog;
 import neon.common.resources.RDialog.Topic;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceProvider;
+import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 
 public class ConversationSystem implements NeonSystem {
 	private final EntityProvider entities;
-	private final ResourceProvider resources;
+	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public ConversationSystem(ResourceProvider resources, EntityProvider entities, EventBus bus) {
+	public ConversationSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 		this.resources = resources;

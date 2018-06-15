@@ -44,7 +44,6 @@ import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
-import neon.common.resources.loaders.ServerConfigurationLoader;
 import neon.common.resources.loaders.TerrainLoader;
 
 /**
@@ -94,7 +93,7 @@ class ServerLoader {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
-			return new ServerConfigurationLoader().load(doc.getRootElement());
+			return new ConfigurationLoader().loadServer(doc.getRootElement());
 		} 	
 	}
 	
@@ -111,26 +110,19 @@ class ServerLoader {
 			}
 			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
-			logger.severe("could not initialize file system");			
+			logger.severe("could not initialize file system");
 		}
 	}
 	
 	private void initResources(ResourceManager resources, CServer configuration, EntityTracker entities) {
 		// add all necessary resource loaders to the manager
-		ConfigurationLoader loader = new ConfigurationLoader();
-		resources.addLoader("client", loader);
-		resources.addLoader("game", loader);
-
-		ServerConfigurationLoader server = new ServerConfigurationLoader();
-		resources.addLoader("config", server);
-//		resources.addLoader("server", server);
-		
-		resources.addLoader("module", new ModuleLoader());
+		resources.addLoader("config", new ConfigurationLoader());
+		resources.addLoader("global", new ModuleLoader());
 		resources.addLoader("terrain", new TerrainLoader());
-		resources.addLoader("creature", new CreatureLoader());
-		resources.addLoader("item", new ItemLoader());
+		resources.addLoader("creatures", new CreatureLoader());
+		resources.addLoader("items", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
-		resources.addLoader("map", new MapLoader(entities, resources, configuration));
+		resources.addLoader("maps", new MapLoader(entities, resources, configuration));
 		
 		// check if all required parent modules are present
 		try {

@@ -22,9 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import neon.common.resources.Resource;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceProvider;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
@@ -34,45 +31,16 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-public class ClientProvider implements ResourceProvider, EntityProvider {
-	private final Map<String, Map<String, Resource>> resources = new HashMap<>();
+public class ClientProvider implements EntityProvider {
 	private final Map<Long, Entity> entities = new HashMap<>();
 
 	/**
 	 * Clears all entities and resources from this provider.
 	 */
 	public void clear() {
-		resources.clear();
 		entities.clear();
 	}
 	
-	/**
-	 * Adds a collection of resources to this provider.
-	 * 
-	 * @param collection
-	 */
-	public void addResources(Collection<Resource> collection) {
-		for (Resource resource : collection) {
-			// make sure namespace exists
-			if (!resources.containsKey(resource.namespace)) {
-				resources.put(resource.namespace, new HashMap<>());
-			}
-			
-			// add resource to correct namespace
-			resources.get(resource.namespace).put(resource.id, resource);
-		}
-	}
-	
-	@Override @SuppressWarnings("unchecked")
-	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
-		// check if resource was already loaded
-		if (resources.containsKey(namespace) && resources.get(namespace).containsKey(id)) {
-			return (T) resources.get(namespace).get(id);
-		} else {
-			throw new ResourceException("Resource " + namespace + ":" + id + " was not found.");
-		}
-	}
-
 	/**
 	 * Adds a collection of entities to this provider.
 	 * 

@@ -58,7 +58,7 @@ public class RMap extends Resource {
 	 * @param module
 	 */
 	public RMap(String id, String name, int width, int height, short uid, String module) {
-		super(id, "map", "maps");
+		super(id, "maps");
 		this.name = name;
 		terrain = new RegionQuadTree<>(width, height);
 		// initialize with a ground plane at 0 elevation

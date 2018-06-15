@@ -26,7 +26,7 @@ import neon.common.graphics.RenderCanvas;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceProvider;
+import neon.common.resources.ResourceManager;
 
 /**
  * A pane to draw miniature maps.
@@ -36,10 +36,10 @@ import neon.common.resources.ResourceProvider;
 public class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final ResourceProvider provider;
+	private final ResourceManager provider;
 	private final RenderCanvas canvas = new RenderCanvas();
 		
-	public MapPane(ResourceProvider provider) {
+	public MapPane(ResourceManager provider) {
 		this.provider = provider;
 	    canvas.widthProperty().bind(widthProperty());
 	    canvas.heightProperty().bind(heightProperty());

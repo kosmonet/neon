@@ -35,16 +35,15 @@ public class ItemLoader implements ResourceLoader<RItem> {
 	public RItem load(Element root) {
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
-		String type = root.getName();
 		String glyph = root.getChild("graphics").getAttributeValue("char");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
-		RItem item = new RItem(id, type, name, glyph, color);
+		RItem item = new RItem(id, name, glyph, color);
 		return item;
 	}
 	
 	@Override
 	public Element save(RItem ri) {
-		Element item = new Element(ri.type);
+		Element item = new Element("item");
 		item.setAttribute("id", ri.id);
 		item.setAttribute("name", ri.name);
 		return item;

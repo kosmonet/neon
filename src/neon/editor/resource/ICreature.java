@@ -29,6 +29,7 @@ public class ICreature extends REntity {
 		graphics = new GraphicsComponent(uid, glyph, color);
 	}
 	
+	@Override
 	String getType() {
 		return "creature";
 	}

@@ -56,7 +56,7 @@ public class RMap extends Resource{
 	 * @param uid
 	 */
 	public RMap(String id, String name, int width, int height, int uid) {
-		super(id, "map", "maps");
+		super(id, "maps");
 		this.name = name;
 		this.width = width;
 		this.height = height;

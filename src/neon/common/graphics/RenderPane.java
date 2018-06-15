@@ -29,7 +29,7 @@ import javafx.scene.layout.StackPane;
 
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceProvider;
+import neon.common.resources.ResourceManager;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
@@ -43,14 +43,14 @@ public class RenderPane extends StackPane {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
-	private final ResourceProvider resources;
+	private final ResourceManager resources;
 	private final EntityRenderer renderer;
 	
 	private RegionQuadTree<String> terrain;
 	private RegionSpatialIndex<Integer> elevation;
 	private Collection<? extends Object> entities;
 	
-	public RenderPane(ResourceProvider resources, EntityRenderer renderer) {
+	public RenderPane(ResourceManager resources, EntityRenderer renderer) {
 		this.resources = resources;
 		this.renderer = renderer;
 		double parallax = 1.02;

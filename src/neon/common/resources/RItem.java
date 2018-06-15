@@ -48,8 +48,8 @@ public class RItem extends Resource {
 	 * @param id
 	 * @param type
 	 */
-	public RItem(String id, String type, String name, String glyph, Color color) {
-		super(id, type, "items");
+	public RItem(String id, String name, String glyph, Color color) {
+		super(id, "items");
 		this.name = name;
 		this.glyph = glyph;
 		this.color = color;

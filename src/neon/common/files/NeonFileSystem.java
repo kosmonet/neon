@@ -29,13 +29,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Implements a virtual filesystem containing all assets related to a game. The
+ * A virtual file system, containing all assets related to a game. The
  * data from all loaded modules will be compacted into a single folder tree. 
  * Data from a parent module will be overwritten by its child modules (if 
  * present).
@@ -46,43 +45,29 @@ import java.util.logging.Logger;
  *
  */
 public class NeonFileSystem {
+	public final static boolean WRITABLE = true;
+	public final static boolean READONLY = false;
+	
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final ArrayList<String> modules = new ArrayList<>();
 	private Path temporary, save;
+	private boolean writable = true;
 	
 	/**
-	 * Creates an empty filesystem. Module folders should be added before the
-	 * filesystem is usable.
+	 * Creates an empty, writable file system. Module folders should be added 
+	 * before the file system is usable.
 	 */
-	public NeonFileSystem() {
-		// this constructor is here to prevent the variadic String constructor
-		// being called with an empty array
-	}
+	public NeonFileSystem() {}
 	
 	/**
-	 * Creates a new virtual filesystem using a list of module names. The 
-	 * modules with the given names should be present in the data folder. The 
-	 * module names should be given in the correct order (parent should appear 
-	 * before any module that is dependent on it).
+	 * Creates an empty file system. Module folders should be added 
+	 * before the file system is usable.
 	 * 
-	 * @param modules	the list of modules that have to be loaded
-	 * @throws FileNotFoundException
+	 * @param writable
 	 */
-	public NeonFileSystem(String... modules) throws FileNotFoundException {
-		// first check if all modules are actually present and if so, store them in an arraylist
-		for (String module : modules) {
-			Path path = Paths.get("data", module);
-			if (path.toFile().exists()) {
-				this.modules.add(module);
-				logger.info("path <" + module + "> found");
-			} else {
-				throw new FileNotFoundException("Module <" + module + "> is missing!");
-			}
-		}
-		
-		// reverse arraylist for file retrieval
-		Collections.reverse(this.modules);
+	public NeonFileSystem(boolean writable) {
+		this.writable = writable;
 	}
 	
 	/**
@@ -202,7 +187,17 @@ public class NeonFileSystem {
 	 * @throws IOException
 	 */
 	public <T> void saveFile(T output, Translator<T> translator, String... path) throws IOException {
-		// first check if the parent folder already exists, and if not, create it
+		// check if the filesystem is writable
+		if(!writable) {
+			throw new IOException("Filesystem is not writable.");			
+		}
+		
+		// check if the temp folder exists
+		if(temporary == null) {
+			throw new IOException("No temp folder registered.");
+		}
+		
+		// check if the parent folder already exists, and if not, create it
 		Path parent = Paths.get(temporary.toString(), path).getParent();
 		if (!Files.exists(parent)) {
 			logger.fine("creating folder " + parent + " for file " + Arrays.toString(path));
@@ -276,8 +271,19 @@ public class NeonFileSystem {
 	 * temp folder.
 	 * 
 	 * @param path
+	 * @throws IOException
 	 */
-	public void deleteFile(String... path) {
+	public void deleteFile(String... path) throws IOException {
+		// check if the temp folder exists
+		if(temporary == null) {
+			throw new IOException("No temp folder registered.");
+		}
+
+		// check if the file system is writable
+		if(!writable) {
+			throw new IOException("Filesystem is not writable.");
+		}
+
 		File file = Paths.get(temporary.toString(), path).toFile();
 		if(file.exists()) {
 			file.delete();

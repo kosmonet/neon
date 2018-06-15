@@ -32,7 +32,7 @@ public class RTerrain extends Resource {
 	private final String name;
 	
 	public RTerrain(String id, String name, String text, Color color) {
-		super(id, "terrain", "terrain");
+		super(id, "terrain");
 		this.color = color;
 		this.text = text;
 		this.name = name;

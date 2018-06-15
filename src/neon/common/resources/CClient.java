@@ -40,7 +40,7 @@ public class CClient extends Resource {
 	 * Initializes the client configuration resource.
 	 */
 	public CClient(String title, String subtitle, Collection<String> species) {
-		super("client", "client", "config");
+		super("client", "config");
 		this.title = title;
 		this.subtitle = subtitle;
 		this.species.addAll(species);

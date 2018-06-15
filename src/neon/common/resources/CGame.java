@@ -25,7 +25,7 @@ public class CGame extends Resource {
 	private String currentMap;
 
 	public CGame(String startMap, int startX, int startY) {
-		super("game", "game", "config");
+		super("game", "config");
 		this.startMap = startMap;
 		currentMap = startMap;
 		x = startX;

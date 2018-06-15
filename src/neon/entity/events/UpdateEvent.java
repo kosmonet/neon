@@ -37,12 +37,7 @@ import neon.util.spatial.RegionSpatialIndex;
  *
  */
 public abstract class UpdateEvent extends NeonEvent {
-	protected final Collection<Resource> resources = new HashSet<>();
 	protected final Collection<Entity> entities = new HashSet<>();
-	
-	public Collection<Resource> getResources() {
-		return resources;
-	}
 	
 	public Collection<Entity> getEntities() {
 		return entities;
@@ -67,7 +62,6 @@ public abstract class UpdateEvent extends NeonEvent {
 		
 		public Map(RMap map, Collection<Resource> resources, Collection<Entity> entities) {
 			this.map = map;
-			this.resources.addAll(resources);
 			this.entities.addAll(entities);
 		}
 		
