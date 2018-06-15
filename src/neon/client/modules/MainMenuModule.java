@@ -143,7 +143,7 @@ public class MainMenuModule extends Module {
 	}
 	
 	/**
-	 * Configures the scene of this main menu module.
+	 * Configures the scene of the main menu module.
 	 * 
 	 * @param event
 	 */

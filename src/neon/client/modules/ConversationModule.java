@@ -97,6 +97,7 @@ public class ConversationModule extends Module {
 	@Subscribe
 	public void update(ConversationEvent.Update event) {
 		flow.getChildren().add(new Text(event.getAnswer()));
+		
 		subjects.getChildren().clear();
 		
 		for (Entry<String, String> topic : event.getTopics().entrySet()) {
@@ -106,8 +107,8 @@ public class ConversationModule extends Module {
 		}
 		
 		index = 0;
-		scroller.setVvalue(scroller.getVmax());
 		Platform.runLater(subjects.getChildren().get(0)::requestFocus);
+		Platform.runLater(() -> scroller.setVvalue(scroller.getVmax()));
 	}
 	
 	/**
@@ -116,10 +117,13 @@ public class ConversationModule extends Module {
 	 * @param event
 	 */
 	private void scrollKeyPressed(KeyEvent event) {
+		// scroll the subjects 1/30th of the scrollpane height (approximately one line)
+		double step = scroller.getHeight()/(30*(flow.getHeight() - scroller.getHeight()));
+		
 		switch (event.getCode()) {
 		case DOWN:
 			if (scroller.getVvalue() < scroller.getVmax()) {
-				scroller.setVvalue(scroller.getVvalue() + 0.1);
+				scroller.setVvalue(scroller.getVvalue() + step);
 			} else {
 				index = Math.min(index + 1, subjects.getChildren().size() - 1);
 				subjects.getChildren().get(index).requestFocus();				
@@ -127,8 +131,8 @@ public class ConversationModule extends Module {
 			event.consume();
 			break;
 		case UP: 
-			if (index == 0) {
-				scroller.setVvalue(scroller.getVvalue() - 0.1);
+			if (index <= 0) {
+				scroller.setVvalue(scroller.getVvalue() - step);
 			} else {
 				index = Math.max(index - 1, 0);
 				subjects.getChildren().get(index).requestFocus();

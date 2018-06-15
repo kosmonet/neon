@@ -31,8 +31,6 @@ import neon.util.spatial.RegionSpatialIndex;
 /**
  * An event containing updates for the client.
  * 
- * TODO: niet-primitieve klasses serialiseren
- * 
  * @author mdriesen
  *
  */
