@@ -39,7 +39,7 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Item;
 
@@ -102,7 +102,7 @@ public class InventoryModule extends Module {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
-		bus.post(new ServerEvent.Inventory());
+		bus.post(new NeonEvent.Inventory());
 		ui.showScene(scene);
 	}
 

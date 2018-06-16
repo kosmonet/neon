@@ -24,7 +24,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InventoryEvent;
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Player;
 
@@ -44,7 +44,7 @@ public class InventorySystem {
 	}
 	
 	@Subscribe
-	private void postInventory(ServerEvent.Inventory event) {
+	private void postInventory(NeonEvent.Inventory event) {
 		Player player = entities.getEntity(0);
 		ArrayList<Long> items = new ArrayList<>();
 		items.addAll(player.inventory.getItems());

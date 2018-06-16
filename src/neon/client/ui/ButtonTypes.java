@@ -28,8 +28,8 @@ public class ButtonTypes {
 	public final static ButtonType ride = new ButtonType("Ride animal");
 	public final static ButtonType swap = new ButtonType("Swap position");
 	
-	public final static ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-	public final static ButtonType yes = new ButtonType("Yes", ButtonData.NO);
-	public final static ButtonType no = new ButtonType("No", ButtonData.NO);
+	public final static ButtonType cancel = new ButtonType("Cancel");
+	public final static ButtonType yes = new ButtonType("Yes");
+	public final static ButtonType no = new ButtonType("No");
 	
 }

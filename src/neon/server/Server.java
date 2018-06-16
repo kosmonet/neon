@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -110,6 +111,11 @@ public class Server implements Runnable {
 		while(true) {
 			bus.post(socket.getEvent());
 		}
+	}
+	
+	@Subscribe
+	private void monitor(DeadEvent event) {
+		logger.warning("server received a dead event: " + event.getEvent());
 	}
 	
 	/**

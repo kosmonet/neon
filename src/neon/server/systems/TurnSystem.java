@@ -25,7 +25,7 @@ import java.util.HashSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ServerEvent;
+import neon.common.event.NeonEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.resources.CGame;
@@ -60,12 +60,12 @@ public class TurnSystem implements NeonSystem {
 	}
 	
 	@Subscribe
-	private void setMode(ServerEvent.Pause event) {
+	private void setMode(NeonEvent.Pause event) {
 		mode = GameMode.TURN_BASED;
 	}
 	
 	@Subscribe
-	private void setMode(ServerEvent.Unpause event) {
+	private void setMode(NeonEvent.Unpause event) {
 		mode = GameMode.REAL_TIME;
 	}
 	

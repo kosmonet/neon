@@ -103,7 +103,7 @@ public class ConversationModule extends Module {
 		for (Entry<String, String> topic : event.getTopics().entrySet()) {
 			Hyperlink link = new Hyperlink(topic.getValue());
 			subjects.getChildren().add(link);
-			link.setOnAction(action -> System.out.println("clickety"));			
+			link.setOnAction(action -> bus.post(new ConversationEvent.Answer(topic.getKey())));			
 		}
 		
 		index = 0;

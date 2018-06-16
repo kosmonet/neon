@@ -65,7 +65,7 @@ public class ConversationSystem implements NeonSystem {
 	}
 
 	@Subscribe
-	private void answer(ConversationEvent event) {
-		
+	private void answer(ConversationEvent.Answer event) {
+		System.out.println("Answer: " + event.getAnswer());
 	}
 }

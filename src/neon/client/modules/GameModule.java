@@ -43,9 +43,9 @@ import neon.client.ui.ClientRenderer;
 import neon.common.event.CollisionEvent;
 import neon.common.event.CombatEvent;
 import neon.common.event.InputEvent;
+import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
-import neon.common.event.ServerEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceManager;
@@ -161,17 +161,17 @@ public class GameModule extends Module {
 	private void pause() {
 		if (paused) {
 			paused = false;
-			bus.post(new ServerEvent.Unpause());
+			bus.post(new NeonEvent.Unpause());
 		} else {
 			paused = true;
-			bus.post(new ServerEvent.Pause());
+			bus.post(new NeonEvent.Pause());
 		}
 	}
 	
 	private void quit() {
 		// pause the server
 		if (!paused) {
-			bus.post(new ServerEvent.Pause());
+			bus.post(new NeonEvent.Pause());
 		}
 		
 		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
@@ -187,7 +187,7 @@ public class GameModule extends Module {
 		
 		// unpause if necessary
 		if (!paused) {
-			bus.post(new ServerEvent.Unpause());
+			bus.post(new NeonEvent.Unpause());
 		}
 	}
 	
@@ -195,7 +195,7 @@ public class GameModule extends Module {
 	private void collide(CollisionEvent event) {
 		// pause the server
 		if (!paused) {
-			bus.post(new ServerEvent.Pause());
+			bus.post(new NeonEvent.Pause());
 		}
 		
 		Creature one = provider.getEntity(event.getBumper());
@@ -237,7 +237,7 @@ public class GameModule extends Module {
 
 		// unpause if necessary
 		if (!paused) {
-			bus.post(new ServerEvent.Unpause());
+			bus.post(new NeonEvent.Unpause());
 		}
 	}
 	
@@ -248,7 +248,7 @@ public class GameModule extends Module {
 		
 		// unpause the server when returning to the game module
 		if (!paused) {
-			bus.post(new ServerEvent.Unpause());
+			bus.post(new NeonEvent.Unpause());
 		}
 	}
 
@@ -256,6 +256,6 @@ public class GameModule extends Module {
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting game module");
 		// pause the server when leaving the game module
-		bus.post(new ServerEvent.Pause());
+		bus.post(new NeonEvent.Pause());
 	}
 }

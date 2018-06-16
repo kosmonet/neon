@@ -89,14 +89,17 @@ public class NeonFileSystem {
 	}
 	
 	/**
-	 * Sets the path to the temporary folder.
+	 * Sets the path to the temporary folder. If the file system is writable,
+	 * the folder will also be emptied.
 	 * 
 	 * @param path
 	 * @throws IOException 
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
 		// delete contents of existing temp folder
-		FileUtils.clearFolder(path);
+		if (writable) {
+			FileUtils.clearFolder(path);
+		}
 
 		// create new temp folder if it didn't exist
 		Files.createDirectories(path);

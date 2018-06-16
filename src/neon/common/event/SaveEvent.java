@@ -19,5 +19,5 @@
 package neon.common.event;
 
 public class SaveEvent extends NeonEvent {
-
+	
 }
