@@ -38,7 +38,13 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 		String text = root.getChild("graphics").getAttributeValue("text");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		String name = root.getAttributeValue("name");
-		return new RTerrain(id, name, text, color);
+		RTerrain terrain = new RTerrain(id, name, text, color);
+		
+		for (Element modifier : root.getChildren("modifier")) {
+			terrain.addModifier(RTerrain.Modifier.valueOf(modifier.getText().toUpperCase()));
+		}
+		
+		return terrain;
 	}
 
 	@Override
@@ -51,6 +57,12 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 		graphics.setAttribute("text", terrain.getText());
 		graphics.setAttribute("color", Graphics.getColorString(terrain.getColor()));
 		root.addContent(graphics);
+		
+		for (RTerrain.Modifier modifier : terrain.getModifiers()) {
+			Element mod = new Element("modifier");
+			mod.setText(modifier.toString());
+			root.addContent(mod);
+		}
 		
 		return root;
 	}

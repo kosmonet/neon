@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,6 +18,9 @@
 
 package neon.common.resources;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.paint.Color;
 
 /**
@@ -27,15 +30,32 @@ import javafx.scene.paint.Color;
  *
  */
 public class RTerrain extends Resource {
+	public enum Modifier {
+		LIQUID;
+	}
+	
 	private final Color color;
 	private final String text;
 	private final String name;
+	private final Set<Modifier> modifiers = new HashSet<>();
 	
 	public RTerrain(String id, String name, String text, Color color) {
 		super(id, "terrain");
 		this.color = color;
 		this.text = text;
 		this.name = name;
+	}
+	
+	public void addModifier(Modifier modifier) {
+		modifiers.add(modifier);
+	}
+	
+	public boolean hasModifier(Modifier modifier) {
+		return modifiers.contains(modifier);
+	}
+	
+	public Set<Modifier> getModifiers() {
+		return modifiers;
 	}
 	
 	public String getName() {

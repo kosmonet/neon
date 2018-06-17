@@ -18,12 +18,15 @@
 
 package neon.server.systems;
 
-import java.awt.Point;
+import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 
 import neon.common.event.CollisionEvent;
 import neon.common.resources.RMap;
+import neon.common.resources.RTerrain;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.Action;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
@@ -37,10 +40,14 @@ import neon.util.Direction;
  *
  */
 public class MovementSystem {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final EventBus bus;
 	private final EntityProvider entities;
+	private final ResourceManager resources;
 	
-	public MovementSystem(EntityProvider entities, EventBus bus) {
+	public MovementSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
+		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
 	}
@@ -69,8 +76,11 @@ public class MovementSystem {
 				}
 			}
 		} else {
-			player.shape.setPosition(x, y, z);
-			player.stats.perform(Action.MOVE_STRAIGHT);			
+			try {
+				move(player, map, x, y, z);
+			} catch (ResourceException e) {
+				logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
+			}
 		}
 	}
 
@@ -79,14 +89,25 @@ public class MovementSystem {
 	 * 
 	 * @param event
 	 */
-	public void move(Creature creature, Point position, RMap map) {
-		if (creature.shape.getX() == position.x || creature.shape.getY() == position.y) {
-			creature.stats.perform(Action.MOVE_STRAIGHT);			
-		} else {
-			creature.stats.perform(Action.MOVE_DIAGONAL);				
+	public void move(Creature creature, int x, int y, RMap map) {
+		try {
+			move(creature, map, x, y, creature.shape.getZ());
+			map.moveEntity(creature.uid, x, y);
+		} catch (ResourceException e) {
+			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
 		}
-		creature.shape.setX(position.x);
-		creature.shape.setY(position.y);
-		map.moveEntity(creature.uid, position.x, position.y);
+	}
+	
+	private void move(Creature creature, RMap map, int x, int y, int z) throws ResourceException {
+		if (creature.shape.getX() == x || creature.shape.getY() == y) {
+			creature.stats.perform(Action.MOVE_STRAIGHT);
+		} else {
+			creature.stats.perform(Action.MOVE_DIAGONAL);
+		}
+
+		RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
+		if (!terrain.hasModifier(RTerrain.Modifier.LIQUID)) {				
+			creature.shape.setPosition(x, y, z);				
+		}
 	}
 }
