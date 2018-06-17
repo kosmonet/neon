@@ -29,13 +29,19 @@ import neon.util.Direction;
 public class InputEvent extends NeonEvent {
 	public static class Move extends InputEvent {
 		private final Direction direction;
+		private final String map;
 		
-		public Move(Direction direction) {
+		public Move(Direction direction, String map) {
 			this.direction = direction;
+			this.map = map;
 		}
 		
 		public Direction getDirection() {
 			return direction;
+		}
+		
+		public String getMap() {
+			return map;
 		}
 	}
 }

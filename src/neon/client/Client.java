@@ -41,6 +41,7 @@ import neon.client.modules.Module;
 import neon.client.modules.NewGameModule;
 import neon.client.modules.Transition;
 import neon.client.modules.TransitionEvent;
+import neon.client.resource.MapLoader;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
@@ -61,7 +62,7 @@ public class Client implements Runnable {
 	private final UserInterface ui;
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
 	private final ResourceManager resources = new ResourceManager(files);
-	
+
 	/**
 	 * Initializes the client.
 	 * 
@@ -92,6 +93,7 @@ public class Client implements Runnable {
 		resources.addLoader("creatures", new CreatureLoader());
 		resources.addLoader("items", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
+		resources.addLoader("maps", new MapLoader());
 		
 		// initialize all modules and enter the first one
 		initModules(version);
@@ -112,7 +114,7 @@ public class Client implements Runnable {
 	
 	private void initModules(String version) {
 		ClientProvider provider = new ClientProvider();
-		
+
 		// client uses the first module in the list as the start state
 		MainMenuModule mainMenu = new MainMenuModule(ui, version, bus);
 		modules.add(mainMenu);

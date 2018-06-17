@@ -24,8 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
@@ -48,11 +46,10 @@ import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.RModule;
-import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
-import neon.entity.entities.Entity;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
@@ -225,32 +222,23 @@ public class GameLoader {
 	 * @throws ResourceException
 	 */
 	private void notifyClient(RMap map) throws ResourceException {
-		// collect all necessary resources to start the game
-		Set<Resource> clientResources = new HashSet<>();
-		clientResources.add(resources.getResource("config", "game"));
-		clientResources.add(map);
-		
-		// add all terrain resources
-		for (String terrain : map.getTerrain().getElements().values()) {
-			clientResources.add(resources.getResource("terrain", terrain));
-		}
-		
-		// collect all the necessary entities
-		Set<Entity> clientEntities = new HashSet<>();
-		
+		// tell the client to start loading the map
 		Player player = entities.getEntity(0);
-		clientEntities.add(player);
-		for (long item : player.inventory.getItems()) {
-			clientEntities.add(entities.getEntity(item));			
+		bus.post(new UpdateEvent.Start(player));
+
+		// then send the map
+		bus.post(new UpdateEvent.Map(map));
+
+		// then everything else
+		for (long uid : player.inventory.getItems()) {
+			Item item = entities.getEntity(uid);			
+			bus.post(new UpdateEvent.Item(uid, item.info.getResource().id));
 		}
 
-		for (Long uid : map.getEntities()) {
-			clientEntities.add(entities.getEntity(uid));
-		}
-
-		// tell the client everything is ready
-		bus.post(new UpdateEvent.Start());
-		bus.post(new UpdateEvent.Map(map, clientResources, clientEntities));		
+		for (long uid : map.getEntities()) {
+			Creature creature = entities.getEntity(uid);
+			bus.post(new UpdateEvent.Creature(uid, creature.info.getResource().id, map.id, creature.shape.getX(), creature.shape.getY(), creature.shape.getZ()));
+		}		
 	}
 	
 	/**

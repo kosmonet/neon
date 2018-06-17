@@ -120,7 +120,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		
 		Element entities = new Element("entities");
 		root.addContent(entities);
-		for (Long uid : map.getEntities()) {
+		for (long uid : map.getEntities()) {
 			String type = "entity";
 			
 			if (tracker.getEntity(uid) instanceof Creature) {

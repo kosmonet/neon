@@ -113,7 +113,7 @@ public class RMap extends Resource{
 		return entities.get(bounds);
 	}
 	
-	public void moveEntity(Long uid, int x, int y) {
+	public void moveEntity(long uid, int x, int y) {
 		entities.move(uid, new Point(x, y));
 	}
 	

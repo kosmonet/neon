@@ -50,7 +50,7 @@ public class DescriptionLabel extends Label {
 	public void update(Item item) {
 		if(item != null) {
 			// create the image like it would show in-game on the ground
-			Image image = TextureFactory.getImage(60, item.graphics.getColor(), item.graphics.getText());
+			Image image = TextureFactory.getImage(60, item.graphics.getColor(), item.graphics.getGlyph());
 			setGraphic(new ImageView(image));
 			
 			StringBuffer description = new StringBuffer();
@@ -73,7 +73,7 @@ public class DescriptionLabel extends Label {
 	public void update(Creature creature) {
 		if(creature != null) {
 			// create the image like it would show in-game on the ground
-			Image image = TextureFactory.getImage(60, creature.graphics.getColor(), creature.graphics.getText());
+			Image image = TextureFactory.getImage(60, creature.graphics.getColor(), creature.graphics.getGlyph());
 			setGraphic(new ImageView(image));
 			
 			StringBuffer description = new StringBuffer();

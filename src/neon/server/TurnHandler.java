@@ -16,11 +16,9 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.handlers;
+package neon.server;
 
 import java.awt.Rectangle;
-import java.util.Collection;
-import java.util.HashSet;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -37,16 +35,15 @@ import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
-import neon.server.GameMode;
 import neon.server.systems.AISystem;
 
 /**
- * Handler to handle new turns (the game loop, basically).
+ * Handles new turns (the game loop, basically).
  * 
  * @author mdriesen
  * 
  */
-public class TurnHandler {
+class TurnHandler {
 	private final ResourceManager resources;
 	private final EntityProvider entities;
 	private final EventBus bus;
@@ -54,7 +51,7 @@ public class TurnHandler {
 	
 	private GameMode mode = GameMode.TURN_BASED;
 	
-	public TurnHandler(ResourceManager resources, EntityProvider entities, EventBus bus, AISystem ai) {
+	TurnHandler(ResourceManager resources, EntityProvider entities, EventBus bus, AISystem ai) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
@@ -103,12 +100,8 @@ public class TurnHandler {
 		
 		// get all entities in the player's neighbourhood
 		Rectangle bounds = new Rectangle(player.shape.getX() - 50, player.shape.getY() - 50, 100, 100);
-		Collection<Entity> changed = new HashSet<Entity>();
-		
 		for (long uid : map.getEntities(bounds)) {
 			Entity entity = entities.getEntity(uid);
-			changed.add(entity);
-
 			if (entity instanceof Creature) {
 				// reset the creature's action points
 				Creature creature = (Creature) entity;
@@ -118,10 +111,10 @@ public class TurnHandler {
 				if(creature.stats.isActive()) {
 					ai.act(creature, map);
 				}
+				
+				// let the client know that an entity has moved
+				bus.post(new UpdateEvent.Move(uid, creature.shape.getX(), creature.shape.getY(), creature.shape.getZ()));
 			}
 		}
-
-		// let the client know that entities have changed and should be redrawn
-		bus.post(new UpdateEvent.Entities(changed));
 	}
 }

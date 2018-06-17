@@ -36,7 +36,7 @@ public class EditorRenderer implements EntityRenderer {
 		if (entity instanceof ICreature) {
 			ICreature creature = (ICreature) entity;
 			GraphicsContext gc = layers.get(creature.shape.getZ()).getGraphicsContext2D();
-			Image image = TextureFactory.getImage(scale, creature.graphics.getColor(), creature.graphics.getText());
+			Image image = TextureFactory.getImage(scale, creature.graphics.getColor(), creature.graphics.getGlyph());
 			gc.clearRect(scale*(creature.shape.getX() - xmin) + 1, scale*(creature.shape.getY() - ymin) + 1, scale - 1, scale - 1);
 			gc.drawImage(image, scale*(creature.shape.getX() - xmin), scale*(creature.shape.getY() - ymin));			
 		}		

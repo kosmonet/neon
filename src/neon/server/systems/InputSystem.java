@@ -24,6 +24,8 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.InputEvent;
 import neon.common.event.TurnEvent;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
@@ -32,34 +34,31 @@ public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;
 	private final EventBus bus;
 	private final MovementSystem mover;
+	private final ResourceManager resources;
 	
-	private RMap map;
-	
-	public InputSystem(EntityProvider entities, EventBus bus, MovementSystem mover) {
+	public InputSystem(ResourceManager resources, EntityProvider entities, EventBus bus, MovementSystem mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;
-	}
-	
-	@Subscribe
-	private void changeMap(UpdateEvent.Map event) {
-		map = event.getMap();
+		this.resources = resources;
 	}
 	
 	/**
 	 * Moves the player on the current map.
 	 * 
 	 * @param event
+	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void move(InputEvent.Move event) {
+	private void move(InputEvent.Move event) throws ResourceException {
 		Player player = (Player) entities.getEntity(0);
 		
 		if(player.stats.isActive()) {
+			RMap map = resources.getResource("maps", event.getMap());
 			mover.move(player, event.getDirection(), map);
 
 			// signal the client that an entity was updated
-			bus.post(new UpdateEvent.Entities(player));
+			bus.post(new UpdateEvent.Move(0, player.shape.getX(), player.shape.getY(), player.shape.getZ()));
 		}
 
 		// check if the player still has action points left after moving

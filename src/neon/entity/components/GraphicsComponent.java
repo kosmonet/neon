@@ -22,12 +22,12 @@ import javafx.scene.paint.Color;
 
 public class GraphicsComponent implements Component {
 	private final long uid;
-	private final String text;
+	private final String glyph;
 	private final Color color;
 	
-	public GraphicsComponent(long uid, String text, Color color) {
+	public GraphicsComponent(long uid, String glyph, Color color) {
 		this.uid = uid;
-		this.text = text;
+		this.glyph = glyph;
 		this.color = color;
 	}
 	
@@ -40,7 +40,7 @@ public class GraphicsComponent implements Component {
 		return color;
 	}
 
-	public String getText() {
-		return text;
+	public String getGlyph() {
+		return glyph;
 	}
 }

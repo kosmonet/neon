@@ -52,6 +52,15 @@ public class ClientProvider implements EntityProvider {
 		}
 	}
 	
+	/**
+	 * Adds an entity to this provider.
+	 * 
+	 * @param entity
+	 */
+	public void addEntity(Entity entity) {
+		entities.put(entity.uid, entity);
+	}
+	
 	@Override @SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
 		return (T) entities.get(uid);
@@ -60,5 +69,15 @@ public class ClientProvider implements EntityProvider {
 	@Override
 	public Collection<Entity> getEntities() {
 		return entities.values();
+	}
+	
+	/**
+	 * Checks whether an entity with the given uid already exists.
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public boolean hasEntity(long uid) {
+		return entities.containsKey(uid);
 	}
 }

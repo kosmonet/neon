@@ -48,8 +48,10 @@ import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.entities.Creature;
+import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
@@ -66,6 +68,7 @@ public class GameModule extends Module {
 	private final EventBus bus;
 	private final ClientProvider provider;
 	private final RenderPane renderPane;
+	private final ResourceManager resources;
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
@@ -80,6 +83,7 @@ public class GameModule extends Module {
 		this.ui = ui;
 		this.bus = bus;
 		this.provider = provider;
+		this.resources = resources;
 		renderPane = new RenderPane(resources, new ClientRenderer());
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
@@ -105,7 +109,12 @@ public class GameModule extends Module {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Start event) {
+	private void update(UpdateEvent.Start event) throws ResourceException {
+		// prepare the player
+		Player player = new Player("", "", resources.getResource("creatures", event.id));
+		player.shape.setPosition(event.x, event.y, event.z);
+		provider.addEntity(player);
+		
 		// prepare the scene
 		stack.getChildren().clear();
 		renderPane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
@@ -115,31 +124,56 @@ public class GameModule extends Module {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Map event) {
-		// store all resources and entities
-		provider.clear();
-		provider.addEntities(event.getEntities());
-		
-		map = event.getMap();
-		
-		renderPane.setMap(event.getTerrain(), event.getElevation(), provider.getEntities());		
+	private void update(UpdateEvent.Map event) throws ResourceException {
+		map = resources.getResource("maps", event.getMap());
+		renderPane.setMap(map.getTerrain(), map.getElevation(), provider.getEntities());		
 		redraw();
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Entities event) {
-		// store all changed entities
-		provider.addEntities(event.getEntities());
+	private void update(UpdateEvent.Creature event) throws ResourceException {
+		if(provider.hasEntity(event.uid)) {
+			Creature creature = provider.getEntity(event.uid);
+			creature.shape.setPosition(event.x, event.y, event.z);
+			map.moveEntity(event.uid, event.x, event.y);
+		} else {
+			Creature creature = new Creature(event.uid, resources.getResource("creatures", event.id));
+			creature.shape.setPosition(event.x, event.y, event.z);
+			map.addEntity(event.uid, event.x, event.y);
+			provider.addEntity(creature);
+		}
+
 		renderPane.updateMap(provider.getEntities());
 		redraw();
 	}
 	
+	@Subscribe
+	private void update(UpdateEvent.Move event) throws ResourceException {
+		if (event.uid == 0) {
+			Creature creature = provider.getEntity(event.uid);
+			creature.shape.setPosition(event.x, event.y, event.z);			
+		} else if (provider.hasEntity(event.uid)) {
+			Creature creature = provider.getEntity(event.uid);
+			creature.shape.setPosition(event.x, event.y, event.z);
+			map.moveEntity(event.uid, event.x, event.y);
+		} 
+		redraw();
+	}
+	
+	@Subscribe
+	private void update(UpdateEvent.Item event) throws ResourceException {
+		if(!provider.hasEntity(event.uid)) {
+			Item item = new Item(event.uid, resources.getResource("items", event.id));
+			provider.addEntity(item);
+		}
+	}
+	
 	private void move(Direction direction) {
-		bus.post(new InputEvent.Move(direction));
+		bus.post(new InputEvent.Move(direction, map.id));
 	}
 	
 	private void redraw() {
-		Player player = (Player) provider.getEntity(0);
+		Player player = provider.getEntity(0);
 		modeLabel.setText(player.record.getMode().toString());
 		int xpos = Math.max(0, (int) (player.shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (player.shape.getY() - renderPane.getHeight()/(2*scale)));

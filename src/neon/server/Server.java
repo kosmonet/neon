@@ -42,7 +42,6 @@ import neon.server.handlers.ConversationHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.ScriptHandler;
-import neon.server.handlers.TurnHandler;
 import neon.server.systems.AISystem;
 import neon.server.systems.CombatSystem;
 import neon.server.systems.InputSystem;
@@ -87,7 +86,7 @@ public class Server implements Runnable {
 
 		bus.register(new InventoryHandler(entities, bus));
 		bus.register(new TurnHandler(resources, entities, bus, new AISystem(mover)));
-		bus.register(new InputSystem(entities, bus, mover));
+		bus.register(new InputSystem(resources, entities, bus, mover));
 		bus.register(new CombatSystem(entities));
 		bus.register(new ConversationHandler(resources, entities, bus));
 		
