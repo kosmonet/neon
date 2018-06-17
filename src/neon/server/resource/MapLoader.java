@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.resource;
 
 import java.awt.Rectangle;
 import java.util.Map;
@@ -31,6 +31,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
 import neon.entity.entities.Creature;
+import neon.server.EntityTracker;
 
 /**
  * A loader for map resources.
@@ -38,12 +39,12 @@ import neon.entity.entities.Creature;
  * @author mdriesen
  *
  */
-class MapLoader implements ResourceLoader<RMap> {
+public class MapLoader implements ResourceLoader<RMap> {
 	private final EntityTracker tracker;
 	private final ResourceManager resources;
 	private final CServer config;
 	
-	MapLoader(EntityTracker entities, ResourceManager resources, CServer config) {
+	public MapLoader(EntityTracker entities, ResourceManager resources, CServer config) {
 		tracker = entities;
 		this.resources = resources;
 		this.config = config;

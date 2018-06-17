@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.services;
+package neon.server.systems;
 
 import java.awt.Point;
 
@@ -36,11 +36,11 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class MovementService {
+public class MovementSystem {
 	private final EventBus bus;
 	private final EntityProvider entities;
 	
-	public MovementService(EntityProvider entities, EventBus bus) {
+	public MovementSystem(EntityProvider entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 	}

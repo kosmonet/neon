@@ -43,7 +43,7 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
+public class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
@@ -62,7 +62,7 @@ class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 		}
 	}
 	
-	void addEntity(Entity entity) {
+	public void addEntity(Entity entity) {
 		entities.put(entity.uid, entity);
 	}
 	
@@ -89,7 +89,7 @@ class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
 	/**
 	 * Stores all remaining entities in the cache in the temp folder on disk.
 	 */
-	void flush() {
+	public void flush() {
 		for (Entity entity : entities.asMap().values()) {
 			saveEntity(entity);
 		}

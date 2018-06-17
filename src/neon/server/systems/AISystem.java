@@ -21,31 +21,25 @@ package neon.server.systems;
 import java.awt.Point;
 import java.util.Random;
 
-import com.google.common.eventbus.Subscribe;
-
+import neon.common.resources.RMap;
 import neon.entity.entities.Creature;
-import neon.server.events.ThinkEvent;
-import neon.server.services.MovementService;
 
 public class AISystem implements NeonSystem {
 	private final Random random = new Random();
-	private final MovementService mover;
+	private final MovementSystem mover;
 	
-	public AISystem(MovementService mover) {
+	public AISystem(MovementSystem mover) {
 		this.mover = mover;
 	}
 	
-	@Subscribe
-	private void act(ThinkEvent event) {
-		Creature creature = event.creature;
-		
+	public void act(Creature creature, RMap map) {
 		while(creature.stats.isActive()) {
 			// move the creature
 			int x = creature.shape.getX() + random.nextInt(3) - 1;
 			int y = creature.shape.getY() + random.nextInt(3) - 1;
 			x = creature.shape.getX();
 			y = creature.shape.getY();
-			mover.move(creature, new Point(x, y), event.map);
+			mover.move(creature, new Point(x, y), map);
 		}
 	}
 }

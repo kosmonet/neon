@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +56,7 @@ import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
+import neon.server.EntityTracker;
 
 /**
  * This class takes care of starting new games, loading old games and saving
@@ -64,7 +65,7 @@ import neon.entity.events.UpdateEvent;
  * @author mdriesen
  * 
  */
-class GameLoader {
+public class GameLoader {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;
@@ -81,7 +82,7 @@ class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	GameLoader(NeonFileSystem files, ResourceManager resources, EntityTracker entities, EventBus bus) {
+	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityTracker entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;

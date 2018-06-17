@@ -27,16 +27,15 @@ import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
-import neon.server.services.MovementService;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;
 	private final EventBus bus;
-	private final MovementService mover;
+	private final MovementSystem mover;
 	
 	private RMap map;
 	
-	public InputSystem(EntityProvider entities, EventBus bus, MovementService mover) {
+	public InputSystem(EntityProvider entities, EventBus bus, MovementSystem mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;

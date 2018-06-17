@@ -38,13 +38,15 @@ import neon.common.resources.CClient;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.server.services.MovementService;
+import neon.server.handlers.ConversationHandler;
+import neon.server.handlers.GameLoader;
+import neon.server.handlers.InventoryHandler;
+import neon.server.handlers.ScriptHandler;
+import neon.server.handlers.TurnHandler;
 import neon.server.systems.AISystem;
 import neon.server.systems.CombatSystem;
-import neon.server.systems.ConversationSystem;
 import neon.server.systems.InputSystem;
-import neon.server.systems.InventorySystem;
-import neon.server.systems.TurnSystem;
+import neon.server.systems.MovementSystem;
 
 /**
  * The server part of the neon engine.
@@ -81,14 +83,13 @@ public class Server implements Runnable {
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
 		
-		MovementService mover = new MovementService(entities, bus);
+		MovementSystem mover = new MovementSystem(entities, bus);
 
-		bus.register(new InventorySystem(entities, bus));
-		bus.register(new TurnSystem(resources, entities, bus));
-		bus.register(new AISystem(mover));
+		bus.register(new InventoryHandler(entities, bus));
+		bus.register(new TurnHandler(resources, entities, bus, new AISystem(mover)));
 		bus.register(new InputSystem(entities, bus, mover));
 		bus.register(new CombatSystem(entities));
-		bus.register(new ConversationSystem(resources, entities, bus));
+		bus.register(new ConversationHandler(resources, entities, bus));
 		
 		// send configuration message to the client
 		try {

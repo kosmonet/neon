@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.systems;
+package neon.server.handlers;
 
 import java.util.HashMap;
 
@@ -31,12 +31,12 @@ import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 
-public class ConversationSystem implements NeonSystem {
+public class ConversationHandler {
 	private final EntityProvider entities;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public ConversationSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	public ConversationHandler(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 		this.resources = resources;

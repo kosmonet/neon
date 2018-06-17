@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.handlers;
 
 import java.util.logging.Logger;
 
@@ -30,13 +30,13 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.console.ConsoleEvent;
 import neon.common.event.ScriptEvent;
 
-class ScriptHandler {
+public class ScriptHandler {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 	private final EventBus bus;
 	
-	ScriptHandler(EventBus bus) {
+	public ScriptHandler(EventBus bus) {
 		this.bus = bus;
 	}
 	

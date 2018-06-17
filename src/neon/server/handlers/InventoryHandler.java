@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.systems;
+package neon.server.handlers;
 
 import java.util.ArrayList;
 
@@ -29,16 +29,16 @@ import neon.entity.EntityProvider;
 import neon.entity.entities.Player;
 
 /**
- * This system handles the inventory-related server bits.
+ * This class handles the inventory-related server bits.
  * 
  * @author mdriesen
  *
  */
-public class InventorySystem {
+public class InventoryHandler {
 	private final EventBus bus;
 	private final EntityProvider entities;
 	
-	public InventorySystem(EntityProvider entities, EventBus bus) {
+	public InventoryHandler(EntityProvider entities, EventBus bus) {
 		this.bus = bus;
 		this.entities = entities;
 	}
