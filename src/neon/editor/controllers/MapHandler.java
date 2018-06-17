@@ -138,8 +138,9 @@ public class MapHandler {
 		mapTree.setShowRoot(false);
 		mapTree.setRoot(root);
 		mapTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("map", new MapLoader(resources));
-		resources.addLoader("creature", new CreatureLoader());
+		resources.addLoader("maps", new MapLoader(resources));
+		// TODO: creatureloader hoort hier niet thuis
+		resources.addLoader("creatures", new CreatureLoader());
 
 		for (Card card : cards.get("maps")) {
 			root.getChildren().add(new TreeItem<Card>(card));

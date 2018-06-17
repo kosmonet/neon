@@ -202,7 +202,7 @@ public class NeonFileSystem {
 		
 		// check if the parent folder already exists, and if not, create it
 		Path parent = Paths.get(temporary.toString(), path).getParent();
-		if (!Files.exists(parent)) {
+		if (parent != null && !Files.exists(parent)) {
 			logger.fine("creating folder " + parent + " for file " + Arrays.toString(path));
 			Files.createDirectories(parent);
 		}

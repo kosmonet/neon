@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -27,11 +27,14 @@ import com.google.common.eventbus.Subscribe;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -133,6 +136,18 @@ public class UserInterface {
 	 */
 	public Optional<ButtonType> showQuestion(String message, ButtonType... buttons) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		
+		// change the button order in the alert to center align the buttons
+        DialogPane dialogPane = new DialogPane() {
+            @Override
+            protected Node createButtonBar() {
+                ButtonBar buttonBar = (ButtonBar) super.createButtonBar();
+                buttonBar.setButtonOrder("U+");
+                return buttonBar;
+            }
+        };
+        
+        alert.setDialogPane(dialogPane);
 		alert.initOwner(stage);
 		alert.setHeaderText(null);
 		alert.setContentText(message);

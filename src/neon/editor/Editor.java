@@ -77,7 +77,7 @@ public class Editor extends Application {
 			logger.severe("could not set the temporary folder");			
 		}
 		
-		resources.addLoader("module", new ModuleLoader());
+		resources.addLoader("global", new ModuleLoader());
 	}
 	
 	@Override

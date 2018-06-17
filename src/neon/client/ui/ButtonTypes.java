@@ -19,7 +19,6 @@
 package neon.client.ui;
 
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ButtonBar.ButtonData;
 
 public class ButtonTypes {
 	public final static ButtonType talk = new ButtonType("Talk");

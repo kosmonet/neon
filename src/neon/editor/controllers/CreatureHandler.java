@@ -105,7 +105,7 @@ public class CreatureHandler {
 		creatureTree.setShowRoot(false);
 		creatureTree.setRoot(root);
 		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("creature", new CreatureLoader());
+		resources.addLoader("creatures", new CreatureLoader());
 
 		for (Card card : cards.get("creatures")) {
 			root.getChildren().add(new TreeItem<Card>(card));

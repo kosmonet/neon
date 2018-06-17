@@ -85,7 +85,7 @@ public class ItemHandler {
 		itemTree.setShowRoot(false);
 		itemTree.setRoot(root);
 		itemTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("item", new ItemLoader());
+		resources.addLoader("items", new ItemLoader());
 		
 		root.getChildren().add(items);
 		root.getChildren().add(doors);
