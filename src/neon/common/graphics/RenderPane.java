@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ package neon.common.graphics;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
@@ -30,6 +32,7 @@ import javafx.scene.layout.StackPane;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.entities.Entity;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
@@ -44,15 +47,16 @@ public class RenderPane extends StackPane {
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;
-	private final EntityRenderer renderer;
+	private final EntityRenderer<Entity> renderer;
 	
 	private RegionQuadTree<String> terrain;
 	private RegionSpatialIndex<Integer> elevation;
-	private Collection<? extends Object> entities;
+	private SortedSet<Entity> entities;
 	
-	public RenderPane(ResourceManager resources, EntityRenderer renderer) {
+	public RenderPane(ResourceManager resources, EntityRenderer<Entity> renderer) {
 		this.resources = resources;
 		this.renderer = renderer;
+		entities = new TreeSet<>(renderer.getComparator());
 		double parallax = 1.02;
 		
 		for (int i = -5; i < 4; i++) {
@@ -68,15 +72,17 @@ public class RenderPane extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionQuadTree<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Object> entities) {
+	public void setMap(RegionQuadTree<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Entity> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
-		this.entities = entities;
+		this.entities.clear();
+		this.entities.addAll(entities);
 		
 	}
 	
-	public void updateMap(Collection<? extends Object> entities) {
-		this.entities = entities;
+	public void updateMap(Collection<? extends Entity> entities) {
+		this.entities.clear();
+		this.entities.addAll(entities);
 	}
 	
 	/**
@@ -93,7 +99,7 @@ public class RenderPane extends StackPane {
 		
 		drawMap(xmin, ymin, scale);
 		
-		for (Object entity : entities) {
+		for (Entity entity : entities) {
 			renderer.drawEntity(entity, xmin, ymin, scale);
 		}
 	}
@@ -118,5 +124,18 @@ public class RenderPane extends StackPane {
 				}
 			}
 		}		
+	}
+	
+	/**
+	 * A resizable JavaFX {@code Canvas}.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public class RenderCanvas extends Canvas {
+		@Override
+		public boolean isResizable() {
+		    return true;
+		}
 	}
 }

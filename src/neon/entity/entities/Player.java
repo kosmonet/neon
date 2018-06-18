@@ -28,8 +28,6 @@ import neon.entity.components.PlayerComponent;
  *
  */
 public class Player extends Creature {
-	public final PlayerComponent record;
-	
 	/**
 	 * Initializes the player character. No uid is needed, the player 
 	 * character always has uid 0.
@@ -40,7 +38,7 @@ public class Player extends Creature {
 	 */
 	public Player(String name, String gender, RCreature species) {
 		super(0, species);
-		record = new PlayerComponent(uid, name, gender);
+		components.put("record", new PlayerComponent(uid, name, gender));
 	}
 	
 	@Override

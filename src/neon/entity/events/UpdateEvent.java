@@ -19,7 +19,10 @@
 package neon.entity.events;
 
 import neon.common.event.NeonEvent;
+import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
+import neon.entity.components.InfoComponent;
+import neon.entity.components.ShapeComponent;
 import neon.entity.entities.Player;
 
 /**
@@ -40,10 +43,12 @@ public abstract class UpdateEvent extends NeonEvent {
 		public final int x, y, z;
 
 		public Start(Player player) {
-			id = player.info.getResource().id;
-			x = player.shape.getX();
-			y = player.shape.getY();
-			z = player.shape.getZ();
+			ShapeComponent shape = player.getComponent("shape");
+			InfoComponent<RCreature> info = player.getComponent("info");
+			id = info.getResource().id;
+			x = shape.getX();
+			y = shape.getY();
+			z = shape.getZ();
 		}
 	}
 	
@@ -73,13 +78,13 @@ public abstract class UpdateEvent extends NeonEvent {
 	 */
 	public static class Creature extends UpdateEvent {
 		public final long uid;
-		public final String id, mapID;
+		public final String id, map;
 		public final int x, y, z;
 		
-		public Creature(long uid, String id, String mapID, int x, int y, int z) {
+		public Creature(long uid, String id, String map, int x, int y, int z) {
 			this.uid = uid;
 			this.id = id;
-			this.mapID = mapID;
+			this.map = map;
 			this.x = x;
 			this.y = y;
 			this.z = z;
@@ -100,11 +105,16 @@ public abstract class UpdateEvent extends NeonEvent {
 	
 	public static class Item extends UpdateEvent {
 		public final long uid;
-		public final String id;
+		public final String id, map;
+		public final int x, y, z;
 		
-		public Item(long uid, String id) {
+		public Item(long uid, String id, String map, int x, int y, int z) {
 			this.uid = uid;
 			this.id = id;
+			this.map = map;
+			this.x = x;
+			this.y = y;
+			this.z = z;
 		}
 	}
 }

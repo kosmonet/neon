@@ -18,21 +18,24 @@
 
 package neon.editor.ui;
 
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.editor.resource.ICreature;
+import neon.entity.entities.Entity;
+import neon.entity.entities.Item;
 
-public class EditorRenderer implements EntityRenderer {
+public class EditorRenderer implements EntityRenderer<Entity> {
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
+	private final EntityComparator comparator = new EntityComparator();
 
 	@Override
-	public void drawEntity(Object entity, int xmin, int ymin, int scale) {
+	public void drawEntity(Entity entity, int xmin, int ymin, int scale) {
 		if (entity instanceof ICreature) {
 			ICreature creature = (ICreature) entity;
 			GraphicsContext gc = layers.get(creature.shape.getZ()).getGraphicsContext2D();
@@ -46,5 +49,22 @@ public class EditorRenderer implements EntityRenderer {
 	public void setLayers(HashMap<Integer, Canvas> layers) {
 		this.layers.clear();
 		this.layers.putAll(layers);
+	}
+
+
+	@Override
+	public Comparator<Entity> getComparator() {
+		return comparator;
+	}
+	
+	private class EntityComparator implements Comparator<Entity> {
+		@Override
+		public int compare(Entity one, Entity two) {
+			if (one.equals(two)) {
+				return 0;
+			} else {
+				return (two instanceof Item) ? 1 : -1;
+			}
+		}		
 	}
 }

@@ -21,16 +21,21 @@ package neon.server.resource;
 import java.awt.Rectangle;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import org.jdom2.Element;
 
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
+import neon.entity.components.ShapeComponent;
 import neon.entity.entities.Creature;
+import neon.entity.entities.Entity;
+import neon.entity.entities.Item;
 import neon.server.EntityTracker;
 
 /**
@@ -40,6 +45,8 @@ import neon.server.EntityTracker;
  *
  */
 public class MapLoader implements ResourceLoader<RMap> {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final EntityTracker tracker;
 	private final ResourceManager resources;
 	private final CServer config;
@@ -192,30 +199,49 @@ public class MapLoader implements ResourceLoader<RMap> {
 	
 	private void initEntitiesFromModule(RMap map, Element entities) {
 		long base = (long) map.uid << 32;
+		
+		// load creatures
 		for (Element entity : entities.getChildren("creature")) {
-			long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
-			int x = Integer.parseInt(entity.getAttributeValue("x"));
-			int y = Integer.parseInt(entity.getAttributeValue("y"));
-			map.addEntity(uid, x, y);
-
 			try {
+				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
 				Creature creature = new Creature(uid, rc);
-				creature.shape.setX(x);
-				creature.shape.setY(y);
+				initEntity(entity, creature.getComponent("shape"), map);
 				tracker.addEntity(creature);
 			} catch (ResourceException e) {
-				throw new IllegalStateException(e);
+				logger.severe("unknown creature on map " + map.id + ": " + entity.getAttributeValue("id"));
 			}
-		}		
+		}
+		
+		// load items
+		for (Element entity : entities.getChildren("item")) {
+			try {
+				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
+				RItem ri = resources.getResource("items", entity.getAttributeValue("id"));
+				Item item = new Item(uid, ri);
+				initEntity(entity, item.getComponent("shape"), map);
+				tracker.addEntity(item);
+			} catch (ResourceException e) {
+				logger.severe("unknown item on map " + map.id + ": " + entity.getAttributeValue("id"));
+			}
+		}
+	}
+	
+	private void initEntity(Element entity, ShapeComponent shape, RMap map) {
+		int x = Integer.parseInt(entity.getAttributeValue("x"));
+		int y = Integer.parseInt(entity.getAttributeValue("y"));
+		map.addEntity(shape.getEntity(), x, y);		
+		shape.setX(x);
+		shape.setY(y);
 	}
 	
 	private void initEntitiesFromSave(RMap map, Element entities) {
-		for (Element entity : entities.getChildren("creature")) {
-			long uid = Integer.parseInt(entity.getAttributeValue("uid"));
-			Creature creature = tracker.getEntity(uid);
-			map.addEntity(uid, creature.shape.getX(), creature.shape.getY());
-		}		
+		for (Element child : entities.getChildren()) {
+			long uid = Integer.parseInt(child.getAttributeValue("uid"));
+			Entity entity = tracker.getEntity(uid);
+			ShapeComponent shape = entity.getComponent("shape");
+			map.addEntity(uid, shape.getX(), shape.getY());
+		}
 	}
 	
 	/**

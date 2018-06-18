@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -28,24 +28,14 @@ import neon.entity.components.SkillComponent;
 import neon.entity.components.StatsComponent;
 
 public class Creature extends Entity {
-	public final InventoryComponent inventory;
-	public final ShapeComponent shape;
-	public final GraphicsComponent graphics;
-	public final BehaviorComponent ai;
-	public final StatsComponent stats;
-	public final SkillComponent skills;
-	public final BehaviorComponent brain;
-	public final InfoComponent<RCreature> info;
-	
 	public Creature(long uid, RCreature species) {
 		super(uid);
-		inventory = new InventoryComponent(uid);
-		shape = new ShapeComponent(uid);
-		graphics = new GraphicsComponent(uid, species.glyph, species.color);
-		ai = new BehaviorComponent(uid);
-		stats = new StatsComponent(uid, species);
-		skills = new SkillComponent(uid);
-		brain = new BehaviorComponent(uid);
-		info = new InfoComponent<>(uid, species);
+		components.put("shape", new ShapeComponent(uid));
+		components.put("info", new InfoComponent<RCreature>(uid, species));
+		components.put("graphics", new GraphicsComponent(uid, species.glyph, species.color));
+		components.put("inventory", new InventoryComponent(uid));
+		components.put("brain", new BehaviorComponent(uid));
+		components.put("skills", new SkillComponent(uid));
+		components.put("stats", new StatsComponent(uid, species));
 	}
 }

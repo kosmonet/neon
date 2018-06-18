@@ -50,6 +50,9 @@ import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.components.BehaviorComponent;
+import neon.entity.components.PlayerComponent;
+import neon.entity.components.ShapeComponent;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
@@ -112,7 +115,7 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Start event) throws ResourceException {
 		// prepare the player
 		Player player = new Player("", "", resources.getResource("creatures", event.id));
-		player.shape.setPosition(event.x, event.y, event.z);
+		player.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
 		provider.addEntity(player);
 		
 		// prepare the scene
@@ -131,14 +134,39 @@ public class GameModule extends Module {
 	}
 	
 	@Subscribe
+	private void update(UpdateEvent.Item event) throws ResourceException {
+		if(provider.hasEntity(event.uid)) {
+			if (!event.map.isEmpty()) {
+				Item item = provider.getEntity(event.uid);
+				item.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+				map.moveEntity(item.uid, event.x, event.y);
+			} else {
+				return;
+			}
+		} else {
+			Item item = new Item(event.uid, resources.getResource("items", event.id));
+			provider.addEntity(item);
+			if (!event.map.isEmpty()) {
+				item.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+				map.addEntity(item.uid, event.x, event.y);
+			} else {
+				return;
+			}
+		}
+
+		renderPane.updateMap(provider.getEntities());
+		redraw();
+	}
+	
+	@Subscribe
 	private void update(UpdateEvent.Creature event) throws ResourceException {
 		if(provider.hasEntity(event.uid)) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.shape.setPosition(event.x, event.y, event.z);
+			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
 			map.moveEntity(event.uid, event.x, event.y);
 		} else {
 			Creature creature = new Creature(event.uid, resources.getResource("creatures", event.id));
-			creature.shape.setPosition(event.x, event.y, event.z);
+			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
 			map.addEntity(event.uid, event.x, event.y);
 			provider.addEntity(creature);
 		}
@@ -151,21 +179,13 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Move event) throws ResourceException {
 		if (event.uid == 0) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.shape.setPosition(event.x, event.y, event.z);			
+			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);			
 		} else if (provider.hasEntity(event.uid)) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.shape.setPosition(event.x, event.y, event.z);
+			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
 			map.moveEntity(event.uid, event.x, event.y);
 		} 
 		redraw();
-	}
-	
-	@Subscribe
-	private void update(UpdateEvent.Item event) throws ResourceException {
-		if(!provider.hasEntity(event.uid)) {
-			Item item = new Item(event.uid, resources.getResource("items", event.id));
-			provider.addEntity(item);
-		}
 	}
 	
 	private void move(Direction direction) {
@@ -174,9 +194,11 @@ public class GameModule extends Module {
 	
 	private void redraw() {
 		Player player = provider.getEntity(0);
-		modeLabel.setText(player.record.getMode().toString());
-		int xpos = Math.max(0, (int) (player.shape.getX() - renderPane.getWidth()/(2*scale)));
-		int ypos = Math.max(0, (int) (player.shape.getY() - renderPane.getHeight()/(2*scale)));
+		PlayerComponent record = player.getComponent("record");
+		modeLabel.setText(record.getMode().toString());
+		ShapeComponent shape = player.getComponent("shape");
+		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
+		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		renderPane.draw(xpos, ypos, scale);
 	}
 	
@@ -237,24 +259,26 @@ public class GameModule extends Module {
 		
 		if (one instanceof Player) {
 			Player player = (Player) one;
+			BehaviorComponent brain = two.getComponent("brain");
+			PlayerComponent record = player.getComponent("record");
 			
-			switch (player.record.getMode()) {
+			switch (record.getMode()) {
 			case NONE:
-				if (two.brain.isFriendly(player)) {
+				if (brain.isFriendly(player)) {
 					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
 					bus.post(new CombatEvent(player.uid, two.uid));	
 				}
 				break;
 			case STEALTH:
-				if (two.brain.isFriendly(player)) {
+				if (brain.isFriendly(player)) {
 					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
 				} else {
 					bus.post(new CombatEvent(player.uid, two.uid));	
 				}
 				break;
 			case AGGRESSION:
-				if (two.brain.isFriendly(player)) {
+				if (brain.isFriendly(player)) {
 					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {

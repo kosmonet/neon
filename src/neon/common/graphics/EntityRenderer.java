@@ -18,10 +18,12 @@
 
 package neon.common.graphics;
 
+import java.util.Comparator;
 import java.util.HashMap;
+
 import javafx.scene.canvas.Canvas;
 
-public interface EntityRenderer {
+public interface EntityRenderer<T> {
 	/**
 	 * Draws the entities on the map.
 	 * 
@@ -30,7 +32,7 @@ public interface EntityRenderer {
 	 * @param ymin
 	 * @param scale
 	 */	
-	public void drawEntity(Object entity, int xmin, int ymin, int scale);
+	public void drawEntity(T entity, int xmin, int ymin, int scale);
 	
 	/**
 	 * Sets the JavaFX {@code Canvas}ses to be used for drawing the entities.
@@ -38,4 +40,6 @@ public interface EntityRenderer {
 	 * @param layers
 	 */
 	public void setLayers(HashMap<Integer, Canvas> layers);
+	
+	public Comparator<T> getComparator();
 }

@@ -44,12 +44,19 @@ import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.RModule;
+import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
+import neon.entity.components.InfoComponent;
+import neon.entity.components.InventoryComponent;
+import neon.entity.components.PlayerComponent;
+import neon.entity.components.ShapeComponent;
 import neon.entity.entities.Creature;
+import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 import neon.entity.events.UpdateEvent;
@@ -106,7 +113,7 @@ public class GameLoader {
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());
 		player = new Player(event.getName(), event.getGender(), species);
-		player.shape.setPosition(game.getStartX(), game.getStartY(), 0);
+		player.<ShapeComponent>getComponent("shape").setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
 		
 		entities.addEntity(new Item(6, resources.getResource("items", "cup")));
@@ -114,11 +121,12 @@ public class GameLoader {
 		entities.addEntity(new Item(3, resources.getResource("items", "cup_silver")));
 		entities.addEntity(new Item(4, resources.getResource("items", "cup_gold")));
 		entities.addEntity(new Item(5, resources.getResource("items", "cup")));
-		player.inventory.addItem(6);
-		player.inventory.addItem(2);
-		player.inventory.addItem(3);
-		player.inventory.addItem(4);
-		player.inventory.addItem(5);
+		InventoryComponent inventory = player.getComponent("inventory");
+		inventory.addItem(6);
+		inventory.addItem(2);
+		inventory.addItem(3);
+		inventory.addItem(4);
+		inventory.addItem(5);
 
 		// tell the client everything is ready
 		notifyClient(map);
@@ -230,14 +238,22 @@ public class GameLoader {
 		bus.post(new UpdateEvent.Map(map));
 
 		// then everything else
-		for (long uid : player.inventory.getItems()) {
-			Item item = entities.getEntity(uid);			
-			bus.post(new UpdateEvent.Item(uid, item.info.getResource().id));
+		InventoryComponent inventory = player.getComponent("inventory");
+		for (long uid : inventory.getItems()) {
+			Item item = entities.getEntity(uid);
+			InfoComponent<RItem> info = item.getComponent("info");			
+			bus.post(new UpdateEvent.Item(uid, info.getResource().id, "", 0, 0, 0));
 		}
 
 		for (long uid : map.getEntities()) {
-			Creature creature = entities.getEntity(uid);
-			bus.post(new UpdateEvent.Creature(uid, creature.info.getResource().id, map.id, creature.shape.getX(), creature.shape.getY(), creature.shape.getZ()));
+			Entity entity = entities.getEntity(uid);
+			ShapeComponent shape = entity.getComponent("shape");
+			InfoComponent<Resource> info = entity.getComponent("info");
+			if (entity instanceof Creature) {
+				bus.post(new UpdateEvent.Creature(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			} else if (entity instanceof Item) {
+				bus.post(new UpdateEvent.Item(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			}
 		}		
 	}
 	
@@ -267,7 +283,8 @@ public class GameLoader {
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder
-		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", player.record.getName()));
+		PlayerComponent record = player.getComponent("record");
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
 		// and request JavaFX to quit
 		bus.post(new QuitEvent());
 	}

@@ -20,9 +20,9 @@ package neon.client.ui;
 
 import java.util.logging.Logger;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 
-import neon.common.graphics.RenderCanvas;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
@@ -37,7 +37,12 @@ public class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ResourceManager provider;
-	private final RenderCanvas canvas = new RenderCanvas();
+	private final Canvas canvas = new Canvas() {
+		@Override
+		public boolean isResizable() {
+		    return true;
+		}
+	};
 		
 	public MapPane(ResourceManager provider) {
 		this.provider = provider;
@@ -47,6 +52,7 @@ public class MapPane extends Pane {
 	}
 	
 	public void drawMap(RMap map) {
+		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		double width = map.getTerrain().getWidth();
 		double height = map.getTerrain().getHeight();
 		double scale = Math.max(width/getWidth(), height/getHeight());

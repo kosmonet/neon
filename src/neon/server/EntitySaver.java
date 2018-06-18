@@ -24,7 +24,10 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.components.InfoComponent;
 import neon.entity.components.InventoryComponent;
+import neon.entity.components.PlayerComponent;
+import neon.entity.components.ShapeComponent;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
@@ -51,28 +54,34 @@ class EntitySaver {
 	
 	private Element savePlayer(Player player) {
 		Element root = new Element("player");
-		root.setAttribute("id", player.info.getResource().id);
-		root.addContent(saveInventory(player.inventory));
-		root.setAttribute("name", player.record.getName());
+		InfoComponent<RCreature> info = player.getComponent("info");
+		root.setAttribute("id", info.getResource().id);
+		root.addContent(saveInventory(player.getComponent("inventory")));
+		PlayerComponent record = player.getComponent("record");
+		root.setAttribute("name", record.getName());
 		
-		root.setAttribute("x", Integer.toString(player.shape.getX()));
-		root.setAttribute("y", Integer.toString(player.shape.getY()));
+		ShapeComponent shape = player.getComponent("shape");
+		root.setAttribute("x", Integer.toString(shape.getX()));
+		root.setAttribute("y", Integer.toString(shape.getY()));
 		return root;			
 	}
 
 	private Element saveCreature(Creature creature) {
 		Element root = new Element("creature");
-		root.setAttribute("id", creature.info.getResource().id);
-		root.addContent(saveInventory(creature.inventory));
+		InfoComponent<RCreature> info = creature.getComponent("info");
+		root.setAttribute("id", info.getResource().id);
+		root.addContent(saveInventory(creature.getComponent("inventory")));
 
-		root.setAttribute("x", Integer.toString(creature.shape.getX()));
-		root.setAttribute("y", Integer.toString(creature.shape.getY()));		
+		ShapeComponent shape = creature.getComponent("shape");
+		root.setAttribute("x", Integer.toString(shape.getX()));
+		root.setAttribute("y", Integer.toString(shape.getY()));		
 		return root;			
 	}
 
 	private Element saveItem(Item item) {
 		Element root = new Element("item");
-		root.setAttribute("id", item.info.getResource().id);
+		InfoComponent<RItem> info = item.getComponent("info");
+		root.setAttribute("id", info.getResource().id);
 		return root;			
 	}
 	
@@ -95,15 +104,17 @@ class EntitySaver {
 		} else if (root.getName().equals("creature")) {
 			RCreature species = resources.getResource("creatures", id);
 			Creature creature = new Creature(uid, species);
-			creature.shape.setX(Integer.parseInt(root.getAttributeValue("x")));
-			creature.shape.setY(Integer.parseInt(root.getAttributeValue("y")));
+			ShapeComponent shape = creature.getComponent("shape");
+			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
+			shape.setY(Integer.parseInt(root.getAttributeValue("y")));
 			return creature;
 		} else if (root.getName().equals("player")) {
 			RCreature species = resources.getResource("creatures", id);
 			Player player = new Player(root.getAttributeValue("name"), "gender", species);
-			player.shape.setX(Integer.parseInt(root.getAttributeValue("x")));
-			player.shape.setY(Integer.parseInt(root.getAttributeValue("y")));
-			loadInventory(root.getChild("items"), player.inventory);
+			ShapeComponent shape = player.getComponent("shape");
+			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
+			shape.setY(Integer.parseInt(root.getAttributeValue("y")));
+			loadInventory(root.getChild("items"), player.getComponent("inventory"));
 			return player;
 		} else {
 			throw new IllegalArgumentException("Entity <" + uid + "> does not exist");
