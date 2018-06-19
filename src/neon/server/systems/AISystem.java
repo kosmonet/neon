@@ -21,8 +21,8 @@ package neon.server.systems;
 import java.util.Random;
 
 import neon.common.resources.RMap;
-import neon.entity.components.ShapeComponent;
-import neon.entity.components.StatsComponent;
+import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 
 public class AISystem implements NeonSystem {
@@ -34,11 +34,11 @@ public class AISystem implements NeonSystem {
 	}
 	
 	public void act(Creature creature, RMap map) {
-		StatsComponent stats = creature.getComponent("stats");
+		Stats stats = creature.getComponent(Stats.class);
 		
 		while (stats.isActive()) {
 			// move the creature
-			ShapeComponent shape = creature.getComponent("shape");
+			Shape shape = creature.getComponent(Shape.class);
 			int x = shape.getX() + random.nextInt(3) - 1;
 			int y = shape.getY() + random.nextInt(3) - 1;
 			mover.move(creature, x, y, map);

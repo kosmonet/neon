@@ -26,17 +26,17 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.NeonEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
-import neon.entity.components.ShapeComponent;
-import neon.entity.components.StatsComponent;
+import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Player;
-import neon.entity.events.UpdateEvent;
 import neon.server.systems.AISystem;
 
 /**
@@ -98,17 +98,17 @@ class TurnHandler {
 		
 		// restore the player's action points
 		Player player = entities.getEntity(0);
-		StatsComponent playerStats = player.getComponent("stats");
+		Stats playerStats = player.getComponent(Stats.class);
 		playerStats.restoreAP(fraction);
 		
 		// get all entities in the player's neighbourhood
-		ShapeComponent center = player.getComponent("shape");
+		Shape center = player.getComponent(Shape.class);
 		Rectangle bounds = new Rectangle(center.getX() - 50, center.getY() - 50, 100, 100);
 		for (long uid : map.getEntities(bounds)) {
 			Entity entity = entities.getEntity(uid);
 			if (entity instanceof Creature) {
 				Creature creature = (Creature) entity;
-				StatsComponent creatureStats = creature.getComponent("stats");
+				Stats creatureStats = creature.getComponent(Stats.class);
 
 				// reset the creature's action points
 				creatureStats.restoreAP(fraction);
@@ -119,7 +119,7 @@ class TurnHandler {
 				}
 				
 				// let the client know that an entity has moved
-				ShapeComponent shape = creature.getComponent("shape");
+				Shape shape = creature.getComponent(Shape.class);
 				bus.post(new UpdateEvent.Move(uid, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}

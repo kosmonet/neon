@@ -18,15 +18,29 @@
 
 package neon.entity.components;
 
-public class TrapComponent implements Component {
+import javafx.scene.paint.Color;
+
+public class Graphics implements Component {
 	private final long uid;
+	private final String glyph;
+	private final Color color;
 	
-	public TrapComponent(long uid) {
+	public Graphics(long uid, String glyph, Color color) {
 		this.uid = uid;
+		this.glyph = glyph;
+		this.color = color;
 	}
 	
 	@Override
 	public long getEntity() {
 		return uid;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public String getGlyph() {
+		return glyph;
 	}
 }

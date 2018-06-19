@@ -18,15 +18,25 @@
 
 package neon.entity.components;
 
-import neon.common.resources.Resource;
+import neon.entity.PlayerMode;
 
-public class InfoComponent<T extends Resource> implements Component {
-	private final T resource;
+/**
+ * Component that contains all player-specific information.
+ * 
+ * @author mdriesen
+ *
+ */
+public class Info implements Component {
 	private final long uid;
+	private final String name;
+	private final String gender;
 	
-	public InfoComponent(long uid, T resource) {
-		this.resource = resource;
+	private PlayerMode mode = PlayerMode.NONE;
+	
+	public Info(long uid, String name, String gender) {
 		this.uid = uid;
+		this.name = name;
+		this.gender = gender;
 	}
 	
 	@Override
@@ -34,7 +44,19 @@ public class InfoComponent<T extends Resource> implements Component {
 		return uid;
 	}
 	
-	public T getResource() {
-		return resource;
+	public String getName() {
+		return name;
+	}
+	
+	public String getGender() {
+		return gender;
+	}
+	
+	public void setMode(PlayerMode mode) {
+		this.mode = mode;
+	}
+	
+	public PlayerMode getMode() {
+		return mode;
 	}
 }

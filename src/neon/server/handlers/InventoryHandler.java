@@ -26,7 +26,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.InventoryEvent;
 import neon.common.event.NeonEvent;
 import neon.entity.EntityProvider;
-import neon.entity.components.InventoryComponent;
+import neon.entity.components.Inventory;
 import neon.entity.entities.Player;
 
 /**
@@ -48,7 +48,7 @@ public class InventoryHandler {
 	private void postInventory(NeonEvent.Inventory event) {
 		Player player = entities.getEntity(0);
 		ArrayList<Long> items = new ArrayList<>();
-		InventoryComponent inventory = player.getComponent("inventory");
+		Inventory inventory = player.getComponent(Inventory.class);
 		items.addAll(inventory.getItems());
 		bus.post(new InventoryEvent(items));
 	}

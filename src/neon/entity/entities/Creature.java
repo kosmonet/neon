@@ -19,23 +19,42 @@
 package neon.entity.entities;
 
 import neon.common.resources.RCreature;
-import neon.entity.components.BehaviorComponent;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.InventoryComponent;
-import neon.entity.components.InfoComponent;
-import neon.entity.components.ShapeComponent;
-import neon.entity.components.SkillComponent;
-import neon.entity.components.StatsComponent;
+import neon.entity.components.Behavior;
+import neon.entity.components.Component;
+import neon.entity.components.Graphics;
+import neon.entity.components.Inventory;
+import neon.entity.components.Shape;
+import neon.entity.components.Skills;
+import neon.entity.components.Stats;
 
 public class Creature extends Entity {
 	public Creature(long uid, RCreature species) {
 		super(uid);
-		components.put("shape", new ShapeComponent(uid));
-		components.put("info", new InfoComponent<RCreature>(uid, species));
-		components.put("graphics", new GraphicsComponent(uid, species.glyph, species.color));
-		components.put("inventory", new InventoryComponent(uid));
-		components.put("brain", new BehaviorComponent(uid));
-		components.put("skills", new SkillComponent(uid));
-		components.put("stats", new StatsComponent(uid, species));
+		components.put(Shape.class, new Shape(uid));
+		components.put(Resource.class, new Resource(uid, species));
+		components.put(Graphics.class, new Graphics(uid, species.glyph, species.color));
+		components.put(Inventory.class, new Inventory(uid));
+		components.put(Behavior.class, new Behavior(uid));
+		components.put(Skills.class, new Skills(uid));
+		components.put(Stats.class, new Stats(uid, species));
+	}
+
+	public class Resource implements Component {
+		private final RCreature resource;
+		private final long uid;
+		
+		public Resource(long uid, RCreature resource) {
+			this.resource = resource;
+			this.uid = uid;
+		}
+		
+		@Override
+		public long getEntity() {
+			return uid;
+		}
+		
+		public RCreature getResource() {
+			return resource;
+		}
 	}
 }

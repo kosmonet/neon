@@ -25,9 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.TextAlignment;
 
 import neon.common.graphics.TextureFactory;
-import neon.common.resources.RCreature;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.InfoComponent;
+import neon.entity.components.Graphics;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 
@@ -53,7 +51,7 @@ public class DescriptionLabel extends Label {
 	public void update(Item item) {
 		if(item != null) {
 			// create the image like it would show in-game on the ground
-			GraphicsComponent graphics = item.getComponent("graphics");
+			Graphics graphics = item.getComponent(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
 			setGraphic(new ImageView(image));
 			
@@ -77,13 +75,13 @@ public class DescriptionLabel extends Label {
 	public void update(Creature creature) {
 		if(creature != null) {
 			// create the image like it would show in-game on the ground
-			GraphicsComponent graphics = creature.getComponent("graphics");
+			Graphics graphics = creature.getComponent(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
 			setGraphic(new ImageView(image));
 			
 			StringBuffer description = new StringBuffer();
 			description.append("\n");
-			InfoComponent<RCreature> info = creature.getComponent("info");
+			Creature.Resource info = creature.getComponent(Creature.Resource.class);
 			description.append(info.getResource().name);
 			description.append("\n");
 

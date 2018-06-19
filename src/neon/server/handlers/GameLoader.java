@@ -34,6 +34,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.ServerLoadEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.event.ClientLoadEvent;
 import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
@@ -44,22 +45,18 @@ import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
-import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.RModule;
-import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
-import neon.entity.components.InfoComponent;
-import neon.entity.components.InventoryComponent;
-import neon.entity.components.PlayerComponent;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Inventory;
+import neon.entity.components.Info;
+import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
-import neon.entity.events.UpdateEvent;
 import neon.server.EntityTracker;
 
 /**
@@ -113,7 +110,7 @@ public class GameLoader {
 		// the player character
 		RCreature species = resources.getResource("creatures", event.getSpecies());
 		player = new Player(event.getName(), event.getGender(), species);
-		player.<ShapeComponent>getComponent("shape").setPosition(game.getStartX(), game.getStartY(), 0);
+		player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
 		
 		entities.addEntity(new Item(6, resources.getResource("items", "cup")));
@@ -121,7 +118,7 @@ public class GameLoader {
 		entities.addEntity(new Item(3, resources.getResource("items", "cup_silver")));
 		entities.addEntity(new Item(4, resources.getResource("items", "cup_gold")));
 		entities.addEntity(new Item(5, resources.getResource("items", "cup")));
-		InventoryComponent inventory = player.getComponent("inventory");
+		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.addItem(6);
 		inventory.addItem(2);
 		inventory.addItem(3);
@@ -232,26 +229,29 @@ public class GameLoader {
 	private void notifyClient(RMap map) throws ResourceException {
 		// tell the client to start loading the map
 		Player player = entities.getEntity(0);
-		bus.post(new UpdateEvent.Start(player));
+		Shape playerShape = player.getComponent(Shape.class);
+		Creature.Resource playerInfo = player.getComponent(Creature.Resource.class);
+		bus.post(new UpdateEvent.Start(playerInfo.getResource().id, playerShape.getX(), playerShape.getY(), playerShape.getZ()));
 
 		// then send the map
 		bus.post(new UpdateEvent.Map(map));
 
 		// then everything else
-		InventoryComponent inventory = player.getComponent("inventory");
+		Inventory inventory = player.getComponent(Inventory.class);
 		for (long uid : inventory.getItems()) {
 			Item item = entities.getEntity(uid);
-			InfoComponent<RItem> info = item.getComponent("info");			
+			Item.Resource info = item.getComponent(Item.Resource.class);
 			bus.post(new UpdateEvent.Item(uid, info.getResource().id, "", 0, 0, 0));
 		}
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
-			ShapeComponent shape = entity.getComponent("shape");
-			InfoComponent<Resource> info = entity.getComponent("info");
+			Shape shape = entity.getComponent(Shape.class);
 			if (entity instanceof Creature) {
+				Creature.Resource info = entity.getComponent(Creature.Resource.class);
 				bus.post(new UpdateEvent.Creature(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			} else if (entity instanceof Item) {
+				Item.Resource info = entity.getComponent(Item.Resource.class);
 				bus.post(new UpdateEvent.Item(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
@@ -283,7 +283,7 @@ public class GameLoader {
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder
-		PlayerComponent record = player.getComponent("record");
+		Info record = player.getComponent(Info.class);
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
 		// and request JavaFX to quit
 		bus.post(new QuitEvent());

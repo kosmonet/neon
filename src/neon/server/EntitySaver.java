@@ -24,10 +24,9 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.components.InfoComponent;
-import neon.entity.components.InventoryComponent;
-import neon.entity.components.PlayerComponent;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Inventory;
+import neon.entity.components.Info;
+import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
@@ -54,13 +53,13 @@ class EntitySaver {
 	
 	private Element savePlayer(Player player) {
 		Element root = new Element("player");
-		InfoComponent<RCreature> info = player.getComponent("info");
+		Creature.Resource info = player.getComponent(Creature.Resource.class);
 		root.setAttribute("id", info.getResource().id);
-		root.addContent(saveInventory(player.getComponent("inventory")));
-		PlayerComponent record = player.getComponent("record");
+		root.addContent(saveInventory(player.getComponent(Inventory.class)));
+		Info record = player.getComponent(Info.class);
 		root.setAttribute("name", record.getName());
 		
-		ShapeComponent shape = player.getComponent("shape");
+		Shape shape = player.getComponent(Shape.class);
 		root.setAttribute("x", Integer.toString(shape.getX()));
 		root.setAttribute("y", Integer.toString(shape.getY()));
 		return root;			
@@ -68,11 +67,11 @@ class EntitySaver {
 
 	private Element saveCreature(Creature creature) {
 		Element root = new Element("creature");
-		InfoComponent<RCreature> info = creature.getComponent("info");
+		Creature.Resource info = creature.getComponent(Creature.Resource.class);
 		root.setAttribute("id", info.getResource().id);
-		root.addContent(saveInventory(creature.getComponent("inventory")));
+		root.addContent(saveInventory(creature.getComponent(Inventory.class)));
 
-		ShapeComponent shape = creature.getComponent("shape");
+		Shape shape = creature.getComponent(Shape.class);
 		root.setAttribute("x", Integer.toString(shape.getX()));
 		root.setAttribute("y", Integer.toString(shape.getY()));		
 		return root;			
@@ -80,12 +79,12 @@ class EntitySaver {
 
 	private Element saveItem(Item item) {
 		Element root = new Element("item");
-		InfoComponent<RItem> info = item.getComponent("info");
+		Item.Resource info = item.getComponent(Item.Resource.class);		
 		root.setAttribute("id", info.getResource().id);
 		return root;			
 	}
 	
-	private Element saveInventory(InventoryComponent items) {
+	private Element saveInventory(Inventory items) {
 		Element inventory = new Element("items");
 		for(Long uid : items.getItems()) {
 			Element item = new Element("item");
@@ -104,24 +103,24 @@ class EntitySaver {
 		} else if (root.getName().equals("creature")) {
 			RCreature species = resources.getResource("creatures", id);
 			Creature creature = new Creature(uid, species);
-			ShapeComponent shape = creature.getComponent("shape");
+			Shape shape = creature.getComponent(Shape.class);
 			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
 			shape.setY(Integer.parseInt(root.getAttributeValue("y")));
 			return creature;
 		} else if (root.getName().equals("player")) {
 			RCreature species = resources.getResource("creatures", id);
 			Player player = new Player(root.getAttributeValue("name"), "gender", species);
-			ShapeComponent shape = player.getComponent("shape");
+			Shape shape = player.getComponent(Shape.class);
 			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
 			shape.setY(Integer.parseInt(root.getAttributeValue("y")));
-			loadInventory(root.getChild("items"), player.getComponent("inventory"));
+			loadInventory(root.getChild("items"), player.getComponent(Inventory.class));
 			return player;
 		} else {
 			throw new IllegalArgumentException("Entity <" + uid + "> does not exist");
 		}
 	}
 	
-	private void loadInventory(Element items, InventoryComponent inventory) {
+	private void loadInventory(Element items, Inventory inventory) {
 		for (Element item : items.getChildren()) {
 			inventory.addItem(Long.parseLong(item.getAttributeValue("uid")));
 		}

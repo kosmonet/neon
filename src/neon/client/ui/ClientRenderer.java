@@ -27,8 +27,8 @@ import javafx.scene.image.Image;
 
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Graphics;
+import neon.entity.components.Shape;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 
@@ -38,8 +38,8 @@ public class ClientRenderer implements EntityRenderer<Entity> {
 	
 	@Override
 	public void drawEntity(Entity entity, int xmin, int ymin, int scale) {
-		ShapeComponent shape = entity.getComponent("shape");
-		GraphicsComponent graphics = entity.getComponent("graphics");
+		Shape shape = entity.getComponent(Shape.class);
+		Graphics graphics = entity.getComponent(Graphics.class);
 		
 		GraphicsContext gc = layers.get(shape.getZ()).getGraphicsContext2D();
 		Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());

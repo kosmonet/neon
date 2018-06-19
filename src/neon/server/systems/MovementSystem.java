@@ -29,8 +29,8 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.Action;
 import neon.entity.EntityProvider;
-import neon.entity.components.ShapeComponent;
-import neon.entity.components.StatsComponent;
+import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 import neon.util.Direction;
@@ -60,7 +60,7 @@ public class MovementSystem {
 	 * @param event
 	 */
 	public void move(Player player, Direction direction, RMap map) {
-		ShapeComponent shape = player.getComponent("shape");
+		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();
 		int z = shape.getZ();
@@ -97,7 +97,7 @@ public class MovementSystem {
 	 */
 	public void move(Creature creature, int x, int y, RMap map) {
 		try {
-			ShapeComponent shape = creature.getComponent("shape");
+			Shape shape = creature.getComponent(Shape.class);
 			move(creature, map, x, y, shape.getZ());
 			map.moveEntity(creature.uid, x, y);
 		} catch (ResourceException e) {
@@ -106,8 +106,8 @@ public class MovementSystem {
 	}
 	
 	private void move(Creature creature, RMap map, int x, int y, int z) throws ResourceException {
-		ShapeComponent shape = creature.getComponent("shape");
-		StatsComponent stats = creature.getComponent("stats");
+		Shape shape = creature.getComponent(Shape.class);
+		Stats stats = creature.getComponent(Stats.class);
 		
 		if (shape.getX() == x || shape.getY() == y) {
 			stats.perform(Action.MOVE_STRAIGHT);

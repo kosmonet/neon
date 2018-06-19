@@ -19,14 +19,14 @@
 package neon.editor.resource;
 
 import javafx.scene.paint.Color;
-import neon.entity.components.GraphicsComponent;
+import neon.entity.components.Graphics;
 
 public class ICreature extends REntity {
-	public final GraphicsComponent graphics;
+	public final Graphics graphics;
 	
 	public ICreature(int uid, String id, String glyph, Color color) {
 		super(uid, id);
-		graphics = new GraphicsComponent(uid, glyph, color);
+		graphics = new Graphics(uid, glyph, color);
 	}
 	
 	@Override

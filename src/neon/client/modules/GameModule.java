@@ -46,17 +46,17 @@ import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.components.BehaviorComponent;
-import neon.entity.components.PlayerComponent;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Behavior;
+import neon.entity.components.Info;
+import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
-import neon.entity.events.UpdateEvent;
 import neon.util.Direction;
 
 /**
@@ -115,7 +115,7 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Start event) throws ResourceException {
 		// prepare the player
 		Player player = new Player("", "", resources.getResource("creatures", event.id));
-		player.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+		player.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 		provider.addEntity(player);
 		
 		// prepare the scene
@@ -138,7 +138,7 @@ public class GameModule extends Module {
 		if(provider.hasEntity(event.uid)) {
 			if (!event.map.isEmpty()) {
 				Item item = provider.getEntity(event.uid);
-				item.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+				item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 				map.moveEntity(item.uid, event.x, event.y);
 			} else {
 				return;
@@ -147,7 +147,7 @@ public class GameModule extends Module {
 			Item item = new Item(event.uid, resources.getResource("items", event.id));
 			provider.addEntity(item);
 			if (!event.map.isEmpty()) {
-				item.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+				item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 				map.addEntity(item.uid, event.x, event.y);
 			} else {
 				return;
@@ -162,11 +162,11 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Creature event) throws ResourceException {
 		if(provider.hasEntity(event.uid)) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 			map.moveEntity(event.uid, event.x, event.y);
 		} else {
 			Creature creature = new Creature(event.uid, resources.getResource("creatures", event.id));
-			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 			map.addEntity(event.uid, event.x, event.y);
 			provider.addEntity(creature);
 		}
@@ -179,10 +179,10 @@ public class GameModule extends Module {
 	private void update(UpdateEvent.Move event) throws ResourceException {
 		if (event.uid == 0) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);			
+			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);			
 		} else if (provider.hasEntity(event.uid)) {
 			Creature creature = provider.getEntity(event.uid);
-			creature.<ShapeComponent>getComponent("shape").setPosition(event.x, event.y, event.z);
+			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
 			map.moveEntity(event.uid, event.x, event.y);
 		} 
 		redraw();
@@ -194,9 +194,9 @@ public class GameModule extends Module {
 	
 	private void redraw() {
 		Player player = provider.getEntity(0);
-		PlayerComponent record = player.getComponent("record");
+		Info record = player.getComponent(Info.class);
 		modeLabel.setText(record.getMode().toString());
-		ShapeComponent shape = player.getComponent("shape");
+		Shape shape = player.getComponent(Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		renderPane.draw(xpos, ypos, scale);
@@ -259,8 +259,8 @@ public class GameModule extends Module {
 		
 		if (one instanceof Player) {
 			Player player = (Player) one;
-			BehaviorComponent brain = two.getComponent("brain");
-			PlayerComponent record = player.getComponent("record");
+			Behavior brain = two.getComponent(Behavior.class);
+			Info record = player.getComponent(Info.class);
 			
 			switch (record.getMode()) {
 			case NONE:

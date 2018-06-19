@@ -18,18 +18,18 @@
 
 package neon.editor.resource;
 
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Shape;
 import neon.entity.entities.Entity;
 
 public abstract class REntity extends Entity {
-	public final ShapeComponent shape;
+	public final Shape shape;
 
 	private final String id;
 	
 	REntity(int uid, String id) {
 		super(uid);
 		this.id = id;
-		shape = new ShapeComponent(uid);
+		shape = new Shape(uid);
 	}
 
 	/**

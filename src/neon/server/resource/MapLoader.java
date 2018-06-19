@@ -32,7 +32,7 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
@@ -206,7 +206,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
 				Creature creature = new Creature(uid, rc);
-				initEntity(entity, creature.getComponent("shape"), map);
+				initEntity(entity, creature.getComponent(Shape.class), map);
 				tracker.addEntity(creature);
 			} catch (ResourceException e) {
 				logger.severe("unknown creature on map " + map.id + ": " + entity.getAttributeValue("id"));
@@ -219,7 +219,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RItem ri = resources.getResource("items", entity.getAttributeValue("id"));
 				Item item = new Item(uid, ri);
-				initEntity(entity, item.getComponent("shape"), map);
+				initEntity(entity, item.getComponent(Shape.class), map);
 				tracker.addEntity(item);
 			} catch (ResourceException e) {
 				logger.severe("unknown item on map " + map.id + ": " + entity.getAttributeValue("id"));
@@ -227,7 +227,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		}
 	}
 	
-	private void initEntity(Element entity, ShapeComponent shape, RMap map) {
+	private void initEntity(Element entity, Shape shape, RMap map) {
 		int x = Integer.parseInt(entity.getAttributeValue("x"));
 		int y = Integer.parseInt(entity.getAttributeValue("y"));
 		map.addEntity(shape.getEntity(), x, y);		
@@ -239,7 +239,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		for (Element child : entities.getChildren()) {
 			long uid = Integer.parseInt(child.getAttributeValue("uid"));
 			Entity entity = tracker.getEntity(uid);
-			ShapeComponent shape = entity.getComponent("shape");
+			Shape shape = entity.getComponent(Shape.class);
 			map.addEntity(uid, shape.getX(), shape.getY());
 		}
 	}

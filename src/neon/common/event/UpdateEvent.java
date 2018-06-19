@@ -16,14 +16,9 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.events;
+package neon.common.event;
 
-import neon.common.event.NeonEvent;
-import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
-import neon.entity.components.InfoComponent;
-import neon.entity.components.ShapeComponent;
-import neon.entity.entities.Player;
 
 /**
  * An event containing updates for the client.
@@ -42,13 +37,11 @@ public abstract class UpdateEvent extends NeonEvent {
 		public final String id;
 		public final int x, y, z;
 
-		public Start(Player player) {
-			ShapeComponent shape = player.getComponent("shape");
-			InfoComponent<RCreature> info = player.getComponent("info");
-			id = info.getResource().id;
-			x = shape.getX();
-			y = shape.getY();
-			z = shape.getZ();
+		public Start(String id, int x, int y, int z) {
+			this.id = id;
+			this.x = x;
+			this.y = y;
+			this.z = z;
 		}
 	}
 	

@@ -18,45 +18,15 @@
 
 package neon.entity.components;
 
-import neon.entity.PlayerMode;
-
-/**
- * Component that contains all player-specific information.
- * 
- * @author mdriesen
- *
- */
-public class PlayerComponent implements Component {
+public class Lock implements Component {
 	private final long uid;
-	private final String name;
-	private final String gender;
 	
-	private PlayerMode mode = PlayerMode.NONE;
-	
-	public PlayerComponent(long uid, String name, String gender) {
+	public Lock(long uid) {
 		this.uid = uid;
-		this.name = name;
-		this.gender = gender;
 	}
 	
 	@Override
 	public long getEntity() {
 		return uid;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getGender() {
-		return gender;
-	}
-	
-	public void setMode(PlayerMode mode) {
-		this.mode = mode;
-	}
-	
-	public PlayerMode getMode() {
-		return mode;
 	}
 }

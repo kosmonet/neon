@@ -19,21 +19,39 @@
 package neon.entity.entities;
 
 import neon.common.resources.RItem;
-import neon.entity.components.GraphicsComponent;
-import neon.entity.components.InfoComponent;
-import neon.entity.components.ShapeComponent;
+import neon.entity.components.Component;
+import neon.entity.components.Graphics;
+import neon.entity.components.Shape;
 
 public class Item extends Entity {
 	public Item(long uid, RItem item) {
 		super(uid);
-		components.put("shape", new ShapeComponent(uid));
-		components.put("info", new InfoComponent<RItem>(uid, item));
-		components.put("graphics", new GraphicsComponent(uid, item.glyph, item.color));		
+		components.put(Shape.class, new Shape(uid));
+		components.put(Resource.class, new Resource(uid, item));
+		components.put(Graphics.class, new Graphics(uid, item.glyph, item.color));		
 	}
 	
 	@Override
 	public String toString() {
-		InfoComponent<RItem> info = getComponent("info");
-		return info.getResource().name;
+		return components.getInstance(Resource.class).getResource().name;
+	}
+	
+	public class Resource implements Component {
+		private final RItem resource;
+		private final long uid;
+		
+		public Resource(long uid, RItem resource) {
+			this.resource = resource;
+			this.uid = uid;
+		}
+		
+		@Override
+		public long getEntity() {
+			return uid;
+		}
+		
+		public RItem getResource() {
+			return resource;
+		}
 	}
 }

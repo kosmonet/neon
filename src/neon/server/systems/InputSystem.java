@@ -23,14 +23,14 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
 import neon.common.event.TurnEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
-import neon.entity.components.ShapeComponent;
-import neon.entity.components.StatsComponent;
+import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Player;
-import neon.entity.events.UpdateEvent;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;
@@ -54,14 +54,14 @@ public class InputSystem implements NeonSystem {
 	@Subscribe
 	private void move(InputEvent.Move event) throws ResourceException {
 		Player player = (Player) entities.getEntity(0);
-		StatsComponent stats = player.getComponent("stats");
+		Stats stats = player.getComponent(Stats.class);
 		
 		if(stats.isActive()) {
 			RMap map = resources.getResource("maps", event.getMap());
 			mover.move(player, event.getDirection(), map);
 
 			// signal the client that an entity was updated
-			ShapeComponent shape = player.getComponent("shape");
+			Shape shape = player.getComponent(Shape.class);
 			bus.post(new UpdateEvent.Move(0, shape.getX(), shape.getY(), shape.getZ()));
 		}
 

@@ -18,24 +18,24 @@
 
 package neon.entity.entities;
 
-import java.util.HashMap;
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
 
 import neon.entity.components.Component;
 
 public abstract class Entity {
 	public final long uid;
-	protected final HashMap<String, Component> components = new HashMap<>();
+	protected final ClassToInstanceMap<Component> components = MutableClassToInstanceMap.create();
 	
 	public Entity(long uid) {
 		this.uid = uid;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends Component> T getComponent(String component) {
-		return (T) components.get(component);
+	public <T extends Component> T getComponent(Class<T> component) {
+		return components.getInstance(component);
 	}
 	
-	public boolean hasComponent(String component) {
+	public boolean hasComponent(Class<?> component) {
 		return components.containsKey(component);
 	}
 }

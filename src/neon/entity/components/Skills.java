@@ -18,29 +18,15 @@
 
 package neon.entity.components;
 
-import javafx.scene.paint.Color;
-
-public class GraphicsComponent implements Component {
+public class Skills implements Component {
 	private final long uid;
-	private final String glyph;
-	private final Color color;
 	
-	public GraphicsComponent(long uid, String glyph, Color color) {
+	public Skills(long uid) {
 		this.uid = uid;
-		this.glyph = glyph;
-		this.color = color;
 	}
 	
 	@Override
 	public long getEntity() {
 		return uid;
-	}
-	
-	public Color getColor() {
-		return color;
-	}
-
-	public String getGlyph() {
-		return glyph;
 	}
 }

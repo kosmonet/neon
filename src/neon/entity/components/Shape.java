@@ -18,15 +18,59 @@
 
 package neon.entity.components;
 
-public class LockComponent implements Component {
+/**
+ * A component that represents the shape (including position) of an entity.
+ * 
+ * @author mdriesen
+ *
+ */
+public class Shape implements Component {
 	private final long uid;
 	
-	public LockComponent(long uid) {
+	private int x, y, z;
+	
+	public Shape(long uid) {
 		this.uid = uid;
 	}
 	
 	@Override
 	public long getEntity() {
 		return uid;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public int getZ() {
+		return z;
+	}
+	
+	/**
+	 * Sets the position of the entity this component belongs to.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setPosition(int x, int y, int z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public void setZ(int z) {
+		this.z = z;
 	}
 }

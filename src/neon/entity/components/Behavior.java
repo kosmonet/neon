@@ -18,30 +18,21 @@
 
 package neon.entity.components;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import neon.entity.entities.Creature;
 
-public class InventoryComponent implements Component {
+public class Behavior implements Component {
 	private final long uid;
-	private final Collection<Long> items = new ArrayList<Long>();
 	
-	public InventoryComponent(long uid) {
+	public Behavior(long uid) {
 		this.uid = uid;
 	}
 	
+	@Override
 	public long getEntity() {
 		return uid;
 	}
 	
-	public void addItem(long uid) {
-		items.add(uid);
-	}
-	
-	public void removeItem(long uid) {
-		items.remove(uid);
-	}
-	
-	public Collection<Long> getItems() {
-		return items;
+	public boolean isFriendly(Creature other) {
+		return true;
 	}
 }
