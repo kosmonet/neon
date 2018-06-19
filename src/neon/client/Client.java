@@ -31,6 +31,7 @@ import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
+import neon.client.modules.ContainerModule;
 import neon.client.modules.ConversationModule;
 import neon.client.modules.GameModule;
 import neon.client.modules.InventoryModule;
@@ -74,7 +75,7 @@ public class Client implements Runnable {
 		// add all required listeners to the event bus
 		this.socket = socket;
 		bus.register(socket);
-		bus.register(new BusListener());
+		bus.register(this);
 		ui = new UserInterface(stage);
 		bus.register(ui);
 		
@@ -144,6 +145,10 @@ public class Client implements Runnable {
 		modules.add(conversation);
 		bus.register(conversation);
 		
+		ContainerModule container = new ContainerModule(ui, bus, provider);
+		modules.add(container);
+		bus.register(container);
+		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
 		bus.register(new Transition(newGame, mainMenu, "cancel"));
@@ -161,25 +166,27 @@ public class Client implements Runnable {
 		
 		bus.register(new Transition(game, conversation, "talk"));
 		bus.register(new Transition(conversation, game, "cancel"));
+
+		bus.register(new Transition(game, container, "pick"));
+		bus.register(new Transition(container, game, "cancel"));
 	}
-	
-	private class BusListener {
-		@Subscribe
-		private void monitor(DeadEvent event) {
-			logger.warning("client received a dead event: " + event.getEvent());
+
+	@Subscribe
+	private void monitor(DeadEvent event) {
+		logger.warning("client received a dead event: " + event.getEvent());
+	}
+
+	/**
+	 * Configures the file system with the required modules.
+	 * 
+	 * @param event
+	 * @throws FileNotFoundException
+	 */
+	@Subscribe
+	private void configure(ClientConfigurationEvent event) throws FileNotFoundException {
+		for(String module : event.getModules()) {
+			files.addModule(module);
 		}
-		
-		/**
-		 * Configures the file system with the required modules.
-		 * 
-		 * @param event
-		 * @throws FileNotFoundException
-		 */
-		@Subscribe
-		private void configure(ClientConfigurationEvent event) throws FileNotFoundException {
-			for(String module : event.getModules()) {
-				files.addModule(module);
-			}
-		}	
-	}
+	}	
+
 }

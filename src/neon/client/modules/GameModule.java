@@ -60,6 +60,7 @@ import neon.entity.entities.Player;
 import neon.util.Direction;
 
 /**
+ * A module that implements the main game screen.
  * 
  * @author mdriesen
  *
@@ -82,6 +83,14 @@ public class GameModule extends Module {
 	private RMap map;
 	private boolean paused = true;
 	
+	/**
+	 * Initializes a new game module.
+	 * 
+	 * @param ui
+	 * @param bus
+	 * @param provider
+	 * @param resources
+	 */
 	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
@@ -109,6 +118,7 @@ public class GameModule extends Module {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
 	}
 	
 	@Subscribe
@@ -224,6 +234,15 @@ public class GameModule extends Module {
 		}
 	}
 	
+	private void act() {
+		Player player = provider.getEntity(0);
+		Shape shape = player.getComponent(Shape.class);
+
+		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
+			bus.post(new TransitionEvent("pick", "map", map));			
+		}
+	}
+	
 	private void quit() {
 		// pause the server
 		if (!paused) {
@@ -232,7 +251,7 @@ public class GameModule extends Module {
 		
 		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
 				ButtonTypes.yes, ButtonTypes.no, ButtonTypes.cancel);
-		
+
 		if (result.get().equals(ButtonTypes.yes)) {
 			// server takes care of saving
 			bus.post(new SaveEvent());	
