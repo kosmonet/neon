@@ -156,6 +156,35 @@ class PointNode<T> {
 	}
 
 	/**
+	 * Tries to remove an element from this node.
+	 * 
+	 * @param element
+	 * @param position
+	 */
+	void remove(T element, Point position) {
+		// check if this node contained the old position
+		if (contains(position)) {
+			// check if this is a leaf
+			if (isLeaf()) {
+				contents.remove(element);
+			} else {
+				// if this was not a leaf, check the child nodes
+				if (NW.contains(position)) {
+					NW.remove(element, position);
+				} else if (NE.contains(position)) {
+					NE.remove(element, position);
+				} else if (SE.contains(position)) {
+					SE.remove(element, position);
+				} else if (SW.contains(position)) {
+					SW.remove(element, position);
+				} else {
+					throw new IllegalArgumentException("Could not remove element in tree.");
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Tries to move an element to a new position.
 	 * 
 	 * @param element

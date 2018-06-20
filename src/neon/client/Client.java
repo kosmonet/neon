@@ -232,6 +232,13 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
+	private void update(UpdateEvent.Remove event) throws ResourceException {
+		System.out.println("remove item");
+		RMap map = resources.getResource("maps", event.map);
+		map.removeEntity(event.uid);
+	}
+	
+	@Subscribe
 	private void monitor(DeadEvent event) {
 		logger.warning("client received a dead event: " + event.getEvent());
 	}

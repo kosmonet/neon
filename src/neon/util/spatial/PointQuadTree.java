@@ -124,4 +124,10 @@ public class PointQuadTree<T> implements PointSpatialIndex<T> {
 		elements.put(element, position);
 		root.move(element, position, previous);
 	}
+
+	@Override
+	public void remove(T element) {
+		root.remove(element, elements.get(element));
+		elements.remove(element);
+	}
 }

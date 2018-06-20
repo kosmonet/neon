@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -40,6 +40,24 @@ public abstract class InventoryEvent extends NeonEvent {
 		private final String id;
 		
 		public Drop(long uid, String id) {
+			this.uid = uid;
+			this.id = id;
+		}
+		
+		public long getItem() {
+			return uid;
+		}
+		
+		public String getMap() {
+			return id;
+		}
+	}
+
+	public static class Pick extends InventoryEvent {
+		private final long uid;
+		private final String id;
+		
+		public Pick(long uid, String id) {
 			this.uid = uid;
 			this.id = id;
 		}

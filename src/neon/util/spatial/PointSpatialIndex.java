@@ -54,6 +54,13 @@ public interface PointSpatialIndex<T> {
 	public void insert(T element, int x, int y);
 	
 	/**
+	 * Removes an element.
+	 * 
+	 * @param element
+	 */
+	public void remove(T element);
+	
+	/**
 	 * Moves an element to a new position.
 	 * 
 	 * @param element

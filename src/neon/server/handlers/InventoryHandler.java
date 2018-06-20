@@ -72,4 +72,15 @@ public class InventoryHandler {
 		String id = item.getComponent(Item.Resource.class).getResource().id;
 		bus.post(new UpdateEvent.Item(item.uid, id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
+	
+	@Subscribe
+	private void pick(InventoryEvent.Pick event) throws ResourceException {
+		RMap map = resources.getResource("maps", event.getMap());
+		map.removeEntity(event.getItem());
+		Player player = entities.getEntity(0);
+		player.getComponent(Inventory.class).addItem(event.getItem());
+
+		Item item = entities.getEntity(event.getItem());
+		bus.post(new UpdateEvent.Remove(item.uid, event.getMap()));
+	}
 }

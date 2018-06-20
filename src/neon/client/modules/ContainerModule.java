@@ -64,6 +64,7 @@ public class ContainerModule extends Module {
 	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
+	private RMap map;
 	
 	public ContainerModule(UserInterface ui, EventBus bus, EntityProvider entities) {
 		this.ui = ui;
@@ -99,6 +100,8 @@ public class ContainerModule extends Module {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.F2)) {
 			showHelp();
+		} else if (event.getCode().equals(KeyCode.ENTER)) {
+			drop();
 		}
 	}
 	
@@ -113,6 +116,22 @@ public class ContainerModule extends Module {
 		playerList.getSelectionModel().selectFirst();
 	}
 	
+	@FXML private void drop() {
+		if (playerList.isFocused() && !playerList.getSelectionModel().isEmpty()) {
+			Item item = playerList.getSelectionModel().getSelectedItem();
+			// we trust the client on this one
+			playerList.getItems().remove(item);
+			containerList.getItems().add(item);
+			bus.post(new InventoryEvent.Drop(item.uid, map.id));
+		} else if (containerList.isFocused() && !containerList.getSelectionModel().isEmpty()) {
+			Item item = containerList.getSelectionModel().getSelectedItem();
+			// we trust the client on this one
+			containerList.getItems().remove(item);
+			playerList.getItems().add(item);
+			bus.post(new InventoryEvent.Pick(item.uid, map.id));			
+		}
+	}
+	
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container module");
@@ -120,7 +139,7 @@ public class ContainerModule extends Module {
 		
 		Player player = entities.getEntity(0);
 		Shape shape = player.getComponent(Shape.class);
-		RMap map = event.getParameter(RMap.class);
+		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
 		for (long item : map.getEntities(shape.getX(), shape.getY())) {
 			containerList.getItems().add(entities.getEntity(item));

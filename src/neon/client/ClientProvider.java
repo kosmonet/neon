@@ -20,6 +20,7 @@ package neon.client;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import neon.entity.EntityProvider;
@@ -69,6 +70,22 @@ public class ClientProvider implements EntityProvider {
 	@Override
 	public Collection<Entity> getEntities() {
 		return entities.values();
+	}
+	
+	/**
+	 * Returns a list of entities with the given uid's.
+	 * 
+	 * @param uids
+	 * @return
+	 */
+	public Collection<Entity> getEntities(Collection<Long> uids) {
+		HashSet<Entity> set = new HashSet<>();
+		
+		for (long uid : uids) {
+			set.add(entities.get(uid));
+		}
+		
+		return set;
 	}
 	
 	/**

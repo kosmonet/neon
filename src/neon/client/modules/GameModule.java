@@ -138,25 +138,34 @@ public class GameModule extends Module {
 	
 	@Subscribe
 	private void update(UpdateEvent.Map event) throws ResourceException {
-		map = resources.getResource("maps", event.getMap());
-		renderPane.setMap(map.getTerrain(), map.getElevation(), provider.getEntities());		
+		Player player = provider.getEntity(0);
+		Shape shape = player.getComponent(Shape.class);
+		map = resources.getResource("maps", event.map);
+		map.addEntity(player.uid, shape.getX(), shape.getY());
+		renderPane.setMap(map.getTerrain(), map.getElevation(), provider.getEntities(map.getEntities()));		
 		redraw();
 	}
 	
 	@Subscribe
 	private void update(UpdateEvent.Item event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(provider.getEntities()));
+		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
 	private void update(UpdateEvent.Creature event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(provider.getEntities()));
+		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
 	private void update(UpdateEvent.Move event) throws ResourceException {
+		Platform.runLater(() -> redraw());
+	}
+	
+	@Subscribe
+	private void update(UpdateEvent.Remove event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	

@@ -52,14 +52,10 @@ public abstract class UpdateEvent extends NeonEvent {
 	 *
 	 */
 	public static class Map extends UpdateEvent {
-		private final String map;
+		public final String map;
 		
 		public Map(RMap map) {
 			this.map = map.id;
-		}
-		
-		public String getMap() {
-			return map;
 		}
 	}
 	
@@ -110,6 +106,16 @@ public abstract class UpdateEvent extends NeonEvent {
 			this.x = x;
 			this.y = y;
 			this.z = z;
+		}
+	}
+	
+	public static class Remove extends UpdateEvent {
+		public final long uid;
+		public final String map;
+		
+		public Remove(long uid, String map) {
+			this.uid = uid;
+			this.map = map;
 		}
 	}
 }

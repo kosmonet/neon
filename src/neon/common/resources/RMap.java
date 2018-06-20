@@ -117,6 +117,15 @@ public class RMap extends Resource{
 		entities.move(uid, new Point(x, y));
 	}
 	
+	/**
+	 * Removes an entity from the map.
+	 * 
+	 * @param uid
+	 */
+	public void removeEntity(long uid) {
+		entities.remove(uid);
+	}
+	
 	public int getWidth() {
 		return width;
 	}
