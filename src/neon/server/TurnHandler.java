@@ -120,7 +120,7 @@ class TurnHandler {
 				
 				// let the client know that an entity has moved
 				Shape shape = creature.getComponent(Shape.class);
-				bus.post(new UpdateEvent.Move(uid, shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}
 	}

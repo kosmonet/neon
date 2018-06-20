@@ -84,7 +84,7 @@ public class Server implements Runnable {
 		
 		MovementSystem mover = new MovementSystem(resources, entities, bus);
 
-		bus.register(new InventoryHandler(entities, bus));
+		bus.register(new InventoryHandler(resources, entities, bus));
 		bus.register(new TurnHandler(resources, entities, bus, new AISystem(mover)));
 		bus.register(new InputSystem(resources, entities, bus, mover));
 		bus.register(new CombatSystem(entities));

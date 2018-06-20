@@ -18,17 +18,38 @@
 
 package neon.common.event;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-public class InventoryEvent extends NeonEvent {
-	private final ArrayList<Long> items;
+public abstract class InventoryEvent extends NeonEvent {
+	public static class Request extends InventoryEvent {}
 	
-	public InventoryEvent(Collection<Long> items) {
-		this.items = new ArrayList<>(items);
+	public static class List extends InventoryEvent {
+		private final long[] items;
+		
+		public List(Collection<Long> items) {
+			this.items = items.stream().mapToLong(Long::longValue).toArray();
+		}
+		
+		public long[] getItems() {
+			return items;
+		}		
 	}
 	
-	public Collection<Long> getItems() {
-		return items;
+	public static class Drop extends InventoryEvent {
+		private final long uid;
+		private final String id;
+		
+		public Drop(long uid, String id) {
+			this.uid = uid;
+			this.id = id;
+		}
+		
+		public long getItem() {
+			return uid;
+		}
+		
+		public String getMap() {
+			return id;
+		}
 	}
 }

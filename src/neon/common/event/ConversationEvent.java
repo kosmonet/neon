@@ -20,7 +20,7 @@ package neon.common.event;
 
 import java.util.HashMap;
 
-public class ConversationEvent extends NeonEvent {
+public abstract class ConversationEvent extends NeonEvent {
 	/**
 	 * Event to start a conversation.
 	 * 

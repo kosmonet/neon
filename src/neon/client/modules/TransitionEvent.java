@@ -18,7 +18,8 @@
 
 package neon.client.modules;
 
-import java.util.HashMap;
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
 
 import neon.common.event.ClientEvent;
 
@@ -30,18 +31,10 @@ import neon.common.event.ClientEvent;
  */
 public class TransitionEvent extends ClientEvent {
 	private final String condition;
-	private final HashMap<String, Object> parameters = new HashMap<>();
+//	private final HashMap<String, Object> parameters = new HashMap<>();
+	private final ClassToInstanceMap<Object> parameters = MutableClassToInstanceMap.create();
 	
 	private boolean consumed = false;
-	
-	/**
-	 * Initializes a transition event.
-	 * 
-	 * @param condition
-	 */
-	public TransitionEvent(String condition) {
-		this.condition = condition;
-	}
 	
 	/**
 	 * Initializes a new transition event with a single parameter.
@@ -50,29 +43,15 @@ public class TransitionEvent extends ClientEvent {
 	 * @param key
 	 * @param parameter
 	 */
-	public TransitionEvent(String condition, String key, Object parameter) {
-		this(condition);
-		parameters.put(key, parameter);
+	public TransitionEvent(String condition, Object... parameters) {
+		this.condition = condition;
+		for (Object parameter : parameters) {
+			this.parameters.put(parameter.getClass(), parameter);			
+		}
 	}
 	
-	/**
-	 * Initializes a new transition event with two parameters.
-	 * 
-	 * @param condition
-	 * @param key1
-	 * @param parameter1
-	 * @param key2
-	 * @param parameter2
-	 */
-	public TransitionEvent(String condition, String key1, Object parameter1, String key2, Object parameter2) {
-		this(condition);
-		parameters.put(key1, parameter1);
-		parameters.put(key2, parameter2);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T getParameter(String key) {
-		return (T) parameters.get(key);
+	public <T extends Object> T getParameter(Class<T> component) {
+		return parameters.getInstance(component);
 	}
 	
 	/**

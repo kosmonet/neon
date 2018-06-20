@@ -39,7 +39,7 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
-import neon.common.event.NeonEvent;
+import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Item;
 
@@ -55,6 +55,7 @@ public class InventoryModule extends Module {
 	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
+	private RMap map;
 	
 	public InventoryModule(UserInterface ui, EventBus bus, EntityProvider entities) {
 		this.ui = ui;
@@ -67,14 +68,15 @@ public class InventoryModule extends Module {
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		} catch (IOException e) {
 			logger.severe("failed to load inventory interface: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		
-		// list catches the esc key, we need a separate listener
+		// list catches the esc and enter keys, we need a separate listener
 		playerList.setOnKeyPressed(event -> keyPressed(event));
 		followerList.setOnKeyPressed(event -> keyPressed(event));
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
@@ -85,11 +87,13 @@ public class InventoryModule extends Module {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.F2)) {
 			showHelp();
+		} else if (event.getCode().equals(KeyCode.ENTER)) {
+			drop();
 		}
 	}
 	
 	@Subscribe
-	private void showInventory(InventoryEvent event) {
+	private void showInventory(InventoryEvent.List event) {
 		playerList.getItems().clear();
 		
 		for (long item : event.getItems()) {
@@ -102,7 +106,8 @@ public class InventoryModule extends Module {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
-		bus.post(new NeonEvent.Inventory());
+		bus.post(new InventoryEvent.Request());
+		map = event.getParameter(RMap.class);
 		ui.showScene(scene);
 	}
 
@@ -111,6 +116,15 @@ public class InventoryModule extends Module {
 		logger.finest("exiting inventory module");
 	}
 	
+	@FXML private void drop() {
+		if (!playerList.getSelectionModel().isEmpty()) {
+			Item item = playerList.getSelectionModel().getSelectedItem();
+			// we trust the client on this one
+			playerList.getItems().remove(item);
+			bus.post(new InventoryEvent.Drop(item.uid, map.id));
+		}
+	}
+
 	@FXML private void showHelp() {
 		new HelpWindow().show("inventory.html");
 	}

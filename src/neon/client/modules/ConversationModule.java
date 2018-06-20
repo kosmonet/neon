@@ -84,8 +84,8 @@ public class ConversationModule extends Module {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering conversation module");
 
-		Player player = event.getParameter("player");
-		Creature creature = event.getParameter("creature");
+		Player player = event.getParameter(Player.class);
+		Creature creature = event.getParameter(Creature.class);
 		bus.post(new ConversationEvent.Start(player.uid, creature.uid));
 		
 		flow.getChildren().clear();

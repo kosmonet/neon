@@ -39,7 +39,7 @@
 			<children>
 				<Button fx:id="equipButton" focusTraversable="false" text="Space" />
 				<Label text="Use/equip" />
-				<Button fx:id="dropButton" text="Enter" defaultButton="true" focusTraversable="false" />
+				<Button fx:id="dropButton" text="Enter" defaultButton="true" focusTraversable="false" onAction="#drop" />
 				<Label text="Drop" />
 				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
 				<Label text="Cancel" />

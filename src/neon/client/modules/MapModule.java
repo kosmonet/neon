@@ -82,7 +82,7 @@ public class MapModule extends Module {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering map module");
 	    root.setCenter(pane);
-	    RMap map = event.getParameter("map");
+	    RMap map = event.getParameter(RMap.class);
 	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
 	    pane.heightProperty().addListener(observable -> pane.drawMap(map));
 		ui.showScene(scene);

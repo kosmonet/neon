@@ -39,7 +39,6 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
-import neon.common.event.NeonEvent;
 import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
 import neon.entity.components.Shape;
@@ -104,7 +103,7 @@ public class ContainerModule extends Module {
 	}
 	
 	@Subscribe
-	private void showInventory(InventoryEvent event) {
+	private void showInventory(InventoryEvent.List event) {
 		playerList.getItems().clear();
 		
 		for (long item : event.getItems()) {
@@ -112,18 +111,17 @@ public class ContainerModule extends Module {
 		}
 		
 		playerList.getSelectionModel().selectFirst();
-		playerList.requestFocus();
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering inventory module");
-		bus.post(new NeonEvent.Inventory());
+		logger.finest("entering container module");
+		bus.post(new InventoryEvent.Request());
 		
-		containerList.getItems().clear();
 		Player player = entities.getEntity(0);
 		Shape shape = player.getComponent(Shape.class);
-		RMap map = event.getParameter("map");
+		RMap map = event.getParameter(RMap.class);
+		containerList.getItems().clear();
 		for (long item : map.getEntities(shape.getX(), shape.getY())) {
 			containerList.getItems().add(entities.getEntity(item));
 		}
@@ -134,7 +132,7 @@ public class ContainerModule extends Module {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting inventory module");
+		logger.finest("exiting container module");
 	}
 	
 	@FXML private void showHelp() {

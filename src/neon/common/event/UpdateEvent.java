@@ -87,12 +87,14 @@ public abstract class UpdateEvent extends NeonEvent {
 	public static class Move extends UpdateEvent {
 		public final long uid;
 		public final int x, y, z;
+		public final String map;
 
-		public Move(long uid, int x, int y, int z) {
+		public Move(long uid, String map, int x, int y, int z) {
 			this.uid = uid;
 			this.x = x;
 			this.y = y;
 			this.z = z;
+			this.map = map;
 		}
 	}
 	

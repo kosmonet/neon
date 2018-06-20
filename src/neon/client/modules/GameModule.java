@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -55,7 +56,6 @@ import neon.entity.components.Behavior;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
-import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 import neon.util.Direction;
 
@@ -145,57 +145,19 @@ public class GameModule extends Module {
 	
 	@Subscribe
 	private void update(UpdateEvent.Item event) throws ResourceException {
-		if(provider.hasEntity(event.uid)) {
-			if (!event.map.isEmpty()) {
-				Item item = provider.getEntity(event.uid);
-				item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-				map.moveEntity(item.uid, event.x, event.y);
-			} else {
-				return;
-			}
-		} else {
-			Item item = new Item(event.uid, resources.getResource("items", event.id));
-			provider.addEntity(item);
-			if (!event.map.isEmpty()) {
-				item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-				map.addEntity(item.uid, event.x, event.y);
-			} else {
-				return;
-			}
-		}
-
-		renderPane.updateMap(provider.getEntities());
-		redraw();
+		Platform.runLater(() -> renderPane.updateMap(provider.getEntities()));
+		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
 	private void update(UpdateEvent.Creature event) throws ResourceException {
-		if(provider.hasEntity(event.uid)) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			map.moveEntity(event.uid, event.x, event.y);
-		} else {
-			Creature creature = new Creature(event.uid, resources.getResource("creatures", event.id));
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			map.addEntity(event.uid, event.x, event.y);
-			provider.addEntity(creature);
-		}
-
-		renderPane.updateMap(provider.getEntities());
-		redraw();
+		Platform.runLater(() -> renderPane.updateMap(provider.getEntities()));
+		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
 	private void update(UpdateEvent.Move event) throws ResourceException {
-		if (event.uid == 0) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);			
-		} else if (provider.hasEntity(event.uid)) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			map.moveEntity(event.uid, event.x, event.y);
-		} 
-		redraw();
+		Platform.runLater(() -> redraw());
 	}
 	
 	private void move(Direction direction) {
@@ -213,7 +175,7 @@ public class GameModule extends Module {
 	}
 	
 	private void showInventory() {
-		bus.post(new TransitionEvent("inventory"));
+		bus.post(new TransitionEvent("inventory", "map", map));
 	}
 	
 	private void showMap() {

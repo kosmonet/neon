@@ -44,15 +44,6 @@ public abstract class NeonEvent {
 	public boolean isBlocked() {
 		return blocked;
 	}
-
-	/**
-	 * An event to request the server to send a list of items in the player's
-	 * inventory to the client.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Inventory extends NeonEvent {}
 	
 	/**
 	 * Event to signal the server to pause the game. This means in practice 

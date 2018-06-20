@@ -62,7 +62,7 @@ public class InputSystem implements NeonSystem {
 
 			// signal the client that an entity was updated
 			Shape shape = player.getComponent(Shape.class);
-			bus.post(new UpdateEvent.Move(0, shape.getX(), shape.getY(), shape.getZ()));
+			bus.post(new UpdateEvent.Move(0, map.id, shape.getX(), shape.getY(), shape.getZ()));
 		}
 
 		// check if the player still has action points left after moving
