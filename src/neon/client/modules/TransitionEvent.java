@@ -31,7 +31,6 @@ import neon.common.event.ClientEvent;
  */
 public class TransitionEvent extends ClientEvent {
 	private final String condition;
-//	private final HashMap<String, Object> parameters = new HashMap<>();
 	private final ClassToInstanceMap<Object> parameters = MutableClassToInstanceMap.create();
 	
 	private boolean consumed = false;
