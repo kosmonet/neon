@@ -41,7 +41,7 @@ public class RMap extends Resource{
 	 */
 	public final String name;
 	
-	private final RegionQuadTree<String> terrain;
+	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;
 	private final PointSpatialIndex<Long> entities;
 	private final int width, height;
@@ -67,7 +67,7 @@ public class RMap extends Resource{
 		this.uid = uid;
 	}
 	
-	public RegionQuadTree<String> getTerrain() {
+	public RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
 	

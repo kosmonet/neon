@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 /**
  * A module represents a state in the client finite state machine. 
@@ -24,7 +24,7 @@ package neon.client.modules;
  * @author mdriesen
  *
  */
-public abstract class Module {
+public abstract class State {
 	private boolean active;
 	
 	/**

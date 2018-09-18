@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -44,7 +44,7 @@ import neon.common.event.ServerLoadEvent;
  * @author mdriesen
  *
  */
-public class LoadModule extends Module {
+public class LoadState extends State {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final EventBus bus;
@@ -61,7 +61,7 @@ public class LoadModule extends Module {
 	 * @param ui
 	 * @param bus	the client event bus
 	 */
-	public LoadModule(UserInterface ui, EventBus bus) {
+	public LoadState(UserInterface ui, EventBus bus) {
 		this.bus = bus;
 		this.ui = ui;
 		

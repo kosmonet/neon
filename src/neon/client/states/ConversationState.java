@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -46,7 +46,7 @@ import neon.common.event.ConversationEvent;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
 
-public class ConversationModule extends Module {
+public class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;
@@ -61,7 +61,7 @@ public class ConversationModule extends Module {
 	private Scene scene;
 	private int index;
 	
-	public ConversationModule(UserInterface ui, EventBus bus) {
+	public ConversationState(UserInterface ui, EventBus bus) {
 		this.bus = bus;
 		this.ui = ui;
 		

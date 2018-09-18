@@ -30,19 +30,18 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
-import neon.client.modules.ContainerModule;
-import neon.client.modules.ConversationModule;
-import neon.client.modules.GameModule;
-import neon.client.modules.InventoryModule;
-import neon.client.modules.LoadModule;
-import neon.client.modules.MainMenuModule;
-import neon.client.modules.MapModule;
-import neon.client.modules.Module;
-import neon.client.modules.NewGameModule;
-import neon.client.modules.Transition;
-import neon.client.modules.TransitionEvent;
 import neon.client.resource.MapLoader;
+import neon.client.states.ContainerState;
+import neon.client.states.ConversationState;
+import neon.client.states.GameState;
+import neon.client.states.InventoryState;
+import neon.client.states.LoadState;
+import neon.client.states.MainMenuState;
+import neon.client.states.MapState;
+import neon.client.states.NewGameState;
+import neon.client.states.State;
+import neon.client.states.Transition;
+import neon.client.states.TransitionEvent;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
@@ -64,7 +63,7 @@ public class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final EventBus bus = new EventBus("Client Bus");
-	private final ArrayList<Module> modules = new ArrayList<>();
+	private final ArrayList<State> modules = new ArrayList<>();
 	private final ClientSocket socket;
 	private final UserInterface ui;
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
@@ -122,35 +121,35 @@ public class Client implements Runnable {
 	
 	private void initModules(String version) {
 		// client uses the first module in the list as the start state
-		MainMenuModule mainMenu = new MainMenuModule(ui, version, bus);
+		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
 		modules.add(mainMenu);
 		bus.register(mainMenu);
 
-		NewGameModule newGame = new NewGameModule(ui, bus);
+		NewGameState newGame = new NewGameState(ui, bus);
 		modules.add(newGame);
 		bus.register(newGame);
 		
-		LoadModule loadGame = new LoadModule(ui, bus);
+		LoadState loadGame = new LoadState(ui, bus);
 		modules.add(loadGame);
 		bus.register(loadGame);
 		
-		GameModule game = new GameModule(ui, bus, provider, resources);
+		GameState game = new GameState(ui, bus, provider, resources);
 		modules.add(game);
 		bus.register(game);
 		
-		InventoryModule inventory = new InventoryModule(ui, bus, provider);
+		InventoryState inventory = new InventoryState(ui, bus, provider);
 		modules.add(inventory);
 		bus.register(inventory);
 		
-		MapModule map = new MapModule(ui, bus, resources);
+		MapState map = new MapState(ui, bus, resources);
 		modules.add(map);
 		bus.register(map);
 		
-		ConversationModule conversation = new ConversationModule(ui, bus);
+		ConversationState conversation = new ConversationState(ui, bus);
 		modules.add(conversation);
 		bus.register(conversation);
 		
-		ContainerModule container = new ContainerModule(ui, bus, provider);
+		ContainerState container = new ContainerState(ui, bus, provider);
 		modules.add(container);
 		bus.register(container);
 		

@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -41,7 +41,7 @@ import neon.client.help.HelpWindow;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NewGameEvent;
 
-public class NewGameModule extends Module {
+public class NewGameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private Button cancelButton, startButton;
@@ -54,7 +54,7 @@ public class NewGameModule extends Module {
 	private final EventBus bus;
 	private Scene scene;
 
-	public NewGameModule(UserInterface ui, EventBus bus) {
+	public NewGameState(UserInterface ui, EventBus bus) {
 		this.ui = ui;
 		this.bus = bus;
 		

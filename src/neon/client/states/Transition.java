@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -28,7 +28,7 @@ import com.google.common.eventbus.Subscribe;
  */
 public class Transition {
 	private final String condition;
-	private final Module from, to;
+	private final State from, to;
 	
 	/**
 	 * Creates a transition between the from and to {@code Module}s, under the given
@@ -38,7 +38,7 @@ public class Transition {
 	 * @param to
 	 * @param condition
 	 */
-	public Transition(Module from, Module to, String condition) {
+	public Transition(State from, State to, String condition) {
 		this.condition = condition;
 		this.from = from;
 		this.to = to;

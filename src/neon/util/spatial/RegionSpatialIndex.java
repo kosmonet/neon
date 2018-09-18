@@ -43,4 +43,16 @@ public interface RegionSpatialIndex<T> {
 	 * @return	the value at the given position
 	 */
 	public T get(int x, int y);
+	
+	/**
+	 * 
+	 * @return	the width of this spatial index
+	 */
+	public int getWidth();
+	
+	/**
+	 * 
+	 * @return	the height of this spatial index.
+	 */
+	public int getHeight();
 }

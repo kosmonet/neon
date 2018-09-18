@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -43,7 +43,7 @@ import neon.common.resources.ResourceManager;
  * @author mdriesen
  *
  */
-public class MapModule extends Module {
+public class MapState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final UserInterface ui;
@@ -54,7 +54,7 @@ public class MapModule extends Module {
 	
 	private Scene scene;
 
-	public MapModule(UserInterface ui, EventBus bus, ResourceManager resources) {
+	public MapState(UserInterface ui, EventBus bus, ResourceManager resources) {
 		this.ui = ui;
 		pane = new MapPane(resources);
 		

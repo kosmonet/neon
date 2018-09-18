@@ -18,6 +18,8 @@
 
 package neon.server.handlers;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.logging.Logger;
 
 import javax.script.ScriptEngine;
@@ -38,6 +40,15 @@ public class ScriptHandler {
 	
 	public ScriptHandler(EventBus bus) {
 		this.bus = bus;
+		
+		try {
+			engine.eval(new FileReader("data/aneirin/scripts/start.js"));
+			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
+			engine.eval("start.onGameStart()");
+			engine.eval("onGameStart()");
+		} catch (FileNotFoundException | ScriptException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -69,5 +80,10 @@ public class ScriptHandler {
 			logger.warning("could not evaluate script: " + script);
 		}		
 		return result;
+	}
+	
+	public static String output(String name) {
+	    System.out.println(name);
+	    return "greetings from java";
 	}
 }

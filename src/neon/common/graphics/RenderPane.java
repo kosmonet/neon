@@ -33,7 +33,6 @@ import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.entities.Entity;
-import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
 /**
@@ -49,7 +48,7 @@ public class RenderPane extends StackPane {
 	private final ResourceManager resources;
 	private final EntityRenderer<Entity> renderer;
 	
-	private RegionQuadTree<String> terrain;
+	private RegionSpatialIndex<String> terrain;
 	private RegionSpatialIndex<Integer> elevation;
 	private SortedSet<Entity> entities;
 	
@@ -72,7 +71,7 @@ public class RenderPane extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionQuadTree<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Entity> entities) {
+	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Entity> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
 		this.entities.clear();

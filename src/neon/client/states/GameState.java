@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -65,7 +65,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class GameModule extends Module {
+public class GameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final UserInterface ui;
@@ -91,7 +91,7 @@ public class GameModule extends Module {
 	 * @param provider
 	 * @param resources
 	 */
-	public GameModule(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
+	public GameState(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
 		this.provider = provider;

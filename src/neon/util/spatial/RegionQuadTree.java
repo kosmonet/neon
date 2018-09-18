@@ -84,10 +84,12 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 		}
 	}
 	
+	@Override
 	public int getWidth() {
 		return width;
 	}
 	
+	@Override
 	public int getHeight() {
 		return height;
 	}

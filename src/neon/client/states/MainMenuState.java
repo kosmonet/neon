@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import neon.common.event.QuitEvent;
  * @author mdriesen
  *
  */
-public class MainMenuModule extends Module {
+public class MainMenuState extends State {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Hyperlink newLink, loadLink, optionLink, quitLink;
@@ -65,7 +65,7 @@ public class MainMenuModule extends Module {
 	 * @param version
 	 * @param bus
 	 */
-	public MainMenuModule(UserInterface ui, String version, EventBus bus) {
+	public MainMenuState(UserInterface ui, String version, EventBus bus) {
 		this.ui = ui;
 		this.bus = bus;
 		

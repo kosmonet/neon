@@ -42,6 +42,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;

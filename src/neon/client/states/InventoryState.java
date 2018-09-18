@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2017 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.modules;
+package neon.client.states;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -41,18 +41,9 @@ import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
 import neon.entity.EntityProvider;
-import neon.entity.components.Shape;
 import neon.entity.entities.Item;
-import neon.entity.entities.Player;
 
-/**
- * A module to handle items when browsing a container or a random heap of 
- * items laying on the ground.
- * 
- * @author mdriesen
- *
- */
-public class ContainerModule extends Module {
+public class InventoryState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final UserInterface ui;
@@ -60,39 +51,35 @@ public class ContainerModule extends Module {
 	private final EntityProvider entities;
 
 	@FXML private Button cancelButton;
-	@FXML private ListView<Item> playerList, containerList;
+	@FXML private ListView<Item> playerList, followerList;
 	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
 	private RMap map;
 	
-	public ContainerModule(UserInterface ui, EventBus bus, EntityProvider entities) {
+	public InventoryState(UserInterface ui, EventBus bus, EntityProvider entities) {
 		this.ui = ui;
 		this.bus = bus;
 		this.entities = entities;
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
 		
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		} catch (IOException e) {
 			logger.severe("failed to load inventory interface: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		
-		// list catches the esc key, we need a separate listener
+		// list catches the esc and enter keys, we need a separate listener
 		playerList.setOnKeyPressed(event -> keyPressed(event));
-		containerList.setOnKeyPressed(event -> keyPressed(event));
-		
-		// update the item description when another item is selected
+		followerList.setOnKeyPressed(event -> keyPressed(event));
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
-		playerList.focusedProperty().addListener(new FocusListener());
-		containerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
-		containerList.focusedProperty().addListener(new FocusListener());
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -116,71 +103,32 @@ public class ContainerModule extends Module {
 		playerList.getSelectionModel().selectFirst();
 	}
 	
-	@FXML private void drop() {
-		if (playerList.isFocused() && !playerList.getSelectionModel().isEmpty()) {
-			Item item = playerList.getSelectionModel().getSelectedItem();
-			// we trust the client on this one
-			playerList.getItems().remove(item);
-			containerList.getItems().add(item);
-			bus.post(new InventoryEvent.Drop(item.uid, map.id));
-		} else if (containerList.isFocused() && !containerList.getSelectionModel().isEmpty()) {
-			Item item = containerList.getSelectionModel().getSelectedItem();
-			// we trust the client on this one
-			containerList.getItems().remove(item);
-			playerList.getItems().add(item);
-			bus.post(new InventoryEvent.Pick(item.uid, map.id));			
-		}
-	}
-	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering container module");
+		logger.finest("entering inventory module");
 		bus.post(new InventoryEvent.Request());
-		
-		Player player = entities.getEntity(0);
-		Shape shape = player.getComponent(Shape.class);
 		map = event.getParameter(RMap.class);
-		containerList.getItems().clear();
-		for (long item : map.getEntities(shape.getX(), shape.getY())) {
-			containerList.getItems().add(entities.getEntity(item));
-		}
-		containerList.getSelectionModel().selectFirst();
-		
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting container module");
+		logger.finest("exiting inventory module");
 	}
 	
+	@FXML private void drop() {
+		if (!playerList.getSelectionModel().isEmpty()) {
+			Item item = playerList.getSelectionModel().getSelectedItem();
+			// we trust the client on this one
+			playerList.getItems().remove(item);
+			bus.post(new InventoryEvent.Drop(item.uid, map.id));
+		}
+	}
+
 	@FXML private void showHelp() {
 		new HelpWindow().show("inventory.html");
 	}
 	
-	/**
-	 * Changes the item description when selecting a different list.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	private class FocusListener implements ChangeListener<Boolean> {
-		@Override
-		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-			if (containerList.isFocused()) {
-				description.update(containerList.getSelectionModel().getSelectedItem());
-			} else {
-				description.update(playerList.getSelectionModel().getSelectedItem());				
-			}
-		}
-	}
-	
-	/**
-	 * Changes the item description when selecting a different item.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
 	private class ListListener implements ChangeListener<Item> {
 	    @Override
 	    public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue) {

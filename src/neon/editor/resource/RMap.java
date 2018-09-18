@@ -27,6 +27,7 @@ import com.google.common.collect.Multimap;
 
 import neon.common.resources.Resource;
 import neon.util.spatial.RegionQuadTree;
+import neon.util.spatial.RegionSpatialIndex;
 
 public class RMap extends Resource {
 	/**
@@ -42,8 +43,8 @@ public class RMap extends Resource {
 	 */
 	public final String module;
 	
-	private final RegionQuadTree<String> terrain;
-	private final RegionQuadTree<Integer> elevation;
+	private final RegionSpatialIndex<String> terrain;
+	private final RegionSpatialIndex<Integer> elevation;
 	private final HashMap<REntity, Integer> entities = new HashMap<>();
 	private final Multimap<Point, REntity> positions = HashMultimap.create();
 	
@@ -67,7 +68,7 @@ public class RMap extends Resource {
 		this.module = module;
 	}
 
-	public RegionQuadTree<String> getTerrain() {
+	public RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
 	
@@ -75,7 +76,7 @@ public class RMap extends Resource {
 	 * 
 	 * @return	the elevation
 	 */
-	public RegionQuadTree<Integer> getElevation() {
+	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}
 	
