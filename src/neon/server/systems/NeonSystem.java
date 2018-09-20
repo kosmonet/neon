@@ -19,5 +19,5 @@
 package neon.server.systems;
 
 public interface NeonSystem {
-
+	
 }

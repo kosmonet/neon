@@ -21,33 +21,66 @@ package neon.client.states;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.google.common.eventbus.EventBus;
+
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import neon.client.UserInterface;
+import neon.common.resources.CClient;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 
 public class CutSceneState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
+	@FXML private Button continueButton;
+	@FXML private Label introLabel;
+
+	private final EventBus bus;
+	private final UserInterface ui;
+	private final ResourceManager resources;
 	private Scene scene;
 
-	public CutSceneState() {
+	public CutSceneState(UserInterface ui, EventBus bus, ResourceManager resources) {
+		this.ui = ui;
+		this.bus = bus;
+		this.resources = resources;
+		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Scene.fxml"));
 		loader.setController(this);
-		
+
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-//			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		} catch (IOException e) {
 			logger.severe("failed to load inventory interface: " + e.getMessage());
 		}
+
+		continueButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering container module");
+		logger.finest("entering cutscene module");
+		try {
+			CClient config = resources.getResource("config", "client");
+			if(config.intro.isEmpty()) {
+				bus.post(new TransitionEvent("cancel"));
+			} else {
+				introLabel.setText(config.intro);
+				ui.showScene(scene);				
+			}
+		} catch (ResourceException e) {
+			bus.post(new TransitionEvent("cancel"));
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
+		logger.finest("exiting cutscene module");
 	}
 }

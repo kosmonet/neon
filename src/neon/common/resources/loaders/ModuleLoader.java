@@ -35,9 +35,10 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 		String title = root.getChildText("title");
 		String subtitle = root.getChildText("subtitle");
 		String map = root.getChild("start").getAttributeValue("map");
+		String intro = root.getChildren("intro").isEmpty() ? "" : root.getChildText("intro");
 		int x = Integer.parseInt(root.getChild("start").getAttributeValue("x"));
 		int y = Integer.parseInt(root.getChild("start").getAttributeValue("y"));
-		RModule module = new RModule(id, title, subtitle, map, x, y);
+		RModule module = new RModule(id, title, subtitle, map, x, y, intro);
 		
 		for (Element species : root.getChild("playable").getChildren()) {
 			module.addPlayableSpecies(species.getText());
@@ -47,7 +48,7 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 			module.addParent(parent.getText());
 		}
 		
-		return module;	
+		return module;
 	}
 
 	@Override
@@ -63,6 +64,12 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 		start.setAttribute("x", Integer.toString(module.getStartX()));
 		start.setAttribute("y", Integer.toString(module.getStartY()));
 		root.addContent(start);
+		
+		if (!module.intro.isEmpty()) {
+			Element intro = new Element("intro");
+			intro.setText(module.intro);
+			root.addContent("intro");
+		}
 		
 		Element playable = new Element("playable");
 		root.addContent(playable);

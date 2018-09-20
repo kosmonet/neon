@@ -83,7 +83,6 @@ public class NewGameState extends State {
 		logger.finest("entering new game module");
 		ui.showScene(scene);
 		nameField.requestFocus();
-		
 	}
 
 	@Override

@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.Button?>
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-	<top>
-		<Label fx:id="instructionLabel" styleClass="instructions" text="Press esc to return to the game." />
-	</top>
 	<center>
-		<Label maxHeight="Infinity" maxWidth="Infinity" text="Loading map..." style="-fx-font-size: 24px" />
+		<Label fx:id="introLabel" maxHeight="Infinity" maxWidth="Infinity" text="Loading intro..." style="-fx-font-size: 24px; -fx-alignment: center;" />
 	</center>
 	<bottom>
 		<HBox styleClass="bottom-buttons">
 			<children>
-				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
-				<Label text="Cancel" />
-				<Button fx:id="helpButton" focusTraversable="false" text="F2" onAction="#showHelp" />
-				<Label text="Help" />
+				<Button fx:id="continueButton" cancelButton="true" focusTraversable="false" text="Esc" />
+				<Label text="Continue" />
 			</children>
 		</HBox>
 	</bottom>

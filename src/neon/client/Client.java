@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
+import neon.client.states.CutSceneState;
 import neon.client.states.GameState;
 import neon.client.states.InventoryState;
 import neon.client.states.LoadState;
@@ -51,6 +52,7 @@ import neon.common.net.ClientSocket;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
@@ -101,6 +103,7 @@ public class Client implements Runnable {
 		resources.addLoader("items", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader());
+		resources.addLoader("config", new ConfigurationLoader());
 		
 		// initialize all modules and enter the first one
 		initModules(version);
@@ -133,6 +136,10 @@ public class Client implements Runnable {
 		modules.add(loadGame);
 		bus.register(loadGame);
 		
+		CutSceneState cut = new CutSceneState(ui, bus, resources);
+		modules.add(cut);
+		bus.register(cut);
+
 		GameState game = new GameState(ui, bus, provider, resources);
 		modules.add(game);
 		bus.register(game);
@@ -156,7 +163,9 @@ public class Client implements Runnable {
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
 		bus.register(new Transition(newGame, mainMenu, "cancel"));
-		bus.register(new Transition(newGame, game, "start game"));
+		bus.register(new Transition(newGame, cut, "start game"));
+		
+		bus.register(new Transition(cut, game, "cancel"));
 		
 		bus.register(new Transition(mainMenu, loadGame, "load game"));
 		bus.register(new Transition(loadGame, mainMenu, "cancel"));

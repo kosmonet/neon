@@ -34,16 +34,18 @@ public class RModule extends Resource {
 	 */
 	public final String title;
 	public final String subtitle;
+	public final String intro;
 
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
 	private final String map;
 	private final int x, y;
 
-	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY) {
+	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY, String intro) {
 		super(id, "global");
 		this.title = title;
 		this.subtitle = subtitle;
+		this.intro = intro;
 		map = startMap;
 		x = startX;
 		y = startY;

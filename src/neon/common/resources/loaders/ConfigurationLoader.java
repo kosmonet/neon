@@ -85,8 +85,9 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	private CClient loadClient(Element root) {
 		String title = root.getAttributeValue("title");
 		String subtitle = root.getAttributeValue("subtitle");
+		String intro = root.getChildText("intro");
 		HashSet<String> species = new HashSet<>();		
-		return new CClient(title, subtitle, species);
+		return new CClient(title, subtitle, species, intro);
 	}
 
 	private Element saveServer(CServer server) {
@@ -112,6 +113,9 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 		Element client = new Element("client");
 		client.setAttribute("title", config.title);
 		client.setAttribute("subtitle", config.subtitle);
+		Element intro = new Element("intro");
+		intro.setText(config.intro);
+		client.addContent(intro);
 		return client;
 	}
 
