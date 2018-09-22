@@ -96,7 +96,7 @@ public class MapHandler {
 	
 	@FXML public void initialize() {
 		// initialize is run twice (MapPane.fxml and MapTree.fxml), so check first if a node is already initialized
-		if(mapTree != null) {
+		if (mapTree != null) {
 			mapTree.setCellFactory(new CardCellFactory());			
 		}
 		

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
@@ -40,23 +41,29 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NewGameEvent;
+import neon.common.resources.RCreature;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.util.Graphics;
 
 public class NewGameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private Button cancelButton, startButton;
-	@FXML private ListView<String> speciesList;
+	@FXML private ListView<RCreature> speciesList;
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
 	@FXML private Label instructionLabel;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
+	private final ResourceManager resources;
 	private Scene scene;
 
-	public NewGameState(UserInterface ui, EventBus bus) {
+	public NewGameState(UserInterface ui, EventBus bus, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
+		this.resources = resources;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/NewGame.fxml"));
 		loader.setController(this);
@@ -76,6 +83,9 @@ public class NewGameState extends State {
 		speciesList.setOnKeyPressed(event -> listKeyPressed(event));
 		// text field catches the F2 key, another listener
 		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));
+		
+		// TODO: list scrollt niet correct naar laatste item
+		speciesList.setCellFactory(speciesList -> new CreatureCell());
 	}
 	
 	@Override
@@ -113,7 +123,7 @@ public class NewGameState extends State {
 	@FXML private void startGame() {
 		// collect player character data
 		String name = nameField.getText();
-		String species = speciesList.getSelectionModel().getSelectedItem();
+		String species = speciesList.getSelectionModel().getSelectedItem().id;
 		String gender = genderGroup.getSelectedToggle().getUserData().toString();
 		
 		if (name.isEmpty()) {
@@ -130,10 +140,28 @@ public class NewGameState extends State {
 	 * Configures the scene of this main menu module.
 	 * 
 	 * @param event
+	 * @throws ResourceException 
 	 */
 	@Subscribe
-	public void configure(ClientConfigurationEvent event) {
-		speciesList.getItems().addAll(event.getPlayableSpecies());
+	private void configure(ClientConfigurationEvent event) throws ResourceException {
+		for (String id : event.getPlayableSpecies()) {
+			speciesList.getItems().add(resources.getResource("creatures", id));
+		}
+		
 		speciesList.getSelectionModel().select(0);
-	}	
+	}
+	
+    private class CreatureCell extends ListCell<RCreature> {
+    	@Override
+    	public void updateItem(RCreature creature, boolean empty) {
+    		super.updateItem(creature, empty);
+    		if (empty || creature == null) {
+    			setGraphic(null);
+    			setText(null);
+    		} else {
+    			setStyle("-fx-text-fill: " + Graphics.getColorString(creature.color));
+    			setText(creature.name);
+    		}
+    	}
+    }
 }

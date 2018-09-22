@@ -31,7 +31,7 @@ public class Transition {
 	private final State from, to;
 	
 	/**
-	 * Creates a transition between the from and to {@code Module}s, under the given
+	 * Creates a transition between the from and to {@code State}s, under the given
 	 * condition.
 	 * 
 	 * @param from

@@ -30,6 +30,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
 import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
@@ -40,6 +41,7 @@ import neon.client.states.LoadState;
 import neon.client.states.MainMenuState;
 import neon.client.states.MapState;
 import neon.client.states.NewGameState;
+import neon.client.states.OptionState;
 import neon.client.states.State;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
@@ -128,7 +130,7 @@ public class Client implements Runnable {
 		modules.add(mainMenu);
 		bus.register(mainMenu);
 
-		NewGameState newGame = new NewGameState(ui, bus);
+		NewGameState newGame = new NewGameState(ui, bus, resources);
 		modules.add(newGame);
 		bus.register(newGame);
 		
@@ -160,6 +162,10 @@ public class Client implements Runnable {
 		modules.add(container);
 		bus.register(container);
 		
+		OptionState options = new OptionState(ui, bus);
+		modules.add(options);
+		bus.register(options);
+		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
 		bus.register(new Transition(newGame, mainMenu, "cancel"));
@@ -170,6 +176,9 @@ public class Client implements Runnable {
 		bus.register(new Transition(mainMenu, loadGame, "load game"));
 		bus.register(new Transition(loadGame, mainMenu, "cancel"));
 		bus.register(new Transition(loadGame, game, "start game"));
+		
+		bus.register(new Transition(mainMenu, options, "options"));
+		bus.register(new Transition(options, mainMenu, "cancel"));
 		
 		bus.register(new Transition(game, inventory, "inventory"));
 		bus.register(new Transition(inventory, game, "cancel"));

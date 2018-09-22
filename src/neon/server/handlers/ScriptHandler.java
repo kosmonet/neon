@@ -44,16 +44,16 @@ public class ScriptHandler {
 	public ScriptHandler(EventBus bus) {
 		this.bus = bus;
 		
-		try {
-			engine.eval(new FileReader("data/aneirin/scripts/start.js"));
-			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
-			
-			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
-				System.out.println("binding: " + entry.getKey() + ": " + entry.getValue().getClass());
-			}
-		} catch (FileNotFoundException | ScriptException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			engine.eval(new FileReader("data/aneirin/scripts/start.js"));
+//			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
+//			
+//			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
+//				System.out.println("binding: " + entry.getKey() + ": " + entry.getValue().getClass());
+//			}
+//		} catch (FileNotFoundException | ScriptException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	/**

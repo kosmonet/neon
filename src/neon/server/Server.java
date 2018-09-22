@@ -113,6 +113,12 @@ public class Server implements Runnable {
 		}
 	}
 	
+	/**
+	 * Gives a warning when an event is detected that no object is currently 
+	 * listening to.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void monitor(DeadEvent event) {
 		logger.warning("server received a dead event: " + event.getEvent());

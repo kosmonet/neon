@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+	<top>
+		<Label fx:id="instructionLabel" styleClass="instructions" text="Select options." />
+	</top>
+	<center>
+		<Label fx:id="introLabel" maxHeight="Infinity" maxWidth="Infinity" text="Change some options" style="-fx-font-size: 24px; -fx-alignment: center;" />
+	</center>
+	<bottom>
+		<HBox styleClass="bottom-buttons">
+			<children>
+				<Button fx:id="saveButton" defaultButton="true" focusTraversable="false" text="Enter" onAction="#save" />
+				<Label text="Save" />
+				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
+				<Label text="Cancel" />
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>

@@ -74,6 +74,7 @@ class ServerLoader {
 	 * 
 	 * @param files
 	 * @param manager
+	 * @param entities
 	 */
 	void configure(NeonFileSystem files, ResourceManager resources, EntityTracker entities) {
 		try {

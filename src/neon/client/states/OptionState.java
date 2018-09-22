@@ -27,61 +27,48 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 
 import neon.client.UserInterface;
-import neon.common.resources.CClient;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 
-public class CutSceneState extends State {
+public class OptionState extends State {
 	private static final Logger logger = Logger.getGlobal();
-	
-	@FXML private Button continueButton;
-	@FXML private Label introLabel;
 
-	private final EventBus bus;
+	@FXML private Button cancelButton;
+	@FXML private Button saveButton;
+
 	private final UserInterface ui;
-	private final ResourceManager resources;
+	private final EventBus bus;
 	private Scene scene;
 
-	public CutSceneState(UserInterface ui, EventBus bus, ResourceManager resources) {
+	public OptionState(UserInterface ui, EventBus bus) {
 		this.ui = ui;
 		this.bus = bus;
-		this.resources = resources;
 		
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Scene.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Options.fxml"));
 		loader.setController(this);
 
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load inventory interface: " + e.getMessage());
+			logger.severe("failed to load options menu: " + e.getMessage());
 		}
 
-		continueButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+	}
+	
+	@FXML private void save() {
+		bus.post(new TransitionEvent("cancel"));
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering cutscene state");
-		try {
-			CClient config = resources.getResource("config", "client");
-			if(config.intro.isEmpty()) {
-				bus.post(new TransitionEvent("cancel"));
-			} else {
-				introLabel.setText(config.intro);
-				ui.showScene(scene);				
-			}
-		} catch (ResourceException e) {
-			bus.post(new TransitionEvent("cancel"));
-			e.printStackTrace();
-		}
+		logger.finest("entering options state");		
+		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting cutscene state");
+		logger.finest("exiting options state");
 	}
 }

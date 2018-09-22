@@ -56,7 +56,7 @@ public class LoadState extends State {
 	private Scene scene;
 	
 	/**
-	 * Initializes this module.
+	 * Initializes this state.
 	 * 
 	 * @param ui
 	 * @param bus	the client event bus
@@ -120,13 +120,13 @@ public class LoadState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering load game module");
+		logger.finest("entering load game state");
 		ui.showScene(scene);
 		bus.post(new ServerLoadEvent.List());
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting load game module");		
+		logger.finest("exiting load game state");		
 	}
 }
