@@ -114,7 +114,7 @@ public class Server implements Runnable {
 	}
 	
 	/**
-	 * Gives a warning when an event is detected that no object is currently 
+	 * Gives a warning when an event is detected that no other object is currently 
 	 * listening to.
 	 * 
 	 * @param event

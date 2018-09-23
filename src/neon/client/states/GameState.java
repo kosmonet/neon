@@ -70,7 +70,7 @@ public class GameState extends State {
 	
 	private final UserInterface ui;
 	private final EventBus bus;
-	private final ClientProvider provider;
+	private final ClientProvider entities;
 	private final RenderPane renderPane;
 	private final ResourceManager resources;
 	
@@ -94,7 +94,7 @@ public class GameState extends State {
 	public GameState(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
-		this.provider = provider;
+		entities = provider;
 		this.resources = resources;
 		renderPane = new RenderPane(resources, new ClientRenderer());
 		
@@ -114,19 +114,20 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> showJournal());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> showMap());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new HelpWindow().show("game.html"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Start event) throws ResourceException {
+	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
 		// prepare the player
-		Player player = new Player("", "", resources.getResource("creatures", event.id));
+		Player player = new Player(event.name, event.gender, resources.getResource("creatures", event.id));
 		player.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-		provider.addEntity(player);
+		entities.addEntity(player);
 		
 		// prepare the scene
 		stack.getChildren().clear();
@@ -137,24 +138,24 @@ public class GameState extends State {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Map event) throws ResourceException {
-		Player player = provider.getEntity(0);
+	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
+		Player player = entities.getEntity(0);
 		Shape shape = player.getComponent(Shape.class);
 		map = resources.getResource("maps", event.map);
 		map.addEntity(player.uid, shape.getX(), shape.getY());
-		renderPane.setMap(map.getTerrain(), map.getElevation(), provider.getEntities(map.getEntities()));		
+		renderPane.setMap(map.getTerrain(), map.getElevation(), entities.getEntities(map.getEntities()));		
 		redraw();
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Item event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
+	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Creature event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
+	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	
@@ -165,7 +166,7 @@ public class GameState extends State {
 	
 	@Subscribe
 	private void update(UpdateEvent.Remove event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(provider.getEntities(map.getEntities())));
+		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
 		Platform.runLater(() -> redraw());
 	}
 	
@@ -174,7 +175,7 @@ public class GameState extends State {
 	}
 	
 	private void redraw() {
-		Player player = provider.getEntity(0);
+		Player player = entities.getEntity(0);
 		Info record = player.getComponent(Info.class);
 		modeLabel.setText(record.getMode().toString());
 		Shape shape = player.getComponent(Shape.class);
@@ -191,8 +192,9 @@ public class GameState extends State {
 		bus.post(new TransitionEvent("map", "map", map));
 	}
 	
-	private void showHelp() {
-		new HelpWindow().show("game.html");
+	private void showJournal() {
+		Player player = entities.getEntity(0);
+		bus.post(new TransitionEvent("journal", "player", player));
 	}
 	
 	private void pause() {
@@ -206,7 +208,7 @@ public class GameState extends State {
 	}
 	
 	private void act() {
-		Player player = provider.getEntity(0);
+		Player player = entities.getEntity(0);
 		Shape shape = player.getComponent(Shape.class);
 
 		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
@@ -244,8 +246,8 @@ public class GameState extends State {
 			bus.post(new NeonEvent.Pause());
 		}
 		
-		Creature one = provider.getEntity(event.getBumper());
-		Creature two = provider.getEntity(event.getBumped());
+		Creature one = entities.getEntity(event.getBumper());
+		Creature two = entities.getEntity(event.getBumped());
 		
 		if (one instanceof Player) {
 			Player player = (Player) one;

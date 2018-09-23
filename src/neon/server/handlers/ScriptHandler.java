@@ -89,7 +89,7 @@ public class ScriptHandler {
 	
 	@Subscribe
 	private void onGameStart(NewGameEvent event) throws ScriptException {
-		engine.eval("onGameStart()");		
+//		engine.eval("onGameStart()");		
 	}
 	
 	public static String output(String name) {

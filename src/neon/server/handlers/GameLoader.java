@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -230,8 +230,9 @@ public class GameLoader {
 		// tell the client to start loading the map
 		Player player = entities.getEntity(0);
 		Shape playerShape = player.getComponent(Shape.class);
-		Creature.Resource playerInfo = player.getComponent(Creature.Resource.class);
-		bus.post(new UpdateEvent.Start(playerInfo.getResource().id, playerShape.getX(), playerShape.getY(), playerShape.getZ()));
+		RCreature creature = player.getComponent(Creature.Resource.class).getResource();
+		Info playerInfo = player.getComponent(Info.class);
+		bus.post(new UpdateEvent.Start(creature.id, playerInfo.getName(), playerInfo.getGender(), playerShape.getX(), playerShape.getY(), playerShape.getZ()));
 
 		// then send the map
 		bus.post(new UpdateEvent.Map(map));

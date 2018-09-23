@@ -21,7 +21,6 @@ package neon.client;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.DeadEvent;
@@ -37,12 +36,12 @@ import neon.client.states.ConversationState;
 import neon.client.states.CutSceneState;
 import neon.client.states.GameState;
 import neon.client.states.InventoryState;
+import neon.client.states.JournalState;
 import neon.client.states.LoadState;
 import neon.client.states.MainMenuState;
 import neon.client.states.MapState;
 import neon.client.states.NewGameState;
 import neon.client.states.OptionState;
-import neon.client.states.State;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.common.event.ClientConfigurationEvent;
@@ -63,11 +62,15 @@ import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 
+/**
+ * 
+ * @author mdriesen
+ *
+ */
 public class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final EventBus bus = new EventBus("Client Bus");
-	private final ArrayList<State> modules = new ArrayList<>();
 	private final ClientSocket socket;
 	private final UserInterface ui;
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
@@ -109,8 +112,6 @@ public class Client implements Runnable {
 		
 		// initialize all modules and enter the first one
 		initModules(version);
-		modules.get(0).setActive(true);
-		modules.get(0).enter(new TransitionEvent("start"));
 	}
 	
 	/**
@@ -127,43 +128,36 @@ public class Client implements Runnable {
 	private void initModules(String version) {
 		// client uses the first module in the list as the start state
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
-		modules.add(mainMenu);
 		bus.register(mainMenu);
 
 		NewGameState newGame = new NewGameState(ui, bus, resources);
-		modules.add(newGame);
 		bus.register(newGame);
 		
 		LoadState loadGame = new LoadState(ui, bus);
-		modules.add(loadGame);
 		bus.register(loadGame);
 		
 		CutSceneState cut = new CutSceneState(ui, bus, resources);
-		modules.add(cut);
 		bus.register(cut);
 
 		GameState game = new GameState(ui, bus, provider, resources);
-		modules.add(game);
 		bus.register(game);
 		
 		InventoryState inventory = new InventoryState(ui, bus, provider);
-		modules.add(inventory);
 		bus.register(inventory);
 		
 		MapState map = new MapState(ui, bus, resources);
-		modules.add(map);
 		bus.register(map);
 		
 		ConversationState conversation = new ConversationState(ui, bus);
-		modules.add(conversation);
 		bus.register(conversation);
 		
 		ContainerState container = new ContainerState(ui, bus, provider);
-		modules.add(container);
 		bus.register(container);
 		
+		JournalState journal = new JournalState(ui, bus);
+		bus.register(journal);
+		
 		OptionState options = new OptionState(ui, bus);
-		modules.add(options);
 		bus.register(options);
 		
 		// register all state transitions on the bus to listen for transition events
@@ -191,10 +185,17 @@ public class Client implements Runnable {
 
 		bus.register(new Transition(game, container, "pick"));
 		bus.register(new Transition(container, game, "cancel"));
+		
+		bus.register(new Transition(game, journal, "journal"));
+		bus.register(new Transition(journal, game, "cancel"));
+		
+		// enter the first state
+		mainMenu.setActive(true);
+		mainMenu.enter(new TransitionEvent("start"));
 	}
 
 	@Subscribe
-	private void update(UpdateEvent.Item event) throws ResourceException {
+	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
 		if (provider.hasEntity(event.uid)) {
 			RMap map = resources.getResource("maps", event.map);
 			Item item = provider.getEntity(event.uid);
@@ -219,7 +220,7 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Creature event) throws ResourceException {
+	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 
 		if(provider.hasEntity(event.uid)) {
@@ -235,7 +236,7 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Move event) throws ResourceException {
+	private void onCreatureMove(UpdateEvent.Move event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 
 		if (event.uid == 0) {
@@ -249,12 +250,17 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Remove event) throws ResourceException {
-		System.out.println("remove item");
+	private void onEntityRemove(UpdateEvent.Remove event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 		map.removeEntity(event.uid);
 	}
 	
+	/**
+	 * Gives a warning when an event is detected that no other object is currently 
+	 * listening to.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void monitor(DeadEvent event) {
 		logger.warning("client received a dead event: " + event.getEvent());

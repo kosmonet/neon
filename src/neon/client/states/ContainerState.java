@@ -79,7 +79,7 @@ public class ContainerState extends State {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 		} catch (IOException e) {
-			logger.severe("failed to load inventory interface: " + e.getMessage());
+			logger.severe("failed to load container interface: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -134,7 +134,7 @@ public class ContainerState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering container module");
+		logger.finest("entering container state");
 		bus.post(new InventoryEvent.Request());
 		
 		Player player = entities.getEntity(0);
@@ -151,7 +151,7 @@ public class ContainerState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting container module");
+		logger.finest("exiting container state");
 	}
 	
 	@FXML private void showHelp() {

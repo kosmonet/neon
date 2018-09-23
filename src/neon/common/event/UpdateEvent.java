@@ -34,11 +34,13 @@ public abstract class UpdateEvent extends NeonEvent {
 	 *
 	 */
 	public static class Start extends UpdateEvent {
-		public final String id;
+		public final String id, name, gender;
 		public final int x, y, z;
 
-		public Start(String id, int x, int y, int z) {
+		public Start(String id, String name, String gender, int x, int y, int z) {
 			this.id = id;
+			this.name = name;
+			this.gender = gender;
 			this.x = x;
 			this.y = y;
 			this.z = z;

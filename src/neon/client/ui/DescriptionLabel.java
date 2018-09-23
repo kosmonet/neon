@@ -49,7 +49,7 @@ public class DescriptionLabel extends Label {
 	 * @param item	the item to describe
 	 */
 	public void update(Item item) {
-		if(item != null) {
+		if (item != null) {
 			// create the image like it would show in-game on the ground
 			Graphics graphics = item.getComponent(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
@@ -73,7 +73,7 @@ public class DescriptionLabel extends Label {
 	 * @param creature	the creature to describe
 	 */
 	public void update(Creature creature) {
-		if(creature != null) {
+		if (creature != null) {
 			// create the image like it would show in-game on the ground
 			Graphics graphics = creature.getComponent(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
