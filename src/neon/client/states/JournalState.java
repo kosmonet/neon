@@ -31,6 +31,7 @@ import javafx.scene.control.Label;
 
 import neon.client.UserInterface;
 import neon.client.ui.DescriptionLabel;
+import neon.common.resources.RCreature;
 import neon.entity.components.Info;
 import neon.entity.components.Stats;
 import neon.entity.entities.Player;
@@ -45,7 +46,7 @@ public class JournalState extends State {
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
-	@FXML private Label infoLabel;
+	@FXML private Label infoLabel, statsLabel;
 
 	private final UserInterface ui;
 	private Scene scene;
@@ -72,7 +73,9 @@ public class JournalState extends State {
 		Player player = event.getParameter(Player.class);
     	description.update(player);
     	Info info = player.getComponent(Info.class);
-    	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + player.getComponent(Stats.class).getSpecies().name);
+    	RCreature species = player.getComponent(Stats.class).getSpecies();
+    	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + species.name);
+    	statsLabel.setText("Speed: " + species.speed);
 		ui.showScene(scene);
 	}
 

@@ -184,7 +184,7 @@ public class SettingsEditor {
 		String map = mapField.getText();
 		xSpinner.increment(0);
 		ySpinner.increment(0);
-		RModule module = new RModule(id, title, subtitle, map, xSpinner.getValue(), ySpinner.getValue(), "");
+		RModule module = new RModule(id, title, subtitle, map, xSpinner.getValue(), ySpinner.getValue(), "", -1);
 		module.addPlayableSpecies(speciesList.getItems());
 		parentList.getItems().forEach(parent -> module.addParent(parent));
 		// an RModule is in the global namespace

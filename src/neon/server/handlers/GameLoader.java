@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -113,17 +114,14 @@ public class GameLoader {
 		player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
 		
-		entities.addEntity(new Item(6, resources.getResource("items", "cup")));
-		entities.addEntity(new Item(2, resources.getResource("items", "cup_gold")));
-		entities.addEntity(new Item(3, resources.getResource("items", "cup_silver")));
-		entities.addEntity(new Item(4, resources.getResource("items", "cup_gold")));
-		entities.addEntity(new Item(5, resources.getResource("items", "cup")));
 		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.addItem(6);
-		inventory.addItem(2);
-		inventory.addItem(3);
-		inventory.addItem(4);
-		inventory.addItem(5);
+		inventory.addMoney(game.getStartMoney());
+		for (String id : game.getStartItems()) {
+			long uid = entities.getFreeUID();
+			Item item = new Item(uid, resources.getResource("items", id));
+			entities.addEntity(item);
+			inventory.addItem(uid);
+		}
 
 		// tell the client everything is ready
 		notifyClient(map);
@@ -137,25 +135,31 @@ public class GameLoader {
 	 * @param modules
 	 */
 	private CGame initGame(ResourceManager resources, String[] modules) {
-		// default start position
+		// defaults
 		String map = "";
 		int x = 0;
 		int y = 0;
+		int money = 0;
+		ArrayList<String> items = new ArrayList<>();
 		
-		// go through the loaded modules to check if any redefined the start position
+		// go through the loaded modules to check if any redefined anything
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
 				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
 				x = (module.getStartX() >= 0) ? module.getStartX() : x;
 				y = (module.getStartY() >= 0) ? module.getStartY() : y;
+				money = (module.getStartMoney() >= 0) ? module.getStartMoney() : money;
+				items.addAll(module.getStartItems());
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);
 			}
 		}
-
-		return new CGame(map, x, y);	
+		
+		CGame game = new CGame(map, x, y, money);
+		game.addStartItems(items);
+		return game;
 	}
 
 	/**

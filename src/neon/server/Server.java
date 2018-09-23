@@ -60,7 +60,7 @@ public class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ServerSocket socket;
-	private final EntityTracker entities = new EntityTracker(files, resources);
+	private final EntityTracker entities = new EntityTracker(files, new EntitySaver(resources));
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**

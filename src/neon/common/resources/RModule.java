@@ -18,8 +18,10 @@
 
 package neon.common.resources;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -38,10 +40,11 @@ public class RModule extends Resource {
 
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
+	private final List<String> items = new ArrayList<>();
 	private final String map;
-	private final int x, y;
+	private final int x, y, money;
 
-	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY, String intro) {
+	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY, String intro, int startMoney) {
 		super(id, "global");
 		this.title = title;
 		this.subtitle = subtitle;
@@ -49,6 +52,15 @@ public class RModule extends Resource {
 		map = startMap;
 		x = startX;
 		y = startY;
+		money = startMoney;
+	}
+	
+	public void addStartItem(String id) {
+		items.add(id);
+	}
+	
+	public List<String> getStartItems() {
+		return items;
 	}
 	
 	/**
@@ -104,5 +116,9 @@ public class RModule extends Resource {
 
 	public int getStartY() {
 		return y;
+	}
+	
+	public int getStartMoney() {
+		return money;
 	}
 }

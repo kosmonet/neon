@@ -18,18 +18,32 @@
 
 package neon.common.resources;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class CGame extends Resource {
 	private final String startMap;
-	private final int x, y;
+	private final int x, y, money;
+	private final List<String> items = new ArrayList<>();
 	
 	private String currentMap;
 
-	public CGame(String startMap, int startX, int startY) {
+	public CGame(String startMap, int startX, int startY, int startMoney) {
 		super("game", "config");
 		this.startMap = startMap;
 		currentMap = startMap;
 		x = startX;
 		y = startY;
+		money = startMoney;
+	}
+	
+	public void addStartItems(Collection<String> items) {
+		this.items.addAll(items);
+	}
+	
+	public List<String> getStartItems() {
+		return items;
 	}
 	
 	/**
@@ -46,6 +60,10 @@ public class CGame extends Resource {
 	
 	public int getStartY() {
 		return y;
+	}
+	
+	public int getStartMoney() {
+		return money;
 	}
 	
 	/**

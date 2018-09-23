@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@ public class Inventory implements Component {
 	private final long uid;
 	private final Collection<Long> items = new ArrayList<Long>();
 	
+	private int money = 0;
+	
 	public Inventory(long uid) {
 		this.uid = uid;
 	}
@@ -43,5 +45,13 @@ public class Inventory implements Component {
 	
 	public Collection<Long> getItems() {
 		return items;
+	}
+	
+	public void addMoney(int amount) {
+		money += amount;
+	}
+	
+	public int getMoney() {
+		return money;
 	}
 }

@@ -25,14 +25,20 @@ public abstract class InventoryEvent extends NeonEvent {
 	
 	public static class List extends InventoryEvent {
 		private final long[] items;
+		private final int money;
 		
-		public List(Collection<Long> items) {
+		public List(Collection<Long> items, int money) {
 			this.items = items.stream().mapToLong(Long::longValue).toArray();
+			this.money = money;
 		}
 		
 		public long[] getItems() {
 			return items;
-		}		
+		}
+		
+		public int getMoney() {
+			return money;
+		}
 	}
 	
 	public static class Drop extends InventoryEvent {

@@ -57,7 +57,7 @@ public class InventoryHandler {
 		ArrayList<Long> items = new ArrayList<>();
 		Inventory inventory = player.getComponent(Inventory.class);
 		items.addAll(inventory.getItems());
-		bus.post(new InventoryEvent.List(items));
+		bus.post(new InventoryEvent.List(items, inventory.getMoney()));
 	}
 	
 	@Subscribe

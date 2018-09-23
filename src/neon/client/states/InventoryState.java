@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -53,6 +54,7 @@ public class InventoryState extends State {
 	@FXML private Button cancelButton;
 	@FXML private ListView<Item> playerList, followerList;
 	@FXML private DescriptionLabel description;
+	@FXML private Label instructionLabel;
 	
 	private Scene scene;
 	private RMap map;
@@ -94,6 +96,7 @@ public class InventoryState extends State {
 	
 	@Subscribe
 	private void showInventory(InventoryEvent.List event) {
+		instructionLabel.setText("Money: " + event.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 		
 		for (long item : event.getItems()) {

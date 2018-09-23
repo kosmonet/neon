@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ import com.google.common.cache.RemovalNotification;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
@@ -48,9 +47,9 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
-	EntityTracker(NeonFileSystem files, ResourceManager resources) {
+	EntityTracker(NeonFileSystem files, EntitySaver saver) {
 		this.files = files;
-		saver = new EntitySaver(resources);	
+		this.saver = saver;	
 	}
 	
 	@Override @SuppressWarnings("unchecked")
@@ -93,6 +92,14 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 		for (Entity entity : entities.asMap().values()) {
 			saveEntity(entity);
 		}
+	}
+	
+	public long getFreeUID() {
+		long uid = 0;
+		while (entities.asMap().containsKey(uid)) {
+			uid++;
+		}
+		return uid;
 	}
 	
 	private void saveEntity(Entity entity) {

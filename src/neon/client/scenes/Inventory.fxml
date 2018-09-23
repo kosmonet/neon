@@ -13,7 +13,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
-		<Label fx:id="instructionLabel" styleClass="instructions" text="Money owned: X copper pieces." />
+		<Label fx:id="instructionLabel" styleClass="instructions" text="Money: X copper pieces." />
 	</top>
 	<center>
 		<GridPane BorderPane.alignment="CENTER">

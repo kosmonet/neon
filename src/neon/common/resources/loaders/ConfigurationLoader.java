@@ -122,7 +122,7 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 	private CGame loadGame(Element root) {
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
-		return new CGame(map, -1, -1);
+		return new CGame(map, -1, -1, -1);
 	}
 
 	private Element saveGame(CGame config) {
