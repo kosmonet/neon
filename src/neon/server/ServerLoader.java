@@ -45,6 +45,7 @@ import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.server.entity.EntityTracker;
 import neon.server.resource.MapLoader;
 
 /**

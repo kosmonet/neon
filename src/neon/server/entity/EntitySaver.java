@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.entity;
 
 import org.jdom2.Element;
 
@@ -32,10 +32,10 @@ import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
 
-class EntitySaver {
+public class EntitySaver {
 	private final ResourceManager resources;
 	
-	EntitySaver(ResourceManager resources) {
+	public EntitySaver(ResourceManager resources) {
 		this.resources = resources;
 	}
 	

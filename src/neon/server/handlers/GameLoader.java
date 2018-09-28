@@ -58,7 +58,7 @@ import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
-import neon.server.EntityTracker;
+import neon.server.entity.EntityTracker;
 
 /**
  * This class takes care of starting new games, loading old games and saving

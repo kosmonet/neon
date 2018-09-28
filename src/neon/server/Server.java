@@ -38,6 +38,8 @@ import neon.common.resources.CClient;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntitySaver;
+import neon.server.entity.EntityTracker;
 import neon.server.handlers.ConversationHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;

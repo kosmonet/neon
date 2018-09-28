@@ -36,7 +36,7 @@ import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
-import neon.server.EntityTracker;
+import neon.server.entity.EntityTracker;
 
 /**
  * A loader for map resources.

@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.entity;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class EntityTracker implements EntityProvider, RemovalListener<Long, Enti
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
-	EntityTracker(NeonFileSystem files, EntitySaver saver) {
+	public EntityTracker(NeonFileSystem files, EntitySaver saver) {
 		this.files = files;
 		this.saver = saver;	
 	}
