@@ -58,7 +58,7 @@ import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 import neon.entity.entities.Player;
-import neon.server.entity.EntityTracker;
+import neon.server.entity.EntityManager;
 
 /**
  * This class takes care of starting new games, loading old games and saving
@@ -72,7 +72,7 @@ public class GameLoader {
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
-	private final EntityTracker entities;
+	private final EntityManager entities;
 	private final NeonFileSystem files;
 	
 	private Player player;
@@ -84,7 +84,7 @@ public class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityTracker entities, EventBus bus) {
+	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;

@@ -22,6 +22,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InputEvent;
+import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
@@ -70,5 +71,10 @@ public class InputSystem implements NeonSystem {
 			// if not, go to the next turn
 			bus.post(new TurnEvent());
 		}
+	}
+
+	@Override
+	public void onTimerTick(TimerEvent tick) {
+		
 	}
 }

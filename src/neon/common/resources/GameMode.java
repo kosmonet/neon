@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.common.resources;
 
 public enum GameMode {
 	TURN_BASED, REAL_TIME;

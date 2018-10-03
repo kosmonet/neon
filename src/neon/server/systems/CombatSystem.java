@@ -21,6 +21,7 @@ package neon.server.systems;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.CombatEvent;
+import neon.common.event.TimerEvent;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Creature;
 
@@ -36,5 +37,9 @@ public class CombatSystem implements NeonSystem {
 		Creature attacker = entities.getEntity(event.getAttacker());
 		Creature defender = entities.getEntity(event.getDefender());
 		System.out.println(attacker + " attacks " + defender);
+	}
+
+	@Override
+	public void onTimerTick(TimerEvent tick) {
 	}
 }

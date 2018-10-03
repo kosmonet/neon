@@ -20,6 +20,7 @@ package neon.server.systems;
 
 import java.util.Random;
 
+import neon.common.event.TimerEvent;
 import neon.common.resources.RMap;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
@@ -43,5 +44,10 @@ public class AISystem implements NeonSystem {
 			int y = shape.getY() + random.nextInt(3) - 1;
 			mover.move(creature, x, y, map);
 		}
+	}
+
+	@Override
+	public void onTimerTick(TimerEvent tick) {
+		
 	}
 }

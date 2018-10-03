@@ -18,6 +18,11 @@
 
 package neon.server.systems;
 
+import com.google.common.eventbus.Subscribe;
+
+import neon.common.event.TimerEvent;
+
 public interface NeonSystem {
-	
+	@Subscribe
+	public void onTimerTick(TimerEvent tick);
 }

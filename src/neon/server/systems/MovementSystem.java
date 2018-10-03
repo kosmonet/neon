@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 
 import neon.common.event.CollisionEvent;
+import neon.common.event.TimerEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
@@ -41,7 +42,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class MovementSystem {
+public class MovementSystem implements NeonSystem {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;
@@ -120,4 +121,7 @@ public class MovementSystem {
 			shape.setPosition(x, y, z);				
 		}
 	}
+
+	@Override
+	public void onTimerTick(TimerEvent tick) {}
 }

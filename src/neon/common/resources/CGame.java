@@ -28,7 +28,8 @@ public class CGame extends Resource {
 	private final List<String> items = new ArrayList<>();
 	
 	private String currentMap;
-
+	private GameMode mode = GameMode.TURN_BASED;
+	
 	public CGame(String startMap, int startX, int startY, int startMoney) {
 		super("game", "config");
 		this.startMap = startMap;
@@ -72,5 +73,13 @@ public class CGame extends Resource {
 	 */
 	public String getCurrentMap() {
 		return currentMap;
+	}
+	
+	public void setMode(GameMode mode) {
+		this.mode = mode;
+	}
+	
+	public GameMode getMode() {
+		return mode;
 	}
 }

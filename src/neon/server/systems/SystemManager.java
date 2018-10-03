@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server;
+package neon.server.systems;
 
 import java.awt.Rectangle;
 
@@ -28,6 +28,7 @@ import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
+import neon.common.resources.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -36,73 +37,95 @@ import neon.entity.components.Shape;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
-import neon.entity.entities.Player;
-import neon.server.systems.AISystem;
 
 /**
- * Handles new turns (the game loop, basically).
+ * Handles all game systems (the game loop, basically).
  * 
  * @author mdriesen
  * 
  */
-class TurnHandler {
+public class SystemManager {
 	private final ResourceManager resources;
 	private final EntityProvider entities;
 	private final EventBus bus;
-	private final AISystem ai;
 	
-	private GameMode mode = GameMode.TURN_BASED;
+	private final AISystem aiSystem;
+	private final ActionSystem actionSystem;
+	private final MovementSystem moveSystem;
+	private final InputSystem inputSystem;
+	private final CombatSystem combatSystem;
 	
-	TurnHandler(ResourceManager resources, EntityProvider entities, EventBus bus, AISystem ai) {
+	private boolean running = false;
+	
+	public SystemManager(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
-		this.ai = ai;
+		
+		// create all systems
+		moveSystem = new MovementSystem(resources, entities, bus);
+		aiSystem = new AISystem(moveSystem);
+		actionSystem = new ActionSystem(resources, entities);
+		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
+		combatSystem = new CombatSystem(entities);
+		
+		// and register them on the event bus
+		bus.register(combatSystem);
+		bus.register(inputSystem);
+
 	}
 	
 	@Subscribe
-	private void setMode(NeonEvent.Pause event) {
-		mode = GameMode.TURN_BASED;
+	private void onGameStart(UpdateEvent.Start event) {
+		running = true;
 	}
 	
 	@Subscribe
-	private void setMode(NeonEvent.Unpause event) {
-		mode = GameMode.REAL_TIME;
+	private void setMode(NeonEvent.Pause event) throws ResourceException {
+		CGame config = resources.getResource("config", "game");
+		config.setMode(GameMode.TURN_BASED);
 	}
 	
 	@Subscribe
-	private void handleTick(TimerEvent event) throws ResourceException {
-		if (mode == GameMode.REAL_TIME) {
-			// update the world
-			update(5);
+	private void setMode(NeonEvent.Unpause event) throws ResourceException {
+		CGame config = resources.getResource("config", "game");
+		config.setMode(GameMode.REAL_TIME);
+	}
+	
+	@Subscribe
+	private void onTimerTick(TimerEvent event) throws ResourceException {
+		if (running) {
+			CGame config = resources.getResource("config", "game");
+			if (config.getMode().equals(GameMode.REAL_TIME)) {
+				update();
+			}
 		}
 	}
 
 	@Subscribe
-	private void handleTurn(TurnEvent event) throws ResourceException {
-		if (mode == GameMode.TURN_BASED) {
-			// update the world
-			update(1);
+	private void onNextTurn(TurnEvent event) throws ResourceException {
+		if (running) {
+			CGame config = resources.getResource("config", "game");
+			if (config.getMode().equals(GameMode.TURN_BASED)) {
+				update();
+			}
 		}
 	}
-	
+
 	/**
 	 * Updates the game for the given fraction of a full turn.
 	 * 
 	 * @param fraction
 	 * @throws ResourceException 
 	 */
-	private void update(int fraction) throws ResourceException {
+	private void update() throws ResourceException {
+		actionSystem.run();
+		
 		CGame config = resources.getResource("config", "game");
 		RMap map = resources.getResource("maps", config.getCurrentMap());
-		
-		// restore the player's action points
-		Player player = entities.getEntity(0);
-		Stats playerStats = player.getComponent(Stats.class);
-		playerStats.restoreAP(fraction);
-		
+				
 		// get all entities in the player's neighbourhood
-		Shape center = player.getComponent(Shape.class);
+		Shape center = entities.getEntity(0).getComponent(Shape.class);
 		Rectangle bounds = new Rectangle(center.getX() - 50, center.getY() - 50, 100, 100);
 		for (long uid : map.getEntities(bounds)) {
 			Entity entity = entities.getEntity(uid);
@@ -110,12 +133,9 @@ class TurnHandler {
 				Creature creature = (Creature) entity;
 				Stats creatureStats = creature.getComponent(Stats.class);
 
-				// reset the creature's action points
-				creatureStats.restoreAP(fraction);
-
 				// let the creature act
 				if(creatureStats.isActive()) {
-					ai.act(creature, map);
+					aiSystem.act(creature, map);
 				}
 				
 				// let the client know that an entity has moved

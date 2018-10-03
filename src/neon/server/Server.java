@@ -39,15 +39,12 @@ import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntitySaver;
-import neon.server.entity.EntityTracker;
+import neon.server.entity.EntityManager;
 import neon.server.handlers.ConversationHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.ScriptHandler;
-import neon.server.systems.AISystem;
-import neon.server.systems.CombatSystem;
-import neon.server.systems.InputSystem;
-import neon.server.systems.MovementSystem;
+import neon.server.systems.SystemManager;
 
 /**
  * The server part of the neon engine.
@@ -62,7 +59,8 @@ public class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ServerSocket socket;
-	private final EntityTracker entities = new EntityTracker(files, new EntitySaver(resources));
+	private final EntityManager entities = new EntityManager(files, new EntitySaver(resources));
+	private final SystemManager systems = new SystemManager(resources, entities, bus);
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**
@@ -83,14 +81,9 @@ public class Server implements Runnable {
 		// add all the systems and various other stuff to the bus
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
-		
-		MovementSystem mover = new MovementSystem(resources, entities, bus);
-
 		bus.register(new InventoryHandler(resources, entities, bus));
-		bus.register(new TurnHandler(resources, entities, bus, new AISystem(mover)));
-		bus.register(new InputSystem(resources, entities, bus, mover));
-		bus.register(new CombatSystem(entities));
 		bus.register(new ConversationHandler(resources, entities, bus));
+		bus.register(systems);
 		
 		// send configuration message to the client
 		try {

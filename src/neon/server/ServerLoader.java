@@ -45,7 +45,7 @@ import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
-import neon.server.entity.EntityTracker;
+import neon.server.entity.EntityManager;
 import neon.server.resource.MapLoader;
 
 /**
@@ -77,7 +77,7 @@ class ServerLoader {
 	 * @param manager
 	 * @param entities
 	 */
-	void configure(NeonFileSystem files, ResourceManager resources, EntityTracker entities) {
+	void configure(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		try {
 			CServer configuration = initConfiguration();
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
@@ -117,7 +117,7 @@ class ServerLoader {
 		}
 	}
 	
-	private void initResources(ResourceManager resources, CServer configuration, EntityTracker entities) {
+	private void initResources(ResourceManager resources, CServer configuration, EntityManager entities) {
 		// add all necessary resource loaders to the manager
 		resources.addLoader("config", new ConfigurationLoader());
 		resources.addLoader("global", new ModuleLoader());

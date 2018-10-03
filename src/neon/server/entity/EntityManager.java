@@ -42,12 +42,12 @@ import neon.entity.entities.Entity;
  * @author mdriesen
  *
  */
-public class EntityTracker implements EntityProvider, RemovalListener<Long, Entity> {
+public class EntityManager implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
-	public EntityTracker(NeonFileSystem files, EntitySaver saver) {
+	public EntityManager(NeonFileSystem files, EntitySaver saver) {
 		this.files = files;
 		this.saver = saver;	
 	}

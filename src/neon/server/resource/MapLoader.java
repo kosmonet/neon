@@ -36,7 +36,7 @@ import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
-import neon.server.entity.EntityTracker;
+import neon.server.entity.EntityManager;
 
 /**
  * A loader for map resources.
@@ -47,11 +47,11 @@ import neon.server.entity.EntityTracker;
 public class MapLoader implements ResourceLoader<RMap> {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final EntityTracker tracker;
+	private final EntityManager tracker;
 	private final ResourceManager resources;
 	private final CServer config;
 	
-	public MapLoader(EntityTracker entities, ResourceManager resources, CServer config) {
+	public MapLoader(EntityManager entities, ResourceManager resources, CServer config) {
 		tracker = entities;
 		this.resources = resources;
 		this.config = config;
