@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@ public class Stats implements Component {
 	private final long uid;
 	
 	private double AP;	// action points
+	
+	private int strength = 10, constitution = 10, dexterity = 10, wisdom = 10, intelligence = 10, charisma = 10;
 	
 	public Stats(long uid, RCreature species) {
 		this.species = species;
@@ -70,6 +72,54 @@ public class Stats implements Component {
 	 */
 	public void restoreAP(int fraction) {
 		AP = Math.min(species.speed, AP + species.speed/fraction);
+	}
+	
+	public int getBaseInt() {
+		return intelligence;
+	}
+	
+	public int getBaseStr() {
+		return strength;
+	}
+	
+	public int getBaseCon() {
+		return constitution;
+	}
+	
+	public int getBaseDex() {
+		return dexterity;
+	}
+	
+	public int getBaseWis() {
+		return wisdom;
+	}
+	
+	public int getBaseCha() {
+		return charisma;
+	}
+	
+	public void setBaseInt(int intelligence) {
+		this.intelligence = intelligence;
+	}
+	
+	public void setBaseStr(int strength) {
+		this.strength = strength;
+	}
+	
+	public void setBaseCon(int constitution) {
+		this.constitution = constitution;
+	}
+	
+	public void setBaseDex(int dexterity) {
+		this.dexterity = dexterity;
+	}
+	
+	public void setBaseWis(int wisdom) {
+		this.wisdom = wisdom;
+	}
+	
+	public void setBaseCha(int charisma) {
+		this.charisma = charisma;
 	}
 	
 	public RCreature getSpecies() {

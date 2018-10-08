@@ -31,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
@@ -54,6 +55,8 @@ public class NewGameState extends State {
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
 	@FXML private Label instructionLabel;
+	@FXML private Spinner<Integer> strengthSpinner, constitutionSpinner, dexteritySpinner;
+	@FXML private Spinner<Integer> intelligenceSpinner, wisdomSpinner, charismaSpinner;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -126,11 +129,18 @@ public class NewGameState extends State {
 		String species = speciesList.getSelectionModel().getSelectedItem().id;
 		String gender = genderGroup.getSelectedToggle().getUserData().toString();
 		
+		int strength = strengthSpinner.getValue();
+		int constitution = constitutionSpinner.getValue();
+		int dexterity = dexteritySpinner.getValue();
+		int intelligence = intelligenceSpinner.getValue();
+		int wisdom = wisdomSpinner.getValue();
+		int charisma = charismaSpinner.getValue();
+		
 		if (name.isEmpty()) {
 			ui.showMessage("Enter a valid character name.", 1000);
 		} else {
 			// let the server know that the game module is waiting for game data
-			bus.post(new NewGameEvent(name, species, gender));
+			bus.post(new NewGameEvent(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
 			// transition to the actual game module
 			bus.post(new TransitionEvent("start game"));
 		}

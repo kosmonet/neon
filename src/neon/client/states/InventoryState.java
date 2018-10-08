@@ -31,17 +31,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-
+import neon.client.ComponentManager;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
-import neon.entity.EntityProvider;
+import neon.entity.components.Graphics;
 import neon.entity.entities.Item;
 
 public class InventoryState extends State {
@@ -49,20 +50,20 @@ public class InventoryState extends State {
 	
 	private final UserInterface ui;
 	private final EventBus bus;
-	private final EntityProvider entities;
+	private final ComponentManager components;
 
 	@FXML private Button cancelButton;
-	@FXML private ListView<Item> playerList, followerList;
+	@FXML private ListView<Long> playerList, followerList;
 	@FXML private DescriptionLabel description;
 	@FXML private Label instructionLabel;
 	
 	private Scene scene;
 	private RMap map;
 	
-	public InventoryState(UserInterface ui, EventBus bus, EntityProvider entities) {
+	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
 		this.bus = bus;
-		this.entities = entities;
+		this.components = components;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
@@ -82,6 +83,7 @@ public class InventoryState extends State {
 		playerList.setOnKeyPressed(event -> keyPressed(event));
 		followerList.setOnKeyPressed(event -> keyPressed(event));
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
+		playerList.setCellFactory(playerList -> new ItemCell());
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -99,8 +101,8 @@ public class InventoryState extends State {
 		instructionLabel.setText("Money: " + event.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 		
-		for (long item : event.getItems()) {
-			playerList.getItems().add(entities.getEntity(item));
+		for (long uid : event.getItems()) {
+			playerList.getItems().add(uid);
 		}
 		
 		playerList.getSelectionModel().selectFirst();
@@ -121,10 +123,10 @@ public class InventoryState extends State {
 	
 	@FXML private void drop() {
 		if (!playerList.getSelectionModel().isEmpty()) {
-			Item item = playerList.getSelectionModel().getSelectedItem();
+			long uid = playerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
-			playerList.getItems().remove(item);
-			bus.post(new InventoryEvent.Drop(item.uid, map.id));
+			playerList.getItems().remove(uid);
+			bus.post(new InventoryEvent.Drop(uid, map.id));
 		}
 	}
 
@@ -132,10 +134,27 @@ public class InventoryState extends State {
 		new HelpWindow().show("inventory.html");
 	}
 	
-	private class ListListener implements ChangeListener<Item> {
+	private class ListListener implements ChangeListener<Long> {
 	    @Override
-	    public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue) {
-	    	description.update(newValue);
+	    public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
+	    	if (newValue != null) {
+	    		Graphics graphics = components.getComponent(newValue, Graphics.class);
+	    		Item.Resource resource = components.getComponent(newValue, Item.Resource.class);
+	    		description.update(resource.getResource().name, graphics);
+	    	}
 	    }
 	}
+
+    private class ItemCell extends ListCell<Long> {
+    	@Override
+    	public void updateItem(Long uid, boolean empty) {
+    		super.updateItem(uid, empty);
+    		if (empty || uid == null) {
+    			setText(null);
+    		} else {
+    	    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
+    			setText(resource.getResource().name);
+    		}
+    	}
+    }
 }

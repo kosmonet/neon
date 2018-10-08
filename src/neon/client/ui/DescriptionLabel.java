@@ -26,8 +26,6 @@ import javafx.scene.text.TextAlignment;
 
 import neon.common.graphics.TextureFactory;
 import neon.entity.components.Graphics;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Item;
 
 /**
  * A custom label used to show item descriptions in the inventory module.
@@ -42,47 +40,21 @@ public class DescriptionLabel extends Label {
 		setMaxWidth(Double.MAX_VALUE);
 		setMaxHeight(Double.MAX_VALUE);
 	}
-
-	/**
-	 * Updates the description.
-	 * 
-	 * @param item	the item to describe
-	 */
-	public void update(Item item) {
-		if (item != null) {
-			// create the image like it would show in-game on the ground
-			Graphics graphics = item.getComponent(Graphics.class);
-			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
-			setGraphic(new ImageView(image));
-			
-			StringBuffer description = new StringBuffer();
-			description.append("\n");
-			description.append(item);
-			description.append("\n");
-
-			setText(description.toString());
-		} else {
-			setGraphic(null);
-			setText(null);
-		}
-	}
 	
 	/**
-	 * Updates the description.
 	 * 
-	 * @param creature	the creature to describe
+	 * @param name
+	 * @param graphics
 	 */
-	public void update(Creature creature) {
-		if (creature != null) {
+	public void update(String name, Graphics graphics) {
+		if (graphics != null) {
 			// create the image like it would show in-game on the ground
-			Graphics graphics = creature.getComponent(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
 			setGraphic(new ImageView(image));
 			
 			StringBuffer description = new StringBuffer();
 			description.append("\n");
-			Creature.Resource info = creature.getComponent(Creature.Resource.class);
-			description.append(info.getResource().name);
+			description.append(name);
 			description.append("\n");
 
 			setText(description.toString());

@@ -26,11 +26,19 @@ package neon.common.event;
  */
 public class NewGameEvent extends NeonEvent {
 	private final String name, species, gender;
+	public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
 	
-	public NewGameEvent(String name, String species, String gender) {
+	public NewGameEvent(String name, String species, String gender, int strength, int constitution, int dexterity, int intelligence, int wisdom, int charisma) {
 		this.name = name;
 		this.species = species;
 		this.gender = gender;
+		
+		this.strength =  strength;
+		this.constitution = constitution;
+		this.dexterity = dexterity;
+		this.intelligence = intelligence;
+		this.wisdom = wisdom;
+		this.charisma = charisma;
 	}
 	
 	public String getName() {

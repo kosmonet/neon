@@ -30,20 +30,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-
+import neon.client.ComponentManager;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
-import neon.entity.EntityProvider;
+import neon.entity.components.Graphics;
 import neon.entity.components.Shape;
 import neon.entity.entities.Item;
-import neon.entity.entities.Player;
 
 /**
  * A state to handle items when browsing a container or a random heap of 
@@ -57,19 +57,19 @@ public class ContainerState extends State {
 	
 	private final UserInterface ui;
 	private final EventBus bus;
-	private final EntityProvider entities;
+	private final ComponentManager components;
 
 	@FXML private Button cancelButton;
-	@FXML private ListView<Item> playerList, containerList;
+	@FXML private ListView<Long> playerList, containerList;
 	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
 	private RMap map;
 	
-	public ContainerState(UserInterface ui, EventBus bus, EntityProvider entities) {
+	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
 		this.bus = bus;
-		this.entities = entities;
+		this.components = components;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
 		loader.setController(this);
@@ -91,8 +91,10 @@ public class ContainerState extends State {
 		// update the item description when another item is selected
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 		playerList.focusedProperty().addListener(new FocusListener());
+		playerList.setCellFactory(playerList -> new ItemCell());
 		containerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 		containerList.focusedProperty().addListener(new FocusListener());
+		containerList.setCellFactory(playerList -> new ItemCell());
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -109,8 +111,8 @@ public class ContainerState extends State {
 	private void showInventory(InventoryEvent.List event) {
 		playerList.getItems().clear();
 		
-		for (long item : event.getItems()) {
-			playerList.getItems().add(entities.getEntity(item));
+		for (long uid : event.getItems()) {
+			playerList.getItems().add(uid);
 		}
 		
 		playerList.getSelectionModel().selectFirst();
@@ -118,17 +120,17 @@ public class ContainerState extends State {
 	
 	@FXML private void drop() {
 		if (playerList.isFocused() && !playerList.getSelectionModel().isEmpty()) {
-			Item item = playerList.getSelectionModel().getSelectedItem();
+			long uid = playerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
-			playerList.getItems().remove(item);
-			containerList.getItems().add(item);
-			bus.post(new InventoryEvent.Drop(item.uid, map.id));
+			playerList.getItems().remove(uid);
+			containerList.getItems().add(uid);
+			bus.post(new InventoryEvent.Drop(uid, map.id));
 		} else if (containerList.isFocused() && !containerList.getSelectionModel().isEmpty()) {
-			Item item = containerList.getSelectionModel().getSelectedItem();
+			long uid = containerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
-			containerList.getItems().remove(item);
-			playerList.getItems().add(item);
-			bus.post(new InventoryEvent.Pick(item.uid, map.id));			
+			containerList.getItems().remove(uid);
+			playerList.getItems().add(uid);
+			bus.post(new InventoryEvent.Pick(uid, map.id));			
 		}
 	}
 	
@@ -137,12 +139,11 @@ public class ContainerState extends State {
 		logger.finest("entering container state");
 		bus.post(new InventoryEvent.Request());
 		
-		Player player = entities.getEntity(0);
-		Shape shape = player.getComponent(Shape.class);
+		Shape shape = event.getParameter(Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
-		for (long item : map.getEntities(shape.getX(), shape.getY())) {
-			containerList.getItems().add(entities.getEntity(item));
+		for (long uid : map.getEntities(shape.getX(), shape.getY())) {
+			containerList.getItems().add(uid);
 		}
 		containerList.getSelectionModel().selectFirst();
 		
@@ -158,6 +159,12 @@ public class ContainerState extends State {
 		new HelpWindow().show("inventory.html");
 	}
 	
+	private void updateDescription(long uid) {
+    	Graphics graphics = components.getComponent(uid, Graphics.class);
+    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
+    	description.update(resource.getResource().name, graphics);
+	}
+	
 	/**
 	 * Changes the item description when selecting a different list.
 	 * 
@@ -168,9 +175,9 @@ public class ContainerState extends State {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 			if (containerList.isFocused()) {
-				description.update(containerList.getSelectionModel().getSelectedItem());
+				updateDescription(containerList.getSelectionModel().getSelectedItem());
 			} else {
-				description.update(playerList.getSelectionModel().getSelectedItem());				
+				updateDescription(playerList.getSelectionModel().getSelectedItem());				
 			}
 		}
 	}
@@ -181,10 +188,25 @@ public class ContainerState extends State {
 	 * @author mdriesen
 	 *
 	 */
-	private class ListListener implements ChangeListener<Item> {
-	    @Override
-	    public void changed(ObservableValue<? extends Item> observable, Item oldValue, Item newValue) {
-	    	description.update(newValue);
-	    }
+	private class ListListener implements ChangeListener<Long> {
+		@Override
+		public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
+			if(newValue != null) {
+				updateDescription(newValue);
+			}
+		}
 	}
+	
+    private class ItemCell extends ListCell<Long> {
+    	@Override
+    	public void updateItem(Long uid, boolean empty) {
+    		super.updateItem(uid, empty);
+    		if (empty || uid == null) {
+    			setText(null);
+    		} else {
+    	    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
+    			setText(resource.getResource().name);
+    		}
+    	}
+    }
 }

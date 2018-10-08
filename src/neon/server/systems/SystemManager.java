@@ -18,8 +18,6 @@
 
 package neon.server.systems;
 
-import java.awt.Rectangle;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -29,14 +27,9 @@ import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.GameMode;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
-import neon.entity.components.Shape;
-import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
 
 /**
  * Handles all game systems (the game loop, basically).
@@ -46,8 +39,6 @@ import neon.entity.entities.Entity;
  */
 public class SystemManager {
 	private final ResourceManager resources;
-	private final EntityProvider entities;
-	private final EventBus bus;
 	
 	private final AISystem aiSystem;
 	private final ActionSystem actionSystem;
@@ -56,15 +47,14 @@ public class SystemManager {
 	private final CombatSystem combatSystem;
 	
 	private boolean running = false;
+	private CGame config;
 	
 	public SystemManager(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
-		this.entities = entities;
-		this.bus = bus;
 		
 		// create all systems
 		moveSystem = new MovementSystem(resources, entities, bus);
-		aiSystem = new AISystem(moveSystem);
+		aiSystem = new AISystem(resources, entities, bus, moveSystem);
 		actionSystem = new ActionSystem(resources, entities);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
 		combatSystem = new CombatSystem(entities);
@@ -76,26 +66,24 @@ public class SystemManager {
 	}
 	
 	@Subscribe
-	private void onGameStart(UpdateEvent.Start event) {
+	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
+		config = resources.getResource("config", "game");
 		running = true;
 	}
 	
 	@Subscribe
-	private void setMode(NeonEvent.Pause event) throws ResourceException {
-		CGame config = resources.getResource("config", "game");
+	private void onPause(NeonEvent.Pause event) throws ResourceException {
 		config.setMode(GameMode.TURN_BASED);
 	}
 	
 	@Subscribe
-	private void setMode(NeonEvent.Unpause event) throws ResourceException {
-		CGame config = resources.getResource("config", "game");
+	private void onUnpause(NeonEvent.Unpause event) throws ResourceException {
 		config.setMode(GameMode.REAL_TIME);
 	}
 	
 	@Subscribe
 	private void onTimerTick(TimerEvent event) throws ResourceException {
 		if (running) {
-			CGame config = resources.getResource("config", "game");
 			if (config.getMode().equals(GameMode.REAL_TIME)) {
 				update();
 			}
@@ -105,7 +93,6 @@ public class SystemManager {
 	@Subscribe
 	private void onNextTurn(TurnEvent event) throws ResourceException {
 		if (running) {
-			CGame config = resources.getResource("config", "game");
 			if (config.getMode().equals(GameMode.TURN_BASED)) {
 				update();
 			}
@@ -113,35 +100,13 @@ public class SystemManager {
 	}
 
 	/**
-	 * Updates the game for the given fraction of a full turn.
-	 * 
-	 * @param fraction
+	 * Updates the game state.
+	 *
 	 * @throws ResourceException 
 	 */
 	private void update() throws ResourceException {
 		actionSystem.run();
-		
-		CGame config = resources.getResource("config", "game");
-		RMap map = resources.getResource("maps", config.getCurrentMap());
-				
-		// get all entities in the player's neighbourhood
-		Shape center = entities.getEntity(0).getComponent(Shape.class);
-		Rectangle bounds = new Rectangle(center.getX() - 50, center.getY() - 50, 100, 100);
-		for (long uid : map.getEntities(bounds)) {
-			Entity entity = entities.getEntity(uid);
-			if (entity instanceof Creature) {
-				Creature creature = (Creature) entity;
-				Stats creatureStats = creature.getComponent(Stats.class);
-
-				// let the creature act
-				if(creatureStats.isActive()) {
-					aiSystem.act(creature, map);
-				}
-				
-				// let the client know that an entity has moved
-				Shape shape = creature.getComponent(Shape.class);
-				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
-			}
-		}
+		aiSystem.run();
+		moveSystem.run();
 	}
 }

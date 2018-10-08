@@ -54,6 +54,7 @@ import neon.common.resources.loaders.ConfigurationLoader;
 import neon.entity.components.Inventory;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
@@ -113,6 +114,14 @@ public class GameLoader {
 		player = new Player(event.getName(), event.getGender(), species);
 		player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 		entities.addEntity(player);
+		
+		Stats stats = player.getComponent(Stats.class);
+		stats.setBaseCha(event.charisma);
+		stats.setBaseCon(event.constitution);
+		stats.setBaseDex(event.dexterity);
+		stats.setBaseStr(event.strength);
+		stats.setBaseWis(event.wisdom);
+		stats.setBaseInt(event.intelligence);
 		
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.addMoney(game.getStartMoney());
@@ -233,10 +242,7 @@ public class GameLoader {
 	private void notifyClient(RMap map) throws ResourceException {
 		// tell the client to start loading the map
 		Player player = entities.getEntity(0);
-		Shape playerShape = player.getComponent(Shape.class);
-		RCreature creature = player.getComponent(Creature.Resource.class).getResource();
-		Info playerInfo = player.getComponent(Info.class);
-		bus.post(new UpdateEvent.Start(creature.id, playerInfo.getName(), playerInfo.getGender(), playerShape.getX(), playerShape.getY(), playerShape.getZ()));
+		bus.post(new UpdateEvent.Start(player));
 
 		// then send the map
 		bus.post(new UpdateEvent.Map(map));

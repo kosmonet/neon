@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,19 +23,49 @@ import com.google.common.collect.MutableClassToInstanceMap;
 
 import neon.entity.components.Component;
 
+/**
+ * An entity represents a set of components.
+ * 
+ * @author mdriesen
+ *
+ */
 public abstract class Entity {
 	public final long uid;
 	protected final ClassToInstanceMap<Component> components = MutableClassToInstanceMap.create();
 	
+	/**
+	 * Initialize a new entity.
+	 * 
+	 * @param uid	the unique identifier of this entity
+	 */
 	public Entity(long uid) {
 		this.uid = uid;
 	}
 	
-	public <T extends Component> T getComponent(Class<T> component) {
-		return components.getInstance(component);
+	/**
+	 * 
+	 * @param component
+	 * @return	the component of the given type
+	 */
+	public <T extends Component> T getComponent(Class<T> type) {
+		return components.getInstance(type);
 	}
 	
-	public boolean hasComponent(Class<?> component) {
-		return components.containsKey(component);
+	/**
+	 * 
+	 * @param component
+	 * @return	whether this entity has a component of the given type
+	 */
+	public boolean hasComponent(Class<?> type) {
+		return components.containsKey(type);
+	}
+	
+	/**
+	 * Adds a component to this entity.
+	 * 
+	 * @param component
+	 */
+	public <T extends Component> void setComponent(T component) {
+		components.put(component.getClass(), component);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,21 +20,35 @@ package neon.server.systems;
 
 import java.util.Random;
 
+import com.google.common.eventbus.EventBus;
+
 import neon.common.event.TimerEvent;
+import neon.common.event.UpdateEvent;
+import neon.common.resources.CGame;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
+import neon.entity.EntityProvider;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
+import neon.entity.entities.Entity;
 
 public class AISystem implements NeonSystem {
 	private final Random random = new Random();
 	private final MovementSystem mover;
+	private final EntityProvider entities;
+	private final ResourceManager resources;
+	private final EventBus bus;
 	
-	public AISystem(MovementSystem mover) {
+	AISystem(ResourceManager resources, EntityProvider entities, EventBus bus, MovementSystem mover) {
 		this.mover = mover;
+		this.resources = resources;
+		this.entities = entities;
+		this.bus = bus;
 	}
 	
-	public void act(Creature creature, RMap map) {
+	private void act(Creature creature, RMap map) {
 		Stats stats = creature.getComponent(Stats.class);
 		
 		while (stats.isActive()) {
@@ -46,6 +60,29 @@ public class AISystem implements NeonSystem {
 		}
 	}
 
+	void run() throws ResourceException {
+		CGame config = resources.getResource("config", "game");
+		RMap map = resources.getResource("maps", config.getCurrentMap());
+				
+		// get all entities in the player's neighbourhood
+		for (long uid : map.getEntities()) {
+			Entity entity = entities.getEntity(uid);
+			if (entity instanceof Creature) {
+				Creature creature = (Creature) entity;
+				Stats creatureStats = creature.getComponent(Stats.class);
+
+				// let the creature act
+				if(creatureStats.isActive()) {
+					act(creature, map);
+				}
+				
+				// let the client know that an entity has moved
+				Shape shape = creature.getComponent(Shape.class);
+				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			}
+		}		
+	}
+	
 	@Override
 	public void onTimerTick(TimerEvent tick) {
 		

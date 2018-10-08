@@ -18,6 +18,8 @@
 
 package neon.client.states;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -27,9 +29,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
+import javafx.scene.web.WebView;
 import neon.client.UserInterface;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.CClient;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -37,18 +39,21 @@ import neon.common.resources.ResourceManager;
 public class CutSceneState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
-	@FXML private Button continueButton;
-	@FXML private Label introLabel;
-
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ResourceManager resources;
+	private final NeonFileSystem files;
+
+	@FXML private Button continueButton;
+	@FXML private WebView view;
+
 	private Scene scene;
 
-	public CutSceneState(UserInterface ui, EventBus bus, ResourceManager resources) {
+	public CutSceneState(UserInterface ui, EventBus bus, NeonFileSystem files, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
 		this.resources = resources;
+		this.files = files;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Scene.fxml"));
 		loader.setController(this);
@@ -61,6 +66,7 @@ public class CutSceneState extends State {
 		}
 
 		continueButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
+        view.getEngine().setUserStyleSheetLocation(getClass().getResource("../help/help.css").toString());
 	}
 	
 	@Override
@@ -71,10 +77,11 @@ public class CutSceneState extends State {
 			if(config.intro.isEmpty()) {
 				bus.post(new TransitionEvent("cancel"));
 			} else {
-				introLabel.setText(config.intro);
+				File file = files.loadFile("texts", config.intro);
+				view.getEngine().load(file.toURI().toString());
 				ui.showScene(scene);				
 			}
-		} catch (ResourceException e) {
+		} catch (ResourceException | FileNotFoundException e) {
 			bus.post(new TransitionEvent("cancel"));
 			e.printStackTrace();
 		}

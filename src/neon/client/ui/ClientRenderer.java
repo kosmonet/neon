@@ -24,27 +24,34 @@ import java.util.HashMap;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-
+import neon.client.ComponentManager;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.entity.components.Graphics;
 import neon.entity.components.Shape;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 
-public class ClientRenderer implements EntityRenderer<Entity> {
+public class ClientRenderer implements EntityRenderer<Long> {
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
+	private final ComponentManager components;
+	
+	public ClientRenderer(ComponentManager components) {
+		this.components = components;
+	}
 	
 	@Override
-	public void drawEntity(Entity entity, int xmin, int ymin, int scale) {
-		Shape shape = entity.getComponent(Shape.class);
-		Graphics graphics = entity.getComponent(Graphics.class);
-		
-		GraphicsContext gc = layers.get(shape.getZ()).getGraphicsContext2D();
-		Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());
-		gc.clearRect(scale*(shape.getX() - xmin) + 1, scale*(shape.getY() - ymin) + 1, scale - 1, scale - 1);
-		gc.drawImage(image, scale*(shape.getX() - xmin), scale*(shape.getY() - ymin));
+	public void drawEntity(Long uid, int xmin, int ymin, int scale) {
+		try {
+			Shape shape = components.getComponent(uid, Shape.class);
+			Graphics graphics = components.getComponent(uid, Graphics.class);
+
+			GraphicsContext gc = layers.get(shape.getZ()).getGraphicsContext2D();
+			Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());
+			gc.clearRect(scale*(shape.getX() - xmin) + 1, scale*(shape.getY() - ymin) + 1, scale - 1, scale - 1);
+			gc.drawImage(image, scale*(shape.getX() - xmin), scale*(shape.getY() - ymin));
+		} catch (NullPointerException e) {
+			System.out.println("entity niet gevonden: " + uid);
+		}
 	}
 
 	@Override
@@ -54,17 +61,17 @@ public class ClientRenderer implements EntityRenderer<Entity> {
 	}
 
 	@Override
-	public Comparator<Entity> getComparator() {
+	public Comparator<Long> getComparator() {
 		return comparator;
 	}
 	
-	private class EntityComparator implements Comparator<Entity> {
+	private class EntityComparator implements Comparator<Long> {
 		@Override
-		public int compare(Entity one, Entity two) {
+		public int compare(Long one, Long two) {
 			if (one.equals(two)) {
 				return 0;
 			} else {
-				return (two instanceof Item) ? 1 : -1;
+				return (two instanceof Long) ? 1 : -1;
 			}
 		}		
 	}

@@ -25,7 +25,15 @@
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
 			</columnConstraints>
 			<children>
-				<Label fx:id="statsLabel" GridPane.columnIndex="0" />
+				<VBox GridPane.columnIndex="0" >
+					<Label fx:id="speedLabel" />
+					<Label fx:id="strengthLabel" />
+					<Label fx:id="constitutionLabel" />
+					<Label fx:id="dexterityLabel" />
+					<Label fx:id="intelligenceLabel" />
+					<Label fx:id="wisdomLabel" />
+					<Label fx:id="charismaLabel" />
+				</VBox>
 				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
 					<DescriptionLabel fx:id="description" focusTraversable="false" />
 				</HBox>

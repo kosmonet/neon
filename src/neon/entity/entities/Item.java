@@ -36,7 +36,7 @@ public class Item extends Entity {
 		return components.getInstance(Resource.class).getResource().name;
 	}
 	
-	public class Resource implements Component {
+	public static class Resource implements Component {
 		private final RItem resource;
 		private final long uid;
 		

@@ -6,46 +6,98 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import java.lang.Integer?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
 		<Label fx:id="instructionLabel" styleClass="instructions" text="Use tab to move between options." />
 	</top>
 	<center>
-		<GridPane hgap="15.0" vgap="5.0" BorderPane.alignment="CENTER" id="new-menu">
-			<columnConstraints>
-				<ColumnConstraints hgrow="SOMETIMES" />
-				<ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
-				<ColumnConstraints hgrow="NEVER" />
-				<ColumnConstraints hgrow="SOMETIMES" />
-			</columnConstraints>
+		<GridPane>
 			<rowConstraints>
 				<RowConstraints vgrow="ALWAYS" />
-				<RowConstraints prefHeight="30.0" vgrow="NEVER" />
-				<RowConstraints prefHeight="100.0" vgrow="NEVER" />
-				<RowConstraints prefHeight="30.0" vgrow="NEVER" />
-				<RowConstraints vgrow="ALWAYS" />
 			</rowConstraints>
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="34.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+			</columnConstraints>
 			<children>
-				<Label text="Name:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-				<Label text="Species:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-				<Label text="Gender:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-				<TextField fx:id="nameField" prefColumnCount="15" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-				<ListView fx:id="speciesList" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-				<HBox alignment="CENTER" spacing="30.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="0">
+					<columnConstraints>
+						<ColumnConstraints hgrow="SOMETIMES" />
+						<ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+						<ColumnConstraints hgrow="NEVER" />
+						<ColumnConstraints hgrow="SOMETIMES" />
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints vgrow="ALWAYS" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints vgrow="ALWAYS" />
+					</rowConstraints>
 					<children>
-						<fx:define> <!-- scenebuilder doesn't work with togglegroup -->
-  							<ToggleGroup fx:id="genderGroup"/>  
-						</fx:define>
-						<RadioButton text="female" userData="female" selected="true" toggleGroup="$genderGroup" />
-						<RadioButton text="male" userData="male" toggleGroup="$genderGroup" />
+						<Label fx:id="strengthLabel" text="Strength:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+						<Label fx:id="constitutionLabel" text="Constitution:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+						<Label fx:id="dexterityLabel" text="Dexterity:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+						<Label fx:id="intelligenceLabel" text="Intelligence:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+						<Label fx:id="wisdomLabel" text="Wisdom:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+						<Label fx:id="charismaLabel" text="Charisma:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+						<fx:define>
+					    	<Integer fx:id="min" fx:value="0"/>
+					    	<Integer fx:id="max" fx:value="10"/>
+					    </fx:define>
+					    <Spinner fx:id="strengthSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="1" />						
+					    <Spinner fx:id="constitutionSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="2" />						
+					    <Spinner fx:id="dexteritySpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="3" />						
+					    <Spinner fx:id="intelligenceSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="4" />						
+					    <Spinner fx:id="wisdomSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="5" />						
+					    <Spinner fx:id="charismaSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="6" />						
 					</children>
-				</HBox>
+				</GridPane>
+				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="1" style=" -fx-border-color:silver; -fx-border-width: 0 1;">
+					<columnConstraints>
+						<ColumnConstraints hgrow="SOMETIMES" />
+						<ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+						<ColumnConstraints hgrow="NEVER" />
+						<ColumnConstraints hgrow="SOMETIMES" />
+					</columnConstraints>
+					<rowConstraints>
+						<RowConstraints vgrow="ALWAYS" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="100.0" vgrow="NEVER" />
+						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints vgrow="ALWAYS" />
+					</rowConstraints>
+					<children>
+						<Label text="Name:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+						<Label text="Species:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+						<Label text="Gender:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+						<TextField fx:id="nameField" prefColumnCount="15" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+						<ListView fx:id="speciesList" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+						<HBox alignment="CENTER" spacing="30.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+							<children>
+								<fx:define> <!-- scenebuilder doesn't work with togglegroup -->
+		  							<ToggleGroup fx:id="genderGroup"/>  
+								</fx:define>
+								<RadioButton text="female" userData="female" selected="true" toggleGroup="$genderGroup" />
+								<RadioButton text="male" userData="male" toggleGroup="$genderGroup" />
+							</children>
+						</HBox>
+					</children>
+				</GridPane>
+				<Label GridPane.columnIndex="2" />
 			</children>
 		</GridPane>
 	</center>

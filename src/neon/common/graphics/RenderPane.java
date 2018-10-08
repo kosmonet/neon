@@ -32,7 +32,6 @@ import javafx.scene.layout.StackPane;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.entities.Entity;
 import neon.util.spatial.RegionSpatialIndex;
 
 /**
@@ -41,18 +40,18 @@ import neon.util.spatial.RegionSpatialIndex;
  * @author mdriesen
  *
  */
-public class RenderPane extends StackPane {
+public class RenderPane<T> extends StackPane {
 	private final static Logger logger = Logger.getGlobal();
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;
-	private final EntityRenderer<Entity> renderer;
+	private final EntityRenderer<T> renderer;
 	
 	private RegionSpatialIndex<String> terrain;
 	private RegionSpatialIndex<Integer> elevation;
-	private SortedSet<Entity> entities;
+	private SortedSet<T> entities;
 	
-	public RenderPane(ResourceManager resources, EntityRenderer<Entity> renderer) {
+	public RenderPane(ResourceManager resources, EntityRenderer<T> renderer) {
 		this.resources = resources;
 		this.renderer = renderer;
 		entities = new TreeSet<>(renderer.getComparator());
@@ -71,7 +70,7 @@ public class RenderPane extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends Entity> entities) {
+	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<T> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
 		this.entities.clear();
@@ -79,7 +78,7 @@ public class RenderPane extends StackPane {
 		
 	}
 	
-	public void updateMap(Collection<? extends Entity> entities) {
+	public void updateMap(Collection<T> entities) {
 		this.entities.clear();
 		this.entities.addAll(entities);
 	}
@@ -98,7 +97,7 @@ public class RenderPane extends StackPane {
 		
 		drawMap(xmin, ymin, scale);
 		
-		for (Entity entity : entities) {
+		for (T entity : entities) {
 			renderer.drawEntity(entity, xmin, ymin, scale);
 		}
 	}

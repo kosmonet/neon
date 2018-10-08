@@ -33,6 +33,13 @@ public class Shape implements Component {
 		this.uid = uid;
 	}
 	
+	public Shape(long uid, int x, int y, int z) {
+		this.uid = uid;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	@Override
 	public long getEntity() {
 		return uid;

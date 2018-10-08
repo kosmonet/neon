@@ -4,10 +4,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<center>
-		<Label fx:id="introLabel" maxHeight="Infinity" maxWidth="Infinity" text="Loading intro..." style="-fx-font-size: 24px; -fx-alignment: center;" />
+		<WebView fx:id="view" />
 	</center>
 	<bottom>
 		<HBox styleClass="bottom-buttons">

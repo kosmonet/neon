@@ -32,9 +32,10 @@ import javafx.scene.control.Label;
 import neon.client.UserInterface;
 import neon.client.ui.DescriptionLabel;
 import neon.common.resources.RCreature;
+import neon.entity.components.Graphics;
 import neon.entity.components.Info;
 import neon.entity.components.Stats;
-import neon.entity.entities.Player;
+import neon.entity.entities.Creature;
 
 /**
  * 
@@ -46,7 +47,9 @@ public class JournalState extends State {
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
-	@FXML private Label infoLabel, statsLabel;
+	@FXML private Label infoLabel;
+	@FXML private Label speedLabel, strengthLabel, constitutionLabel, dexterityLabel;
+	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel;
 
 	private final UserInterface ui;
 	private Scene scene;
@@ -70,12 +73,24 @@ public class JournalState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering journal state");
-		Player player = event.getParameter(Player.class);
-    	description.update(player);
-    	Info info = player.getComponent(Info.class);
-    	RCreature species = player.getComponent(Stats.class).getSpecies();
+		
+    	Info info = event.getParameter(Info.class);
+    	Stats stats = event.getParameter(Stats.class);
+    	Graphics graphics = event.getParameter(Graphics.class);
+    	Creature.Resource resource = event.getParameter(Creature.Resource.class);
+    	
+    	description.update(resource.getResource().name, graphics);
+    	RCreature species = stats.getSpecies();
     	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + species.name);
-    	statsLabel.setText("Speed: " + species.speed);
+    	speedLabel.setText("Speed: " + species.speed);
+    	
+    	strengthLabel.setText("Strength: " + stats.getBaseStr());
+    	constitutionLabel.setText("Constitution: " + stats.getBaseCon());
+    	dexterityLabel.setText("Dexterity: " + stats.getBaseDex());
+    	intelligenceLabel.setText("Intelligence: " + stats.getBaseInt());
+    	wisdomLabel.setText("Wisdom: " + stats.getBaseWis());
+    	charismaLabel.setText("Charisma: " + stats.getBaseCha());
+    	
 		ui.showScene(scene);
 	}
 

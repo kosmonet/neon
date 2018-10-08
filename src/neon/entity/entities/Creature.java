@@ -39,7 +39,7 @@ public class Creature extends Entity {
 		components.put(Stats.class, new Stats(uid, species));
 	}
 
-	public class Resource implements Component {
+	public static class Resource implements Component {
 		private final RCreature resource;
 		private final long uid;
 		

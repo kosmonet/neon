@@ -18,7 +18,13 @@
 
 package neon.common.event;
 
+import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
+import neon.entity.components.Info;
+import neon.entity.components.Shape;
+import neon.entity.components.Stats;
+import neon.entity.entities.Creature.Resource;
+import neon.entity.entities.Player;
 
 /**
  * An event containing updates for the client.
@@ -36,15 +42,29 @@ public abstract class UpdateEvent extends NeonEvent {
 	public static class Start extends UpdateEvent {
 		public final String id, name, gender;
 		public final int x, y, z;
+		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
 
-		public Start(String id, String name, String gender, int x, int y, int z) {
-			this.id = id;
-			this.name = name;
-			this.gender = gender;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
+		public Start(Player player) {
+			Shape shape = player.getComponent(Shape.class);
+			RCreature creature = player.getComponent(Resource.class).getResource();
+			Info info = player.getComponent(Info.class);
+			Stats stats = player.getComponent(Stats.class);
+			
+			id = creature.id;
+			name = info.getName();
+			gender = info.getGender();
+			
+			x = shape.getX();
+			y = shape.getY();
+			z = shape.getZ();
+			
+			strength =  stats.getBaseStr();
+			constitution = stats.getBaseCon();
+			dexterity = stats.getBaseDex();
+			intelligence = stats.getBaseInt();
+			wisdom = stats.getBaseWis();
+			charisma = stats.getBaseCha();			
+		}	
 	}
 	
 	/**

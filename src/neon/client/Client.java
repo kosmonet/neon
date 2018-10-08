@@ -50,6 +50,8 @@ import neon.common.event.QuitEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
+import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -58,6 +60,8 @@ import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.entity.components.Behavior;
+import neon.entity.components.Graphics;
 import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
@@ -75,7 +79,7 @@ public class Client implements Runnable {
 	private final UserInterface ui;
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
 	private final ResourceManager resources = new ResourceManager(files);
-	private final ClientProvider provider = new ClientProvider();
+	private final ComponentManager components = new ComponentManager();
 
 	/**
 	 * Initializes the client.
@@ -136,13 +140,13 @@ public class Client implements Runnable {
 		LoadState loadGame = new LoadState(ui, bus);
 		bus.register(loadGame);
 		
-		CutSceneState cut = new CutSceneState(ui, bus, resources);
+		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
 		bus.register(cut);
 
-		GameState game = new GameState(ui, bus, provider, resources);
+		GameState game = new GameState(ui, bus, components, resources);
 		bus.register(game);
 		
-		InventoryState inventory = new InventoryState(ui, bus, provider);
+		InventoryState inventory = new InventoryState(ui, bus, components);
 		bus.register(inventory);
 		
 		MapState map = new MapState(ui, bus, resources);
@@ -151,7 +155,7 @@ public class Client implements Runnable {
 		ConversationState conversation = new ConversationState(ui, bus);
 		bus.register(conversation);
 		
-		ContainerState container = new ContainerState(ui, bus, provider);
+		ContainerState container = new ContainerState(ui, bus, components);
 		bus.register(container);
 		
 		JournalState journal = new JournalState(ui, bus);
@@ -196,55 +200,50 @@ public class Client implements Runnable {
 
 	@Subscribe
 	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
-		if (provider.hasEntity(event.uid)) {
+		long uid = event.uid;
+		RItem resource = resources.getResource("items", event.id);
+
+		components.putComponent(uid, new Item.Resource(uid, resource));
+		components.putComponent(uid, new Graphics(uid, resource.glyph, resource.color));
+		components.putComponent(uid, new Shape(uid, event.x, event.y, event.z));
+
+		if (!event.map.isEmpty()) {
 			RMap map = resources.getResource("maps", event.map);
-			Item item = provider.getEntity(event.uid);
-			item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			
-			if (map.getEntities().contains(event.uid)) {
-				map.moveEntity(item.uid, event.x, event.y);
+
+			if (map.getEntities().contains(uid)) {
+				map.moveEntity(uid, event.x, event.y);
 			} else {
-				map.addEntity(item.uid, event.x, event.y);
-			}
-		} else {
-			Item item = new Item(event.uid, resources.getResource("items", event.id));
-			provider.addEntity(item);
-			if (!event.map.isEmpty()) {
-				RMap map = resources.getResource("maps", event.map);
-				item.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-				map.addEntity(item.uid, event.x, event.y);
-			} else {
-				return;
+				map.addEntity(uid, event.x, event.y);
 			}
 		}
 	}
-	
+
 	@Subscribe
 	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
+		long uid = event.uid;
 		RMap map = resources.getResource("maps", event.map);
-
-		if(provider.hasEntity(event.uid)) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			map.moveEntity(event.uid, event.x, event.y);
+		Shape shape = components.getComponent(uid, Shape.class);
+		
+		if (shape != null) {
+			shape.setPosition(event.x, event.y, event.z);
+			map.moveEntity(uid, event.x, event.y);
 		} else {
-			Creature creature = new Creature(event.uid, resources.getResource("creatures", event.id));
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-			map.addEntity(event.uid, event.x, event.y);
-			provider.addEntity(creature);
+			RCreature resource = resources.getResource("creatures", event.id);
+			components.putComponent(uid, new Behavior(uid));
+			components.putComponent(uid, new Creature.Resource(uid, resource));
+			components.putComponent(uid, new Graphics(uid, resource.glyph, resource.color));
+			components.putComponent(uid, new Shape(uid, event.x, event.y, event.z));
+			map.addEntity(uid, event.x, event.y);
 		}
 	}
 	
 	@Subscribe
 	private void onCreatureMove(UpdateEvent.Move event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
+		Shape shape = components.getComponent(event.uid, Shape.class);
+		shape.setPosition(event.x, event.y, event.z);			
 
-		if (event.uid == 0) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);			
-		} else if (provider.hasEntity(event.uid)) {
-			Creature creature = provider.getEntity(event.uid);
-			creature.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
+		if (event.uid != 0) {
 			map.moveEntity(event.uid, event.x, event.y);
 		}
 	}

@@ -36,7 +36,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
-import neon.client.ClientProvider;
+import neon.client.ComponentManager;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
@@ -49,14 +49,16 @@ import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
+import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.components.Behavior;
+import neon.entity.components.Graphics;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
-import neon.entity.entities.Player;
 import neon.util.Direction;
 
 /**
@@ -67,12 +69,13 @@ import neon.util.Direction;
  */
 public class GameState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
-	private final ClientProvider entities;
-	private final RenderPane renderPane;
+	private final RenderPane<Long> renderPane;
 	private final ResourceManager resources;
+	private final ComponentManager components;
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
@@ -91,12 +94,12 @@ public class GameState extends State {
 	 * @param provider
 	 * @param resources
 	 */
-	public GameState(UserInterface ui, EventBus bus, ClientProvider provider, ResourceManager resources) {
+	public GameState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
-		entities = provider;
 		this.resources = resources;
-		renderPane = new RenderPane(resources, new ClientRenderer());
+		this.components = components;
+		renderPane = new RenderPane<Long>(resources, new ClientRenderer(components));
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -125,9 +128,20 @@ public class GameState extends State {
 	@Subscribe
 	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
 		// prepare the player
-		Player player = new Player(event.name, event.gender, resources.getResource("creatures", event.id));
-		player.getComponent(Shape.class).setPosition(event.x, event.y, event.z);
-		entities.addEntity(player);
+		RCreature species = resources.getResource("creatures", event.id);
+		Stats stats = new Stats(PLAYER_UID, species);
+		stats.setBaseCha(event.charisma);
+		stats.setBaseCon(event.constitution);
+		stats.setBaseDex(event.dexterity);
+		stats.setBaseInt(event.intelligence);
+		stats.setBaseStr(event.strength);
+		stats.setBaseWis(event.wisdom);
+		
+		components.putComponent(PLAYER_UID, stats);
+		components.putComponent(PLAYER_UID, new Creature.Resource(PLAYER_UID, species));
+		components.putComponent(PLAYER_UID, new Graphics(PLAYER_UID, "@", species.color));
+		components.putComponent(PLAYER_UID, new Shape(PLAYER_UID, event.x, event.y, event.z));
+		components.putComponent(PLAYER_UID, new Info(PLAYER_UID, event.name, event.gender));
 		
 		// prepare the scene
 		stack.getChildren().clear();
@@ -139,23 +153,22 @@ public class GameState extends State {
 	
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
-		Player player = entities.getEntity(0);
-		Shape shape = player.getComponent(Shape.class);
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		map = resources.getResource("maps", event.map);
-		map.addEntity(player.uid, shape.getX(), shape.getY());
-		renderPane.setMap(map.getTerrain(), map.getElevation(), entities.getEntities(map.getEntities()));		
+		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
+		renderPane.setMap(map.getTerrain(), map.getElevation(), map.getEntities());		
 		redraw();
 	}
 	
 	@Subscribe
 	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
+		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
 	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
+		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
 	}
 	
@@ -166,7 +179,7 @@ public class GameState extends State {
 	
 	@Subscribe
 	private void update(UpdateEvent.Remove event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(entities.getEntities(map.getEntities())));
+		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
 	}
 	
@@ -175,26 +188,28 @@ public class GameState extends State {
 	}
 	
 	private void redraw() {
-		Player player = entities.getEntity(0);
-		Info record = player.getComponent(Info.class);
+		Info record = components.getComponent(PLAYER_UID, Info.class);
 		modeLabel.setText(record.getMode().toString());
-		Shape shape = player.getComponent(Shape.class);
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		renderPane.draw(xpos, ypos, scale);
 	}
 	
 	private void showInventory() {
-		bus.post(new TransitionEvent("inventory", "map", map));
+		bus.post(new TransitionEvent("inventory", map));
 	}
 	
 	private void showMap() {
-		bus.post(new TransitionEvent("map", "map", map));
+		bus.post(new TransitionEvent("map", map));
 	}
 	
 	private void showJournal() {
-		Player player = entities.getEntity(0);
-		bus.post(new TransitionEvent("journal", "player", player));
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		Info info = components.getComponent(PLAYER_UID, Info.class);
+		Graphics graphics = components.getComponent(PLAYER_UID, Graphics.class);
+		Creature.Resource species = components.getComponent(PLAYER_UID, Creature.Resource.class);
+		bus.post(new TransitionEvent("journal", stats, info, graphics, species));
 	}
 	
 	private void pause() {
@@ -208,11 +223,10 @@ public class GameState extends State {
 	}
 	
 	private void act() {
-		Player player = entities.getEntity(0);
-		Shape shape = player.getComponent(Shape.class);
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 
 		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
-			bus.post(new TransitionEvent("pick", "map", map));			
+			bus.post(new TransitionEvent("pick", map, shape));			
 		}
 	}
 	
@@ -246,40 +260,41 @@ public class GameState extends State {
 			bus.post(new NeonEvent.Pause());
 		}
 		
-		Creature one = entities.getEntity(event.getBumper());
-		Creature two = entities.getEntity(event.getBumped());
-		
-		if (one instanceof Player) {
-			Player player = (Player) one;
-			Behavior brain = two.getComponent(Behavior.class);
-			Info record = player.getComponent(Info.class);
+		long bumper = event.getBumper();
+		long bumped = event.getBumped();
+
+		if (bumper == PLAYER_UID) {
+			Info record = components.getComponent(bumper, Info.class);
+			Behavior brain = components.getComponent(bumped, Behavior.class);
+	    	Graphics graphics = components.getComponent(bumped, Graphics.class);
+	    	Creature.Resource resource = components.getComponent(bumped, Creature.Resource.class);
 			
 			switch (record.getMode()) {
 			case NONE:
-				if (brain.isFriendly(player)) {
-					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
+				if (brain.isFriendly(bumper)) {
+					bus.post(new TransitionEvent("talk", graphics, resource));
 				} else {
-					bus.post(new CombatEvent(player.uid, two.uid));	
+					bus.post(new CombatEvent(bumper, bumped));	
 				}
 				break;
 			case STEALTH:
-				if (brain.isFriendly(player)) {
-					bus.post(new TransitionEvent("talk", "player", player, "creature", two));
+				if (brain.isFriendly(bumper)) {
+					bus.post(new TransitionEvent("talk", graphics, resource));
 				} else {
-					bus.post(new CombatEvent(player.uid, two.uid));	
+					bus.post(new CombatEvent(bumper, bumped));	
 				}
 				break;
 			case AGGRESSION:
-				if (brain.isFriendly(player)) {
+				if (brain.isFriendly(bumper)) {
 					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", "player", player, "creature", two));
+						bus.post(new TransitionEvent("talk", graphics, resource));
 					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent(player.uid, two.uid));	
+						bus.post(new CombatEvent(bumper, bumped));	
 					}
 				} else {
-					bus.post(new CombatEvent(player.uid, two.uid));	
+					bus.post(new CombatEvent(bumper, bumped));	
 				}
 				break;
 			}

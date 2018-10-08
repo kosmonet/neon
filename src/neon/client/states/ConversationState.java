@@ -43,11 +43,12 @@ import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.common.event.ConversationEvent;
+import neon.entity.components.Graphics;
 import neon.entity.entities.Creature;
-import neon.entity.entities.Player;
 
 public class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final UserInterface ui;
@@ -83,14 +84,11 @@ public class ConversationState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering conversation module");
-
-		Player player = event.getParameter(Player.class);
-		Creature creature = event.getParameter(Creature.class);
-		bus.post(new ConversationEvent.Start(player.uid, creature.uid));
-		
+    	Graphics graphics = event.getParameter(Graphics.class);
+    	Creature.Resource resource = event.getParameter(Creature.Resource.class);
+		bus.post(new ConversationEvent.Start(PLAYER_UID, graphics.getEntity()));		
 		flow.getChildren().clear();
-
-		description.update(creature);
+		description.update(resource.getResource().name, graphics);
 		ui.showScene(scene);
 	}
 

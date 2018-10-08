@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -49,10 +49,14 @@ public class MovementSystem implements NeonSystem {
 	private final EntityProvider entities;
 	private final ResourceManager resources;
 	
-	public MovementSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	MovementSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
+	}
+	
+	void run() {
+		
 	}
 	
 	/**
@@ -60,7 +64,7 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	public void move(Player player, Direction direction, RMap map) {
+	void move(Player player, Direction direction, RMap map) {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();
@@ -96,7 +100,7 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	public void move(Creature creature, int x, int y, RMap map) {
+	void move(Creature creature, int x, int y, RMap map) {
 		try {
 			Shape shape = creature.getComponent(Shape.class);
 			move(creature, map, x, y, shape.getZ());
