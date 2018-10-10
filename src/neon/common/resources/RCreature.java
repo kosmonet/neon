@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -47,17 +47,66 @@ public class RCreature extends Resource {
 	 */
 	public final int speed;
 	
-	/**
-	 * Creates a new creature resource with the given id, name, character and color.
-	 * 
-	 * @param id
-	 * @param type
-	 */
-	public RCreature(String id, String name, String glyph, Color color, int speed) {
-		super(id, "creatures");
-		this.name = name;
-		this.color = color;
-		this.glyph = glyph;
-		this.speed = speed;
+	public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
+	
+	private RCreature(Builder builder) {
+		super(builder.id, "creatures");
+		name = builder.name;
+		color = builder.color;
+		glyph = builder.glyph;
+		speed = builder.speed;
+		strength = builder.strength;
+		constitution = builder.constitution;
+		dexterity = builder.dexterity;
+		intelligence = builder.intelligence;
+		wisdom = builder.wisdom;
+		charisma = builder.charisma;		
+	}
+	
+	public static class Builder {
+		private String id;
+		private String name;
+		private String glyph;
+		private Color color;
+		private int speed;
+		private int strength, constitution, dexterity, intelligence, wisdom, charisma;
+		
+		public Builder(String id) {
+			this.id = id;
+		}
+		
+		public RCreature build() {
+			return new RCreature(this);
+		}
+		
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public Builder setGlyph(String glyph) {
+			this.glyph = glyph;
+			return this;
+		}
+		
+		public Builder setColor(Color color) {
+			this.color = color;
+			return this;
+		}
+		
+		public Builder setSpeed(int speed) {
+			this.speed = speed;
+			return this;
+		}
+		
+		public Builder setStats(int strength, int constitution, int dexterity, int intelligence, int wisdom, int charisma) {
+			this.strength = strength;
+			this.constitution = constitution;
+			this.dexterity = dexterity;
+			this.intelligence = intelligence;
+			this.wisdom = wisdom;
+			this.charisma = charisma;		
+			return this;
+		}
 	}
 }

@@ -32,13 +32,14 @@
 			<children>
 				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="0">
 					<columnConstraints>
-						<ColumnConstraints hgrow="SOMETIMES" />
+						<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
 						<ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
 						<ColumnConstraints hgrow="NEVER" />
 						<ColumnConstraints hgrow="SOMETIMES" />
 					</columnConstraints>
 					<rowConstraints>
 						<RowConstraints vgrow="ALWAYS" />
+						<RowConstraints vgrow="SOMETIMES" />
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
@@ -48,22 +49,19 @@
 						<RowConstraints vgrow="ALWAYS" />
 					</rowConstraints>
 					<children>
-						<Label fx:id="strengthLabel" text="Strength:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-						<Label fx:id="constitutionLabel" text="Constitution:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-						<Label fx:id="dexterityLabel" text="Dexterity:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-						<Label fx:id="intelligenceLabel" text="Intelligence:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-						<Label fx:id="wisdomLabel" text="Wisdom:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-						<Label fx:id="charismaLabel" text="Charisma:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-						<fx:define>
-					    	<Integer fx:id="min" fx:value="0"/>
-					    	<Integer fx:id="max" fx:value="10"/>
-					    </fx:define>
-					    <Spinner fx:id="strengthSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="1" />						
-					    <Spinner fx:id="constitutionSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="2" />						
-					    <Spinner fx:id="dexteritySpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="3" />						
-					    <Spinner fx:id="intelligenceSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="4" />						
-					    <Spinner fx:id="wisdomSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="5" />						
-					    <Spinner fx:id="charismaSpinner" min="$min" max="$max" GridPane.columnIndex="2" GridPane.rowIndex="6" />						
+						<Label fx:id="statsLabel" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="4" />
+						<Label fx:id="strengthLabel" text="Strength:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+						<Label fx:id="constitutionLabel" text="Constitution:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+						<Label fx:id="dexterityLabel" text="Dexterity:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+						<Label fx:id="intelligenceLabel" text="Intelligence:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+						<Label fx:id="wisdomLabel" text="Wisdom:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+						<Label fx:id="charismaLabel" text="Charisma:" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+					    <Spinner fx:id="strengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="2" />						
+					    <Spinner fx:id="constitutionSpinner" GridPane.columnIndex="2" GridPane.rowIndex="3" />						
+					    <Spinner fx:id="dexteritySpinner" GridPane.columnIndex="2" GridPane.rowIndex="4" />						
+					    <Spinner fx:id="intelligenceSpinner" GridPane.columnIndex="2" GridPane.rowIndex="5" />						
+					    <Spinner fx:id="wisdomSpinner" GridPane.columnIndex="2" GridPane.rowIndex="6" />						
+					    <Spinner fx:id="charismaSpinner" GridPane.columnIndex="2" GridPane.rowIndex="7" />						
 					</children>
 				</GridPane>
 				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="1" style=" -fx-border-color:silver; -fx-border-width: 0 1;">

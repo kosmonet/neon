@@ -130,7 +130,6 @@ public class Client implements Runnable {
 	}
 	
 	private void initModules(String version) {
-		// client uses the first module in the list as the start state
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
 		bus.register(mainMenu);
 

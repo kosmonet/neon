@@ -32,6 +32,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
@@ -54,14 +55,23 @@ public class NewGameState extends State {
 	@FXML private ListView<RCreature> speciesList;
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
-	@FXML private Label instructionLabel;
+	@FXML private Label instructionLabel, statsLabel;
 	@FXML private Spinner<Integer> strengthSpinner, constitutionSpinner, dexteritySpinner;
 	@FXML private Spinner<Integer> intelligenceSpinner, wisdomSpinner, charismaSpinner;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ResourceManager resources;
+	private final IntegerSpinnerValueFactory strFactory, conFactory, dexFactory, intFactory, wisFactory, chaFactory;
+	
 	private Scene scene;
+	private int points = 20;
+	private int strMod = 0;
+	private int conMod = 0;
+	private int dexMod = 0;
+	private int intMod = 0;
+	private int wisMod = 0;
+	private int chaMod = 0;
 
 	public NewGameState(UserInterface ui, EventBus bus, ResourceManager resources) {
 		this.ui = ui;
@@ -82,13 +92,37 @@ public class NewGameState extends State {
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
 
+		statsLabel.setText(points + " ability points to spend.");
+		
 		// list catches the esc, enter and F2 keys, we need a separate listener
 		speciesList.setOnKeyPressed(event -> listKeyPressed(event));
 		// text field catches the F2 key, another listener
-		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));
+		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));		
 		
 		// TODO: list scrollt niet correct naar laatste item
 		speciesList.setCellFactory(speciesList -> new CreatureCell());
+		speciesList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> changeSpecies(oldValue, newValue));
+		
+		strFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		conFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		dexFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		intFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		wisFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		chaFactory = new IntegerSpinnerValueFactory(3, 18, 10);
+		
+		strengthSpinner.setValueFactory(strFactory);
+		constitutionSpinner.setValueFactory(conFactory);
+		dexteritySpinner.setValueFactory(dexFactory);
+		intelligenceSpinner.setValueFactory(intFactory);
+		wisdomSpinner.setValueFactory(wisFactory);
+		charismaSpinner.setValueFactory(chaFactory);
+
+		strengthSpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeStr(oldValue, newValue));
+		constitutionSpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeCon(oldValue, newValue));
+		dexteritySpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeDex(oldValue, newValue));
+		intelligenceSpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeInt(oldValue, newValue));
+		wisdomSpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeWis(oldValue, newValue));
+		charismaSpinner.valueProperty().addListener((obs, oldValue, newValue) -> changeCha(oldValue, newValue));
 	}
 	
 	@Override
@@ -138,6 +172,8 @@ public class NewGameState extends State {
 		
 		if (name.isEmpty()) {
 			ui.showMessage("Enter a valid character name.", 1000);
+		} else if (points - strMod - conMod - dexMod - intMod - wisMod - chaMod != 0) {
+			ui.showMessage("You have unspent ability points.", 1000);			
 		} else {
 			// let the server know that the game module is waiting for game data
 			bus.post(new NewGameEvent(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
@@ -161,7 +197,145 @@ public class NewGameState extends State {
 		speciesList.getSelectionModel().select(0);
 	}
 	
-    private class CreatureCell extends ListCell<RCreature> {
+	private void changeStr(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		strMod = newValue - species.strength;
+		changeAbility();
+	}
+	
+	private void changeCon(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		conMod =  newValue - species.constitution;
+		changeAbility();
+	}
+	
+	private void changeDex(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		dexMod = newValue - species.dexterity;
+		changeAbility();
+	}
+	
+	private void changeInt(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		intMod = newValue - species.intelligence;
+		changeAbility();
+	}
+	
+	private void changeWis(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		wisMod = newValue - species.wisdom;
+		changeAbility();
+	}
+	
+	private void changeCha(int oldValue, int newValue) {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		chaMod = newValue - species.charisma;
+		changeAbility();
+	}
+	
+	private void changeAbility() {
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+		int pointsLeft = points - strMod - conMod - dexMod - intMod - wisMod - chaMod;
+		
+		if (strMod > 2) {
+			pointsLeft -= (10 + strMod) % 12;
+		}
+		
+		if (strMod > 5) {
+			pointsLeft -= (10 + strMod) % 15;
+		}
+		
+		if (conMod > 2) {
+			pointsLeft -= (10 + conMod) % 12;
+		}
+		
+		if (conMod > 5) {
+			pointsLeft -= (10 + conMod) % 15;
+		}
+		
+		if (dexMod > 2) {
+			pointsLeft -= (10 + dexMod) % 12;
+		}
+		
+		if (dexMod > 5) {
+			pointsLeft -= (10 + dexMod) % 15;
+		}
+		
+		if (intMod > 2) {
+			pointsLeft -= (10 + intMod) % 12;
+		}
+		
+		if (intMod > 5) {
+			pointsLeft -= (10 + intMod) % 15;
+		}
+		
+		if (wisMod > 2) {
+			pointsLeft -= (10 + wisMod) % 12;
+		}
+		
+		if (wisMod > 5) {
+			pointsLeft -= (10 + wisMod) % 15;
+		}
+		
+		if (chaMod > 2) {
+			pointsLeft -= (10 + chaMod) % 12;
+		}
+		
+		if (chaMod > 5) {
+			pointsLeft -= (10 + chaMod) % 15;
+		}
+		
+		statsLabel.setText(pointsLeft + " ability points to spend.");
+		
+		if ((pointsLeft == 2 && strMod > 4) || (pointsLeft == 1 && strMod > 1) || (pointsLeft <= 0)) {
+			strFactory.setMax(strengthSpinner.getValue());
+		} else {
+			strFactory.setMax(species.strength + 8);			
+		}
+
+		if ((pointsLeft == 2 && conMod > 4) || (pointsLeft == 1 && conMod > 1) || (pointsLeft <= 0)) {
+			conFactory.setMax(constitutionSpinner.getValue());
+		} else {
+			conFactory.setMax(species.constitution + 8);
+		}
+		
+		if ((pointsLeft == 2 && dexMod > 4) || (pointsLeft == 1 && dexMod > 1) || (pointsLeft <= 0)) {
+			dexFactory.setMax(dexteritySpinner.getValue());
+		} else {
+			dexFactory.setMax(species.dexterity + 8);
+		}
+		
+		if ((pointsLeft == 2 && intMod > 4) || (pointsLeft == 1 && intMod > 1) || (pointsLeft <= 0)) {
+			intFactory.setMax(intelligenceSpinner.getValue());
+		} else {
+			intFactory.setMax(species.intelligence + 8);
+		}
+		
+		if ((pointsLeft == 2 && wisMod > 4) || (pointsLeft == 1 && wisMod > 1) || (pointsLeft <= 0)) {
+			wisFactory.setMax(wisdomSpinner.getValue());
+		} else {
+			wisFactory.setMax(species.wisdom + 8);
+		}
+		
+		if ((pointsLeft == 2 && chaMod > 4) || (pointsLeft == 1 && chaMod > 1) || (pointsLeft <= 0)) {
+			chaFactory.setMax(charismaSpinner.getValue());
+		} else {
+			chaFactory.setMax(species.charisma + 8);			
+		}
+	}
+	
+	private void changeSpecies(RCreature oldValue, RCreature newValue) {
+		if (newValue != null) {
+			strengthSpinner.getValueFactory().setValue(newValue.strength + strMod);
+			constitutionSpinner.getValueFactory().setValue(newValue.constitution + conMod);
+			dexteritySpinner.getValueFactory().setValue(newValue.dexterity + dexMod);
+			intelligenceSpinner.getValueFactory().setValue(newValue.intelligence + intMod);
+			wisdomSpinner.getValueFactory().setValue(newValue.wisdom + wisMod);
+			charismaSpinner.getValueFactory().setValue(newValue.charisma + chaMod);
+		}
+	}
+
+   private class CreatureCell extends ListCell<RCreature> {
     	@Override
     	public void updateItem(RCreature creature, boolean empty) {
     		super.updateItem(creature, empty);

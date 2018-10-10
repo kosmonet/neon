@@ -144,12 +144,20 @@ public class CreatureEditor {
 		String glyph = textField.getText();
 		speedSpinner.increment(0);	// stupid way to validate spinner value
 		int speed = speedSpinner.getValue();
+		
+		int str = 10;
+		int con = 10;
+		int dex = 10;
+		int iq = 10;
+		int wis = 10;
+		int cha = 10;
 		// check if anything was actually changed
 		if (!name.equals(rc.name) || !glyph.equals(rc.glyph) || !color.equals(rc.color) ||
 				speed != rc.speed) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature(card.toString(), name, glyph, color, speed);
+			RCreature creature = new RCreature.Builder(card.toString()).setName(name).setGlyph(glyph).setColor(color).
+					setSpeed(speed).setStats(str, con, dex, iq, wis, cha).build();
 			bus.post(new SaveEvent.Resources(creature));
 			card.setChanged(true);				
 		}

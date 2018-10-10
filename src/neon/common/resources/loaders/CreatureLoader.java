@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -38,8 +38,16 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		String glyph = root.getChild("graphics").getAttributeValue("char");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		int speed = Integer.parseInt(root.getAttributeValue("speed"));
-		RCreature creature = new RCreature(id, name, glyph, color, speed);
-		return creature;
+		
+		Element stats = root.getChild("stats");
+		int str = Integer.parseInt(stats.getAttributeValue("str"));
+		int con = Integer.parseInt(stats.getAttributeValue("con"));
+		int dex = Integer.parseInt(stats.getAttributeValue("dex"));
+		int iq = Integer.parseInt(stats.getAttributeValue("int"));
+		int wis = Integer.parseInt(stats.getAttributeValue("wis"));
+		int cha = Integer.parseInt(stats.getAttributeValue("cha"));
+		return new RCreature.Builder(id).setName(name).setGlyph(glyph).setColor(color).
+				setSpeed(speed).setStats(str, con, dex, iq, wis, cha).build();
 	}
 	
 	@Override
@@ -47,11 +55,21 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		Element creature = new Element("creature");
 		creature.setAttribute("id", rc.id);
 		creature.setAttribute("name", rc.name);
+		creature.setAttribute("speed", Integer.toString(rc.speed));
 		
 		Element graphics = new Element("graphics");
 		graphics.setAttribute("char", rc.glyph);
 		graphics.setAttribute("color", Graphics.getColorString(rc.color));
 		creature.addContent(graphics);
+		
+		Element stats = new Element("stats");
+		stats.setAttribute("str", Integer.toString(rc.strength));
+		stats.setAttribute("con", Integer.toString(rc.constitution));
+		stats.setAttribute("dex", Integer.toString(rc.dexterity));
+		stats.setAttribute("int", Integer.toString(rc.intelligence));
+		stats.setAttribute("wis", Integer.toString(rc.wisdom));
+		stats.setAttribute("cha", Integer.toString(rc.charisma));
+		creature.addContent(stats);
 		
 		return creature;
 	}
