@@ -38,7 +38,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-
+import javafx.scene.paint.Color;
 import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.common.event.ClientConfigurationEvent;
@@ -55,7 +55,7 @@ public class NewGameState extends State {
 	@FXML private ListView<RCreature> speciesList;
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
-	@FXML private Label instructionLabel, statsLabel;
+	@FXML private Label instructionLabel, statsLabel, weightLabel, healthLabel, manaLabel;
 	@FXML private Spinner<Integer> strengthSpinner, constitutionSpinner, dexteritySpinner;
 	@FXML private Spinner<Integer> intelligenceSpinner, wisdomSpinner, charismaSpinner;
 	
@@ -72,6 +72,7 @@ public class NewGameState extends State {
 	private int intMod = 0;
 	private int wisMod = 0;
 	private int chaMod = 0;
+	private int pointsLeft = points;
 
 	public NewGameState(UserInterface ui, EventBus bus, ResourceManager resources) {
 		this.ui = ui;
@@ -172,14 +173,25 @@ public class NewGameState extends State {
 		
 		if (name.isEmpty()) {
 			ui.showMessage("Enter a valid character name.", 1000);
-		} else if (points - strMod - conMod - dexMod - intMod - wisMod - chaMod != 0) {
-			ui.showMessage("You have unspent ability points.", 1000);			
+//		} else if (pointsLeft > 0) {
+//			ui.showMessage("You have unspent ability points.", 1000);			
+//		} else if (pointsLeft < 0) {
+//			ui.showMessage("You have spent too many ability points.", 1000);			
 		} else {
 			// let the server know that the game module is waiting for game data
-			bus.post(new NewGameEvent(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
-			// transition to the actual game module
-			bus.post(new TransitionEvent("start game"));
+			bus.post(new NewGameEvent.Check(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
 		}
+	}
+	
+	@Subscribe
+	private void onGameStart(NewGameEvent.Start event) {
+		// transition to the actual game module
+		bus.post(new TransitionEvent("start game"));		
+	}
+	
+	@Subscribe
+	private void onGameStart(NewGameEvent.Fail event) {
+		ui.showMessage("The character you created is not valid.", 1000);			
 	}
 	
 	/**
@@ -195,15 +207,24 @@ public class NewGameState extends State {
 		}
 		
 		speciesList.getSelectionModel().select(0);
+		
+		int strength = speciesList.getSelectionModel().getSelectedItem().strength;
+		weightLabel.setText("Carry weight: " + 6*strength + "/" + 9*strength);
+		int constitution = speciesList.getSelectionModel().getSelectedItem().constitution;
+		healthLabel.setText("Health: " + 3*constitution + " HP");
+		int intelligence = speciesList.getSelectionModel().getSelectedItem().intelligence;
+		manaLabel.setText("Mana: " + 6*intelligence);
 	}
 	
 	private void changeStr(int oldValue, int newValue) {
+		weightLabel.setText("Carry weight: " + 6*newValue + "/" + 9*newValue);
 		RCreature species = speciesList.getSelectionModel().getSelectedItem();
 		strMod = newValue - species.strength;
 		changeAbility();
 	}
 	
 	private void changeCon(int oldValue, int newValue) {
+		healthLabel.setText("Health: " + 3*newValue + " HP");
 		RCreature species = speciesList.getSelectionModel().getSelectedItem();
 		conMod =  newValue - species.constitution;
 		changeAbility();
@@ -216,6 +237,7 @@ public class NewGameState extends State {
 	}
 	
 	private void changeInt(int oldValue, int newValue) {
+		manaLabel.setText("Mana: " + 6*newValue);
 		RCreature species = speciesList.getSelectionModel().getSelectedItem();
 		intMod = newValue - species.intelligence;
 		changeAbility();
@@ -234,8 +256,7 @@ public class NewGameState extends State {
 	}
 	
 	private void changeAbility() {
-		RCreature species = speciesList.getSelectionModel().getSelectedItem();
-		int pointsLeft = points - strMod - conMod - dexMod - intMod - wisMod - chaMod;
+		pointsLeft = points - strMod - conMod - dexMod - intMod - wisMod - chaMod;
 		
 		if (strMod > 2) {
 			pointsLeft -= (10 + strMod) % 12;
@@ -285,8 +306,16 @@ public class NewGameState extends State {
 			pointsLeft -= (10 + chaMod) % 15;
 		}
 		
-		statsLabel.setText(pointsLeft + " ability points to spend.");
+		if (pointsLeft >= 0) {
+			statsLabel.setTextFill(Color.WHITE);
+			statsLabel.setText(pointsLeft + " ability points to spend.");
+		} else {
+			statsLabel.setTextFill(Color.RED);
+			statsLabel.setText(-pointsLeft + " ability points to remove!");
+		}
 		
+		RCreature species = speciesList.getSelectionModel().getSelectedItem();
+
 		if ((pointsLeft == 2 && strMod > 4) || (pointsLeft == 1 && strMod > 1) || (pointsLeft <= 0)) {
 			strFactory.setMax(strengthSpinner.getValue());
 		} else {

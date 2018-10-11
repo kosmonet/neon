@@ -46,6 +46,9 @@
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
 						<RowConstraints prefHeight="30.0" vgrow="NEVER" />
+						<RowConstraints vgrow="SOMETIMES" />
+						<RowConstraints vgrow="SOMETIMES" />
+						<RowConstraints vgrow="SOMETIMES" />
 						<RowConstraints vgrow="ALWAYS" />
 					</rowConstraints>
 					<children>
@@ -56,12 +59,15 @@
 						<Label fx:id="intelligenceLabel" text="Intelligence:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 						<Label fx:id="wisdomLabel" text="Wisdom:" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 						<Label fx:id="charismaLabel" text="Charisma:" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-					    <Spinner fx:id="strengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="2" />						
-					    <Spinner fx:id="constitutionSpinner" GridPane.columnIndex="2" GridPane.rowIndex="3" />						
-					    <Spinner fx:id="dexteritySpinner" GridPane.columnIndex="2" GridPane.rowIndex="4" />						
-					    <Spinner fx:id="intelligenceSpinner" GridPane.columnIndex="2" GridPane.rowIndex="5" />						
-					    <Spinner fx:id="wisdomSpinner" GridPane.columnIndex="2" GridPane.rowIndex="6" />						
-					    <Spinner fx:id="charismaSpinner" GridPane.columnIndex="2" GridPane.rowIndex="7" />						
+					    <Spinner fx:id="strengthSpinner" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+					    <Spinner fx:id="constitutionSpinner" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+					    <Spinner fx:id="dexteritySpinner" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+					    <Spinner fx:id="intelligenceSpinner" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+					    <Spinner fx:id="wisdomSpinner" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+					    <Spinner fx:id="charismaSpinner" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+						<Label fx:id="weightLabel" GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="4" />
+						<Label fx:id="healthLabel" GridPane.columnIndex="0" GridPane.rowIndex="9" GridPane.columnSpan="4" />
+						<Label fx:id="manaLabel" GridPane.columnIndex="0" GridPane.rowIndex="10" GridPane.columnSpan="4" />
 					</children>
 				</GridPane>
 				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="1" style=" -fx-border-color:silver; -fx-border-width: 0 1;">

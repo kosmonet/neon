@@ -47,7 +47,7 @@ public class JournalState extends State {
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
-	@FXML private Label infoLabel;
+	@FXML private Label infoLabel, healthLabel, manaLabel, weightLabel;
 	@FXML private Label speedLabel, strengthLabel, constitutionLabel, dexterityLabel;
 	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel;
 
@@ -90,6 +90,10 @@ public class JournalState extends State {
     	intelligenceLabel.setText("Intelligence: " + stats.getBaseInt());
     	wisdomLabel.setText("Wisdom: " + stats.getBaseWis());
     	charismaLabel.setText("Charisma: " + stats.getBaseCha());
+    	
+    	weightLabel.setText("Carry weight: " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr());
+    	healthLabel.setText("Health: " + 3*stats.getBaseCon() + " HP");
+    	manaLabel.setText("Mana: " + 6*stats.getBaseInt());
     	
 		ui.showScene(scene);
 	}

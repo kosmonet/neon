@@ -100,40 +100,56 @@ public class GameLoader {
 	 * @throws IOException 
 	 */
 	@Subscribe
-	private void startNewGame(NewGameEvent event) throws ResourceException, IOException {
+	private void startNewGame(NewGameEvent.Check event) throws ResourceException, IOException {
 		logger.info("starting a new game");
-		
-		// get the start map
-		CServer config = resources.getResource("config", "server");
-		CGame game = initGame(resources, config.getModules());
-		resources.addResource(game);
-		RMap map = resources.getResource("maps", game.getStartMap());
-		
-		// the player character
-		RCreature species = resources.getResource("creatures", event.getSpecies());
-		player = new Player(event.getName(), event.getGender(), species);
-		player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
-		entities.addEntity(player);
-		
-		Stats stats = player.getComponent(Stats.class);
-		stats.setBaseCha(event.charisma);
-		stats.setBaseCon(event.constitution);
-		stats.setBaseDex(event.dexterity);
-		stats.setBaseStr(event.strength);
-		stats.setBaseWis(event.wisdom);
-		stats.setBaseInt(event.intelligence);
-		
-		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.addMoney(game.getStartMoney());
-		for (String id : game.getStartItems()) {
-			long uid = entities.getFreeUID();
-			Item item = new Item(uid, resources.getResource("items", id));
-			entities.addEntity(item);
-			inventory.addItem(uid);
-		}
 
-		// tell the client everything is ready
-		notifyClient(map);
+		if (isValidCharacter(event)) {
+			// get the start map
+			CServer config = resources.getResource("config", "server");
+			CGame game = initGame(resources, config.getModules());
+			resources.addResource(game);
+			RMap map = resources.getResource("maps", game.getStartMap());
+
+			// the player character
+			RCreature species = resources.getResource("creatures", event.getSpecies());
+			player = new Player(event.getName(), event.getGender(), species);
+			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
+			entities.addEntity(player);
+
+			Stats stats = player.getComponent(Stats.class);
+			stats.setBaseCha(event.charisma);
+			stats.setBaseCon(event.constitution);
+			stats.setBaseDex(event.dexterity);
+			stats.setBaseStr(event.strength);
+			stats.setBaseWis(event.wisdom);
+			stats.setBaseInt(event.intelligence);
+
+			Inventory inventory = player.getComponent(Inventory.class);
+			inventory.addMoney(game.getStartMoney());
+			for (String id : game.getStartItems()) {
+				long uid = entities.getFreeUID();
+				Item item = new Item(uid, resources.getResource("items", id));
+				entities.addEntity(item);
+				inventory.addItem(uid);
+			}
+
+			// tell the client everything is ready
+			bus.post(new NewGameEvent.Start());
+			notifyClient(map);
+		} else {
+			bus.post(new NewGameEvent.Fail());			
+		}
+	}
+	
+	/**
+	 * Checks whether the character described in the event is a valid character
+	 * according to the game rules.
+	 * 
+	 * @param event
+	 * @return
+	 */
+	private boolean isValidCharacter(NewGameEvent.Check event) {
+		return true;
 	}
 
 	/**
