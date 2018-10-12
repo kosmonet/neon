@@ -20,8 +20,10 @@ package neon.common.event;
 
 import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
+import neon.entity.Skill;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
+import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature.Resource;
 import neon.entity.entities.Player;
@@ -43,12 +45,14 @@ public abstract class UpdateEvent extends NeonEvent {
 		public final String id, name, gender;
 		public final int x, y, z;
 		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
+		public final int swimming;
 
 		public Start(Player player) {
 			Shape shape = player.getComponent(Shape.class);
 			RCreature creature = player.getComponent(Resource.class).getResource();
 			Info info = player.getComponent(Info.class);
 			Stats stats = player.getComponent(Stats.class);
+			Skills skills = player.getComponent(Skills.class);
 			
 			id = creature.id;
 			name = info.getName();
@@ -63,7 +67,9 @@ public abstract class UpdateEvent extends NeonEvent {
 			dexterity = stats.getBaseDex();
 			intelligence = stats.getBaseInt();
 			wisdom = stats.getBaseWis();
-			charisma = stats.getBaseCha();			
+			charisma = stats.getBaseCha();
+			
+			swimming = (int) skills.getSkill(Skill.SWIMMING);
 		}	
 	}
 	

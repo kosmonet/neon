@@ -4,8 +4,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.geometry.Insets?>
+
 <StackPane fx:id="stack" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<HBox alignment="CENTER">
@@ -13,8 +16,13 @@
 		</HBox>
 		<BorderPane fx:id="infoPane">
 			<bottom>
-				<HBox alignment="CENTER_RIGHT" >
-					<padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+				<HBox spacing="10" alignment="CENTER_RIGHT">
+					<padding>
+						<Insets top="10" right="10" bottom="10" left="10" />
+					</padding>
+					<Label fx:id="healthLabel" id="health" text="test" />
+					<Label fx:id="manaLabel" id="mana" text="test" />
+					<Region HBox.hgrow="ALWAYS" />
 					<Label fx:id="modeLabel" id="mode" text="test" />
 				</HBox>
 			</bottom>

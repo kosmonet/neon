@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -55,6 +55,6 @@ public abstract class NewGameEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Start extends NewGameEvent {}
+	public static class Pass extends NewGameEvent {}
 	public static class Fail extends NewGameEvent {}
 }

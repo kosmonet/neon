@@ -184,13 +184,13 @@ public class NewGameState extends State {
 	}
 	
 	@Subscribe
-	private void onGameStart(NewGameEvent.Start event) {
+	private void onCreationPass(NewGameEvent.Pass event) {
 		// transition to the actual game module
 		bus.post(new TransitionEvent("start game"));		
 	}
 	
 	@Subscribe
-	private void onGameStart(NewGameEvent.Fail event) {
+	private void onCreationFail(NewGameEvent.Fail event) {
 		ui.showMessage("The character you created is not valid.", 1000);			
 	}
 	
@@ -201,7 +201,7 @@ public class NewGameState extends State {
 	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void configure(ClientConfigurationEvent event) throws ResourceException {
+	private void onConfigure(ClientConfigurationEvent event) throws ResourceException {
 		for (String id : event.getPlayableSpecies()) {
 			speciesList.getItems().add(resources.getResource("creatures", id));
 		}

@@ -157,7 +157,7 @@ public class Client implements Runnable {
 		ContainerState container = new ContainerState(ui, bus, components);
 		bus.register(container);
 		
-		JournalState journal = new JournalState(ui, bus);
+		JournalState journal = new JournalState(ui, bus, components);
 		bus.register(journal);
 		
 		OptionState options = new OptionState(ui, bus);

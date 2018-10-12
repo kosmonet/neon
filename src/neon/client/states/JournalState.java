@@ -28,12 +28,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
+import neon.client.ComponentManager;
 import neon.client.UserInterface;
 import neon.client.ui.DescriptionLabel;
 import neon.common.resources.RCreature;
+import neon.entity.Skill;
 import neon.entity.components.Graphics;
 import neon.entity.components.Info;
+import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 
@@ -44,18 +46,22 @@ import neon.entity.entities.Creature;
  */
 public class JournalState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
 	@FXML private Label infoLabel, healthLabel, manaLabel, weightLabel;
 	@FXML private Label speedLabel, strengthLabel, constitutionLabel, dexterityLabel;
 	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel;
+	@FXML private Label swimLabel;
 
 	private final UserInterface ui;
+	private final ComponentManager components;
 	private Scene scene;
 
-	public JournalState(UserInterface ui, EventBus bus) {
+	public JournalState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
+		this.components = components;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Journal.fxml"));
 		loader.setController(this);
@@ -74,12 +80,13 @@ public class JournalState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering journal state");
 		
-    	Info info = event.getParameter(Info.class);
-    	Stats stats = event.getParameter(Stats.class);
-    	Graphics graphics = event.getParameter(Graphics.class);
-    	Creature.Resource resource = event.getParameter(Creature.Resource.class);
-    	
-    	description.update(resource.getResource().name, graphics);
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		Info info = components.getComponent(PLAYER_UID, Info.class);
+		Graphics graphics = components.getComponent(PLAYER_UID, Graphics.class);
+		Creature.Resource resource = components.getComponent(PLAYER_UID, Creature.Resource.class);
+		Skills skills = components.getComponent(PLAYER_UID, Skills.class);
+		
+		description.update(resource.getResource().name, graphics);
     	RCreature species = stats.getSpecies();
     	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + species.name);
     	speedLabel.setText("Speed: " + species.speed);
@@ -94,6 +101,8 @@ public class JournalState extends State {
     	weightLabel.setText("Carry weight: " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr());
     	healthLabel.setText("Health: " + 3*stats.getBaseCon() + " HP");
     	manaLabel.setText("Mana: " + 6*stats.getBaseInt());
+    	
+    	swimLabel.setText("Swimming: " + (int) skills.getSkill(Skill.SWIMMING));
     	
 		ui.showScene(scene);
 	}

@@ -26,7 +26,7 @@
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
 			</columnConstraints>
 			<children>
-				<VBox GridPane.columnIndex="0" alignment="center" >
+				<VBox GridPane.columnIndex="0" alignment="center">
 					<Label fx:id="speedLabel" />
 					<Label text="∷" />
 					<Label fx:id="strengthLabel" />
@@ -43,7 +43,9 @@
 				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
 					<DescriptionLabel fx:id="description" focusTraversable="false" />
 				</HBox>
-				<Label GridPane.columnIndex="2" />
+				<VBox GridPane.columnIndex="2" alignment="center">
+					<Label fx:id="swimLabel" />
+				</VBox>
 			</children>
 		</GridPane>
 	</center>

@@ -136,6 +136,22 @@
 	-fx-padding: 5 10 5 10;
 }
 
+#health {
+	-fx-text-fill: silver;
+    -fx-background-color: #663333AA;
+	-fx-background-radius: 5;
+	-fx-border-color: transparent;
+	-fx-padding: 5 10 5 10;
+}
+
+#mana {
+	-fx-text-fill: silver;
+    -fx-background-color: #333366AA;
+	-fx-background-radius: 5;
+	-fx-border-color: transparent;
+	-fx-padding: 5 10 5 10;
+}
+
 /* styles for the conversation module */
 #conversation .hyperlink {
 	-fx-font-size: 12;

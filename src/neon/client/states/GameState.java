@@ -53,10 +53,12 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.Skill;
 import neon.entity.components.Behavior;
 import neon.entity.components.Graphics;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
+import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.util.Direction;
@@ -79,7 +81,7 @@ public class GameState extends State {
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
-	@FXML private Label modeLabel;
+	@FXML private Label modeLabel, healthLabel, manaLabel;
 	
 	private Scene scene;
 	private int scale = 20;
@@ -136,8 +138,11 @@ public class GameState extends State {
 		stats.setBaseInt(event.intelligence);
 		stats.setBaseStr(event.strength);
 		stats.setBaseWis(event.wisdom);
+		Skills skills = new Skills(PLAYER_UID);
+		skills.setSkill(Skill.SWIMMING, event.swimming);
 		
 		components.putComponent(PLAYER_UID, stats);
+		components.putComponent(PLAYER_UID, skills);
 		components.putComponent(PLAYER_UID, new Creature.Resource(PLAYER_UID, species));
 		components.putComponent(PLAYER_UID, new Graphics(PLAYER_UID, "@", species.color));
 		components.putComponent(PLAYER_UID, new Shape(PLAYER_UID, event.x, event.y, event.z));
@@ -190,6 +195,9 @@ public class GameState extends State {
 	private void redraw() {
 		Info record = components.getComponent(PLAYER_UID, Info.class);
 		modeLabel.setText(record.getMode().toString());
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		healthLabel.setText("♥ " + stats.getBaseCon()*3);
+		manaLabel.setText("✳ " + stats.getBaseInt()*6);
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
@@ -205,11 +213,7 @@ public class GameState extends State {
 	}
 	
 	private void showJournal() {
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		Info info = components.getComponent(PLAYER_UID, Info.class);
-		Graphics graphics = components.getComponent(PLAYER_UID, Graphics.class);
-		Creature.Resource species = components.getComponent(PLAYER_UID, Creature.Resource.class);
-		bus.post(new TransitionEvent("journal", stats, info, graphics, species));
+		bus.post(new TransitionEvent("journal"));
 	}
 	
 	private void pause() {

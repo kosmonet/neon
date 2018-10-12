@@ -134,7 +134,7 @@ public class GameLoader {
 			}
 
 			// tell the client everything is ready
-			bus.post(new NewGameEvent.Start());
+			bus.post(new NewGameEvent.Pass());
 			notifyClient(map);
 		} else {
 			bus.post(new NewGameEvent.Fail());			
