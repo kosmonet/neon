@@ -23,6 +23,7 @@ import org.jdom2.Element;
 import javafx.scene.paint.Color;
 
 import neon.common.resources.RItem;
+import neon.entity.Slot;
 
 /**
  * A resource loader specifically for items.
@@ -33,12 +34,25 @@ import neon.common.resources.RItem;
 public class ItemLoader implements ResourceLoader<RItem> {
 	@Override
 	public RItem load(Element root) {
+		String type = root.getName();
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
 		String glyph = root.getChild("graphics").getAttributeValue("char");
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
-		RItem item = new RItem(id, name, glyph, color);
-		return item;
+		
+		RItem.Builder builder = new RItem.Builder(id).setName(name).setGraphics(glyph, color);
+		
+		switch (type) {
+		case "armor":
+			Slot slot = Slot.valueOf(root.getAttributeValue("slot").toUpperCase());
+			int rating = Integer.parseInt(root.getAttributeValue("rating"));
+			return new RItem.Armor(builder.setSlot(slot).setRating(rating));		
+		case "clothing":
+			builder.setSlot(Slot.valueOf(root.getAttributeValue("slot").toUpperCase()));
+			return new RItem.Clothing(builder);		
+		default:
+			return new RItem(builder);
+		}
 	}
 	
 	@Override

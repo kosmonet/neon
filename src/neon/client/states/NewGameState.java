@@ -46,7 +46,7 @@ import neon.common.event.NewGameEvent;
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.util.Graphics;
+import neon.util.GraphicsUtils;
 
 public class NewGameState extends State {
 	private static final Logger logger = Logger.getGlobal();
@@ -372,7 +372,7 @@ public class NewGameState extends State {
     			setGraphic(null);
     			setText(null);
     		} else {
-    			setStyle("-fx-text-fill: " + Graphics.getColorString(creature.color));
+    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(creature.color));
     			setText(creature.name);
     		}
     	}

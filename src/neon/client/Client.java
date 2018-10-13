@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.common.primitives.Longs;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -46,6 +47,7 @@ import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
 import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.InventoryEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.UpdateEvent;
@@ -64,6 +66,7 @@ import neon.common.resources.loaders.TerrainLoader;
 import neon.entity.Skill;
 import neon.entity.components.Behavior;
 import neon.entity.components.Graphics;
+import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
@@ -149,7 +152,7 @@ public class Client implements Runnable {
 		GameState game = new GameState(ui, bus, components, resources);
 		bus.register(game);
 		
-		InventoryState inventory = new InventoryState(ui, bus, components);
+		InventoryState inventory = new InventoryState(ui, bus, components, resources);
 		bus.register(inventory);
 		
 		MapState map = new MapState(ui, bus, resources);
@@ -158,7 +161,7 @@ public class Client implements Runnable {
 		ConversationState conversation = new ConversationState(ui, bus);
 		bus.register(conversation);
 		
-		ContainerState container = new ContainerState(ui, bus, components);
+		ContainerState container = new ContainerState(ui, bus, components, resources);
 		bus.register(container);
 		
 		JournalState journal = new JournalState(ui, bus, components);
@@ -206,7 +209,7 @@ public class Client implements Runnable {
 		long uid = event.uid;
 		RItem resource = resources.getResource("items", event.id);
 
-		components.putComponent(uid, new Item.Resource(uid, resource));
+		components.putComponent(uid, new Item.Resource(uid, resource.id));
 		components.putComponent(uid, new Graphics(uid, resource.glyph, resource.color));
 		components.putComponent(uid, new Shape(uid, event.x, event.y, event.z));
 
@@ -269,6 +272,19 @@ public class Client implements Runnable {
 		Stats stats = components.getComponent(0, Stats.class);
 		stats.setLevel(event.level);
 		ui.showOverlayMessage("Level up!", 1000);
+	}
+	
+	@Subscribe
+	private void onInventoryChange(InventoryEvent.Update event) throws ResourceException {
+		Inventory inventory = new Inventory(0);
+		inventory.addMoney(event.getMoney());
+		inventory.addItems(Longs.asList(event.getItems()));
+		for (long uid : event.getEquipedItems()) {
+			Item.Resource resource = components.getComponent(uid, Item.Resource.class);
+			RItem.Clothing cloth = resources.getResource("items", resource.getID());
+			inventory.equip(cloth.slot, uid);
+		}
+		components.putComponent(0, inventory);
 	}
 	
 	/**

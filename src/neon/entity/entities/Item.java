@@ -27,21 +27,16 @@ public class Item extends Entity {
 	public Item(long uid, RItem item) {
 		super(uid);
 		components.put(Shape.class, new Shape(uid));
-		components.put(Resource.class, new Resource(uid, item));
+		components.put(Resource.class, new Resource(uid, item.id));
 		components.put(Graphics.class, new Graphics(uid, item.glyph, item.color));		
 	}
 	
-	@Override
-	public String toString() {
-		return components.getInstance(Resource.class).getResource().name;
-	}
-	
 	public static class Resource implements Component {
-		private final RItem resource;
+		private final String id;
 		private final long uid;
 		
-		public Resource(long uid, RItem resource) {
-			this.resource = resource;
+		public Resource(long uid, String id) {
+			this.id = id;
 			this.uid = uid;
 		}
 		
@@ -50,8 +45,8 @@ public class Item extends Entity {
 			return uid;
 		}
 		
-		public RItem getResource() {
-			return resource;
+		public String getID() {
+			return id;
 		}
 	}
 }

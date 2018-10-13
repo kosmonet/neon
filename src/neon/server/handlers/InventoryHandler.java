@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 
 package neon.server.handlers;
 
-import java.util.ArrayList;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -52,29 +51,22 @@ public class InventoryHandler {
 	}
 	
 	@Subscribe
-	private void postInventory(InventoryEvent.Request event) {
+	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
 		Player player = entities.getEntity(0);
-		ArrayList<Long> items = new ArrayList<>();
 		Inventory inventory = player.getComponent(Inventory.class);
-		items.addAll(inventory.getItems());
-		bus.post(new InventoryEvent.List(items, inventory.getMoney()));
-	}
-	
-	@Subscribe
-	private void drop(InventoryEvent.Drop event) throws ResourceException {
-		Player player = entities.getEntity(0);
-		player.getComponent(Inventory.class).removeItem(event.getItem());
+		inventory.removeItem(event.getItem());
 		Shape shape = player.getComponent(Shape.class);
 		RMap map = resources.getResource("maps", event.getMap());
 		map.addEntity(event.getItem(), shape.getX(), shape.getY());
 		Item item = entities.getEntity(event.getItem());
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
-		String id = item.getComponent(Item.Resource.class).getResource().id;
+		String id = item.getComponent(Item.Resource.class).getID();
+		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
 		bus.post(new UpdateEvent.Item(item.uid, id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
 	@Subscribe
-	private void pick(InventoryEvent.Pick event) throws ResourceException {
+	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.getMap());
 		map.removeEntity(event.getItem());
 		Player player = entities.getEntity(0);
@@ -82,5 +74,24 @@ public class InventoryHandler {
 
 		Item item = entities.getEntity(event.getItem());
 		bus.post(new UpdateEvent.Remove(item.uid, event.getMap()));
+	}
+	
+	@Subscribe
+	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
+		Player player = entities.getEntity(0);
+		Item item = entities.getEntity(event.uid);
+		RItem resource = resources.getResource("items", item.getComponent(Item.Resource.class).getID());
+		Inventory inventory = player.getComponent(Inventory.class);
+		
+		if (inventory.getItems().contains(event.uid) && resource instanceof RItem.Clothing) {
+			RItem.Clothing cloth = (RItem.Clothing) resource;
+			if (inventory.hasEquiped(event.uid)) {
+				inventory.unEquip(cloth.slot);
+			} else {
+				inventory.equip(cloth.slot, event.uid);				
+			}
+		}
+		
+		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
 	}
 }

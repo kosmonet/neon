@@ -22,7 +22,7 @@ import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
 import neon.common.resources.RCreature;
-import neon.util.Graphics;
+import neon.util.GraphicsUtils;
 
 /**
  * A resource loader specifically for creatures.
@@ -46,7 +46,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		int iq = Integer.parseInt(stats.getAttributeValue("int"));
 		int wis = Integer.parseInt(stats.getAttributeValue("wis"));
 		int cha = Integer.parseInt(stats.getAttributeValue("cha"));
-		return new RCreature.Builder(id).setName(name).setGlyph(glyph).setColor(color).
+		return new RCreature.Builder(id).setName(name).setGraphics(glyph, color).
 				setSpeed(speed).setStats(str, con, dex, iq, wis, cha).build();
 	}
 	
@@ -59,7 +59,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		
 		Element graphics = new Element("graphics");
 		graphics.setAttribute("char", rc.glyph);
-		graphics.setAttribute("color", Graphics.getColorString(rc.color));
+		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.color));
 		creature.addContent(graphics);
 		
 		Element stats = new Element("stats");

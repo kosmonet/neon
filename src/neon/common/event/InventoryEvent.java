@@ -21,19 +21,23 @@ package neon.common.event;
 import java.util.Collection;
 
 public abstract class InventoryEvent extends NeonEvent {
-	public static class Request extends InventoryEvent {}
-	
-	public static class List extends InventoryEvent {
+	public static class Update extends InventoryEvent {
 		private final long[] items;
+		private final long[] equiped;
 		private final int money;
 		
-		public List(Collection<Long> items, int money) {
+		public Update(Collection<Long> items, Collection<Long> equiped, int money) {
 			this.items = items.stream().mapToLong(Long::longValue).toArray();
+			this.equiped = equiped.stream().mapToLong(Long::longValue).toArray();
 			this.money = money;
 		}
 		
 		public long[] getItems() {
 			return items;
+		}
+		
+		public long[] getEquipedItems() {
+			return equiped;
 		}
 		
 		public int getMoney() {
@@ -61,11 +65,11 @@ public abstract class InventoryEvent extends NeonEvent {
 
 	public static class Pick extends InventoryEvent {
 		private final long uid;
-		private final String id;
+		private final String map;
 		
-		public Pick(long uid, String id) {
+		public Pick(long uid, String map) {
 			this.uid = uid;
-			this.id = id;
+			this.map = map;
 		}
 		
 		public long getItem() {
@@ -73,7 +77,15 @@ public abstract class InventoryEvent extends NeonEvent {
 		}
 		
 		public String getMap() {
-			return id;
+			return map;
+		}
+	}
+
+	public static class Equip extends InventoryEvent {
+		public final long uid;
+		
+		public Equip(long uid) {
+			this.uid = uid;
 		}
 	}
 }

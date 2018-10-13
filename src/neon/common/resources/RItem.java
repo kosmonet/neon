@@ -19,6 +19,7 @@
 package neon.common.resources;
 
 import javafx.scene.paint.Color;
+import neon.entity.Slot;
 
 /**
  * An item resource.
@@ -42,16 +43,62 @@ public class RItem extends Resource {
 	 */
 	public final Color color;
 	
-	/**
-	 * Creates a new item resource with the given id and type.
-	 * 
-	 * @param id
-	 * @param type
-	 */
-	public RItem(String id, String name, String glyph, Color color) {
-		super(id, "items");
-		this.name = name;
-		this.glyph = glyph;
-		this.color = color;
+	public RItem(Builder builder) {
+		super(builder.id, "items");
+		name = builder.name;
+		glyph = builder.glyph;
+		color = builder.color;		
+	}
+	
+	public static class Clothing extends RItem {
+		public final Slot slot;
+		
+		public Clothing(Builder builder) {
+			super(builder);
+			slot = builder.slot;
+		}		
+	}
+	
+	public static class Armor extends Clothing {
+		public final int rating;
+		
+		public Armor(Builder builder) {
+			super(builder);
+			rating = builder.rating;
+		}		
+	}
+	
+	public static class Builder {
+		private final String id;
+		private String glyph;
+		private Color color;
+		private String name;
+		private Slot slot;
+		private int rating;
+		
+		public Builder(String id) {
+			this.id = id;
+		}
+		
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public Builder setGraphics(String glyph, Color color) {
+			this.glyph = glyph;
+			this.color = color;
+			return this;
+		}
+		
+		public Builder setSlot(Slot slot) {
+			this.slot = slot;
+			return this;
+		}
+
+		public Builder setRating(int rating) {
+			this.rating = rating;
+			return this;
+		}
 	}
 }

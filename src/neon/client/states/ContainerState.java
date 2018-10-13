@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -35,15 +36,21 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.InventoryEvent;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.components.Graphics;
+import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
 import neon.entity.entities.Item;
+import neon.util.GraphicsUtils;
 
 /**
  * A state to handle items when browsing a container or a random heap of 
@@ -58,6 +65,7 @@ public class ContainerState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
+	private final ResourceManager resources;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, containerList;
@@ -65,11 +73,13 @@ public class ContainerState extends State {
 	
 	private Scene scene;
 	private RMap map;
+	private Inventory inventory;
 	
-	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components) {
+	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
+		this.resources = resources;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
 		loader.setController(this);
@@ -108,14 +118,19 @@ public class ContainerState extends State {
 	}
 	
 	@Subscribe
-	private void showInventory(InventoryEvent.List event) {
+	private void onInventoryUpdate(InventoryEvent.Update event) {
+		Platform.runLater(() -> refresh());
+	}
+	
+	private void refresh() {
+		int index = playerList.getSelectionModel().getSelectedIndex();
+		inventory = components.getComponent(0, Inventory.class);
 		playerList.getItems().clear();
 		
-		for (long uid : event.getItems()) {
+		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
 		}
-		
-		playerList.getSelectionModel().selectFirst();
+		playerList.getSelectionModel().select(index);
 	}
 	
 	@FXML private void drop() {
@@ -137,8 +152,6 @@ public class ContainerState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container state");
-		bus.post(new InventoryEvent.Request());
-		
 		Shape shape = event.getParameter(Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
@@ -146,6 +159,8 @@ public class ContainerState extends State {
 			containerList.getItems().add(uid);
 		}
 		containerList.getSelectionModel().selectFirst();
+		refresh();
+		playerList.getSelectionModel().selectFirst();
 		
 		ui.showScene(scene);
 	}
@@ -161,8 +176,12 @@ public class ContainerState extends State {
 	
 	private void updateDescription(long uid) {
     	Graphics graphics = components.getComponent(uid, Graphics.class);
-    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
-    	description.update(resource.getResource().name, graphics);
+		try {
+			RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
+    		description.update(item.name, graphics);
+		} catch (ResourceException e) {
+			logger.warning(e.getMessage());
+		}
 	}
 	
 	/**
@@ -174,10 +193,16 @@ public class ContainerState extends State {
 	private class FocusListener implements ChangeListener<Boolean> {
 		@Override
 		public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-			if (containerList.isFocused()) {
+			if (containerList.isFocused() && !containerList.getItems().isEmpty()) {
+				if (containerList.getSelectionModel().getSelectedIndex() < 0) {
+					containerList.getSelectionModel().selectFirst();
+				}
 				updateDescription(containerList.getSelectionModel().getSelectedItem());
-			} else {
-				updateDescription(playerList.getSelectionModel().getSelectedItem());				
+			} else if (playerList.isFocused() && !playerList.getItems().isEmpty()) {
+				if (playerList.getSelectionModel().getSelectedIndex() < 0) {
+					playerList.getSelectionModel().selectFirst();
+				}
+				updateDescription(playerList.getSelectionModel().getSelectedItem());
 			}
 		}
 	}
@@ -204,8 +229,14 @@ public class ContainerState extends State {
     		if (empty || uid == null) {
     			setText(null);
     		} else {
-    	    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
-    			setText(resource.getResource().name);
+				try {
+					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
+					Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
+	    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
+	    			setText(item.name);
+				} catch (ResourceException e) {
+					logger.warning(e.getMessage());
+				}
     		}
     	}
     }

@@ -20,10 +20,15 @@ package neon.entity.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
+import neon.entity.Slot;
 
 public class Inventory implements Component {
 	private final long uid;
 	private final Collection<Long> items = new ArrayList<Long>();
+	private final EnumMap<Slot, Long> equiped = new EnumMap<>(Slot.class);
 	
 	private int money = 0;
 	
@@ -39,7 +44,20 @@ public class Inventory implements Component {
 		items.add(uid);
 	}
 	
+	public void addItems(Collection<Long> items) {
+		this.items.addAll(items);
+	}
+	
 	public void removeItem(long uid) {
+		// unequip before removing
+		if (equiped.containsValue(uid)) {
+			for (Map.Entry<Slot, Long> entry : equiped.entrySet()) {
+				if (entry.getValue() == uid) {
+					unEquip(entry.getKey());
+				}
+			}
+		}
+		
 		items.remove(uid);
 	}
 	
@@ -53,5 +71,25 @@ public class Inventory implements Component {
 	
 	public int getMoney() {
 		return money;
+	}
+	
+	public boolean hasEquiped(long uid) {
+		return equiped.containsValue(uid);
+	}
+	
+	public boolean hasEquiped(Slot slot) {
+		return equiped.containsKey(slot);
+	}
+	
+	public void unEquip(Slot slot) {
+		equiped.remove(slot);
+	}
+	
+	public void equip(Slot slot, long uid) {
+		equiped.put(slot, uid);
+	}
+	
+	public Collection<Long> getEquipedItems() {
+		return equiped.values();
 	}
 }

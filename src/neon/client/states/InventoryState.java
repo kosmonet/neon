@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -36,14 +37,20 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.InventoryEvent;
+import neon.common.resources.RItem;
 import neon.common.resources.RMap;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.entity.components.Graphics;
+import neon.entity.components.Inventory;
 import neon.entity.entities.Item;
+import neon.util.GraphicsUtils;
 
 public class InventoryState extends State {
 	private static final Logger logger = Logger.getGlobal();
@@ -51,6 +58,7 @@ public class InventoryState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
+	private final ResourceManager resources;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, followerList;
@@ -59,11 +67,13 @@ public class InventoryState extends State {
 	
 	private Scene scene;
 	private RMap map;
+	private Inventory inventory;
 	
-	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components) {
+	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
+		this.resources = resources;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
@@ -78,8 +88,9 @@ public class InventoryState extends State {
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> equipItem());
 		
-		// list catches the esc and enter keys, we need a separate listener
+		// lists catch keys, we need a separate listener
 		playerList.setOnKeyPressed(event -> keyPressed(event));
 		followerList.setOnKeyPressed(event -> keyPressed(event));
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
@@ -87,38 +98,59 @@ public class InventoryState extends State {
 	}
 	
 	private void keyPressed(KeyEvent event) {
-		if (event.getCode().equals(KeyCode.ESCAPE)) {
+		switch(event.getCode()) {
+		case ESCAPE:
 			bus.post(new TransitionEvent("cancel"));
-		} else if (event.getCode().equals(KeyCode.F2)) {
+			break;
+		case F2:
 			showHelp();
-		} else if (event.getCode().equals(KeyCode.ENTER)) {
+			break;
+		case ENTER:
 			drop();
-		}
+			break;
+		case SPACE:
+			equipItem();
+			break;
+		default:
+			break;
+		}		
 	}
 	
-	@Subscribe
-	private void showInventory(InventoryEvent.List event) {
-		instructionLabel.setText("Money: " + event.getMoney() + " copper pieces.");
-		playerList.getItems().clear();
-		
-		for (long uid : event.getItems()) {
-			playerList.getItems().add(uid);
-		}
-		
-		playerList.getSelectionModel().selectFirst();
+	private void equipItem() {
+		long uid = playerList.getSelectionModel().getSelectedItem();
+		bus.post(new InventoryEvent.Equip(uid));
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
-		bus.post(new InventoryEvent.Request());
 		map = event.getParameter(RMap.class);
+		refresh();		
+		playerList.getSelectionModel().selectFirst();		
 		ui.showScene(scene);
 	}
-
+	
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting inventory module");
+	}
+	
+	private void refresh() {
+		int index = playerList.getSelectionModel().getSelectedIndex();
+		inventory = components.getComponent(0, Inventory.class);
+		instructionLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
+		playerList.getItems().clear();
+		
+		for (long uid : inventory.getItems()) {
+			playerList.getItems().add(uid);
+		}
+		
+		playerList.getSelectionModel().select(index);
+	}
+	
+	@Subscribe
+	private void onInventoryUpdate(InventoryEvent.Update event) {
+		Platform.runLater(() -> refresh());
 	}
 	
 	@FXML private void drop() {
@@ -139,8 +171,29 @@ public class InventoryState extends State {
 	    public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
 	    	if (newValue != null) {
 	    		Graphics graphics = components.getComponent(newValue, Graphics.class);
-	    		Item.Resource resource = components.getComponent(newValue, Item.Resource.class);
-	    		description.update(resource.getResource().name, graphics);
+				try {
+					RItem item = resources.getResource("items", components.getComponent(newValue, Item.Resource.class).getID());
+					StringBuilder builder = new StringBuilder();
+					builder.append(item.name);
+					
+					if (item instanceof RItem.Clothing) {
+						RItem.Clothing cloth = (RItem.Clothing) item;
+						builder.append("\n");
+						builder.append("∷");
+						builder.append("\n");
+						builder.append("Slot: " + cloth.slot.toString().toLowerCase());
+					}
+					
+					if (item instanceof RItem.Armor) {
+						RItem.Armor armor = (RItem.Armor) item;
+						builder.append("\n");
+						builder.append("Rating: " + armor.rating);						
+					}
+					
+		    		description.update(builder.toString(), graphics);
+				} catch (ResourceException e) {
+					logger.warning(e.getMessage());
+				}
 	    	}
 	    }
 	}
@@ -149,11 +202,19 @@ public class InventoryState extends State {
     	@Override
     	public void updateItem(Long uid, boolean empty) {
     		super.updateItem(uid, empty);
+    		
     		if (empty || uid == null) {
+    			setGraphic(null);
     			setText(null);
     		} else {
-    	    	Item.Resource resource = components.getComponent(uid, Item.Resource.class);
-    			setText(resource.getResource().name);
+				try {
+					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
+					Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
+	    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
+	    			setText(item.name);
+				} catch (ResourceException e) {
+					logger.warning(e.getMessage());
+				}
     		}
     	}
     }

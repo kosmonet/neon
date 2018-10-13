@@ -84,12 +84,8 @@ public class RCreature extends Resource {
 			return this;
 		}
 		
-		public Builder setGlyph(String glyph) {
+		public Builder setGraphics(String glyph, Color color) {
 			this.glyph = glyph;
-			return this;
-		}
-		
-		public Builder setColor(Color color) {
 			this.color = color;
 			return this;
 		}
