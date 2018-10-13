@@ -30,7 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.web.WebView;
-import neon.client.UserInterface;
+import neon.client.ui.UserInterface;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CClient;
 import neon.common.resources.ResourceException;
@@ -66,7 +66,7 @@ public class CutSceneState extends State {
 		}
 
 		continueButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-        view.getEngine().setUserStyleSheetLocation(getClass().getResource("../help/help.css").toString());
+		view.getEngine().setUserStyleSheetLocation(getClass().getResource("../help/help.css").toString());
 	}
 	
 	@Override
@@ -79,7 +79,7 @@ public class CutSceneState extends State {
 			} else {
 				File file = files.loadFile("texts", config.intro);
 				view.getEngine().load(file.toURI().toString());
-				ui.showScene(scene);				
+				ui.showScene(scene);
 			}
 		} catch (ResourceException | FileNotFoundException e) {
 			bus.post(new TransitionEvent("cancel"));

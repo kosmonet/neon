@@ -32,9 +32,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-
-import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
+import neon.client.ui.UserInterface;
 import neon.common.event.ClientLoadEvent;
 import neon.common.event.ServerLoadEvent;
 

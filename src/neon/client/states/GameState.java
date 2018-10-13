@@ -37,10 +37,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
 import neon.client.ComponentManager;
-import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.ClientRenderer;
+import neon.client.ui.UserInterface;
 import neon.common.event.CollisionEvent;
 import neon.common.event.CombatEvent;
 import neon.common.event.InputEvent;
@@ -178,12 +178,12 @@ public class GameState extends State {
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Move event) throws ResourceException {
+	private void onMove(UpdateEvent.Move event) throws ResourceException {
 		Platform.runLater(() -> redraw());
 	}
 	
 	@Subscribe
-	private void update(UpdateEvent.Remove event) throws ResourceException {
+	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
 	}

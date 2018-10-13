@@ -29,8 +29,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import neon.client.ComponentManager;
-import neon.client.UserInterface;
 import neon.client.ui.DescriptionLabel;
+import neon.client.ui.UserInterface;
 import neon.common.resources.RCreature;
 import neon.entity.Skill;
 import neon.entity.components.Graphics;
@@ -50,7 +50,7 @@ public class JournalState extends State {
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
-	@FXML private Label infoLabel, healthLabel, manaLabel, weightLabel;
+	@FXML private Label infoLabel, healthLabel, manaLabel, weightLabel, levelLabel;
 	@FXML private Label speedLabel, strengthLabel, constitutionLabel, dexterityLabel;
 	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel;
 	@FXML private Label swimLabel;
@@ -90,6 +90,7 @@ public class JournalState extends State {
     	RCreature species = stats.getSpecies();
     	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + species.name);
     	speedLabel.setText("Speed: " + species.speed);
+    	levelLabel.setText("Level " + stats.getLevel());
     	
     	strengthLabel.setText("Strength: " + stats.getBaseStr());
     	constitutionLabel.setText("Constitution: " + stats.getBaseCon());

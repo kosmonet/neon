@@ -30,10 +30,13 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.Action;
 import neon.entity.EntityProvider;
+import neon.entity.Skill;
 import neon.entity.components.Shape;
+import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Player;
+import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
 /**
@@ -48,11 +51,13 @@ public class MovementSystem implements NeonSystem {
 	private final EventBus bus;
 	private final EntityProvider entities;
 	private final ResourceManager resources;
+	private final SkillHandler skillHandler;
 	
 	MovementSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
+		skillHandler = new SkillHandler(bus);
 	}
 	
 	void run() {
@@ -113,6 +118,7 @@ public class MovementSystem implements NeonSystem {
 	private void move(Creature creature, RMap map, int x, int y, int z) throws ResourceException {
 		Shape shape = creature.getComponent(Shape.class);
 		Stats stats = creature.getComponent(Stats.class);
+		Skills skills = creature.getComponent(Skills.class);
 		
 		if (shape.getX() == x || shape.getY() == y) {
 			stats.perform(Action.MOVE_STRAIGHT);
@@ -121,7 +127,12 @@ public class MovementSystem implements NeonSystem {
 		}
 
 		RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
-		if (!terrain.hasModifier(RTerrain.Modifier.LIQUID)) {				
+		boolean canMove = true;
+		if (terrain.hasModifier(RTerrain.Modifier.LIQUID)) {
+			canMove = skillHandler.checkSkill(skills, Skill.SWIMMING, stats);
+		}
+		
+		if (canMove) {				
 			shape.setPosition(x, y, z);				
 		}
 	}

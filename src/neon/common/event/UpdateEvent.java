@@ -146,4 +146,26 @@ public abstract class UpdateEvent extends NeonEvent {
 			this.map = map;
 		}
 	}
+	
+	public static class SkillUpdate extends UpdateEvent {
+		public final long uid;
+		public final String skill;
+		public final int value;
+		
+		public SkillUpdate(long uid, String skill, int value) {
+			this.uid = uid;
+			this.skill = skill;
+			this.value = value;
+		}
+	}
+	
+	public static class Level extends UpdateEvent {
+		public final long uid;
+		public final int level;
+		
+		public Level(long uid, int level) {
+			this.uid = uid;
+			this.level = level;
+		}
+	}
 }

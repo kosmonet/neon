@@ -30,10 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
-
-import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
+import neon.client.ui.UserInterface;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceManager;
 

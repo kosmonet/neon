@@ -19,5 +19,11 @@
 package neon.entity;
 
 public enum Skill {
-	SWIMMING;
+	SWIMMING(10);
+	
+	public final int steps;
+	
+	private Skill(int steps) {
+		this.steps = steps;
+	}
 }

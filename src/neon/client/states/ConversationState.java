@@ -38,10 +38,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
-import neon.client.UserInterface;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
+import neon.client.ui.UserInterface;
 import neon.common.event.ConversationEvent;
 import neon.entity.components.Graphics;
 import neon.entity.entities.Creature;

@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client;
+package neon.client.ui;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -35,6 +35,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -53,6 +54,7 @@ public class UserInterface {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final Stage stage;
+	private final Tooltip tip = new Tooltip();
 	
 	/**
 	 * Initializes this {@code UserInterface} with the JavaFX {@code Stage} 
@@ -60,7 +62,7 @@ public class UserInterface {
 	 * 
 	 * @param stage
 	 */
-	UserInterface(Stage stage) {
+	public UserInterface(Stage stage) {
 		this.stage = stage;
 		stage.setWidth(1280);
 		stage.setMinWidth(800);
@@ -106,6 +108,21 @@ public class UserInterface {
 		alert.setContentText(event.getMessage());
 		alert.initOwner(stage);
 		alert.showAndWait();
+	}
+	
+	/**
+	 * Shows a non-blocking message in a tooltip for the given duration.
+	 * 
+	 * @param message	the message that will be shown
+	 * @param duration	how long the message will be shown (in milliseconds)
+	 */
+	public void showOverlayMessage(String message, int duration) {
+        tip.setText(message);
+        tip.show(stage);
+
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(duration), event -> tip.hide()));
+		timeline.setCycleCount(1);
+		timeline.play();
 	}
 	
 	/**

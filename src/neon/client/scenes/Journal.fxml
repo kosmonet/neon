@@ -27,6 +27,8 @@
 			</columnConstraints>
 			<children>
 				<VBox GridPane.columnIndex="0" alignment="center">
+					<Label fx:id="levelLabel" />
+					<Label text="∷" />
 					<Label fx:id="speedLabel" />
 					<Label text="∷" />
 					<Label fx:id="strengthLabel" />

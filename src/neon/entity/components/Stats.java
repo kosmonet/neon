@@ -26,6 +26,7 @@ public class Stats implements Component {
 	private final long uid;
 	
 	private double AP;	// action points
+	private int level = 1;
 	
 	private int strength = 10, constitution = 10, dexterity = 10, wisdom = 10, intelligence = 10, charisma = 10;
 	
@@ -120,6 +121,18 @@ public class Stats implements Component {
 	
 	public void setBaseCha(int charisma) {
 		this.charisma = charisma;
+	}
+	
+	public int getHealth() {
+		return 3*constitution + level*constitution/3;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
 	}
 	
 	public RCreature getSpecies() {

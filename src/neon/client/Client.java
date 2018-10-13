@@ -44,6 +44,7 @@ import neon.client.states.NewGameState;
 import neon.client.states.OptionState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
+import neon.client.ui.UserInterface;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
@@ -60,9 +61,12 @@ import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.entity.Skill;
 import neon.entity.components.Behavior;
 import neon.entity.components.Graphics;
 import neon.entity.components.Shape;
+import neon.entity.components.Skills;
+import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 
@@ -251,6 +255,20 @@ public class Client implements Runnable {
 	private void onEntityRemove(UpdateEvent.Remove event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 		map.removeEntity(event.uid);
+	}
+	
+	@Subscribe
+	private void onSkillUpdate(UpdateEvent.SkillUpdate event) throws ResourceException {
+		Skills skills = components.getComponent(event.uid, Skills.class);
+		skills.setSkill(Skill.valueOf(event.skill), event.value);
+		ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
+	}
+	
+	@Subscribe
+	private void onLevelIncrease(UpdateEvent.Level event) throws ResourceException {
+		Stats stats = components.getComponent(0, Stats.class);
+		stats.setLevel(event.level);
+		ui.showOverlayMessage("Level up!", 1000);
 	}
 	
 	/**

@@ -27,8 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-
-import neon.client.UserInterface;
+import neon.client.ui.UserInterface;
 
 public class OptionState extends State {
 	private static final Logger logger = Logger.getGlobal();

@@ -24,12 +24,16 @@ import neon.entity.Skill;
 
 public class Skills implements Component {
 	private final long uid;
-	private final EnumMap<Skill, Double> skills = new EnumMap<>(Skill.class);
+	private final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
+	private final EnumMap<Skill, Integer> steps = new EnumMap<>(Skill.class);
+	
+	private int increases = 0;
 	
 	public Skills(long uid) {
 		this.uid = uid;
 		for (Skill skill : Skill.values()) {
-			skills.put(skill, 5d);
+			skills.put(skill, 5);
+			steps.put(skill, 0);
 		}
 	}
 	
@@ -38,11 +42,31 @@ public class Skills implements Component {
 		return uid;
 	}
 	
-	public void setSkill(Skill skill, double level) {
-		skills.put(skill, level);
+	public void setSkill(Skill skill, int value) {
+		skills.put(skill, value);
 	}
 	
-	public double getSkill(Skill skill) {
+	public int getSkill(Skill skill) {
 		return skills.get(skill);
+	}
+	
+	public void setSteps(Skill skill, int value) {
+		steps.put(skill, value);
+	}
+	
+	public int getSteps(Skill skill) {
+		return steps.get(skill);
+	}
+	
+	public int getSkillIncreases() {
+		return increases;
+	}
+
+	public void resetSkillIncreases() {
+		increases = 0;
+	}
+	
+	public void addSkillIncreases(int amount) {
+		increases += amount;
 	}
 }
