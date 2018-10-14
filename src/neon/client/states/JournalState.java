@@ -28,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
@@ -100,9 +101,20 @@ public class JournalState extends State {
     	charismaLabel.setText("Charisma: " + stats.getBaseCha());
     	
     	weightLabel.setText("Carry weight: " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr());
-    	healthLabel.setText("Health: " + 3*stats.getBaseCon() + " HP");
-    	manaLabel.setText("Mana: " + 6*stats.getBaseInt());
-    	
+    	healthLabel.setText("Health: " + stats.getHealth() + "/" + stats.getBaseHealth());
+		if (stats.getHealth()/stats.getBaseHealth() < 0.1) {
+			healthLabel.setTextFill(Color.RED);
+		} else {
+			healthLabel.setTextFill(Color.WHITE);			
+		}
+
+		manaLabel.setText("Mana: " + stats.getMana() + "/" + stats.getBaseMana());
+		if (stats.getMana()/stats.getBaseMana() < 0.1) {
+			manaLabel.setTextFill(Color.RED);
+		} else {
+			manaLabel.setTextFill(Color.WHITE);			
+		}
+   	
     	swimLabel.setText("Swimming: " + (int) skills.getSkill(Skill.SWIMMING));
     	
 		ui.showScene(scene);

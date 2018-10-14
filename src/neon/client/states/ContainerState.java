@@ -216,7 +216,7 @@ public class ContainerState extends State {
 	private class ListListener implements ChangeListener<Long> {
 		@Override
 		public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
-			if(newValue != null) {
+			if (newValue != null) {
 				updateDescription(newValue);
 			}
 		}

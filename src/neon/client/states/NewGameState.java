@@ -56,6 +56,7 @@ public class NewGameState extends State {
 	@FXML private ToggleGroup genderGroup;
 	@FXML private TextField nameField;
 	@FXML private Label instructionLabel, statsLabel, weightLabel, healthLabel, manaLabel;
+	@FXML private Label descriptionLabel;
 	@FXML private Spinner<Integer> strengthSpinner, constitutionSpinner, dexteritySpinner;
 	@FXML private Spinner<Integer> intelligenceSpinner, wisdomSpinner, charismaSpinner;
 	
@@ -63,9 +64,10 @@ public class NewGameState extends State {
 	private final EventBus bus;
 	private final ResourceManager resources;
 	private final IntegerSpinnerValueFactory strFactory, conFactory, dexFactory, intFactory, wisFactory, chaFactory;
+	private final int[] modifiers = {0, 1, 2, 4, 6, 8, 11, 14, 17, 21, 25, 29, 34, 39, 44, 50, 56, 62};
+	private final int points = 20;
 	
 	private Scene scene;
-	private int points = 20;
 	private int strMod = 0;
 	private int conMod = 0;
 	private int dexMod = 0;
@@ -256,55 +258,13 @@ public class NewGameState extends State {
 	}
 	
 	private void changeAbility() {
-		pointsLeft = points - strMod - conMod - dexMod - intMod - wisMod - chaMod;
-		
-		if (strMod > 2) {
-			pointsLeft -= (10 + strMod) % 12;
-		}
-		
-		if (strMod > 5) {
-			pointsLeft -= (10 + strMod) % 15;
-		}
-		
-		if (conMod > 2) {
-			pointsLeft -= (10 + conMod) % 12;
-		}
-		
-		if (conMod > 5) {
-			pointsLeft -= (10 + conMod) % 15;
-		}
-		
-		if (dexMod > 2) {
-			pointsLeft -= (10 + dexMod) % 12;
-		}
-		
-		if (dexMod > 5) {
-			pointsLeft -= (10 + dexMod) % 15;
-		}
-		
-		if (intMod > 2) {
-			pointsLeft -= (10 + intMod) % 12;
-		}
-		
-		if (intMod > 5) {
-			pointsLeft -= (10 + intMod) % 15;
-		}
-		
-		if (wisMod > 2) {
-			pointsLeft -= (10 + wisMod) % 12;
-		}
-		
-		if (wisMod > 5) {
-			pointsLeft -= (10 + wisMod) % 15;
-		}
-		
-		if (chaMod > 2) {
-			pointsLeft -= (10 + chaMod) % 12;
-		}
-		
-		if (chaMod > 5) {
-			pointsLeft -= (10 + chaMod) % 15;
-		}
+		pointsLeft = points;
+		pointsLeft -= strMod < 0 ? strMod : modifiers[strMod];
+		pointsLeft -= conMod < 0 ? conMod : modifiers[conMod];
+		pointsLeft -= dexMod < 0 ? dexMod : modifiers[dexMod];
+		pointsLeft -= intMod < 0 ? intMod : modifiers[intMod];
+		pointsLeft -= wisMod < 0 ? wisMod : modifiers[wisMod];
+		pointsLeft -= chaMod < 0 ? chaMod : modifiers[chaMod];
 		
 		if (pointsLeft >= 0) {
 			statsLabel.setTextFill(Color.WHITE);
@@ -361,6 +321,8 @@ public class NewGameState extends State {
 			intelligenceSpinner.getValueFactory().setValue(newValue.intelligence + intMod);
 			wisdomSpinner.getValueFactory().setValue(newValue.wisdom + wisMod);
 			charismaSpinner.getValueFactory().setValue(newValue.charisma + chaMod);
+			
+			descriptionLabel.setText(newValue.description);
 		}
 	}
 

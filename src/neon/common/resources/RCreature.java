@@ -48,6 +48,7 @@ public class RCreature extends Resource {
 	public final int speed;
 	
 	public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
+	public final String description;
 	
 	private RCreature(Builder builder) {
 		super(builder.id, "creatures");
@@ -60,7 +61,8 @@ public class RCreature extends Resource {
 		dexterity = builder.dexterity;
 		intelligence = builder.intelligence;
 		wisdom = builder.wisdom;
-		charisma = builder.charisma;		
+		charisma = builder.charisma;
+		description = builder.description;
 	}
 	
 	public static class Builder {
@@ -70,6 +72,7 @@ public class RCreature extends Resource {
 		private Color color;
 		private int speed;
 		private int strength, constitution, dexterity, intelligence, wisdom, charisma;
+		private String description = "";
 		
 		public Builder(String id) {
 			this.id = id;
@@ -92,6 +95,11 @@ public class RCreature extends Resource {
 		
 		public Builder setSpeed(int speed) {
 			this.speed = speed;
+			return this;
+		}
+		
+		public Builder setDescription(String description) {
+			this.description = description;
 			return this;
 		}
 		

@@ -63,7 +63,7 @@ public class InventoryState extends State {
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, followerList;
 	@FXML private DescriptionLabel description;
-	@FXML private Label instructionLabel;
+	@FXML private Label instructionLabel, armorLabel;
 	
 	private Scene scene;
 	private RMap map;
@@ -106,7 +106,7 @@ public class InventoryState extends State {
 			showHelp();
 			break;
 		case ENTER:
-			drop();
+			dropItem();
 			break;
 		case SPACE:
 			equipItem();
@@ -116,7 +116,7 @@ public class InventoryState extends State {
 		}		
 	}
 	
-	private void equipItem() {
+	@FXML private void equipItem() {
 		long uid = playerList.getSelectionModel().getSelectedItem();
 		bus.post(new InventoryEvent.Equip(uid));
 	}
@@ -137,14 +137,28 @@ public class InventoryState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
+		int rating = 0;
 		inventory = components.getComponent(0, Inventory.class);
 		instructionLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 		
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
+			
+			try {
+				if (inventory.hasEquiped(uid)) {
+					RItem.Clothing cloth = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
+					if (cloth instanceof RItem.Armor) {
+						RItem.Armor armor = (RItem.Armor) cloth;
+						rating += armor.rating;
+					}
+				}
+			} catch (ResourceException e) {
+				logger.severe(e.getMessage());
+			}
 		}
 		
+		armorLabel.setText("Armor rating: " + rating);
 		playerList.getSelectionModel().select(index);
 	}
 	
@@ -153,7 +167,7 @@ public class InventoryState extends State {
 		Platform.runLater(() -> refresh());
 	}
 	
-	@FXML private void drop() {
+	@FXML private void dropItem() {
 		if (!playerList.getSelectionModel().isEmpty()) {
 			long uid = playerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one

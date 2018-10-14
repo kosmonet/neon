@@ -27,7 +27,7 @@
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
 				<ColumnConstraints hgrow="SOMETIMES" percentWidth="34.0" />
-				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+				<ColumnConstraints hgrow="SOMETIMES" halignment="CENTER" percentWidth="33.0" />
 			</columnConstraints>
 			<children>
 				<GridPane hgap="15.0" vgap="5.0" id="new-menu" GridPane.columnIndex="0">
@@ -101,7 +101,7 @@
 						</HBox>
 					</children>
 				</GridPane>
-				<Label GridPane.columnIndex="2" />
+				<Label fx:id="descriptionLabel" GridPane.columnIndex="2" />
 			</children>
 		</GridPane>
 	</center>

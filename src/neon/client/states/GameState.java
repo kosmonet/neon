@@ -35,7 +35,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-
+import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
@@ -196,8 +196,21 @@ public class GameState extends State {
 		Info record = components.getComponent(PLAYER_UID, Info.class);
 		modeLabel.setText(record.getMode().toString());
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		healthLabel.setText("♥ " + stats.getBaseCon()*3);
-		manaLabel.setText("✳ " + stats.getBaseInt()*6);
+		
+		healthLabel.setText("♥ " + stats.getHealth() + "/" + stats.getBaseHealth());
+		if (stats.getHealth()/stats.getBaseHealth() < 0.1) {
+			healthLabel.setTextFill(Color.RED);
+		} else {
+			healthLabel.setTextFill(Color.SILVER);			
+		}
+		
+		manaLabel.setText("✳ " + stats.getMana() + "/" + stats.getBaseMana());
+		if (stats.getMana()/stats.getBaseMana() < 0.1) {
+			manaLabel.setTextFill(Color.RED);
+		} else {
+			manaLabel.setTextFill(Color.SILVER);			
+		}		
+		
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));

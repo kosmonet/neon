@@ -13,7 +13,12 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
-		<Label fx:id="instructionLabel" styleClass="instructions" text="Money: X copper pieces." />
+		<HBox styleClass="instructions" spacing="50">
+			<children>
+				<Label fx:id="instructionLabel" text="Money: X copper pieces." />
+				<Label fx:id="armorLabel" text="Armor rating: ." />
+			</children>
+		</HBox>
 	</top>
 	<center>
 		<GridPane BorderPane.alignment="CENTER">
@@ -37,9 +42,9 @@
 	<bottom>
 		<HBox styleClass="bottom-buttons">
 			<children>
-				<Button fx:id="equipButton" focusTraversable="false" text="Space" />
+				<Button fx:id="equipButton" focusTraversable="false" text="Space" onAction="#equipItem" />
 				<Label text="Use/equip" />
-				<Button fx:id="dropButton" text="Enter" defaultButton="true" focusTraversable="false" onAction="#drop" />
+				<Button fx:id="dropButton" text="Enter" defaultButton="true" focusTraversable="false" onAction="#dropItem" />
 				<Label text="Drop" />
 				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
 				<Label text="Cancel" />

@@ -27,6 +27,8 @@ public class Stats implements Component {
 	
 	private double AP;	// action points
 	private int level = 1;
+	private int healthMod = 0;
+	private int manaMod = 0;
 	
 	private int strength = 10, constitution = 10, dexterity = 10, wisdom = 10, intelligence = 10, charisma = 10;
 	
@@ -123,8 +125,20 @@ public class Stats implements Component {
 		this.charisma = charisma;
 	}
 	
-	public int getHealth() {
+	public int getBaseHealth() {
 		return 3*constitution + level*constitution/3;
+	}
+	
+	public int getHealth() {
+		return getBaseHealth() - healthMod;
+	}
+	
+	public int getBaseMana() {
+		return intelligence*6;
+	}
+	
+	public int getMana() {
+		return getBaseMana() - manaMod;
 	}
 	
 	public int getLevel() {
