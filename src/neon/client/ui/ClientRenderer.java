@@ -29,6 +29,7 @@ import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.entity.components.Graphics;
 import neon.entity.components.Shape;
+import neon.entity.entities.Item;
 
 public class ClientRenderer implements EntityRenderer<Long> {
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
@@ -71,7 +72,7 @@ public class ClientRenderer implements EntityRenderer<Long> {
 			if (one.equals(two)) {
 				return 0;
 			} else {
-				return (two instanceof Long) ? 1 : -1;
+				return (components.getComponent(two, Item.Resource.class) != null) ? 1 : -1;
 			}
 		}		
 	}
