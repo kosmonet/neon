@@ -156,12 +156,14 @@ public class ContainerState extends State {
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
 		for (long uid : map.getEntities(shape.getX(), shape.getY())) {
-			containerList.getItems().add(uid);
+			if (uid != 0) {
+				containerList.getItems().add(uid);
+			}
 		}
 		containerList.getSelectionModel().selectFirst();
 		refresh();
 		playerList.getSelectionModel().selectFirst();
-		
+
 		ui.showScene(scene);
 	}
 

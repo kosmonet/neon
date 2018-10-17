@@ -50,6 +50,9 @@ public class ItemLoader implements ResourceLoader<RItem> {
 		case "clothing":
 			builder.setSlot(Slot.valueOf(root.getAttributeValue("slot").toUpperCase()));
 			return new RItem.Clothing(builder);		
+		case "weapon":
+			builder.setSlot(Slot.WEAPON).setDamage(root.getAttributeValue("dmg"));
+			return new RItem.Weapon(builder);		
 		default:
 			return new RItem(builder);
 		}

@@ -92,6 +92,15 @@ public class InventoryHandler {
 			}
 		}
 		
+		if (inventory.getItems().contains(event.uid) && resource instanceof RItem.Weapon) {
+			RItem.Weapon weapon = (RItem.Weapon) resource;
+			if (inventory.hasEquiped(event.uid)) {
+				inventory.unEquip(weapon.slot);
+			} else {
+				inventory.equip(weapon.slot, event.uid);				
+			}
+		}
+		
 		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
 	}
 }

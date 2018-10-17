@@ -68,6 +68,17 @@ public class RItem extends Resource {
 		}		
 	}
 	
+	public static class Weapon extends RItem {
+		public final Slot slot;
+		public final String damage;
+		
+		public Weapon(Builder builder) {
+			super(builder);
+			damage = builder.damage;
+			slot = builder.slot;
+		}		
+	}
+	
 	public static class Builder {
 		private final String id;
 		private String glyph;
@@ -75,6 +86,7 @@ public class RItem extends Resource {
 		private String name;
 		private Slot slot;
 		private int rating;
+		private String damage;
 		
 		public Builder(String id) {
 			this.id = id;
@@ -98,6 +110,11 @@ public class RItem extends Resource {
 
 		public Builder setRating(int rating) {
 			this.rating = rating;
+			return this;
+		}
+
+		public Builder setDamage(String damage) {
+			this.damage = damage;
 			return this;
 		}
 	}

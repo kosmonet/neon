@@ -206,6 +206,7 @@ public class Client implements Runnable {
 
 	@Subscribe
 	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
+		System.out.println("item change: " + event.uid);
 		long uid = event.uid;
 		RItem resource = resources.getResource("items", event.id);
 
@@ -281,8 +282,14 @@ public class Client implements Runnable {
 		inventory.addItems(Longs.asList(event.getItems()));
 		for (long uid : event.getEquipedItems()) {
 			Item.Resource resource = components.getComponent(uid, Item.Resource.class);
-			RItem.Clothing cloth = resources.getResource("items", resource.getID());
-			inventory.equip(cloth.slot, uid);
+			RItem item = resources.getResource("items", resource.getID());
+			if (item instanceof RItem.Clothing) {
+				RItem.Clothing cloth = (RItem.Clothing) item;
+				inventory.equip(cloth.slot, uid);
+			} else if (item instanceof RItem.Weapon) {
+				RItem.Weapon weapon = (RItem.Weapon) item;
+				inventory.equip(weapon.slot, uid);				
+			}
 		}
 		components.putComponent(0, inventory);
 	}

@@ -147,9 +147,9 @@ public class InventoryState extends State {
 			
 			try {
 				if (inventory.hasEquiped(uid)) {
-					RItem.Clothing cloth = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
-					if (cloth instanceof RItem.Armor) {
-						RItem.Armor armor = (RItem.Armor) cloth;
+					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
+					if (item instanceof RItem.Armor) {
+						RItem.Armor armor = (RItem.Armor) item;
 						rating += armor.rating;
 					}
 				}
@@ -202,6 +202,14 @@ public class InventoryState extends State {
 						RItem.Armor armor = (RItem.Armor) item;
 						builder.append("\n");
 						builder.append("Rating: " + armor.rating);						
+					}
+					
+					if (item instanceof RItem.Weapon) {
+						RItem.Weapon weapon = (RItem.Weapon) item;
+						builder.append("\n");
+						builder.append("∷");
+						builder.append("\n");
+						builder.append("Damage: " + weapon.damage);						
 					}
 					
 		    		description.update(builder.toString(), graphics);
