@@ -57,7 +57,7 @@ public class SystemManager {
 		aiSystem = new AISystem(resources, entities, bus, moveSystem);
 		actionSystem = new ActionSystem(resources, entities);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
-		combatSystem = new CombatSystem(entities);
+		combatSystem = new CombatSystem(resources, entities, bus);
 		
 		// and register them on the event bus
 		bus.register(combatSystem);

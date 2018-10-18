@@ -37,6 +37,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.ServerLoadEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.event.ClientLoadEvent;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
@@ -272,6 +273,7 @@ public class GameLoader {
 			bus.post(new UpdateEvent.Item(uid, info.getID(), "", 0, 0, 0));
 		}
 		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
+//		bus.post(new ComponentUpdateEvent(inventory));
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);

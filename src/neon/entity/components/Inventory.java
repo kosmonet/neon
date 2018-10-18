@@ -89,6 +89,10 @@ public class Inventory implements Component {
 		equiped.put(slot, uid);
 	}
 	
+	public long getEquipedItem(Slot slot) {
+		return equiped.get(slot);
+	}
+	
 	public Collection<Long> getEquipedItems() {
 		return equiped.values();
 	}

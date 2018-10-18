@@ -27,6 +27,7 @@ import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.primitives.Longs;
+import com.google.gson.JsonSyntaxException;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -47,6 +48,7 @@ import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
 import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
@@ -65,6 +67,7 @@ import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.entity.Skill;
 import neon.entity.components.Behavior;
+import neon.entity.components.Component;
 import neon.entity.components.Graphics;
 import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
@@ -206,7 +209,6 @@ public class Client implements Runnable {
 
 	@Subscribe
 	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
-		System.out.println("item change: " + event.uid);
 		long uid = event.uid;
 		RItem resource = resources.getResource("items", event.id);
 
@@ -225,6 +227,20 @@ public class Client implements Runnable {
 		}
 	}
 
+	@Subscribe
+	private void onItemPick(UpdateEvent.Pick event) throws ResourceException {
+		RMap map = resources.getResource("maps", event.map);
+		map.removeEntity(event.uid);
+		Inventory inventory = components.getComponent(0, Inventory.class);
+		inventory.addItem(event.uid);
+	}
+	
+	@Subscribe 
+	private void onComponentUpdate(ComponentUpdateEvent event) throws JsonSyntaxException, ClassNotFoundException {
+		Component component = event.getComponent();
+		components.putComponent(component.getEntity(), component);
+	}
+	
 	@Subscribe
 	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
 		long uid = event.uid;

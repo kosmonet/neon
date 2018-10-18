@@ -46,7 +46,31 @@ public class Dice {
 		return result + z;
 	}
 	
-//	public static int roll(String roll) {
-//		return 0;
-//	}
+	/**
+	 * Returns the result of a dice roll. The input string has the form 'xdy', 
+	 * 'xdy+z' or 'xdy-z', with x, y and z positive integers. 
+	 * 
+	 * @param roll	the string representation of the roll
+	 * @return		the result of the roll
+	 */
+	public static int roll(String roll) {
+		int index1 = roll.indexOf("d");
+		int index2 = roll.indexOf("+");
+		int index3 = roll.indexOf("-");
+		int number = Integer.parseInt(roll.substring(0, index1));
+		int dice = 0;
+		int mod = 0;
+		
+		if(index2 > 0 ) {			// -1 wilt zeggen dat er geen + is gevonden
+			dice = Integer.parseInt(roll.substring(index1 + 1, index2));
+			mod = Integer.parseInt(roll.substring(index2 + 1, roll.length()));
+		} else if(index3 > 0) {		// -1 wilt zeggen dat er geen - is gevonden
+			dice = Integer.parseInt(roll.substring(index1 + 1, index3));
+			mod = -Integer.parseInt(roll.substring(index3 + 1, roll.length()));			
+		} else {
+			dice = Integer.parseInt(roll.substring(index1 + 1, roll.length()));
+		}
+		
+		return roll(number, dice, mod);
+	}
 }

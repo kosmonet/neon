@@ -130,7 +130,11 @@ public class Stats implements Component {
 	}
 	
 	public int getHealth() {
-		return getBaseHealth() - healthMod;
+		return getBaseHealth() + healthMod;
+	}
+	
+	public void addHealth(int amount) {
+		healthMod += amount;
 	}
 	
 	public int getBaseMana() {

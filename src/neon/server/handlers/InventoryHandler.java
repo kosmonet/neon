@@ -73,7 +73,7 @@ public class InventoryHandler {
 		player.getComponent(Inventory.class).addItem(event.getItem());
 
 		Item item = entities.getEntity(event.getItem());
-		bus.post(new UpdateEvent.Remove(item.uid, event.getMap()));
+		bus.post(new UpdateEvent.Pick(item.uid, map.id));
 	}
 	
 	@Subscribe

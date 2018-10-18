@@ -53,6 +53,7 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.PlayerMode;
 import neon.entity.Skill;
 import neon.entity.components.Behavior;
 import neon.entity.components.Graphics;
@@ -125,6 +126,7 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
 	}
 	
 	@Subscribe
@@ -172,6 +174,12 @@ public class GameState extends State {
 	}
 	
 	@Subscribe
+	private void onItemChange(UpdateEvent.Pick event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
+		Platform.runLater(() -> redraw());
+	}
+	
+	@Subscribe
 	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
@@ -186,6 +194,22 @@ public class GameState extends State {
 	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
+	}
+	
+	private void changeMode() {
+		Info record = components.getComponent(PLAYER_UID, Info.class);
+		switch (record.getMode()) {
+		case NONE:
+			record.setMode(PlayerMode.AGGRESSION);
+			break;
+		case AGGRESSION:
+			record.setMode(PlayerMode.STEALTH);
+			break;
+		case STEALTH:
+			record.setMode(PlayerMode.NONE);
+			break;
+		}
+		modeLabel.setText(record.getMode().toString());		
 	}
 	
 	private void move(Direction direction) {
@@ -291,14 +315,14 @@ public class GameState extends State {
 				if (brain.isFriendly(bumper)) {
 					bus.post(new TransitionEvent("talk", graphics, resource));
 				} else {
-					bus.post(new CombatEvent(bumper, bumped));	
+					bus.post(new CombatEvent.Start(bumper, bumped));	
 				}
 				break;
 			case STEALTH:
 				if (brain.isFriendly(bumper)) {
 					bus.post(new TransitionEvent("talk", graphics, resource));
 				} else {
-					bus.post(new CombatEvent(bumper, bumped));	
+					bus.post(new CombatEvent.Start(bumper, bumped));	
 				}
 				break;
 			case AGGRESSION:
@@ -308,10 +332,10 @@ public class GameState extends State {
 					if (result.get().equals(ButtonTypes.talk)) {
 						bus.post(new TransitionEvent("talk", graphics, resource));
 					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent(bumper, bumped));	
+						bus.post(new CombatEvent.Start(bumper, bumped));	
 					}
 				} else {
-					bus.post(new CombatEvent(bumper, bumped));	
+					bus.post(new CombatEvent.Start(bumper, bumped));	
 				}
 				break;
 			}
@@ -321,6 +345,14 @@ public class GameState extends State {
 		if (!paused) {
 			bus.post(new NeonEvent.Unpause());
 		}
+	}
+	
+	@Subscribe
+	private void onCombat(CombatEvent.Result event) {
+		Stats stats = components.getComponent(event.defender, Stats.class);
+		System.out.println(stats);
+		String message = "Defender is hit for " + event.damage + "points (" + stats.getHealth() + "/" + stats.getBaseHealth() + "). ";
+		ui.showOverlayMessage(message, 1000);
 	}
 	
 	@Override

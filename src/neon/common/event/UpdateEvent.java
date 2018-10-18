@@ -147,6 +147,16 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	public static class Pick extends UpdateEvent {
+		public final long uid;
+		public final String map;
+		
+		public Pick(long uid, String map) {
+			this.uid = uid;
+			this.map = map;
+		}
+	}
+	
 	public static class SkillUpdate extends UpdateEvent {
 		public final long uid;
 		public final String skill;

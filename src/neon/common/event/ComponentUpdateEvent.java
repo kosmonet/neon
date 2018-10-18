@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,27 +18,25 @@
 
 package neon.common.event;
 
-public abstract class CombatEvent extends NeonEvent {
-	public final long attacker;
-	public final long defender;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import neon.entity.components.Component;
+
+public class ComponentUpdateEvent extends NeonEvent {
+	private final static Gson gson = new Gson();
 	
-	public CombatEvent(long attacker, long defender) {
-		this.attacker = attacker;
-		this.defender = defender;
+	private final String component;
+	private final String type;
+	
+	public ComponentUpdateEvent(Component component) {
+		this.component = gson.toJson(component);
+		type = component.getClass().getCanonicalName();
+		System.out.println(this.component);
 	}
 	
-	public static class Start extends CombatEvent {
-		public Start(long attacker, long defender) {
-			super(attacker, defender);
-		}		
-	}
-	
-	public static class Result extends CombatEvent {
-		public final long damage;
-		
-		public Result(long attacker, long defender, int damage) {
-			super(attacker, defender);
-			this.damage = damage;
-		}
+	@SuppressWarnings("unchecked")
+	public <T extends Component> T getComponent() throws JsonSyntaxException, ClassNotFoundException {
+		return (T) gson.fromJson(component, Class.forName(type));
 	}
 }
