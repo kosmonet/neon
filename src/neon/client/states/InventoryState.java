@@ -42,6 +42,7 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RItem;
 import neon.common.resources.RMap;
@@ -124,6 +125,7 @@ public class InventoryState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
+		bus.register(this);
 		map = event.getParameter(RMap.class);
 		refresh();		
 		playerList.getSelectionModel().selectFirst();		
@@ -133,6 +135,7 @@ public class InventoryState extends State {
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting inventory module");
+		bus.unregister(this);
 	}
 	
 	private void refresh() {
@@ -163,7 +166,7 @@ public class InventoryState extends State {
 	}
 	
 	@Subscribe
-	private void onInventoryUpdate(InventoryEvent.Update event) {
+	private void onInventoryUpdate(ComponentUpdateEvent event) {
 		Platform.runLater(() -> refresh());
 	}
 	

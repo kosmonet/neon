@@ -41,6 +41,7 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RItem;
 import neon.common.resources.RMap;
@@ -118,7 +119,7 @@ public class ContainerState extends State {
 	}
 	
 	@Subscribe
-	private void onInventoryUpdate(InventoryEvent.Update event) {
+	private void onInventoryUpdate(ComponentUpdateEvent event) {
 		Platform.runLater(() -> refresh());
 	}
 	
@@ -152,6 +153,7 @@ public class ContainerState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container state");
+		bus.register(this);
 		Shape shape = event.getParameter(Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
@@ -170,6 +172,7 @@ public class ContainerState extends State {
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting container state");
+		bus.unregister(this);
 	}
 	
 	@FXML private void showHelp() {

@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.common.primitives.Longs;
 import com.google.gson.JsonSyntaxException;
 
 import javafx.application.Platform;
@@ -49,7 +48,6 @@ import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
-import neon.common.event.InventoryEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.UpdateEvent;
@@ -141,37 +139,18 @@ public class Client implements Runnable {
 	
 	private void initModules(String version) {
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
-		bus.register(mainMenu);
-
 		NewGameState newGame = new NewGameState(ui, bus, resources);
 		bus.register(newGame);
-		
 		LoadState loadGame = new LoadState(ui, bus);
-		bus.register(loadGame);
-		
 		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
-		bus.register(cut);
-
 		GameState game = new GameState(ui, bus, components, resources);
 		bus.register(game);
-		
 		InventoryState inventory = new InventoryState(ui, bus, components, resources);
-		bus.register(inventory);
-		
 		MapState map = new MapState(ui, bus, resources);
-		bus.register(map);
-		
 		ConversationState conversation = new ConversationState(ui, bus);
-		bus.register(conversation);
-		
 		ContainerState container = new ContainerState(ui, bus, components, resources);
-		bus.register(container);
-		
 		JournalState journal = new JournalState(ui, bus, components);
-		bus.register(journal);
-		
 		OptionState options = new OptionState(ui, bus);
-		bus.register(options);
 		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
@@ -289,25 +268,6 @@ public class Client implements Runnable {
 		Stats stats = components.getComponent(0, Stats.class);
 		stats.setLevel(event.level);
 		ui.showOverlayMessage("Level up!", 1000);
-	}
-	
-	@Subscribe
-	private void onInventoryChange(InventoryEvent.Update event) throws ResourceException {
-		Inventory inventory = new Inventory(0);
-		inventory.addMoney(event.getMoney());
-		inventory.addItems(Longs.asList(event.getItems()));
-		for (long uid : event.getEquipedItems()) {
-			Item.Resource resource = components.getComponent(uid, Item.Resource.class);
-			RItem item = resources.getResource("items", resource.getID());
-			if (item instanceof RItem.Clothing) {
-				RItem.Clothing cloth = (RItem.Clothing) item;
-				inventory.equip(cloth.slot, uid);
-			} else if (item instanceof RItem.Weapon) {
-				RItem.Weapon weapon = (RItem.Weapon) item;
-				inventory.equip(weapon.slot, uid);				
-			}
-		}
-		components.putComponent(0, inventory);
 	}
 	
 	/**

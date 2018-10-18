@@ -102,12 +102,14 @@ public class MainMenuState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering main menu module");
+		bus.register(this);
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) { 
 		logger.finest("exiting main menu module");
+		bus.unregister(this);
 	}
 	
 	@FXML private void loadWebsite() throws IOException, URISyntaxException {

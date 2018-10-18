@@ -21,6 +21,7 @@ package neon.server.handlers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.RItem;
@@ -61,7 +62,7 @@ public class InventoryHandler {
 		Item item = entities.getEntity(event.getItem());
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
 		String id = item.getComponent(Item.Resource.class).getID();
-		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
+		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new UpdateEvent.Item(item.uid, id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
@@ -101,6 +102,6 @@ public class InventoryHandler {
 			}
 		}
 		
-		bus.post(new InventoryEvent.Update(inventory.getItems(), inventory.getEquipedItems(), inventory.getMoney()));
+		bus.post(new ComponentUpdateEvent(inventory));
 	}
 }

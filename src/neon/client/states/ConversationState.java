@@ -83,6 +83,7 @@ public class ConversationState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering conversation module");
+		bus.register(this);
     	Graphics graphics = event.getParameter(Graphics.class);
     	Creature.Resource resource = event.getParameter(Creature.Resource.class);
 		bus.post(new ConversationEvent.Start(PLAYER_UID, graphics.getEntity()));		
@@ -91,6 +92,12 @@ public class ConversationState extends State {
 		ui.showScene(scene);
 	}
 
+	@Override
+	public void exit(TransitionEvent event) {
+		logger.finest("exiting conversation module");
+		bus.unregister(this);
+	}
+	
 	@Subscribe
 	public void update(ConversationEvent.Update event) {
 		flow.getChildren().add(new Text(event.getAnswer()));
@@ -139,11 +146,6 @@ public class ConversationState extends State {
 		default:
 			break;
 		}
-	}
-	
-	@Override
-	public void exit(TransitionEvent event) {
-		logger.finest("exiting conversation module");		
 	}
 	
 	@FXML private void showHelp() {

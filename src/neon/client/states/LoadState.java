@@ -120,12 +120,14 @@ public class LoadState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering load game state");
+		bus.register(this);
 		ui.showScene(scene);
 		bus.post(new ServerLoadEvent.List());
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting load game state");		
+		logger.finest("exiting load game state");
+		bus.unregister(this);
 	}
 }

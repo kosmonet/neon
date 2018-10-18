@@ -18,33 +18,7 @@
 
 package neon.common.event;
 
-import java.util.Collection;
-
 public abstract class InventoryEvent extends NeonEvent {
-	public static class Update extends InventoryEvent {
-		private final long[] items;
-		private final long[] equiped;
-		private final int money;
-		
-		public Update(Collection<Long> items, Collection<Long> equiped, int money) {
-			this.items = items.stream().mapToLong(Long::longValue).toArray();
-			this.equiped = equiped.stream().mapToLong(Long::longValue).toArray();
-			this.money = money;
-		}
-		
-		public long[] getItems() {
-			return items;
-		}
-		
-		public long[] getEquipedItems() {
-			return equiped;
-		}
-		
-		public int getMoney() {
-			return money;
-		}
-	}
-	
 	public static class Drop extends InventoryEvent {
 		private final long uid;
 		private final String id;
