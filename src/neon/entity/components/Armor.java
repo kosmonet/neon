@@ -16,26 +16,23 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client;
+package neon.entity.components;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-
-import neon.entity.components.Component;
-
-public class ComponentManager {
-	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
+public class Armor implements Component {
+	private final long uid;
+	private final int rating;
 	
-	public <T extends Component> void putComponent(long uid, T component) {
-		components.put(uid, component.getClass(), component);
+	public Armor(long uid, int rating) {
+		this.uid = uid;
+		this.rating = rating;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T extends Component> T getComponent(long uid, Class<T> type) {
-		return (T) components.get(uid, type);
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 	
-	public <T extends Component> boolean hasComponent(long uid, Class<T> type) {
-		return components.contains(uid, type);
+	public int getRating() {
+		return rating;
 	}
 }

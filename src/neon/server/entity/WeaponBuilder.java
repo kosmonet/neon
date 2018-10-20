@@ -16,26 +16,15 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client;
+package neon.server.entity;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import neon.common.resources.RItem;
+import neon.entity.entities.Entity;
+import neon.entity.entities.Item;
 
-import neon.entity.components.Component;
-
-public class ComponentManager {
-	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
-	
-	public <T extends Component> void putComponent(long uid, T component) {
-		components.put(uid, component.getClass(), component);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T extends Component> T getComponent(long uid, Class<T> type) {
-		return (T) components.get(uid, type);
-	}
-	
-	public <T extends Component> boolean hasComponent(long uid, Class<T> type) {
-		return components.contains(uid, type);
+public class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
+	@Override
+	public Entity build(long uid, RItem.Weapon resource) {
+		return new Item(uid, resource);
 	}
 }

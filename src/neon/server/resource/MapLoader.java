@@ -35,7 +35,6 @@ import neon.common.resources.loaders.ResourceLoader;
 import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 import neon.server.entity.EntityManager;
 
 /**
@@ -205,9 +204,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 			try {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
-				Creature creature = new Creature(uid, rc);
+				Entity creature = tracker.createEntity(uid, rc);
 				initEntity(entity, creature.getComponent(Shape.class), map);
-				tracker.addEntity(creature);
 			} catch (ResourceException e) {
 				logger.severe("unknown creature on map " + map.id + ": " + entity.getAttributeValue("id"));
 			}
@@ -218,9 +216,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 			try {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RItem ri = resources.getResource("items", entity.getAttributeValue("id"));
-				Item item = new Item(uid, ri);
+				Entity item = tracker.createEntity(uid, ri);
 				initEntity(entity, item.getComponent(Shape.class), map);
-				tracker.addEntity(item);
 			} catch (ResourceException e) {
 				logger.severe("unknown item on map " + map.id + ": " + entity.getAttributeValue("id"));
 			}

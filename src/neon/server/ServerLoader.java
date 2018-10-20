@@ -36,6 +36,8 @@ import neon.common.event.MessageEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CClient;
 import neon.common.resources.CServer;
+import neon.common.resources.RCreature;
+import neon.common.resources.RItem;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -45,7 +47,12 @@ import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.server.entity.ArmorBuilder;
+import neon.server.entity.ClothingBuilder;
+import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
+import neon.server.entity.ItemBuilder;
+import neon.server.entity.WeaponBuilder;
 import neon.server.resource.MapLoader;
 
 /**
@@ -81,6 +88,7 @@ class ServerLoader {
 		try {
 			CServer configuration = initConfiguration();
 			logger.setLevel(Level.parse(configuration.getLogLevel()));
+			initEntities(entities);
 			initFileSystem(files, configuration.getModules());
 			initResources(resources, configuration, entities);
 			initClient(resources, configuration.getModules());
@@ -98,6 +106,15 @@ class ServerLoader {
 			Document doc = new SAXBuilder().build(in);
 			return new ConfigurationLoader().loadServer(doc.getRootElement());
 		} 	
+	}
+	
+	private void initEntities(EntityManager entities) {
+		// add all builders to the entity manager
+		entities.addBuilder(RItem.class, new ItemBuilder());
+		entities.addBuilder(RItem.Armor.class, new ArmorBuilder());
+		entities.addBuilder(RItem.Clothing.class, new ClothingBuilder());
+		entities.addBuilder(RItem.Weapon.class, new WeaponBuilder());
+		entities.addBuilder(RCreature.class, new CreatureBuilder());
 	}
 	
 	/**

@@ -129,8 +129,7 @@ public class GameLoader {
 			inventory.addMoney(game.getStartMoney());
 			for (String id : game.getStartItems()) {
 				long uid = entities.getFreeUID();
-				Item item = new Item(uid, resources.getResource("items", id));
-				entities.addEntity(item);
+				entities.createEntity(uid, resources.getResource("items", id));
 				inventory.addItem(uid);
 			}
 

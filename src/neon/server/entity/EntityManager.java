@@ -20,6 +20,7 @@ package neon.server.entity;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import org.jdom2.Document;
@@ -31,6 +32,7 @@ import com.google.common.cache.RemovalNotification;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
+import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
@@ -44,6 +46,7 @@ import neon.entity.entities.Entity;
  */
 public class EntityManager implements EntityProvider, RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
+	private final HashMap<Class<? extends Resource>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
@@ -61,8 +64,28 @@ public class EntityManager implements EntityProvider, RemovalListener<Long, Enti
 		}
 	}
 	
+	@Deprecated
 	public void addEntity(Entity entity) {
 		entities.put(entity.uid, entity);
+	}
+	
+	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<T> builder) {
+		builders.put(type, builder);
+	}
+	
+	/**
+	 * Creates a new entity from the given resource and uid. The new entity
+	 * is added to the cache.
+	 * 
+	 * @param uid
+	 * @param resource
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Entity createEntity(long uid, Resource resource) {
+		Entity entity = builders.get(resource.getClass()).build(uid, resource);
+		entities.put(uid, entity);
+		return entity;
 	}
 	
 	@Override
