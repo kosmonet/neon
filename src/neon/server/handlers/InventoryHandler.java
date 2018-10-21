@@ -31,8 +31,8 @@ import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
-import neon.entity.entities.Player;
 
 /**
  * This class handles the inventory-related server bits.
@@ -53,7 +53,7 @@ public class InventoryHandler {
 	
 	@Subscribe
 	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
-		Player player = entities.getEntity(0);
+		Creature player = entities.getEntity(0);
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.removeItem(event.getItem());
 		Shape shape = player.getComponent(Shape.class);
@@ -61,16 +61,15 @@ public class InventoryHandler {
 		map.addEntity(event.getItem(), shape.getX(), shape.getY());
 		Item item = entities.getEntity(event.getItem());
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
-		String id = item.getComponent(Item.Resource.class).getID();
 		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new UpdateEvent.Item(item.uid, id, map.id, shape.getX(), shape.getY(), shape.getZ()));
+		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
 	@Subscribe
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.getMap());
 		map.removeEntity(event.getItem());
-		Player player = entities.getEntity(0);
+		Creature player = entities.getEntity(0);
 		player.getComponent(Inventory.class).addItem(event.getItem());
 
 		Item item = entities.getEntity(event.getItem());
@@ -79,7 +78,7 @@ public class InventoryHandler {
 	
 	@Subscribe
 	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
-		Player player = entities.getEntity(0);
+		Creature player = entities.getEntity(0);
 		Item item = entities.getEntity(event.uid);
 		RItem resource = resources.getResource("items", item.getComponent(Item.Resource.class).getID());
 		Inventory inventory = player.getComponent(Inventory.class);

@@ -16,20 +16,23 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.entity;
+package neon.entity.components;
 
-import neon.common.resources.RItem;
-import neon.entity.components.Armor;
-import neon.entity.components.Clothing;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
-
-public class ArmorBuilder implements EntityBuilder<RItem.Armor> {
+public class Weapon implements Component {
+	private final long uid;
+	private final String damage;
+	
+	public Weapon(long uid, String damage) {
+		this.uid = uid;
+		this.damage = damage;
+	}
+	
 	@Override
-	public Entity build(long uid, RItem.Armor resource) {
-		Item armor = new Item(uid, resource);
-		armor.setComponent(new Armor(uid, resource.rating));
-		armor.setComponent(new Clothing(uid, resource.slot));
-		return armor;
+	public long getEntity() {
+		return uid;
+	}
+	
+	public String getDamage() {
+		return damage;
 	}
 }

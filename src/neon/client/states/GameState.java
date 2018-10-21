@@ -168,12 +168,6 @@ public class GameState extends State {
 	}
 	
 	@Subscribe
-	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		Platform.runLater(() -> redraw());
-	}
-	
-	@Subscribe
 	private void onItemChange(UpdateEvent.Pick event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());

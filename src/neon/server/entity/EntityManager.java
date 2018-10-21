@@ -38,7 +38,7 @@ import neon.entity.EntityProvider;
 import neon.entity.entities.Entity;
 
 /**
- * This class tracks all loaded entities in the current game (and by extension
+ * This class manages all loaded entities in the current game (and by extension
  * all loaded modules and maps). 
  * 
  * @author mdriesen
@@ -62,11 +62,6 @@ public class EntityManager implements EntityProvider, RemovalListener<Long, Enti
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("No entity with uid <" + uid + "> found", e);
 		}
-	}
-	
-	@Deprecated
-	public void addEntity(Entity entity) {
-		entities.put(entity.uid, entity);
 	}
 	
 	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<T> builder) {

@@ -53,13 +53,16 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.entity.components.Inventory;
+import neon.entity.components.Armor;
+import neon.entity.components.Clothing;
+import neon.entity.components.Graphics;
 import neon.entity.components.Info;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
+import neon.entity.components.Weapon;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
-import neon.entity.entities.Player;
 import neon.server.entity.EntityManager;
 
 /**
@@ -77,7 +80,7 @@ public class GameLoader {
 	private final EntityManager entities;
 	private final NeonFileSystem files;
 	
-	private Player player;
+	private Entity player;
 	
 	/**
 	 * Initializes this game loader.
@@ -113,9 +116,9 @@ public class GameLoader {
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.getSpecies());
-			player = new Player(event.getName(), event.getGender(), species);
+			player = entities.createEntity(0, species);
+			player.setComponent(new Info(0, event.getName(), event.getGender()));
 			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
-			entities.addEntity(player);
 
 			Stats stats = player.getComponent(Stats.class);
 			stats.setBaseCha(event.charisma);
@@ -257,7 +260,7 @@ public class GameLoader {
 	 */
 	private void notifyClient(RMap map) throws ResourceException {
 		// tell the client to start loading the map
-		Player player = entities.getEntity(0);
+		Entity player = entities.getEntity(0);
 		bus.post(new UpdateEvent.Start(player));
 
 		// then send the map
@@ -266,9 +269,7 @@ public class GameLoader {
 		// then everything else
 		Inventory inventory = player.getComponent(Inventory.class);
 		for (long uid : inventory.getItems()) {
-			Item item = entities.getEntity(uid);
-			Item.Resource info = item.getComponent(Item.Resource.class);
-			bus.post(new UpdateEvent.Item(uid, info.getID(), "", 0, 0, 0));
+			notifyItem(entities.getEntity(uid));
 		}
 		bus.post(new ComponentUpdateEvent(inventory));
 
@@ -279,9 +280,24 @@ public class GameLoader {
 				Creature.Resource info = entity.getComponent(Creature.Resource.class);
 				bus.post(new UpdateEvent.Creature(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			} else if (entity instanceof Item) {
-				Item.Resource info = entity.getComponent(Item.Resource.class);
-				bus.post(new UpdateEvent.Item(uid, info.getID(), map.id, shape.getX(), shape.getY(), shape.getZ()));
+				notifyItem(entity);
+				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
+		}		
+	}
+	
+	private void notifyItem(Entity item) {
+		Item.Resource info = item.getComponent(Item.Resource.class);
+		bus.post(new ComponentUpdateEvent(info));
+		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
+		if (item.hasComponent(Clothing.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
+		}
+		if (item.hasComponent(Armor.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
+		}		
+		if (item.hasComponent(Weapon.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
 		}		
 	}
 	

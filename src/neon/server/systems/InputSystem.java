@@ -31,7 +31,7 @@ import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
-import neon.entity.entities.Player;
+import neon.entity.entities.Creature;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;
@@ -54,7 +54,7 @@ public class InputSystem implements NeonSystem {
 	 */
 	@Subscribe
 	private void move(InputEvent.Move event) throws ResourceException {
-		Player player = (Player) entities.getEntity(0);
+		Creature player = entities.getEntity(0);
 		Stats stats = player.getComponent(Stats.class);
 		
 		if(stats.isActive()) {

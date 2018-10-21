@@ -26,7 +26,7 @@ import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature.Resource;
-import neon.entity.entities.Player;
+import neon.entity.entities.Entity;
 
 /**
  * An event containing updates for the client.
@@ -47,7 +47,7 @@ public abstract class UpdateEvent extends NeonEvent {
 		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
 		public final int swimming;
 
-		public Start(Player player) {
+		public Start(Entity player) {
 			Shape shape = player.getComponent(Shape.class);
 			RCreature creature = player.getComponent(Resource.class).getResource();
 			Info info = player.getComponent(Info.class);
@@ -122,20 +122,20 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Item extends UpdateEvent {
-		public final long uid;
-		public final String id, map;
-		public final int x, y, z;
-		
-		public Item(long uid, String id, String map, int x, int y, int z) {
-			this.uid = uid;
-			this.id = id;
-			this.map = map;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-	}
+//	public static class Item extends UpdateEvent {
+//		public final long uid;
+//		public final String id, map;
+//		public final int x, y, z;
+//		
+//		public Item(long uid, String id, String map, int x, int y, int z) {
+//			this.uid = uid;
+//			this.id = id;
+//			this.map = map;
+//			this.x = x;
+//			this.y = y;
+//			this.z = z;
+//		}
+//	}
 	
 	public static class Remove extends UpdateEvent {
 		public final long uid;

@@ -54,7 +54,6 @@ import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
 import neon.common.resources.RCreature;
-import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -72,7 +71,6 @@ import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
-import neon.entity.entities.Item;
 
 /**
  * 
@@ -187,26 +185,6 @@ public class Client implements Runnable {
 	}
 
 	@Subscribe
-	private void onItemChange(UpdateEvent.Item event) throws ResourceException {
-		long uid = event.uid;
-		RItem resource = resources.getResource("items", event.id);
-
-		components.putComponent(uid, new Item.Resource(uid, resource.id));
-		components.putComponent(uid, new Graphics(uid, resource.glyph, resource.color));
-		components.putComponent(uid, new Shape(uid, event.x, event.y, event.z));
-
-		if (!event.map.isEmpty()) {
-			RMap map = resources.getResource("maps", event.map);
-
-			if (map.getEntities().contains(uid)) {
-				map.moveEntity(uid, event.x, event.y);
-			} else {
-				map.addEntity(uid, event.x, event.y);
-			}
-		}
-	}
-
-	@Subscribe
 	private void onItemPick(UpdateEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 		map.removeEntity(event.uid);
@@ -240,13 +218,15 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void onCreatureMove(UpdateEvent.Move event) throws ResourceException {
+	private void onEntityMove(UpdateEvent.Move event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
 		Shape shape = components.getComponent(event.uid, Shape.class);
 		shape.setPosition(event.x, event.y, event.z);			
 
-		if (event.uid != 0) {
+		if (map.getEntities().contains(event.uid)) {
 			map.moveEntity(event.uid, event.x, event.y);
+		} else {
+			map.addEntity(event.uid, event.x, event.y);
 		}
 	}
 	

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import neon.entity.components.Shape;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
-import neon.entity.entities.Player;
 
 public class EntitySaver {
 	private final ResourceManager resources;
@@ -40,8 +39,8 @@ public class EntitySaver {
 	}
 	
 	Element save(Entity entity) {
-		if (entity instanceof Player) {
-			return savePlayer((Player) entity);
+		if (entity.hasComponent(Info.class)) {
+			return savePlayer(entity);
 		} else if (entity instanceof Creature) {
 			return saveCreature((Creature) entity);
 		} else if (entity instanceof Item) {
@@ -51,7 +50,7 @@ public class EntitySaver {
 		}
 	}
 	
-	private Element savePlayer(Player player) {
+	private Element savePlayer(Entity player) {
 		Element root = new Element("player");
 		Creature.Resource info = player.getComponent(Creature.Resource.class);
 		root.setAttribute("id", info.getResource().id);
@@ -109,7 +108,8 @@ public class EntitySaver {
 			return creature;
 		} else if (root.getName().equals("player")) {
 			RCreature species = resources.getResource("creatures", id);
-			Player player = new Player(root.getAttributeValue("name"), "gender", species);
+			Creature player = new Creature(0, species);
+			player.setComponent(new Info(0, root.getAttributeValue("name"), "gender"));
 			Shape shape = player.getComponent(Shape.class);
 			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
 			shape.setY(Integer.parseInt(root.getAttributeValue("y")));

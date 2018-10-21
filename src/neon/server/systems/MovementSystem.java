@@ -35,7 +35,6 @@ import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
-import neon.entity.entities.Player;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
@@ -69,7 +68,7 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	void move(Player player, Direction direction, RMap map) {
+	void move(Creature player, Direction direction, RMap map) {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();

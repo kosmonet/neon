@@ -48,8 +48,11 @@ import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.entity.components.Armor;
+import neon.entity.components.Clothing;
 import neon.entity.components.Graphics;
 import neon.entity.components.Inventory;
+import neon.entity.components.Weapon;
 import neon.entity.entities.Item;
 import neon.util.GraphicsUtils;
 
@@ -147,17 +150,11 @@ public class InventoryState extends State {
 		
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
-			
-			try {
-				if (inventory.hasEquiped(uid)) {
-					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
-					if (item instanceof RItem.Armor) {
-						RItem.Armor armor = (RItem.Armor) item;
-						rating += armor.rating;
-					}
+
+			if (inventory.hasEquiped(uid)) {
+				if (components.hasComponent(uid, Armor.class)) {
+					rating += components.getComponent(uid, Armor.class).getRating();
 				}
-			} catch (ResourceException e) {
-				logger.severe(e.getMessage());
 			}
 		}
 		
@@ -193,26 +190,26 @@ public class InventoryState extends State {
 					StringBuilder builder = new StringBuilder();
 					builder.append(item.name);
 					
-					if (item instanceof RItem.Clothing) {
-						RItem.Clothing cloth = (RItem.Clothing) item;
+					if (components.hasComponent(newValue, Clothing.class)) {
+						Clothing clothing = components.getComponent(newValue, Clothing.class);
 						builder.append("\n");
 						builder.append("∷");
 						builder.append("\n");
-						builder.append("Slot: " + cloth.slot.toString().toLowerCase());
+						builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
 					}
 					
-					if (item instanceof RItem.Armor) {
-						RItem.Armor armor = (RItem.Armor) item;
+					if (components.hasComponent(newValue, Armor.class)) {
+						Armor armor = components.getComponent(newValue, Armor.class);
 						builder.append("\n");
-						builder.append("Rating: " + armor.rating);						
+						builder.append("Rating: " + armor.getRating());						
 					}
 					
-					if (item instanceof RItem.Weapon) {
-						RItem.Weapon weapon = (RItem.Weapon) item;
+					if (components.hasComponent(newValue, Weapon.class)) {
+						Weapon weapon = components.getComponent(newValue, Weapon.class);
 						builder.append("\n");
 						builder.append("∷");
 						builder.append("\n");
-						builder.append("Damage: " + weapon.damage);						
+						builder.append("Damage: " + weapon.getDamage());						
 					}
 					
 		    		description.update(builder.toString(), graphics);

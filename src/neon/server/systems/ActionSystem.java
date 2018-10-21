@@ -28,7 +28,6 @@ import neon.entity.EntityProvider;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
-import neon.entity.entities.Player;
 
 public class ActionSystem implements NeonSystem {
 	private final EntityProvider entities;
@@ -44,7 +43,7 @@ public class ActionSystem implements NeonSystem {
 		int fraction = config.getMode().equals(GameMode.REAL_TIME) ? 5 : 1;
 
 		// restore the player's action points
-		Player player = entities.getEntity(0);
+		Creature player = entities.getEntity(0);
 		Stats playerStats = player.getComponent(Stats.class);
 		playerStats.restoreAP(fraction);		
 

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,33 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.entity.components;
 
-import neon.common.resources.RCreature;
-import neon.entity.components.Info;
+import neon.entity.Slot;
 
-/**
- * An entity representing the player character.
- * 
- * @author mdriesen
- *
- */
-public class Player extends Creature {
-	/**
-	 * Initializes the player character. No uid is needed, the player 
-	 * character always has uid 0.
-	 * 
-	 * @param name
-	 * @param gender
-	 * @param species
-	 */
-	public Player(String name, String gender, RCreature species) {
-		super(0, species);
-		components.put(Info.class, new Info(uid, name, gender));
+public class Clothing implements Component {
+	private final long uid;
+	private final Slot slot;
+	
+	public Clothing(long uid, Slot slot) {
+		this.uid = uid;
+		this.slot = slot;
 	}
 	
 	@Override
-	public String toString() {
-		return "player";
+	public long getEntity() {
+		return uid;
+	}
+	
+	public Slot getSlot() {
+		return slot;
 	}
 }
