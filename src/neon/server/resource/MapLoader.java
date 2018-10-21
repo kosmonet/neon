@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Shape;
-import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.server.entity.EntityManager;
 
@@ -129,7 +129,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 		for (long uid : map.getEntities()) {
 			String type = "entity";
 			
-			if (tracker.getEntity(uid) instanceof Creature) {
+			if (tracker.getEntity(uid).hasComponent(CreatureInfo.class)) {
 				type = "creature";
 			}
 			

@@ -53,24 +53,18 @@ import neon.common.event.QuitEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
-import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
-import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.entity.Skill;
-import neon.entity.components.Behavior;
 import neon.entity.components.Component;
-import neon.entity.components.Graphics;
-import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
 
 /**
  * 
@@ -115,7 +109,6 @@ public class Client implements Runnable {
 		// add all loaders to the resource manager
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creatures", new CreatureLoader());
-		resources.addLoader("items", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader());
 		resources.addLoader("config", new ConfigurationLoader());
@@ -143,10 +136,10 @@ public class Client implements Runnable {
 		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
 		GameState game = new GameState(ui, bus, components, resources);
 		bus.register(game);
-		InventoryState inventory = new InventoryState(ui, bus, components, resources);
+		InventoryState inventory = new InventoryState(ui, bus, components);
 		MapState map = new MapState(ui, bus, resources);
 		ConversationState conversation = new ConversationState(ui, bus);
-		ContainerState container = new ContainerState(ui, bus, components, resources);
+		ContainerState container = new ContainerState(ui, bus, components);
 		JournalState journal = new JournalState(ui, bus, components);
 		OptionState options = new OptionState(ui, bus);
 		
@@ -184,14 +177,6 @@ public class Client implements Runnable {
 		mainMenu.enter(new TransitionEvent("start"));
 	}
 
-	@Subscribe
-	private void onItemPick(UpdateEvent.Pick event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.map);
-		map.removeEntity(event.uid);
-		Inventory inventory = components.getComponent(0, Inventory.class);
-		inventory.addItem(event.uid);
-	}
-	
 	@Subscribe 
 	private void onComponentUpdate(ComponentUpdateEvent event) throws JsonSyntaxException, ClassNotFoundException {
 		Component component = event.getComponent();
@@ -199,30 +184,16 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
-		long uid = event.uid;
-		RMap map = resources.getResource("maps", event.map);
-		Shape shape = components.getComponent(uid, Shape.class);
-		
-		if (shape != null) {
-			shape.setPosition(event.x, event.y, event.z);
-			map.moveEntity(uid, event.x, event.y);
-		} else {
-			RCreature resource = resources.getResource("creatures", event.id);
-			components.putComponent(uid, new Behavior(uid));
-			components.putComponent(uid, new Creature.Resource(uid, resource));
-			components.putComponent(uid, new Graphics(uid, resource.glyph, resource.color));
-			components.putComponent(uid, new Shape(uid, event.x, event.y, event.z));
-			map.addEntity(uid, event.x, event.y);
-		}
-	}
-	
-	@Subscribe
 	private void onEntityMove(UpdateEvent.Move event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.map);
-		Shape shape = components.getComponent(event.uid, Shape.class);
-		shape.setPosition(event.x, event.y, event.z);			
+		if (components.hasComponent(event.uid, Shape.class)) {
+			Shape shape = components.getComponent(event.uid, Shape.class);
+			shape.setPosition(event.x, event.y, event.z);			
+		} else {
+			Shape shape = new Shape(event.uid, event.x, event.y, event.z);
+			components.putComponent(event.uid, shape);
+		}
 
+		RMap map = resources.getResource("maps", event.map);		
 		if (map.getEntities().contains(event.uid)) {
 			map.moveEntity(event.uid, event.x, event.y);
 		} else {
@@ -237,7 +208,7 @@ public class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void onSkillUpdate(UpdateEvent.SkillUpdate event) throws ResourceException {
+	private void onSkillIncrease(UpdateEvent.SkillUpdate event) throws ResourceException {
 		Skills skills = components.getComponent(event.uid, Skills.class);
 		skills.setSkill(Skill.valueOf(event.skill), event.value);
 		ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);

@@ -44,16 +44,13 @@ import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
-import neon.common.resources.RItem;
 import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 import neon.entity.components.Armor;
 import neon.entity.components.Clothing;
 import neon.entity.components.Graphics;
 import neon.entity.components.Inventory;
+import neon.entity.components.ItemInfo;
 import neon.entity.components.Weapon;
-import neon.entity.entities.Item;
 import neon.util.GraphicsUtils;
 
 public class InventoryState extends State {
@@ -62,7 +59,6 @@ public class InventoryState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
-	private final ResourceManager resources;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, followerList;
@@ -73,11 +69,10 @@ public class InventoryState extends State {
 	private RMap map;
 	private Inventory inventory;
 	
-	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
+	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
-		this.resources = resources;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
@@ -185,37 +180,30 @@ public class InventoryState extends State {
 	    public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
 	    	if (newValue != null) {
 	    		Graphics graphics = components.getComponent(newValue, Graphics.class);
-				try {
-					RItem item = resources.getResource("items", components.getComponent(newValue, Item.Resource.class).getID());
-					StringBuilder builder = new StringBuilder();
-					builder.append(item.name);
-					
-					if (components.hasComponent(newValue, Clothing.class)) {
-						Clothing clothing = components.getComponent(newValue, Clothing.class);
-						builder.append("\n");
-						builder.append("∷");
-						builder.append("\n");
-						builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
-					}
-					
-					if (components.hasComponent(newValue, Armor.class)) {
-						Armor armor = components.getComponent(newValue, Armor.class);
-						builder.append("\n");
-						builder.append("Rating: " + armor.getRating());						
-					}
-					
-					if (components.hasComponent(newValue, Weapon.class)) {
-						Weapon weapon = components.getComponent(newValue, Weapon.class);
-						builder.append("\n");
-						builder.append("∷");
-						builder.append("\n");
-						builder.append("Damage: " + weapon.getDamage());						
-					}
-					
-		    		description.update(builder.toString(), graphics);
-				} catch (ResourceException e) {
-					logger.warning(e.getMessage());
-				}
+	    		ItemInfo info = components.getComponent(newValue, ItemInfo.class);
+	    		StringBuilder builder = new StringBuilder();
+	    		builder.append(info.getName());
+    			builder.append("\n");
+
+	    		if (components.hasComponent(newValue, Clothing.class)) {
+	    			Clothing clothing = components.getComponent(newValue, Clothing.class);
+	    			builder.append("∷\n");
+	    			builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
+	    		}
+
+	    		if (components.hasComponent(newValue, Armor.class)) {
+	    			Armor armor = components.getComponent(newValue, Armor.class);
+	    			builder.append("\n");
+	    			builder.append("Rating: " + armor.getRating());						
+	    		}
+
+	    		if (components.hasComponent(newValue, Weapon.class)) {
+	    			Weapon weapon = components.getComponent(newValue, Weapon.class);
+	    			builder.append("∷\n");
+	    			builder.append("Damage: " + weapon.getDamage());						
+	    		}
+
+	    		description.update(builder.toString(), graphics);
 	    	}
 	    }
 	}
@@ -229,14 +217,10 @@ public class InventoryState extends State {
     			setGraphic(null);
     			setText(null);
     		} else {
-				try {
-					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
-					Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
-	    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
-	    			setText(item.name);
-				} catch (ResourceException e) {
-					logger.warning(e.getMessage());
-				}
+    			ItemInfo info = components.getComponent(uid, ItemInfo.class);
+    			Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
+    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
+    			setText(info.getName());
     		}
     	}
     }

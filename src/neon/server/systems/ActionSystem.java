@@ -51,10 +51,8 @@ public class ActionSystem implements NeonSystem {
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
-			if (entity instanceof Creature) {
-				Creature creature = (Creature) entity;
-				Stats creatureStats = creature.getComponent(Stats.class);
-
+			if (entity.hasComponent(Stats.class)) {
+				Stats creatureStats = entity.getComponent(Stats.class);
 				// reset the creature's action points
 				creatureStats.restoreAP(1);
 			}

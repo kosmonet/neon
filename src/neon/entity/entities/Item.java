@@ -19,34 +19,15 @@
 package neon.entity.entities;
 
 import neon.common.resources.RItem;
-import neon.entity.components.Component;
 import neon.entity.components.Graphics;
+import neon.entity.components.ItemInfo;
 import neon.entity.components.Shape;
 
 public class Item extends Entity {
 	public Item(long uid, RItem item) {
 		super(uid);
 		components.put(Shape.class, new Shape(uid));
-		components.put(Resource.class, new Resource(uid, item.id));
+		components.put(ItemInfo.class, new ItemInfo(uid, item.id, item.name));
 		components.put(Graphics.class, new Graphics(uid, item.glyph, item.color));		
-	}
-	
-	public static class Resource implements Component {
-		private final String id;
-		private final long uid;
-		
-		public Resource(long uid, String id) {
-			this.id = id;
-			this.uid = uid;
-		}
-		
-		@Override
-		public long getEntity() {
-			return uid;
-		}
-		
-		public String getID() {
-			return id;
-		}
 	}
 }

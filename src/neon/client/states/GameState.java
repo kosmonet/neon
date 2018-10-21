@@ -56,12 +56,12 @@ import neon.common.resources.ResourceManager;
 import neon.entity.PlayerMode;
 import neon.entity.Skill;
 import neon.entity.components.Behavior;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
-import neon.entity.components.Info;
+import neon.entity.components.PlayerInfo;
 import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
 import neon.util.Direction;
 
 /**
@@ -145,10 +145,10 @@ public class GameState extends State {
 		
 		components.putComponent(PLAYER_UID, stats);
 		components.putComponent(PLAYER_UID, skills);
-		components.putComponent(PLAYER_UID, new Creature.Resource(PLAYER_UID, species));
+		components.putComponent(PLAYER_UID, new CreatureInfo(PLAYER_UID, species.id, species.name));
 		components.putComponent(PLAYER_UID, new Graphics(PLAYER_UID, "@", species.color));
 		components.putComponent(PLAYER_UID, new Shape(PLAYER_UID, event.x, event.y, event.z));
-		components.putComponent(PLAYER_UID, new Info(PLAYER_UID, event.name, event.gender));
+		components.putComponent(PLAYER_UID, new PlayerInfo(PLAYER_UID, event.name, event.gender));
 		
 		// prepare the scene
 		stack.getChildren().clear();
@@ -168,19 +168,8 @@ public class GameState extends State {
 	}
 	
 	@Subscribe
-	private void onItemChange(UpdateEvent.Pick event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		Platform.runLater(() -> redraw());
-	}
-	
-	@Subscribe
-	private void onCreatureChange(UpdateEvent.Creature event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		Platform.runLater(() -> redraw());
-	}
-	
-	@Subscribe
 	private void onMove(UpdateEvent.Move event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
 		Platform.runLater(() -> redraw());
 	}
 	
@@ -191,7 +180,7 @@ public class GameState extends State {
 	}
 	
 	private void changeMode() {
-		Info record = components.getComponent(PLAYER_UID, Info.class);
+		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
 		case NONE:
 			record.setMode(PlayerMode.AGGRESSION);
@@ -211,7 +200,7 @@ public class GameState extends State {
 	}
 	
 	private void redraw() {
-		Info record = components.getComponent(PLAYER_UID, Info.class);
+		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		modeLabel.setText(record.getMode().toString());
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		
@@ -299,10 +288,10 @@ public class GameState extends State {
 		long bumped = event.getBumped();
 
 		if (bumper == PLAYER_UID) {
-			Info record = components.getComponent(bumper, Info.class);
+			PlayerInfo record = components.getComponent(bumper, PlayerInfo.class);
 			Behavior brain = components.getComponent(bumped, Behavior.class);
 	    	Graphics graphics = components.getComponent(bumped, Graphics.class);
-	    	Creature.Resource resource = components.getComponent(bumped, Creature.Resource.class);
+	    	CreatureInfo resource = components.getComponent(bumped, CreatureInfo.class);
 			
 			switch (record.getMode()) {
 			case NONE:

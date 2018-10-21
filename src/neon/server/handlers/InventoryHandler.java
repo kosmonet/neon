@@ -24,13 +24,14 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
+import neon.entity.components.Clothing;
 import neon.entity.components.Inventory;
 import neon.entity.components.Shape;
+import neon.entity.components.Weapon;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 
@@ -70,34 +71,34 @@ public class InventoryHandler {
 		RMap map = resources.getResource("maps", event.getMap());
 		map.removeEntity(event.getItem());
 		Creature player = entities.getEntity(0);
-		player.getComponent(Inventory.class).addItem(event.getItem());
+		Inventory inventory = player.getComponent(Inventory.class);
+		inventory.addItem(event.getItem());
 
-		Item item = entities.getEntity(event.getItem());
-		bus.post(new UpdateEvent.Pick(item.uid, map.id));
+		bus.post(new UpdateEvent.Remove(event.getItem(), map.id));
+		bus.post(new ComponentUpdateEvent(inventory));
 	}
 	
 	@Subscribe
 	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
 		Creature player = entities.getEntity(0);
 		Item item = entities.getEntity(event.uid);
-		RItem resource = resources.getResource("items", item.getComponent(Item.Resource.class).getID());
 		Inventory inventory = player.getComponent(Inventory.class);
 		
-		if (inventory.getItems().contains(event.uid) && resource instanceof RItem.Clothing) {
-			RItem.Clothing cloth = (RItem.Clothing) resource;
+		if (inventory.getItems().contains(event.uid) && item.hasComponent(Clothing.class)) {
+			Clothing cloth = item.getComponent(Clothing.class);
 			if (inventory.hasEquiped(event.uid)) {
-				inventory.unEquip(cloth.slot);
+				inventory.unEquip(cloth.getSlot());
 			} else {
-				inventory.equip(cloth.slot, event.uid);				
+				inventory.equip(cloth.getSlot(), event.uid);				
 			}
 		}
 		
-		if (inventory.getItems().contains(event.uid) && resource instanceof RItem.Weapon) {
-			RItem.Weapon weapon = (RItem.Weapon) resource;
+		if (inventory.getItems().contains(event.uid) && item.hasComponent(Weapon.class)) {
+			Weapon weapon = item.getComponent(Weapon.class);
 			if (inventory.hasEquiped(event.uid)) {
-				inventory.unEquip(weapon.slot);
+				inventory.unEquip(weapon.getSlot());
 			} else {
-				inventory.equip(weapon.slot, event.uid);				
+				inventory.equip(weapon.getSlot(), event.uid);				
 			}
 		}
 		

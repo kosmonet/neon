@@ -18,14 +18,13 @@
 
 package neon.common.event;
 
-import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.entity.Skill;
-import neon.entity.components.Info;
+import neon.entity.components.CreatureInfo;
+import neon.entity.components.PlayerInfo;
 import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
-import neon.entity.entities.Creature.Resource;
 import neon.entity.entities.Entity;
 
 /**
@@ -49,12 +48,11 @@ public abstract class UpdateEvent extends NeonEvent {
 
 		public Start(Entity player) {
 			Shape shape = player.getComponent(Shape.class);
-			RCreature creature = player.getComponent(Resource.class).getResource();
-			Info info = player.getComponent(Info.class);
+			PlayerInfo info = player.getComponent(PlayerInfo.class);
 			Stats stats = player.getComponent(Stats.class);
 			Skills skills = player.getComponent(Skills.class);
 			
-			id = creature.id;
+			id = player.getComponent(CreatureInfo.class).getResource();
 			name = info.getName();
 			gender = info.getGender();
 			
@@ -87,27 +85,6 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	/**
-	 * An event to signal a creature update.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Creature extends UpdateEvent {
-		public final long uid;
-		public final String id, map;
-		public final int x, y, z;
-		
-		public Creature(long uid, String id, String map, int x, int y, int z) {
-			this.uid = uid;
-			this.id = id;
-			this.map = map;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-	}
-	
 	public static class Move extends UpdateEvent {
 		public final long uid;
 		public final int x, y, z;
@@ -122,36 +99,11 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-//	public static class Item extends UpdateEvent {
-//		public final long uid;
-//		public final String id, map;
-//		public final int x, y, z;
-//		
-//		public Item(long uid, String id, String map, int x, int y, int z) {
-//			this.uid = uid;
-//			this.id = id;
-//			this.map = map;
-//			this.x = x;
-//			this.y = y;
-//			this.z = z;
-//		}
-//	}
-	
 	public static class Remove extends UpdateEvent {
 		public final long uid;
 		public final String map;
 		
 		public Remove(long uid, String map) {
-			this.uid = uid;
-			this.map = map;
-		}
-	}
-	
-	public static class Pick extends UpdateEvent {
-		public final long uid;
-		public final String map;
-		
-		public Pick(long uid, String map) {
 			this.uid = uid;
 			this.map = map;
 		}

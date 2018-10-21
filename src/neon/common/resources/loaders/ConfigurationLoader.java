@@ -51,12 +51,12 @@ public class ConfigurationLoader implements ResourceLoader<Resource> {
 
 	@Override
 	public Element save(Resource resource) {
-		if (resource instanceof CGame) {
-			return saveGame((CGame)resource);
-		} else if (resource instanceof CClient) {
-			return saveClient((CClient)resource);
-		} else if (resource instanceof CServer) {
-			return saveServer((CServer)resource);
+		if (resource.id.equals("game")) {
+			return saveGame((CGame) resource);
+		} else if (resource.id.equals("client")) {
+			return saveClient((CClient) resource);
+		} else if (resource.id.equals("server")) {
+			return saveServer((CServer) resource);
 		} else {
 			throw new IllegalArgumentException("Argument is not a configuration resource");			
 		}

@@ -16,18 +16,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.entity;
+package neon.entity.components;
 
-import neon.common.resources.RItem;
-import neon.entity.components.Weapon;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
+public class ItemInfo implements Component {
+	private final String id, name;
+	private final long uid;
+	
+	public ItemInfo(long uid, String id, String name) {
+		this.id = id;
+		this.uid = uid;
+		this.name = name;
+	}
+	
+	public String getResource() {
+		return id;
+	}
 
-public class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
 	@Override
-	public Entity build(long uid, RItem.Weapon resource) {
-		Item weapon = new Item(uid, resource);
-		weapon.setComponent(new Weapon(uid, resource.damage));
-		return weapon;
+	public long getEntity() {
+		return uid;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

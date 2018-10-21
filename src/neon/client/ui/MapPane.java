@@ -36,7 +36,7 @@ import neon.common.resources.ResourceManager;
 public class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final ResourceManager provider;
+	private final ResourceManager resources;
 	private final Canvas canvas = new Canvas() {
 		@Override
 		public boolean isResizable() {
@@ -44,8 +44,8 @@ public class MapPane extends Pane {
 		}
 	};
 		
-	public MapPane(ResourceManager provider) {
-		this.provider = provider;
+	public MapPane(ResourceManager resources) {
+		this.resources = resources;
 	    canvas.widthProperty().bind(widthProperty());
 	    canvas.heightProperty().bind(heightProperty());
 	    getChildren().add(canvas);
@@ -65,7 +65,7 @@ public class MapPane extends Pane {
 				String id = map.getTerrain().get((int) (x*scale), (int) (y*scale));
 				if(id != null) {
 					try {
-						RTerrain terrain = provider.getResource("terrain", id);
+						RTerrain terrain = resources.getResource("terrain", id);
 						canvas.getGraphicsContext2D().setFill(terrain.getColor());
 						canvas.getGraphicsContext2D().fillRect(x + xOffset, y + yOffset, 1, 1);
 					} catch (ResourceException e) {

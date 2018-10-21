@@ -31,10 +31,12 @@ import neon.common.resources.ResourceManager;
 import neon.entity.Action;
 import neon.entity.EntityProvider;
 import neon.entity.Skill;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Shape;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.entities.Creature;
+import neon.entity.entities.Entity;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
@@ -59,10 +61,6 @@ public class MovementSystem implements NeonSystem {
 		skillHandler = new SkillHandler(bus);
 	}
 	
-	void run() {
-		
-	}
-	
 	/**
 	 * Moves the player on the current map.
 	 * 
@@ -84,7 +82,7 @@ public class MovementSystem implements NeonSystem {
 		// check for collisions with other creatures
 		if (!map.getEntities(x, y).isEmpty()) {
 			for (long uid : map.getEntities(x, y)) {
-				if (entities.getEntity(uid) instanceof Creature) {
+				if (entities.getEntity(uid).hasComponent(CreatureInfo.class)) {
 					bus.post(new CollisionEvent(player.uid, uid));
 					return;
 				}
@@ -104,7 +102,7 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	void move(Creature creature, int x, int y, RMap map) {
+	void move(Entity creature, int x, int y, RMap map) {
 		try {
 			Shape shape = creature.getComponent(Shape.class);
 			move(creature, map, x, y, shape.getZ());
@@ -114,7 +112,7 @@ public class MovementSystem implements NeonSystem {
 		}
 	}
 	
-	private void move(Creature creature, RMap map, int x, int y, int z) throws ResourceException {
+	private void move(Entity creature, RMap map, int x, int y, int z) throws ResourceException {
 		Shape shape = creature.getComponent(Shape.class);
 		Stats stats = creature.getComponent(Stats.class);
 		Skills skills = creature.getComponent(Skills.class);

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,45 +18,27 @@
 
 package neon.entity.components;
 
-import neon.entity.PlayerMode;
-
-/**
- * Component that contains all player-specific information.
- * 
- * @author mdriesen
- *
- */
-public class Info implements Component {
-	private final long uid;
+public class CreatureInfo implements Component {
+	private final String id;
 	private final String name;
-	private final String gender;
+	private final long uid;
 	
-	private PlayerMode mode = PlayerMode.NONE;
-	
-	public Info(long uid, String name, String gender) {
+	public CreatureInfo(long uid, String id, String name) {
+		this.id = id;
 		this.uid = uid;
 		this.name = name;
-		this.gender = gender;
+	}
+	
+	public String getResource() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 	@Override
 	public long getEntity() {
 		return uid;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getGender() {
-		return gender;
-	}
-	
-	public void setMode(PlayerMode mode) {
-		this.mode = mode;
-	}
-	
-	public PlayerMode getMode() {
-		return mode;
 	}
 }

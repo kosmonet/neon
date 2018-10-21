@@ -42,8 +42,8 @@ import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.ConversationEvent;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
-import neon.entity.entities.Creature;
 
 public class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();
@@ -85,10 +85,10 @@ public class ConversationState extends State {
 		logger.finest("entering conversation module");
 		bus.register(this);
     	Graphics graphics = event.getParameter(Graphics.class);
-    	Creature.Resource resource = event.getParameter(Creature.Resource.class);
+    	CreatureInfo info = event.getParameter(CreatureInfo.class);
 		bus.post(new ConversationEvent.Start(PLAYER_UID, graphics.getEntity()));		
-		flow.getChildren().clear();
-		description.update(resource.getResource().name, graphics);
+		flow.getChildren().clear();	
+		description.update(info.getName(), graphics);		
 		ui.showScene(scene);
 	}
 

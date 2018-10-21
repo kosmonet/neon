@@ -57,7 +57,7 @@ public class SystemManager {
 		aiSystem = new AISystem(resources, entities, bus, moveSystem);
 		actionSystem = new ActionSystem(resources, entities);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
-		combatSystem = new CombatSystem(resources, entities, bus);
+		combatSystem = new CombatSystem(entities, bus);
 		
 		// and register them on the event bus
 		bus.register(combatSystem);
@@ -107,6 +107,6 @@ public class SystemManager {
 	private void update() throws ResourceException {
 		actionSystem.run();
 		aiSystem.run();
-		moveSystem.run();
+//		moveSystem.run();
 	}
 }

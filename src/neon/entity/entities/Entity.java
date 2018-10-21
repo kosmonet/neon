@@ -56,7 +56,7 @@ public abstract class Entity {
 	 * @param component
 	 * @return	whether this entity has a component of the given type
 	 */
-	public boolean hasComponent(Class<?> type) {
+	public boolean hasComponent(Class<? extends Component> type) {
 		return components.containsKey(type);
 	}
 	

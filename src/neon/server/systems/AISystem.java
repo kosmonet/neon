@@ -29,9 +29,9 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
+import neon.entity.components.Behavior;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 
 public class AISystem implements NeonSystem {
@@ -48,7 +48,7 @@ public class AISystem implements NeonSystem {
 		this.bus = bus;
 	}
 	
-	private void act(Creature creature, RMap map) {
+	private void act(Entity creature, RMap map) {
 		Stats stats = creature.getComponent(Stats.class);
 		
 		while (stats.isActive()) {
@@ -67,17 +67,16 @@ public class AISystem implements NeonSystem {
 		// get all entities in the player's neighbourhood
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
-			if (entity instanceof Creature) {
-				Creature creature = (Creature) entity;
-				Stats creatureStats = creature.getComponent(Stats.class);
+			if (entity.hasComponent(Behavior.class)) {
+				Stats stats = entity.getComponent(Stats.class);
 
 				// let the creature act
-				if(creatureStats.isActive()) {
-					act(creature, map);
+				if (stats.isActive()) {
+					act(entity, map);
 				}
 				
 				// let the client know that an entity has moved
-				Shape shape = creature.getComponent(Shape.class);
+				Shape shape = entity.getComponent(Shape.class);
 				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		

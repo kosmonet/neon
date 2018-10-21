@@ -20,6 +20,7 @@ package neon.client.ui;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,10 +29,12 @@ import neon.client.ComponentManager;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.entity.components.Graphics;
+import neon.entity.components.ItemInfo;
 import neon.entity.components.Shape;
-import neon.entity.entities.Item;
 
 public class ClientRenderer implements EntityRenderer<Long> {
+	private static final Logger logger = Logger.getGlobal();
+	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
 	private final ComponentManager components;
@@ -51,7 +54,7 @@ public class ClientRenderer implements EntityRenderer<Long> {
 			gc.clearRect(scale*(shape.getX() - xmin) + 1, scale*(shape.getY() - ymin) + 1, scale - 1, scale - 1);
 			gc.drawImage(image, scale*(shape.getX() - xmin), scale*(shape.getY() - ymin));
 		} catch (NullPointerException e) {
-			System.out.println("entity niet gevonden: " + uid);
+			logger.severe("could not render entity " + uid);
 		}
 	}
 
@@ -72,7 +75,7 @@ public class ClientRenderer implements EntityRenderer<Long> {
 			if (one.equals(two)) {
 				return 0;
 			} else {
-				return (components.getComponent(two, Item.Resource.class) != null) ? 1 : -1;
+				return components.hasComponent(two, ItemInfo.class) ? 1 : -1;
 			}
 		}		
 	}

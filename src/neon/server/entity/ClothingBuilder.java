@@ -19,12 +19,15 @@
 package neon.server.entity;
 
 import neon.common.resources.RItem;
+import neon.entity.components.Clothing;
 import neon.entity.entities.Entity;
 import neon.entity.entities.Item;
 
 public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	@Override
 	public Entity build(long uid, RItem.Clothing resource) {
-		return new Item(uid, resource);
+		Item cloth = new Item(uid, resource);
+		cloth.setComponent(new Clothing(uid, resource.slot));
+		return cloth;
 	}
 }

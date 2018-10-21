@@ -24,31 +24,27 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.CombatEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.TimerEvent;
-import neon.common.resources.RItem;
-import neon.common.resources.Resource;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 import neon.entity.EntityProvider;
 import neon.entity.Slot;
+import neon.entity.components.Armor;
 import neon.entity.components.Inventory;
 import neon.entity.components.Stats;
+import neon.entity.components.Weapon;
 import neon.entity.entities.Creature;
 import neon.entity.entities.Item;
 import neon.util.Dice;
 
 public class CombatSystem implements NeonSystem {
 	private final EntityProvider entities;
-	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public CombatSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	public CombatSystem(EntityProvider entities, EventBus bus) {
 		this.entities = entities;
-		this.resources = resources;
 		this.bus = bus;
 	}
 	
 	@Subscribe
-	private void fight(CombatEvent.Start event) throws ResourceException {
+	private void fight(CombatEvent.Start event) {
 		Creature attacker = entities.getEntity(event.attacker);
 		Creature defender = entities.getEntity(event.defender);
 		
@@ -63,35 +59,29 @@ public class CombatSystem implements NeonSystem {
 	@Override
 	public void onTimerTick(TimerEvent tick) {}
 	
-	private int getDamage(Inventory inventory) throws ResourceException {
+	private int getDamage(Inventory inventory) {
 		int damage = 0;
-		
+
 		if (inventory.hasEquiped(Slot.WEAPON)) {
 			Item item = entities.getEntity(inventory.getEquipedItem(Slot.WEAPON));
-			String id = item.getComponent(Item.Resource.class).getID();
-			Resource resource = resources.getResource(id);
-			if (resource instanceof RItem.Weapon) {
-				RItem.Weapon weapon = (RItem.Weapon) resource;
-				damage = Dice.roll(weapon.damage);
+			if (item.hasComponent(Weapon.class)) {
+				damage = Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
 		}
-		
+
 		return damage;
 	}
-	
-	private int getArmor(Inventory inventory) throws ResourceException {
+
+	private int getArmor(Inventory inventory) {
 		int AC = 0;
-		
+
 		for (long uid : inventory.getEquipedItems()) {
 			Item item = entities.getEntity(uid);
-			String id = item.getComponent(Item.Resource.class).getID();
-			Resource resource = resources.getResource(id);
-			if (resource instanceof RItem.Armor) {
-				RItem.Armor armor = (RItem.Armor) resource;
-				AC += armor.rating;
+			if (item.hasComponent(Armor.class)) {
+				AC += item.getComponent(Armor.class).getRating();
 			}
 		}
-		
+
 		return AC;
 	}
 }

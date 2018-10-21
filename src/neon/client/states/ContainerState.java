@@ -43,14 +43,11 @@ import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
-import neon.common.resources.RItem;
 import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 import neon.entity.components.Graphics;
 import neon.entity.components.Inventory;
+import neon.entity.components.ItemInfo;
 import neon.entity.components.Shape;
-import neon.entity.entities.Item;
 import neon.util.GraphicsUtils;
 
 /**
@@ -66,7 +63,6 @@ public class ContainerState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
-	private final ResourceManager resources;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, containerList;
@@ -76,11 +72,10 @@ public class ContainerState extends State {
 	private RMap map;
 	private Inventory inventory;
 	
-	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
+	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
-		this.resources = resources;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
 		loader.setController(this);
@@ -180,13 +175,9 @@ public class ContainerState extends State {
 	}
 	
 	private void updateDescription(long uid) {
-    	Graphics graphics = components.getComponent(uid, Graphics.class);
-		try {
-			RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
-    		description.update(item.name, graphics);
-		} catch (ResourceException e) {
-			logger.warning(e.getMessage());
-		}
+		Graphics graphics = components.getComponent(uid, Graphics.class);
+		ItemInfo info = components.getComponent(uid, ItemInfo.class);
+		description.update(info.getName(), graphics);
 	}
 	
 	/**
@@ -227,22 +218,18 @@ public class ContainerState extends State {
 		}
 	}
 	
-    private class ItemCell extends ListCell<Long> {
-    	@Override
-    	public void updateItem(Long uid, boolean empty) {
-    		super.updateItem(uid, empty);
-    		if (empty || uid == null) {
-    			setText(null);
-    		} else {
-				try {
-					RItem item = resources.getResource("items", components.getComponent(uid, Item.Resource.class).getID());
-					Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
-	    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
-	    			setText(item.name);
-				} catch (ResourceException e) {
-					logger.warning(e.getMessage());
-				}
-    		}
-    	}
-    }
+	private class ItemCell extends ListCell<Long> {
+		@Override
+		public void updateItem(Long uid, boolean empty) {
+			super.updateItem(uid, empty);
+			if (empty || uid == null) {
+				setText(null);
+			} else {
+				ItemInfo info = components.getComponent(uid, ItemInfo.class);
+				Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
+				setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
+				setText(info.getName());
+			}
+		}
+	}
 }

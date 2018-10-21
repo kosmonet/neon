@@ -53,16 +53,17 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.entity.components.Inventory;
+import neon.entity.components.ItemInfo;
 import neon.entity.components.Armor;
+import neon.entity.components.Behavior;
 import neon.entity.components.Clothing;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
-import neon.entity.components.Info;
+import neon.entity.components.PlayerInfo;
 import neon.entity.components.Shape;
 import neon.entity.components.Stats;
 import neon.entity.components.Weapon;
-import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 import neon.server.entity.EntityManager;
 
 /**
@@ -117,7 +118,7 @@ public class GameLoader {
 			// the player character
 			RCreature species = resources.getResource("creatures", event.getSpecies());
 			player = entities.createEntity(0, species);
-			player.setComponent(new Info(0, event.getName(), event.getGender()));
+			player.setComponent(new PlayerInfo(0, event.getName(), event.getGender()));
 			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 
 			Stats stats = player.getComponent(Stats.class);
@@ -276,19 +277,29 @@ public class GameLoader {
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
 			Shape shape = entity.getComponent(Shape.class);
-			if (entity instanceof Creature) {
-				Creature.Resource info = entity.getComponent(Creature.Resource.class);
-				bus.post(new UpdateEvent.Creature(uid, info.getResource().id, map.id, shape.getX(), shape.getY(), shape.getZ()));
-			} else if (entity instanceof Item) {
+			if (entity.hasComponent(CreatureInfo.class)) {
+				notifyCreature(entity);
+				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			} else if (entity.hasComponent(ItemInfo.class)) {
 				notifyItem(entity);
 				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
 	}
 	
+	private void notifyCreature(Entity creature) {
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
+	}
+	
+	/**
+	 * Notifies the client of a new {@code Item}.
+	 * 
+	 * @param item
+	 */
 	private void notifyItem(Entity item) {
-		Item.Resource info = item.getComponent(Item.Resource.class);
-		bus.post(new ComponentUpdateEvent(info));
+		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
 		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
 		if (item.hasComponent(Clothing.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
@@ -327,7 +338,7 @@ public class GameLoader {
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder
-		Info record = player.getComponent(Info.class);
+		PlayerInfo record = player.getComponent(PlayerInfo.class);
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
 		// and request JavaFX to quit
 		bus.post(new QuitEvent());

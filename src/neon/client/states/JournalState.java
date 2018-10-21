@@ -34,11 +34,11 @@ import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.resources.RCreature;
 import neon.entity.Skill;
+import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
-import neon.entity.components.Info;
+import neon.entity.components.PlayerInfo;
 import neon.entity.components.Skills;
 import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
 
 /**
  * 
@@ -82,14 +82,14 @@ public class JournalState extends State {
 		logger.finest("entering journal state");
 		
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		Info info = components.getComponent(PLAYER_UID, Info.class);
+		PlayerInfo playerInfo = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		Graphics graphics = components.getComponent(PLAYER_UID, Graphics.class);
-		Creature.Resource resource = components.getComponent(PLAYER_UID, Creature.Resource.class);
+		CreatureInfo creatureInfo = components.getComponent(PLAYER_UID, CreatureInfo.class);
 		Skills skills = components.getComponent(PLAYER_UID, Skills.class);
-		
-		description.update(resource.getResource().name, graphics);
+	
+		description.update(creatureInfo.getName(), graphics);
     	RCreature species = stats.getSpecies();
-    	infoLabel.setText(info.getName() + ", " + info.getGender() + " " + species.name);
+    	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
     	speedLabel.setText("Speed: " + species.speed);
     	levelLabel.setText("Level " + stats.getLevel());
     	
