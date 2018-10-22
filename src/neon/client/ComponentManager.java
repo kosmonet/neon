@@ -30,9 +30,8 @@ public class ComponentManager {
 		components.put(uid, component.getClass(), component);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public <T extends Component> T getComponent(long uid, Class<T> type) {
-		return (T) components.get(uid, type);
+		return type.cast(components.get(uid, type));
 	}
 	
 	public <T extends Component> boolean hasComponent(long uid, Class<T> type) {

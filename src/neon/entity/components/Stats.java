@@ -22,8 +22,8 @@ import neon.common.resources.RCreature;
 import neon.entity.Action;
 
 public class Stats implements Component {
-	private final RCreature species;
 	private final long uid;
+	private final int speed;
 	
 	private double AP;	// action points
 	private int level = 1;
@@ -33,8 +33,8 @@ public class Stats implements Component {
 	private int strength = 10, constitution = 10, dexterity = 10, wisdom = 10, intelligence = 10, charisma = 10;
 	
 	public Stats(long uid, RCreature species) {
-		this.species = species;
 		this.uid = uid;
+		this.speed = species.speed;
 		AP = species.speed;
 	}
 	
@@ -64,7 +64,7 @@ public class Stats implements Component {
 	 * Restores a part of the action points equal to the creature's speed.
 	 */
 	public void restoreAP() {
-		AP = Math.min(species.speed, AP + species.speed);
+		AP = Math.min(speed, AP + speed);
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class Stats implements Component {
 	 * @param fraction
 	 */
 	public void restoreAP(int fraction) {
-		AP = Math.min(species.speed, AP + species.speed/fraction);
+		AP = Math.min(speed, AP + speed/fraction);
 	}
 	
 	public int getBaseInt() {
@@ -153,10 +153,10 @@ public class Stats implements Component {
 		this.level = level;
 	}
 	
-	public RCreature getSpecies() {
-		return species;
+	public int getSpeed() {
+		return speed;
 	}
-
+	
 	@Override
 	public long getEntity() {
 		return uid;

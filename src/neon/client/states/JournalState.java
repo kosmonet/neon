@@ -32,7 +32,6 @@ import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.common.resources.RCreature;
 import neon.entity.Skill;
 import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
@@ -88,9 +87,8 @@ public class JournalState extends State {
 		Skills skills = components.getComponent(PLAYER_UID, Skills.class);
 	
 		description.update(creatureInfo.getName(), graphics);
-    	RCreature species = stats.getSpecies();
     	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
-    	speedLabel.setText("Speed: " + species.speed);
+    	speedLabel.setText("Speed: " + stats.getSpeed());
     	levelLabel.setText("Level " + stats.getLevel());
     	
     	strengthLabel.setText("Strength: " + stats.getBaseStr());

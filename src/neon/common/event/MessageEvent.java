@@ -19,7 +19,7 @@
 package neon.common.event;
 
 /**
- * A {@code ClientEvent} to transmit a message that should be shown by the 
+ * An event to transmit a message that should be shown by the 
  * client in a dialog window.
  * 
  * @author mdriesen

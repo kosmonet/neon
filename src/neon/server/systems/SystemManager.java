@@ -72,12 +72,12 @@ public class SystemManager {
 	}
 	
 	@Subscribe
-	private void onPause(NeonEvent.Pause event) throws ResourceException {
+	private void onPause(NeonEvent.Pause event) {
 		config.setMode(GameMode.TURN_BASED);
 	}
 	
 	@Subscribe
-	private void onUnpause(NeonEvent.Unpause event) throws ResourceException {
+	private void onUnpause(NeonEvent.Unpause event) {
 		config.setMode(GameMode.REAL_TIME);
 	}
 	

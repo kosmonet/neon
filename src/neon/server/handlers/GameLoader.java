@@ -61,8 +61,10 @@ import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
 import neon.entity.components.PlayerInfo;
 import neon.entity.components.Shape;
+import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.entity.components.Weapon;
+import neon.entity.entities.Creature;
 import neon.entity.entities.Entity;
 import neon.server.entity.EntityManager;
 
@@ -261,18 +263,12 @@ public class GameLoader {
 	 */
 	private void notifyClient(RMap map) throws ResourceException {
 		// tell the client to start loading the map
-		Entity player = entities.getEntity(0);
-		bus.post(new UpdateEvent.Start(player));
+		Creature player = entities.getEntity(0);
+		bus.post(new UpdateEvent.Start());		
+		notifyPlayer(player);
 
 		// then send the map
 		bus.post(new UpdateEvent.Map(map));
-
-		// then everything else
-		Inventory inventory = player.getComponent(Inventory.class);
-		for (long uid : inventory.getItems()) {
-			notifyItem(entities.getEntity(uid));
-		}
-		bus.post(new ComponentUpdateEvent(inventory));
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
@@ -285,6 +281,22 @@ public class GameLoader {
 				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
+	}
+	
+	private void notifyPlayer(Creature player) {
+		// then everything else
+		Inventory inventory = player.getComponent(Inventory.class);
+		for (long uid : inventory.getItems()) {
+			notifyItem(entities.getEntity(uid));
+		}
+		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
+		
+		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
 	}
 	
 	private void notifyCreature(Entity creature) {

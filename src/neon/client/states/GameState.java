@@ -49,18 +49,15 @@ import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
-import neon.common.resources.RCreature;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.entity.PlayerMode;
-import neon.entity.Skill;
 import neon.entity.components.Behavior;
 import neon.entity.components.CreatureInfo;
 import neon.entity.components.Graphics;
 import neon.entity.components.PlayerInfo;
 import neon.entity.components.Shape;
-import neon.entity.components.Skills;
 import neon.entity.components.Stats;
 import neon.util.Direction;
 
@@ -131,25 +128,6 @@ public class GameState extends State {
 	
 	@Subscribe
 	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
-		// prepare the player
-		RCreature species = resources.getResource("creatures", event.id);
-		Stats stats = new Stats(PLAYER_UID, species);
-		stats.setBaseCha(event.charisma);
-		stats.setBaseCon(event.constitution);
-		stats.setBaseDex(event.dexterity);
-		stats.setBaseInt(event.intelligence);
-		stats.setBaseStr(event.strength);
-		stats.setBaseWis(event.wisdom);
-		Skills skills = new Skills(PLAYER_UID);
-		skills.setSkill(Skill.SWIMMING, event.swimming);
-		
-		components.putComponent(PLAYER_UID, stats);
-		components.putComponent(PLAYER_UID, skills);
-		components.putComponent(PLAYER_UID, new CreatureInfo(PLAYER_UID, species.id, species.name));
-		components.putComponent(PLAYER_UID, new Graphics(PLAYER_UID, "@", species.color));
-		components.putComponent(PLAYER_UID, new Shape(PLAYER_UID, event.x, event.y, event.z));
-		components.putComponent(PLAYER_UID, new PlayerInfo(PLAYER_UID, event.name, event.gender));
-		
 		// prepare the scene
 		stack.getChildren().clear();
 		renderPane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());

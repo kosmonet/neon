@@ -19,13 +19,6 @@
 package neon.common.event;
 
 import neon.common.resources.RMap;
-import neon.entity.Skill;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.PlayerInfo;
-import neon.entity.components.Shape;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
-import neon.entity.entities.Entity;
 
 /**
  * An event containing updates for the client.
@@ -40,36 +33,7 @@ public abstract class UpdateEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Start extends UpdateEvent {
-		public final String id, name, gender;
-		public final int x, y, z;
-		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
-		public final int swimming;
-
-		public Start(Entity player) {
-			Shape shape = player.getComponent(Shape.class);
-			PlayerInfo info = player.getComponent(PlayerInfo.class);
-			Stats stats = player.getComponent(Stats.class);
-			Skills skills = player.getComponent(Skills.class);
-			
-			id = player.getComponent(CreatureInfo.class).getResource();
-			name = info.getName();
-			gender = info.getGender();
-			
-			x = shape.getX();
-			y = shape.getY();
-			z = shape.getZ();
-			
-			strength =  stats.getBaseStr();
-			constitution = stats.getBaseCon();
-			dexterity = stats.getBaseDex();
-			intelligence = stats.getBaseInt();
-			wisdom = stats.getBaseWis();
-			charisma = stats.getBaseCha();
-			
-			swimming = (int) skills.getSkill(Skill.SWIMMING);
-		}	
-	}
+	public static class Start extends UpdateEvent {}
 	
 	/**
 	 * An event to indicate a change of map.
