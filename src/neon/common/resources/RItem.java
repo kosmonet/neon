@@ -19,7 +19,7 @@
 package neon.common.resources;
 
 import javafx.scene.paint.Color;
-import neon.entity.Slot;
+import neon.common.entity.Slot;
 
 /**
  * An item resource.

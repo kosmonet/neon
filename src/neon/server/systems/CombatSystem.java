@@ -21,17 +21,17 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.Slot;
+import neon.common.entity.components.Armor;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Stats;
+import neon.common.entity.components.Weapon;
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Item;
 import neon.common.event.CombatEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.TimerEvent;
-import neon.entity.EntityProvider;
-import neon.entity.Slot;
-import neon.entity.components.Armor;
-import neon.entity.components.Inventory;
-import neon.entity.components.Stats;
-import neon.entity.components.Weapon;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Item;
 import neon.util.Dice;
 
 public class CombatSystem implements NeonSystem {

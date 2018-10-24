@@ -22,17 +22,17 @@ import java.util.Random;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.components.Behavior;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Stats;
+import neon.common.entity.entities.Entity;
 import neon.common.event.TimerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityProvider;
-import neon.entity.components.Behavior;
-import neon.entity.components.Shape;
-import neon.entity.components.Stats;
-import neon.entity.entities.Entity;
 
 public class AISystem implements NeonSystem {
 	private final Random random = new Random();

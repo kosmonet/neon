@@ -21,9 +21,8 @@ package neon.common.resources.loaders;
 import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
-
+import neon.common.entity.Slot;
 import neon.common.resources.RItem;
-import neon.entity.Slot;
 
 /**
  * A resource loader specifically for items.

@@ -25,6 +25,9 @@ import java.util.logging.Logger;
 
 import org.jdom2.Element;
 
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Shape;
+import neon.common.entity.entities.Entity;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
@@ -32,9 +35,6 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Shape;
-import neon.entity.entities.Entity;
 import neon.server.entity.EntityManager;
 
 /**

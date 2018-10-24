@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,21 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity;
 
-public class Behavior implements Component {
-	private final long uid;
-	
-	public Behavior(long uid) {
-		this.uid = uid;
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public boolean isFriendly(long uid) {
-		return true;
-	}
+public enum Slot {
+	HEAD, EYES, NECK, SHIRT, ARMOR, BELT, BACK, ARMS, HANDS, FEET, RING_LEFT, RING_RIGHT, WEAPON;
 }

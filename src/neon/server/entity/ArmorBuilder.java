@@ -18,11 +18,11 @@
 
 package neon.server.entity;
 
+import neon.common.entity.components.Armor;
+import neon.common.entity.components.Clothing;
+import neon.common.entity.entities.Entity;
+import neon.common.entity.entities.Item;
 import neon.common.resources.RItem;
-import neon.entity.components.Armor;
-import neon.entity.components.Clothing;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 
 public class ArmorBuilder implements EntityBuilder<RItem.Armor> {
 	@Override

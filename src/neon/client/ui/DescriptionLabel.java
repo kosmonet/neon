@@ -23,9 +23,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.TextAlignment;
-
+import neon.common.entity.components.Graphics;
 import neon.common.graphics.TextureFactory;
-import neon.entity.components.Graphics;
 
 /**
  * A custom label used to show item descriptions in the inventory module.

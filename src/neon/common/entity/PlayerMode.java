@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2017 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,29 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity;
 
-import neon.entity.Slot;
+public enum PlayerMode {
+	STEALTH("sneaky"), AGGRESSION("aggressive"), NONE("normal");
 
-public class Weapon implements Component {
-	private final long uid;
-	private final String damage;
+	private String name;
 	
-	public Weapon(long uid, String damage) {
-		this.uid = uid;
-		this.damage = damage;
+	private PlayerMode(String name) {
+		this.name = name;
 	}
 	
 	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public String getDamage() {
-		return damage;
-	}
-	
-	public Slot getSlot() {
-		return Slot.WEAPON;
+	public String toString() {
+		return name;
 	}
 }

@@ -18,16 +18,16 @@
 
 package neon.server.systems;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.components.Stats;
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Entity;
 import neon.common.event.TimerEvent;
 import neon.common.resources.CGame;
 import neon.common.resources.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityProvider;
-import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
 
 public class ActionSystem implements NeonSystem {
 	private final EntityProvider entities;

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2017 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,28 +16,21 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity.components;
 
-public class ItemInfo implements Component {
-	private final String id, name;
+public class Behavior implements Component {
 	private final long uid;
 	
-	public ItemInfo(long uid, String id, String name) {
-		this.id = id;
+	public Behavior(long uid) {
 		this.uid = uid;
-		this.name = name;
 	}
 	
-	public String getResource() {
-		return id;
-	}
-
 	@Override
 	public long getEntity() {
 		return uid;
 	}
 	
-	public String getName() {
-		return name;
+	public boolean isFriendly(long uid) {
+		return true;
 	}
 }

@@ -16,12 +16,12 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity.components;
 
-public class Lock implements Component {
+public class Trap implements Component {
 	private final long uid;
 	
-	public Lock(long uid) {
+	public Trap(long uid) {
 		this.uid = uid;
 	}
 	

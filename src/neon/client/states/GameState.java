@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -41,6 +42,13 @@ import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.ClientRenderer;
 import neon.client.ui.UserInterface;
+import neon.common.entity.PlayerMode;
+import neon.common.entity.components.Behavior;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.PlayerInfo;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Stats;
 import neon.common.event.CollisionEvent;
 import neon.common.event.CombatEvent;
 import neon.common.event.InputEvent;
@@ -52,13 +60,6 @@ import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.PlayerMode;
-import neon.entity.components.Behavior;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Graphics;
-import neon.entity.components.PlayerInfo;
-import neon.entity.components.Shape;
-import neon.entity.components.Stats;
 import neon.util.Direction;
 
 /**
@@ -85,6 +86,8 @@ public class GameState extends State {
 	private int scale = 20;
 	private RMap map;
 	private boolean paused = true;
+	private boolean casting = false;
+	private long pointer;
 	
 	/**
 	 * Initializes a new game module.
@@ -124,6 +127,7 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
 	}
 	
 	@Subscribe
@@ -174,7 +178,48 @@ public class GameState extends State {
 	}
 	
 	private void move(Direction direction) {
-		bus.post(new InputEvent.Move(direction, map.id));
+		if (!casting) {
+			bus.post(new InputEvent.Move(direction, map.id));
+		} else {
+			Shape shape = components.getComponent(pointer, Shape.class);
+			switch (direction) {
+			case LEFT: 
+				shape.setX(Math.max(0, shape.getX() - 1)); 
+				break;
+			case RIGHT: 
+				shape.setX(Math.min(map.getWidth(), shape.getX() + 1)); 
+				break;
+			case UP: 
+				shape.setY(Math.max(0, shape.getY() - 1)); 
+				break;
+			case DOWN: 
+				shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
+				break;
+			}
+			redraw();
+		}
+	}
+	
+	private void cast() {
+		if (!casting) {
+			System.out.println("braobel");
+			pointer = components.getFreeUID();
+			Shape player = components.getComponent(0, Shape.class);
+			Shape shape = new Shape(pointer, player.getX(), player.getY(), player.getZ());
+			Graphics graphics = new Graphics(pointer, "X", Color.WHITE);
+			components.putComponent(pointer, shape);
+			components.putComponent(pointer, graphics);
+			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
+			entities.add(pointer);
+			renderPane.updateMap(entities);
+			redraw();
+			casting = true;
+		} else {
+			components.removeEntity(pointer);
+			renderPane.updateMap(map.getEntities());
+			redraw();
+			casting = false;
+		}
 	}
 	
 	private void redraw() {

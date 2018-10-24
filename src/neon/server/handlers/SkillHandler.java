@@ -20,10 +20,10 @@ package neon.server.handlers;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.entity.Skill;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
 import neon.common.event.UpdateEvent;
-import neon.entity.Skill;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
 
 public class SkillHandler {
 	private final static long PLAYER_UID = 0;

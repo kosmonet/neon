@@ -18,8 +18,8 @@
 
 package neon.editor.resource;
 
-import neon.entity.components.Shape;
-import neon.entity.entities.Entity;
+import neon.common.entity.components.Shape;
+import neon.common.entity.entities.Entity;
 
 public abstract class REntity extends Entity {
 	public final Shape shape;

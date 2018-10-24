@@ -22,21 +22,21 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.entity.Action;
+import neon.common.entity.EntityProvider;
+import neon.common.entity.Skill;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Entity;
 import neon.common.event.CollisionEvent;
 import neon.common.event.TimerEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.Action;
-import neon.entity.EntityProvider;
-import neon.entity.Skill;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Shape;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
@@ -73,10 +73,18 @@ public class MovementSystem implements NeonSystem {
 		int z = shape.getZ();
 
 		switch (direction) {
-		case LEFT: x = Math.max(0, x - 1); break;
-		case RIGHT: x = Math.min(map.getWidth(), x + 1); break;
-		case UP: y = Math.max(0, y - 1); break;
-		case DOWN: y = Math.min(map.getHeight(), y + 1); break;
+		case LEFT: 
+			x = Math.max(0, x - 1); 
+			break;
+		case RIGHT: 
+			x = Math.min(map.getWidth(), x + 1); 
+			break;
+		case UP: 
+			y = Math.max(0, y - 1); 
+			break;
+		case DOWN: 
+			y = Math.min(map.getHeight(), y + 1); 
+			break;
 		}
 		
 		// check for collisions with other creatures

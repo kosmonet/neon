@@ -16,14 +16,31 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity;
+package neon.common.entity.components;
 
-public enum Action {
-	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10);
+import javafx.scene.paint.Color;
+
+public class Graphics implements Component {
+	private final long uid;
+	private final String glyph;
+	private final Color color;
 	
-	public final int points;
+	public Graphics(long uid, String glyph, Color color) {
+		this.uid = uid;
+		this.glyph = glyph;
+		this.color = color;
+	}
 	
-	private Action(int points) {
-		this.points = points;
+	@Override
+	public long getEntity() {
+		return uid;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public String getGlyph() {
+		return glyph;
 	}
 }

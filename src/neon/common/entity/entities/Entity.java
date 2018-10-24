@@ -16,12 +16,12 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.common.entity.entities;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
 
-import neon.entity.components.Component;
+import neon.common.entity.components.Component;
 
 /**
  * An entity represents a set of components.

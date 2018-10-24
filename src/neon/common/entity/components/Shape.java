@@ -16,19 +16,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity.components;
 
-import javafx.scene.paint.Color;
-
-public class Graphics implements Component {
+/**
+ * A component that represents the shape (including position) of an entity.
+ * 
+ * @author mdriesen
+ *
+ */
+public class Shape implements Component {
 	private final long uid;
-	private final String glyph;
-	private final Color color;
 	
-	public Graphics(long uid, String glyph, Color color) {
+	private int x, y, z;
+	
+	public Shape(long uid) {
 		this.uid = uid;
-		this.glyph = glyph;
-		this.color = color;
+	}
+	
+	public Shape(long uid, int x, int y, int z) {
+		this.uid = uid;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 	
 	@Override
@@ -36,11 +45,39 @@ public class Graphics implements Component {
 		return uid;
 	}
 	
-	public Color getColor() {
-		return color;
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public int getZ() {
+		return z;
+	}
+	
+	/**
+	 * Sets the position of the entity this component belongs to.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setPosition(int x, int y, int z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
-	public String getGlyph() {
-		return glyph;
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public void setZ(int z) {
+		this.z = z;
 	}
 }

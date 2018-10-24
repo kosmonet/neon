@@ -16,16 +16,16 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.entities;
+package neon.common.entity.entities;
 
+import neon.common.entity.components.Behavior;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
 import neon.common.resources.RCreature;
-import neon.entity.components.Behavior;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Graphics;
-import neon.entity.components.Inventory;
-import neon.entity.components.Shape;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
 
 public class Creature extends Entity {
 	public Creature(long uid, RCreature species) {

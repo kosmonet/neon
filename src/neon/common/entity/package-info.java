@@ -21,4 +21,4 @@
  * @author mdriesen
  *
  */
-package neon.entity;
+package neon.common.entity;

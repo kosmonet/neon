@@ -32,12 +32,12 @@ import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.entity.Skill;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Graphics;
-import neon.entity.components.PlayerInfo;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
+import neon.common.entity.Skill;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.PlayerInfo;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
 
 /**
  * 

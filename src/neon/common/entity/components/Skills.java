@@ -16,11 +16,11 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity.components;
 
 import java.util.EnumMap;
 
-import neon.entity.Skill;
+import neon.common.entity.Skill;
 
 public class Skills implements Component {
 	private final long uid;

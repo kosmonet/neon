@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2017 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,25 +16,14 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity;
 
-import neon.entity.Slot;
-
-public class Clothing implements Component {
-	private final long uid;
-	private final Slot slot;
+public enum Action {
+	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10);
 	
-	public Clothing(long uid, Slot slot) {
-		this.uid = uid;
-		this.slot = slot;
-	}
+	public final int points;
 	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public Slot getSlot() {
-		return slot;
+	private Action(int points) {
+		this.points = points;
 	}
 }

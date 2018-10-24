@@ -41,9 +41,9 @@ import javafx.scene.text.TextFlow;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Graphics;
 import neon.common.event.ConversationEvent;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Graphics;
 
 public class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();

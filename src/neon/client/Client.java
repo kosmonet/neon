@@ -46,6 +46,11 @@ import neon.client.states.OptionState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
+import neon.common.entity.Skill;
+import neon.common.entity.components.Component;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.NeonEvent;
@@ -60,11 +65,6 @@ import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.TerrainLoader;
-import neon.entity.Skill;
-import neon.entity.components.Component;
-import neon.entity.components.Shape;
-import neon.entity.components.Skills;
-import neon.entity.components.Stats;
 
 /**
  * 

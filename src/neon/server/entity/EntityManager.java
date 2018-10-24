@@ -30,12 +30,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.entities.Entity;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
-import neon.entity.EntityProvider;
-import neon.entity.entities.Entity;
 
 /**
  * This class manages all loaded entities in the current game (and by extension

@@ -42,15 +42,15 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
+import neon.common.entity.components.Armor;
+import neon.common.entity.components.Clothing;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Weapon;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
-import neon.entity.components.Armor;
-import neon.entity.components.Clothing;
-import neon.entity.components.Graphics;
-import neon.entity.components.Inventory;
-import neon.entity.components.ItemInfo;
-import neon.entity.components.Weapon;
 import neon.util.GraphicsUtils;
 
 public class InventoryState extends State {

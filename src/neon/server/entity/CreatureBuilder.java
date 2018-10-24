@@ -18,9 +18,9 @@
 
 package neon.server.entity;
 
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Entity;
 import neon.common.resources.RCreature;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
 
 public class CreatureBuilder implements EntityBuilder<RCreature> {
 	@Override

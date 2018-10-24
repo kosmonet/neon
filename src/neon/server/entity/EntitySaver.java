@@ -20,18 +20,18 @@ package neon.server.entity;
 
 import org.jdom2.Element;
 
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.PlayerInfo;
+import neon.common.entity.components.Shape;
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Entity;
+import neon.common.entity.entities.Item;
 import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.components.CreatureInfo;
-import neon.entity.components.Inventory;
-import neon.entity.components.ItemInfo;
-import neon.entity.components.PlayerInfo;
-import neon.entity.components.Shape;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 
 public class EntitySaver {
 	private final ResourceManager resources;

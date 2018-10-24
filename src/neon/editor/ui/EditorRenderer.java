@@ -24,11 +24,11 @@ import java.util.HashMap;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import neon.common.entity.entities.Entity;
+import neon.common.entity.entities.Item;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.editor.resource.ICreature;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 
 public class EditorRenderer implements EntityRenderer<Entity> {
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();

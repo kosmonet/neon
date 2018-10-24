@@ -21,19 +21,19 @@ package neon.server.handlers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.components.Clothing;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Weapon;
+import neon.common.entity.entities.Creature;
+import neon.common.entity.entities.Item;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityProvider;
-import neon.entity.components.Clothing;
-import neon.entity.components.Inventory;
-import neon.entity.components.Shape;
-import neon.entity.components.Weapon;
-import neon.entity.entities.Creature;
-import neon.entity.entities.Item;
 
 /**
  * This class handles the inventory-related server bits.

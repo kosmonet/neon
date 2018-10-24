@@ -19,7 +19,7 @@
 package neon.editor.resource;
 
 import javafx.scene.paint.Color;
-import neon.entity.components.Graphics;
+import neon.common.entity.components.Graphics;
 
 public class ICreature extends REntity {
 	public final Graphics graphics;

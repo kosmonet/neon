@@ -16,14 +16,28 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity;
+package neon.common.entity.components;
 
-public enum Skill {
-	SWIMMING(10);
+public class ItemInfo implements Component {
+	private final String id, name;
+	private final long uid;
 	
-	public final int steps;
+	public ItemInfo(long uid, String id, String name) {
+		this.id = id;
+		this.uid = uid;
+		this.name = name;
+	}
 	
-	private Skill(int steps) {
-		this.steps = steps;
+	public String getResource() {
+		return id;
+	}
+
+	@Override
+	public long getEntity() {
+		return uid;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

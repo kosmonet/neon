@@ -34,8 +34,8 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 
 import javafx.scene.paint.Color;
-import neon.entity.Skill;
-import neon.entity.components.Component;
+import neon.common.entity.Skill;
+import neon.common.entity.components.Component;
 
 public class ComponentUpdateEvent extends NeonEvent {
 	private final static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Color.class, new ColorAdapter()).

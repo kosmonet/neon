@@ -21,7 +21,7 @@ package neon.client;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
-import neon.entity.components.Component;
+import neon.common.entity.components.Component;
 
 public class ComponentManager {
 	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
@@ -30,11 +30,23 @@ public class ComponentManager {
 		components.put(uid, component.getClass(), component);
 	}
 	
+	public void removeEntity(long uid) {
+		components.row(uid).clear();
+	}
+	
 	public <T extends Component> T getComponent(long uid, Class<T> type) {
 		return type.cast(components.get(uid, type));
 	}
 	
 	public <T extends Component> boolean hasComponent(long uid, Class<T> type) {
 		return components.contains(uid, type);
+	}
+	
+	public long getFreeUID() {
+		long uid = 0;
+		while (components.containsRow(uid)) {
+			uid++;
+		}
+		return uid;		
 	}
 }

@@ -16,14 +16,14 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.entity.components;
+package neon.common.entity.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import neon.entity.Slot;
+import neon.common.entity.Slot;
 
 public class Inventory implements Component {
 	private final long uid;

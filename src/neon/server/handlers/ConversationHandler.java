@@ -23,13 +23,13 @@ import java.util.HashMap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.entities.Creature;
 import neon.common.event.ConversationEvent;
 import neon.common.resources.RDialog;
 import neon.common.resources.RDialog.Topic;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityProvider;
-import neon.entity.entities.Creature;
 
 public class ConversationHandler {
 	private final EntityProvider entities;

@@ -21,6 +21,10 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.EntityProvider;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Stats;
+import neon.common.entity.entities.Creature;
 import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
@@ -28,10 +32,6 @@ import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.entity.EntityProvider;
-import neon.entity.components.Shape;
-import neon.entity.components.Stats;
-import neon.entity.entities.Creature;
 
 public class InputSystem implements NeonSystem {
 	private final EntityProvider entities;

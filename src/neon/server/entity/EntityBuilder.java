@@ -18,8 +18,8 @@
 
 package neon.server.entity;
 
+import neon.common.entity.entities.Entity;
 import neon.common.resources.Resource;
-import neon.entity.entities.Entity;
 
 public interface EntityBuilder<T extends Resource> {
 	public Entity build(long uid, T resource);

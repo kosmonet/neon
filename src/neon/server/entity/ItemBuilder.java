@@ -18,9 +18,9 @@
 
 package neon.server.entity;
 
+import neon.common.entity.entities.Entity;
+import neon.common.entity.entities.Item;
 import neon.common.resources.RItem;
-import neon.entity.entities.Entity;
-import neon.entity.entities.Item;
 
 public class ItemBuilder implements EntityBuilder<RItem> {
 	@Override
