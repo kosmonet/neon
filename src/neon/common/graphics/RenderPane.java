@@ -70,7 +70,7 @@ public class RenderPane<T> extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<T> entities) {
+	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends T> entities) {
 		this.terrain = terrain;
 		this.elevation = elevation;
 		this.entities.clear();
@@ -78,7 +78,7 @@ public class RenderPane<T> extends StackPane {
 		
 	}
 	
-	public void updateMap(Collection<T> entities) {
+	public void updateMap(Collection<? extends T> entities) {
 		this.entities.clear();
 		this.entities.addAll(entities);
 	}

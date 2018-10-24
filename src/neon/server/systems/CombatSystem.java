@@ -21,7 +21,6 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.Slot;
 import neon.common.entity.components.Armor;
 import neon.common.entity.components.Inventory;
@@ -32,13 +31,14 @@ import neon.common.entity.entities.Item;
 import neon.common.event.CombatEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.TimerEvent;
+import neon.server.entity.EntityManager;
 import neon.util.Dice;
 
 public class CombatSystem implements NeonSystem {
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final EventBus bus;
 	
-	public CombatSystem(EntityProvider entities, EventBus bus) {
+	public CombatSystem(EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 	}

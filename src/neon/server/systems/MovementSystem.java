@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Action;
-import neon.common.entity.EntityProvider;
 import neon.common.entity.Skill;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Shape;
@@ -37,6 +36,7 @@ import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
@@ -50,11 +50,11 @@ public class MovementSystem implements NeonSystem {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final ResourceManager resources;
 	private final SkillHandler skillHandler;
 	
-	MovementSystem(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;

@@ -55,6 +55,10 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 			module.addStartItem(item.getAttributeValue("id"));
 		}
 		
+		for (Element item : start.getChildren("spell")) {
+			module.addStartSpell(item.getAttributeValue("id"));
+		}
+		
 		return module;
 	}
 

@@ -22,7 +22,6 @@ import java.util.Random;
 
 import com.google.common.eventbus.EventBus;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.components.Behavior;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
@@ -33,15 +32,16 @@ import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 public class AISystem implements NeonSystem {
 	private final Random random = new Random();
 	private final MovementSystem mover;
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	AISystem(ResourceManager resources, EntityProvider entities, EventBus bus, MovementSystem mover) {
+	AISystem(ResourceManager resources, EntityManager entities, EventBus bus, MovementSystem mover) {
 		this.mover = mover;
 		this.resources = resources;
 		this.entities = entities;

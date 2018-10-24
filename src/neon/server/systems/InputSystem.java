@@ -21,7 +21,6 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
 import neon.common.entity.entities.Creature;
@@ -32,14 +31,15 @@ import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 public class InputSystem implements NeonSystem {
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final EventBus bus;
 	private final MovementSystem mover;
 	private final ResourceManager resources;
 	
-	public InputSystem(ResourceManager resources, EntityProvider entities, EventBus bus, MovementSystem mover) {
+	public InputSystem(ResourceManager resources, EntityManager entities, EventBus bus, MovementSystem mover) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;

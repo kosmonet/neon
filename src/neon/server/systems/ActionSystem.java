@@ -18,7 +18,6 @@
 
 package neon.server.systems;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.components.Stats;
 import neon.common.entity.entities.Creature;
 import neon.common.entity.entities.Entity;
@@ -28,12 +27,13 @@ import neon.common.resources.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 public class ActionSystem implements NeonSystem {
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final ResourceManager resources;
 	
-	public ActionSystem(ResourceManager resources, EntityProvider entities) {
+	public ActionSystem(ResourceManager resources, EntityManager entities) {
 		this.entities = entities;
 		this.resources = resources;
 	}

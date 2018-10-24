@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,18 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity;
+package neon.common.entity.components;
 
-import java.util.Collection;
-
-import neon.common.entity.entities.Entity;
-
-public interface EntityProvider {
-	public <T extends Entity> T getEntity(long uid);
+public class Magic implements Component {
+	private final long uid;
 	
-	/**
-	 * 
-	 * @return	all entities currently in the provider
-	 */
-	public Collection<Entity> getEntities();
+	public Magic(long uid) {
+		this.uid = uid;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
+	}
 }

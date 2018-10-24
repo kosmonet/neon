@@ -23,20 +23,20 @@ import java.util.HashMap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.entities.Creature;
 import neon.common.event.ConversationEvent;
 import neon.common.resources.RDialog;
 import neon.common.resources.RDialog.Topic;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 public class ConversationHandler {
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public ConversationHandler(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	public ConversationHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 		this.resources = resources;

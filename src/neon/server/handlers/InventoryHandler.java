@@ -21,7 +21,6 @@ package neon.server.handlers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
@@ -34,6 +33,7 @@ import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 /**
  * This class handles the inventory-related server bits.
@@ -43,10 +43,10 @@ import neon.common.resources.ResourceManager;
  */
 public class InventoryHandler {
 	private final EventBus bus;
-	private final EntityProvider entities;
+	private final EntityManager entities;
 	private final ResourceManager resources;
 	
-	public InventoryHandler(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	public InventoryHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
 		this.entities = entities;
 		this.resources = resources;

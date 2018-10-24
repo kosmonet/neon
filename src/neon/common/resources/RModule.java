@@ -41,6 +41,7 @@ public class RModule extends Resource {
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
 	private final List<String> items = new ArrayList<>();
+	private final Set<String> spells = new HashSet<>();
 	private final String map;
 	private final int x, y, money;
 
@@ -59,8 +60,16 @@ public class RModule extends Resource {
 		items.add(id);
 	}
 	
-	public List<String> getStartItems() {
+	public void addStartSpell(String id) {
+		spells.add(id);
+	}
+	
+	public Collection<String> getStartItems() {
 		return items;
+	}
+	
+	public Set<String> getStartSpells() {
+		return spells;
 	}
 	
 	/**

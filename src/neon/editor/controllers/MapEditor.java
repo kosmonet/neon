@@ -48,7 +48,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-
+import neon.common.entity.entities.Entity;
 import neon.common.graphics.RenderPane;
 import neon.editor.Card;
 import neon.editor.SaveEvent;
@@ -80,7 +80,7 @@ public class MapEditor {
 	
 	private final Card card;
 	private final GridPane grid = new GridPane();
-	private final RenderPane renderer;
+	private final RenderPane<Entity> renderer;
 	private final Pane pane = new Pane();
 	private final ScrollPane scroller = new ScrollPane();
 	private final EventBus bus;
@@ -138,7 +138,7 @@ public class MapEditor {
 		pane.setStyle("-fx-background-color: black;");
 	    pane.setOnMouseClicked(event -> mouseClicked(event));
 		
-		renderer = new RenderPane(resources, new EditorRenderer());
+		renderer = new RenderPane<Entity>(resources, new EditorRenderer());
 		renderer.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
@@ -237,7 +237,7 @@ public class MapEditor {
         double viewportHeight = scroller.getViewportBounds().getHeight();
         double y = Math.max(0,  contentHeight - viewportHeight) * scroller.getVvalue();
         
-		renderer.draw((int)x/scale, (int)y/scale, scale);
+		renderer.draw((int) x/scale, (int) y/scale, scale);
 		renderer.setTranslateX(x);
 		renderer.setTranslateY(y);
 	}

@@ -30,7 +30,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
-import neon.common.entity.EntityProvider;
 import neon.common.entity.entities.Entity;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -44,7 +43,7 @@ import neon.common.resources.ResourceException;
  * @author mdriesen
  *
  */
-public class EntityManager implements EntityProvider, RemovalListener<Long, Entity> {
+public class EntityManager implements RemovalListener<Long, Entity> {
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final HashMap<Class<? extends Resource>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
@@ -55,7 +54,7 @@ public class EntityManager implements EntityProvider, RemovalListener<Long, Enti
 		this.saver = saver;	
 	}
 	
-	@Override @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
 		try {
 			return (T) entities.get(uid, () -> loadEntity(uid));
@@ -83,7 +82,6 @@ public class EntityManager implements EntityProvider, RemovalListener<Long, Enti
 		return entity;
 	}
 	
-	@Override
 	public Collection<Entity> getEntities() {
 		return entities.asMap().values();
 	}

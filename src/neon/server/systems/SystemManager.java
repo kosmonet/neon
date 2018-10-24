@@ -21,7 +21,6 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.EntityProvider;
 import neon.common.event.NeonEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
@@ -30,6 +29,7 @@ import neon.common.resources.CGame;
 import neon.common.resources.GameMode;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.entity.EntityManager;
 
 /**
  * Handles all game systems (the game loop, basically).
@@ -49,7 +49,7 @@ public class SystemManager {
 	private boolean running = false;
 	private CGame config;
 	
-	public SystemManager(ResourceManager resources, EntityProvider entities, EventBus bus) {
+	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.resources = resources;
 		
 		// create all systems
