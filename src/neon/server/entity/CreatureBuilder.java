@@ -21,10 +21,13 @@ package neon.server.entity;
 import neon.common.entity.entities.Creature;
 import neon.common.entity.entities.Entity;
 import neon.common.resources.RCreature;
+import neon.systems.magic.Magic;
 
 public class CreatureBuilder implements EntityBuilder<RCreature> {
 	@Override
 	public Entity build(long uid, RCreature resource) {
-		return new Creature(uid, resource);
+		Creature creature = new Creature(uid, resource);
+		creature.setComponent(new Magic(uid));
+		return creature;
 	}
 }

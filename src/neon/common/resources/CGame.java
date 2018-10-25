@@ -20,12 +20,15 @@ package neon.common.resources;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CGame extends Resource {
 	private final String startMap;
 	private final int x, y, money;
 	private final List<String> items = new ArrayList<>();
+	private final Set<String> spells = new HashSet<>();
 	
 	private String currentMap;
 	private GameMode mode = GameMode.TURN_BASED;
@@ -43,8 +46,16 @@ public class CGame extends Resource {
 		this.items.addAll(items);
 	}
 	
+	public void addStartSpells(Collection<String> spells) {
+		this.spells.addAll(spells);
+	}
+	
 	public List<String> getStartItems() {
 		return items;
+	}
+	
+	public Set<String> getStartSpells() {
+		return spells;
 	}
 	
 	/**

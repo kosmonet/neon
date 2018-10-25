@@ -39,6 +39,7 @@ import neon.client.states.GameState;
 import neon.client.states.InventoryState;
 import neon.client.states.JournalState;
 import neon.client.states.LoadState;
+import neon.client.states.MagicState;
 import neon.client.states.MainMenuState;
 import neon.client.states.MapState;
 import neon.client.states.NewGameState;
@@ -65,6 +66,7 @@ import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.systems.magic.SpellLoader;
 
 /**
  * 
@@ -112,6 +114,7 @@ public class Client implements Runnable {
 		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader());
 		resources.addLoader("config", new ConfigurationLoader());
+		resources.addLoader("spells", new SpellLoader());
 		
 		// initialize all modules and enter the first one
 		initModules(version);
@@ -142,6 +145,7 @@ public class Client implements Runnable {
 		ContainerState container = new ContainerState(ui, bus, components);
 		JournalState journal = new JournalState(ui, bus, components);
 		OptionState options = new OptionState(ui, bus);
+		MagicState magic = new MagicState(ui, bus, components, resources);
 		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
@@ -171,6 +175,9 @@ public class Client implements Runnable {
 		
 		bus.register(new Transition(game, journal, "journal"));
 		bus.register(new Transition(journal, game, "cancel"));
+		
+		bus.register(new Transition(game, magic, "magic"));
+		bus.register(new Transition(magic, game, "cancel"));
 		
 		// enter the first state
 		mainMenu.setActive(true);

@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.features.magic;
+package neon.systems.magic;
 
 public enum Effect {
 	HEAL;

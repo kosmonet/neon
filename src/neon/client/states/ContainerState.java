@@ -149,7 +149,7 @@ public class ContainerState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container state");
 		bus.register(this);
-		Shape shape = event.getParameter(Shape.class);
+		Shape shape = components.getComponent(0, Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
 		for (long uid : map.getEntities(shape.getX(), shape.getY())) {

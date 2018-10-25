@@ -16,8 +16,21 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.features.magic;
+package neon.systems.magic;
 
-public enum Target {
-	SELF, OTHER;
+import neon.common.resources.Resource;
+
+public class RSpell extends Resource {
+	public final Effect effect;
+	public final Target target;
+	public final int duration;
+	public final int magnitude;
+	
+	public RSpell(String id, Effect effect, Target target, int duration, int magnitude) {
+		super(id, "spells");
+		this.effect = effect;
+		this.target = target;
+		this.duration = duration;
+		this.magnitude = magnitude;
+	}
 }

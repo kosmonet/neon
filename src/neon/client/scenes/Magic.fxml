@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import neon.client.ui.DescriptionLabel?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+	<top>
+		<Label fx:id="instructionLabel" styleClass="instructions" text="Pick a spell." />
+	</top>
+	<center>
+		<GridPane BorderPane.alignment="CENTER">
+			<rowConstraints>
+				<RowConstraints vgrow="ALWAYS" />
+			</rowConstraints>
+			<columnConstraints>
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="34.0" />
+				<ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0" />
+			</columnConstraints>
+			<children>
+				<ListView fx:id="spellList" GridPane.columnIndex="0" />
+				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
+					<DescriptionLabel fx:id="description" focusTraversable="false" />
+				</HBox>
+				<Label GridPane.columnIndex="2"  />
+			</children>
+		</GridPane>
+	</center>
+	<bottom>
+		<HBox styleClass="bottom-buttons">
+			<children>
+				<Button fx:id="equipButton" focusTraversable="false" text="Space" onAction="#equipSpell" />
+				<Label text="Equip" />
+				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
+				<Label text="Cancel" />
+				<Button fx:id="helpButton" focusTraversable="false" text="F2" onAction="#showHelp" />
+				<Label text="Help" />
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>

@@ -54,6 +54,7 @@ import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
 import neon.server.entity.WeaponBuilder;
 import neon.server.resource.MapLoader;
+import neon.systems.magic.SpellLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.
@@ -143,6 +144,7 @@ class ServerLoader {
 		resources.addLoader("items", new ItemLoader());
 		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader(entities, resources, configuration));
+		resources.addLoader("spells", new SpellLoader());
 		
 		// check if all required parent modules are present
 		try {

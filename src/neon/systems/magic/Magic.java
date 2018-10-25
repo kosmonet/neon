@@ -16,13 +16,27 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.magic;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import neon.common.entity.components.Component;
 
 public class Magic implements Component {
 	private final long uid;
+	private final Set<String> spells = new HashSet<>();
 	
 	public Magic(long uid) {
 		this.uid = uid;
+	}
+	
+	public void addSpell(String spell) {
+		spells.add(spell);
+	}
+	
+	public Set<String> getSpells() {
+		return spells;
 	}
 	
 	@Override

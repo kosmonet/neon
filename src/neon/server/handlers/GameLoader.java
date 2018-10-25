@@ -25,6 +25,7 @@ import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
@@ -67,6 +68,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.server.entity.EntityManager;
+import neon.systems.magic.Magic;
 
 /**
  * This class takes care of starting new games, loading old games and saving
@@ -82,8 +84,6 @@ public class GameLoader {
 	private final ResourceManager resources;
 	private final EntityManager entities;
 	private final NeonFileSystem files;
-	
-	private Entity player;
 	
 	/**
 	 * Initializes this game loader.
@@ -119,7 +119,7 @@ public class GameLoader {
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.getSpecies());
-			player = entities.createEntity(0, species);
+			Entity player = entities.createEntity(0, species);
 			player.setComponent(new PlayerInfo(0, event.getName(), event.getGender()));
 			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 
@@ -139,6 +139,11 @@ public class GameLoader {
 				inventory.addItem(uid);
 			}
 
+			Magic magic = player.getComponent(Magic.class);
+			for (String id : game.getStartSpells()) {
+				magic.addSpell(id);
+			}
+			
 			// tell the client everything is ready
 			bus.post(new NewGameEvent.Pass());
 			notifyClient(map);
@@ -172,6 +177,7 @@ public class GameLoader {
 		int y = 0;
 		int money = 0;
 		ArrayList<String> items = new ArrayList<>();
+		HashSet<String> spells = new HashSet<>();
 		
 		// go through the loaded modules to check if any redefined anything
 		for (String id : modules) {
@@ -182,6 +188,7 @@ public class GameLoader {
 				y = (module.getStartY() >= 0) ? module.getStartY() : y;
 				money = (module.getStartMoney() >= 0) ? module.getStartMoney() : money;
 				items.addAll(module.getStartItems());
+				spells.addAll(module.getStartSpells());
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
 				logger.warning("problem loading module " + id);
@@ -190,6 +197,7 @@ public class GameLoader {
 		
 		CGame game = new CGame(map, x, y, money);
 		game.addStartItems(items);
+		game.addStartSpells(spells);
 		return game;
 	}
 
@@ -292,7 +300,7 @@ public class GameLoader {
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
-		
+		bus.post(new ComponentUpdateEvent(player.getComponent(Magic.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
@@ -303,6 +311,7 @@ public class GameLoader {
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
 	}
 	
 	/**
@@ -350,6 +359,7 @@ public class GameLoader {
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder
+		Creature player = entities.getEntity(0);
 		PlayerInfo record = player.getComponent(PlayerInfo.class);
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
 		// and request JavaFX to quit

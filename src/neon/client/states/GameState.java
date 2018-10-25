@@ -119,15 +119,16 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.UP), () -> move(Direction.UP));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> showInventory());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> showJournal());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> showMap());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> bus.post(new TransitionEvent("inventory", map)));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> bus.post(new TransitionEvent("journal")));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map", map)));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new HelpWindow().show("game.html"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 	}
 	
 	@Subscribe
@@ -247,18 +248,6 @@ public class GameState extends State {
 		renderPane.draw(xpos, ypos, scale);
 	}
 	
-	private void showInventory() {
-		bus.post(new TransitionEvent("inventory", map));
-	}
-	
-	private void showMap() {
-		bus.post(new TransitionEvent("map", map));
-	}
-	
-	private void showJournal() {
-		bus.post(new TransitionEvent("journal"));
-	}
-	
 	private void pause() {
 		if (paused) {
 			paused = false;
@@ -273,7 +262,7 @@ public class GameState extends State {
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 
 		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
-			bus.post(new TransitionEvent("pick", map, shape));			
+			bus.post(new TransitionEvent("pick", map));			
 		}
 	}
 	

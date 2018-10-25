@@ -2,4 +2,4 @@
  * @author mdriesen
  *
  */
-package neon.features;
+package neon.systems.magic;
