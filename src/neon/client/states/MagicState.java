@@ -22,23 +22,29 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.ComponentManager;
 import neon.client.ui.UserInterface;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.systems.magic.Magic;
+import neon.systems.magic.MagicEvent;
 import neon.systems.magic.RSpell;
 
 public class MagicState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -46,6 +52,7 @@ public class MagicState extends State {
 	private final ResourceManager resources;
 
 	@FXML private ListView<RSpell> spellList;
+	@FXML private Label instructionLabel;
 	
 	private Scene scene;
 
@@ -73,20 +80,15 @@ public class MagicState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering magic state");
 		bus.register(this);
-		
-		for (String id : components.getComponent(0, Magic.class).getSpells()) {
-			try {
-				spellList.getItems().add(resources.getResource("spells", id));
-			} catch (ResourceException e) {
-				logger.warning("could not find spell <" + id + ">");
-			}
-		}
-		
+		refresh();
+		spellList.getSelectionModel().selectFirst();
 		ui.showScene(scene);
 	}
 
 	private void keyPressed(KeyEvent event) {
-		if (event.getCode().equals(KeyCode.ESCAPE)) {
+		if (event.getCode().equals(KeyCode.SPACE)) {
+			equipSpell();
+		} else if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.F2)) {
 			showHelp();
@@ -100,7 +102,37 @@ public class MagicState extends State {
 	}
 	
 	@FXML private void showHelp() {}
-	@FXML private void equipSpell() {}
+	
+	@FXML private void equipSpell() {
+		String id = spellList.getSelectionModel().getSelectedItem().id;
+		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+		
+		if (magic.hasEquiped(id)) {
+			bus.post(new MagicEvent.Unequip(id));
+		} else {
+			bus.post(new MagicEvent.Equip(id));	
+		}		
+	}
+	
+	@Subscribe
+	private void onSpellUpdate(ComponentUpdateEvent event) {
+		Platform.runLater(() -> refresh());
+	}
+	
+	private void refresh() {
+		int index = spellList.getSelectionModel().getSelectedIndex();
+		spellList.getItems().clear();
+		
+		for (String id : components.getComponent(PLAYER_UID, Magic.class).getSpells()) {
+			try {
+				spellList.getItems().add(resources.getResource("spells", id));
+			} catch (ResourceException e) {
+				logger.warning("could not find spell <" + id + ">");
+			}
+		}
+		
+		spellList.getSelectionModel().select(index);
+	}
 	
 	private class SpellCell extends ListCell<RSpell> {
 		@Override
@@ -110,6 +142,12 @@ public class MagicState extends State {
 				setText(null);
 			} else {
 				setText(spell.id);
+				Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+				if (magic.hasEquiped(spell.id)) {
+					setStyle("-fx-font-weight: bold");
+				} else {
+					setStyle("-fx-font-weight: normal");
+				}
 			}
 		}
 	}

@@ -51,6 +51,7 @@ import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
 import neon.common.event.CollisionEvent;
 import neon.common.event.CombatEvent;
+import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
@@ -60,6 +61,8 @@ import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.systems.magic.Magic;
+import neon.systems.magic.MagicEvent;
 import neon.util.Direction;
 
 /**
@@ -71,6 +74,7 @@ import neon.util.Direction;
 public class GameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
+	private static final long POINTER_UID = 1;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -86,8 +90,7 @@ public class GameState extends State {
 	private int scale = 20;
 	private RMap map;
 	private boolean paused = true;
-	private boolean casting = false;
-	private long pointer;
+	private boolean looking = false;
 	
 	/**
 	 * Initializes a new game module.
@@ -128,6 +131,7 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), () -> look());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 	}
 	
@@ -162,6 +166,11 @@ public class GameState extends State {
 		Platform.runLater(() -> redraw());
 	}
 	
+	@Subscribe
+	private void onUpdate(ComponentUpdateEvent event) {
+		Platform.runLater(() -> redraw());		
+	}
+	
 	private void changeMode() {
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
@@ -179,10 +188,10 @@ public class GameState extends State {
 	}
 	
 	private void move(Direction direction) {
-		if (!casting) {
+		if (!looking) {
 			bus.post(new InputEvent.Move(direction, map.id));
 		} else {
-			Shape shape = components.getComponent(pointer, Shape.class);
+			Shape shape = components.getComponent(POINTER_UID, Shape.class);
 			switch (direction) {
 			case LEFT: 
 				shape.setX(Math.max(0, shape.getX() - 1)); 
@@ -202,28 +211,35 @@ public class GameState extends State {
 	}
 	
 	private void cast() {
-		if (!casting) {
-			System.out.println("braobel");
-			pointer = components.getFreeUID();
-			Shape player = components.getComponent(0, Shape.class);
-			Shape shape = new Shape(pointer, player.getX(), player.getY(), player.getZ());
-			Graphics graphics = new Graphics(pointer, "X", Color.WHITE);
-			components.putComponent(pointer, shape);
-			components.putComponent(pointer, graphics);
+		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+		if (magic.getEquiped().isPresent()) {
+			bus.post(new MagicEvent.Cast(magic.getEquiped().get(), PLAYER_UID));
+		} 
+	}
+	
+	private void look() {
+		if (!looking) {
+			Shape player = components.getComponent(PLAYER_UID, Shape.class);
+			Shape shape = new Shape(POINTER_UID, player.getX(), player.getY(), player.getZ());
+			Graphics graphics = new Graphics(POINTER_UID, "X", Color.WHITE);
+			components.putComponent(POINTER_UID, shape);
+			components.putComponent(POINTER_UID, graphics);
 			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
-			entities.add(pointer);
+			entities.add(POINTER_UID);
 			renderPane.updateMap(entities);
 			redraw();
-			casting = true;
+			looking = true;
 		} else {
-			components.removeEntity(pointer);
+			components.removeEntity(POINTER_UID);
 			renderPane.updateMap(map.getEntities());
 			redraw();
-			casting = false;
+			looking = false;
 		}
 	}
 	
 	private void redraw() {
+		System.out.println("redraw");
+		
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		modeLabel.setText(record.getMode().toString());
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);

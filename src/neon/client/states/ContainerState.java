@@ -59,6 +59,7 @@ import neon.util.GraphicsUtils;
  */
 public class ContainerState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -120,7 +121,7 @@ public class ContainerState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
-		inventory = components.getComponent(0, Inventory.class);
+		inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		playerList.getItems().clear();
 		
 		for (long uid : inventory.getItems()) {
@@ -149,7 +150,7 @@ public class ContainerState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container state");
 		bus.register(this);
-		Shape shape = components.getComponent(0, Shape.class);
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
 		for (long uid : map.getEntities(shape.getX(), shape.getY())) {

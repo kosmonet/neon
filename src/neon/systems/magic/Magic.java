@@ -19,6 +19,7 @@
 package neon.systems.magic;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import neon.common.entity.components.Component;
@@ -26,6 +27,8 @@ import neon.common.entity.components.Component;
 public class Magic implements Component {
 	private final long uid;
 	private final Set<String> spells = new HashSet<>();
+	
+	private Optional<String> equiped = Optional.empty();
 	
 	public Magic(long uid) {
 		this.uid = uid;
@@ -37,6 +40,24 @@ public class Magic implements Component {
 	
 	public Set<String> getSpells() {
 		return spells;
+	}
+	
+	public void equip(String spell) {
+		if (spells.contains(spell)) {
+			equiped = Optional.of(spell);
+		}
+	}
+	
+	public Optional<String> getEquiped() {
+		return equiped;
+	}
+	
+	public boolean hasEquiped(String spell) {
+		return equiped.orElse("").equals(spell);
+	}
+	
+	public void unequip() {
+		equiped = Optional.empty();
 	}
 	
 	@Override

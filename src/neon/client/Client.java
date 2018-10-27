@@ -75,6 +75,7 @@ import neon.systems.magic.SpellLoader;
  */
 public class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 
 	private final EventBus bus = new EventBus("Client Bus");
 	private final ClientSocket socket;
@@ -223,7 +224,7 @@ public class Client implements Runnable {
 	
 	@Subscribe
 	private void onLevelIncrease(UpdateEvent.Level event) throws ResourceException {
-		Stats stats = components.getComponent(0, Stats.class);
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		stats.setLevel(event.level);
 		ui.showOverlayMessage("Level up!", 1000);
 	}

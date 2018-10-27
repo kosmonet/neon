@@ -30,6 +30,7 @@ import neon.common.resources.GameMode;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
+import neon.systems.magic.MagicSystem;
 
 /**
  * Handles all game systems (the game loop, basically).
@@ -45,6 +46,7 @@ public class SystemManager {
 	private final MovementSystem moveSystem;
 	private final InputSystem inputSystem;
 	private final CombatSystem combatSystem;
+	private final MagicSystem magicSystem;
 	
 	private boolean running = false;
 	private CGame config;
@@ -58,11 +60,12 @@ public class SystemManager {
 		actionSystem = new ActionSystem(resources, entities);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
 		combatSystem = new CombatSystem(entities, bus);
+		magicSystem = new MagicSystem(resources, entities, bus);
 		
 		// and register them on the event bus
 		bus.register(combatSystem);
 		bus.register(inputSystem);
-
+		bus.register(magicSystem);
 	}
 	
 	@Subscribe

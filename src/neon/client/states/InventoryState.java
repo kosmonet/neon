@@ -55,6 +55,7 @@ import neon.util.GraphicsUtils;
 
 public class InventoryState extends State {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -139,7 +140,7 @@ public class InventoryState extends State {
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		int rating = 0;
-		inventory = components.getComponent(0, Inventory.class);
+		inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		instructionLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 		

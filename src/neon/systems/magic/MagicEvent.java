@@ -16,29 +16,34 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client;
+package neon.systems.magic;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import neon.common.event.NeonEvent;
 
-import neon.common.entity.components.Component;
-
-public class ComponentManager {
-	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
-	
-	public void putComponent(long uid, Component component) {
-		components.put(uid, component.getClass(), component);
+public abstract class MagicEvent extends NeonEvent {
+	public static class Equip extends MagicEvent {
+		public final String spell;
+		
+		public Equip(String spell) {
+			this.spell = spell;
+		}
 	}
 	
-	public void removeEntity(long uid) {
-		components.row(uid).clear();
+	public static class Unequip extends MagicEvent {
+		public final String spell;
+		
+		public Unequip(String spell) {
+			this.spell = spell;
+		}
 	}
 	
-	public <T extends Component> T getComponent(long uid, Class<T> type) {
-		return type.cast(components.get(uid, type));
-	}
-	
-	public boolean hasComponent(long uid, Class<?> type) {
-		return components.contains(uid, type);
+	public static class Cast extends MagicEvent {
+		public final String spell;
+		public final long target;
+		
+		public Cast(String spell, long target) {
+			this.spell = spell;
+			this.target = target;
+		}
 	}
 }
