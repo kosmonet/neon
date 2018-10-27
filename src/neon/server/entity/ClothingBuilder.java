@@ -24,6 +24,7 @@ import neon.common.entity.components.Graphics;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
+import neon.systems.magic.Enchantment;
 
 public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	@Override
@@ -33,6 +34,9 @@ public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 		cloth.setComponent(new ItemInfo(uid, resource.id, resource.name));
 		cloth.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		cloth.setComponent(new Clothing(uid, resource.slot));
+		if (resource.effect.isPresent()) {
+			cloth.setComponent(new Enchantment(uid, resource.effect.get(), resource.magnitude));
+		}
 		return cloth;
 	}
 }

@@ -20,6 +20,7 @@ package neon.client.states;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -46,6 +47,8 @@ import neon.common.entity.PlayerMode;
 import neon.common.entity.components.Behavior;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Graphics;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
@@ -62,6 +65,7 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.systems.combat.CombatEvent;
+import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
 import neon.util.Direction;
@@ -133,6 +137,7 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), () -> look());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> use());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 	}
 	
@@ -226,6 +231,25 @@ public class GameState extends State {
 		if (magic.getEquiped().isPresent()) {
 			bus.post(new MagicEvent.Cast(magic.getEquiped().get(), PLAYER_UID));
 		} 
+	}
+	
+	private void use() {
+		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		ArrayList<ButtonType> items = new ArrayList<>();
+		HashMap<ButtonType, Long> mapping = new HashMap<>();
+		
+		for (long item : inventory.getEquipedItems()) {
+			if (components.hasComponent(item, Enchantment.class)) {
+				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).getName());
+				mapping.put(button, item);
+				items.add(button);
+			}
+		}
+		
+		Optional<ButtonType> result = ui.showQuestion("What item to use?", items.toArray(new ButtonType[items.size()]));
+		if (result.isPresent()) {
+			bus.post(new MagicEvent.Use(mapping.get(result.get())));
+		}
 	}
 	
 	private void look() {

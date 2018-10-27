@@ -37,7 +37,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
@@ -51,7 +50,7 @@ import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
-import neon.util.GraphicsUtils;
+import neon.systems.magic.Enchantment;
 
 public class InventoryState extends State {
 	private static final Logger logger = Logger.getGlobal();
@@ -204,6 +203,13 @@ public class InventoryState extends State {
 	    			builder.append("Damage: " + weapon.getDamage());						
 	    		}
 
+	    		if (components.hasComponent(newValue, Enchantment.class)) {
+	    			Enchantment enchantment = components.getComponent(newValue, Enchantment.class);
+	    			builder.append("\n∷\n");
+	    			builder.append("Effect: " + enchantment.getEffect() + "\n");						
+	    			builder.append("Magnitude: " + enchantment.getMagnitude());						
+	    		}
+
 	    		description.update(builder.toString(), graphics);
 	    	}
 	    }
@@ -214,13 +220,26 @@ public class InventoryState extends State {
     	public void updateItem(Long uid, boolean empty) {
     		super.updateItem(uid, empty);
     		
-    		if (empty || uid == null) {
+    		if (empty) {
     			setGraphic(null);
     			setText(null);
     		} else {
+    			StringBuilder style = new StringBuilder();
+    			
+    			if (components.hasComponent(uid, Enchantment.class)) {
+    				style.append(isSelected() ? "-fx-text-fill: turquoise;" : "-fx-text-fill: teal;");    				
+    			} else {
+    				style.append(isSelected() ? "-fx-text-fill: white;" : "-fx-text-fill: silver;");
+    			}
+    			
+    			if (inventory.hasEquiped(uid)) {
+    				style.append("-fx-font-weight: bold;");    				
+    			} else {
+    				style.append("-fx-font-weight: normal;");    				
+    			}
+    			
+    			setStyle(style.toString());
     			ItemInfo info = components.getComponent(uid, ItemInfo.class);
-    			Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
-    			setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
     			setText(info.getName());
     		}
     	}

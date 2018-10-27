@@ -46,4 +46,12 @@ public abstract class MagicEvent extends NeonEvent {
 			this.target = target;
 		}
 	}
+	
+	public static class Use extends MagicEvent {
+		public final long item;
+		
+		public Use(long item) {
+			this.item = item;
+		}
+	}
 }

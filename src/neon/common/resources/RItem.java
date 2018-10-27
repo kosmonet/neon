@@ -18,8 +18,11 @@
 
 package neon.common.resources;
 
+import java.util.Optional;
+
 import javafx.scene.paint.Color;
 import neon.common.entity.Slot;
+import neon.systems.magic.Effect;
 
 /**
  * An item resource.
@@ -52,10 +55,14 @@ public class RItem extends Resource {
 	
 	public static class Clothing extends RItem {
 		public final Slot slot;
+		public final Optional<Effect> effect;
+		public final int magnitude;
 		
 		public Clothing(Builder builder) {
 			super(builder);
 			slot = builder.slot;
+			magnitude = builder.magnitude;
+			effect = Optional.ofNullable(builder.effect);
 		}		
 	}
 	
@@ -87,6 +94,8 @@ public class RItem extends Resource {
 		private Slot slot;
 		private int rating;
 		private String damage;
+		private Effect effect;
+		private int magnitude;
 		
 		public Builder(String id) {
 			this.id = id;
@@ -115,6 +124,12 @@ public class RItem extends Resource {
 
 		public Builder setDamage(String damage) {
 			this.damage = damage;
+			return this;
+		}
+		
+		public Builder setEnchantment(Effect effect, int magnitude) {
+			this.effect = effect;
+			this.magnitude = magnitude;
 			return this;
 		}
 	}

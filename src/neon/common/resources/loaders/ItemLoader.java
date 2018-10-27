@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import org.jdom2.Element;
 import javafx.scene.paint.Color;
 import neon.common.entity.Slot;
 import neon.common.resources.RItem;
+import neon.systems.magic.Effect;
 
 /**
  * A resource loader specifically for items.
@@ -40,6 +41,13 @@ public class ItemLoader implements ResourceLoader<RItem> {
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		
 		RItem.Builder builder = new RItem.Builder(id).setName(name).setGraphics(glyph, color);
+		
+		Element magic = root.getChild("magic");
+		if (magic != null) {
+			Effect effect = Effect.valueOf(magic.getAttributeValue("effect").toUpperCase());
+			int magnitude = Integer.parseInt(magic.getAttributeValue("magnitude"));
+			builder.setEnchantment(effect, magnitude);
+		}
 		
 		switch (type) {
 		case "armor":

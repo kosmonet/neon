@@ -67,6 +67,7 @@ import neon.common.resources.loaders.ConfigurationLoader;
 import neon.server.entity.EntityManager;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
+import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 
 /**
@@ -325,14 +326,18 @@ public class GameLoader {
 	private void notifyItem(Entity item) {
 		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
 		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
+		
 		if (item.hasComponent(Clothing.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
-		}
-		if (item.hasComponent(Armor.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
-		}		
-		if (item.hasComponent(Weapon.class)) {
+			if (item.hasComponent(Armor.class)) {
+				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
+			}		
+		} else if (item.hasComponent(Weapon.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
+		}
+		
+		if (item.hasComponent(Enchantment.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
 		}		
 	}
 	

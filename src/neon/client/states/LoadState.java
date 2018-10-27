@@ -83,7 +83,7 @@ public class LoadState extends State {
 	}
 	
 	@FXML private void startGame() {
-		if(saveList.getSelectionModel().getSelectedItem() != null) {
+		if(!saveList.getSelectionModel().isEmpty()) {
 			// let the server know we want to load a saved game
 			bus.post(new ServerLoadEvent.Start(saveList.getSelectionModel().getSelectedItem()));
 			// transition to the actual game module

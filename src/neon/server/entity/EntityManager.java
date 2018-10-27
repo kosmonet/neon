@@ -111,7 +111,7 @@ public class EntityManager implements RemovalListener<Long, Entity> {
 	}
 	
 	public long getFreeUID() {
-		long uid = 0;
+		long uid = 256;
 		while (entities.asMap().containsKey(uid)) {
 			uid++;
 		}

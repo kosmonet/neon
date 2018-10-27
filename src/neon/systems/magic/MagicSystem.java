@@ -21,6 +21,7 @@ package neon.systems.magic;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.resources.ResourceException;
@@ -58,13 +59,26 @@ public class MagicSystem {
 
 	@Subscribe
 	private void onCast(MagicEvent.Cast event) throws ResourceException {
-//		Magic magic = entities.getEntity(PLAYER_UID).getComponent(Magic.class);
 		RSpell spell = resources.getResource("spells", event.spell);
 		
 		switch (spell.effect) {
 		case HEAL:
 			Stats stats = entities.getEntity(event.target).getComponent(Stats.class);
 			stats.addHealth(spell.magnitude);
+			bus.post(new ComponentUpdateEvent(stats));
+			break;
+		}
+	}
+	
+	@Subscribe
+	private void onItemUse(MagicEvent.Use event) {
+		Entity item = entities.getEntity(event.item);
+		Enchantment enchantment = item.getComponent(Enchantment.class);
+		
+		switch (enchantment.getEffect()) {
+		case HEAL:
+			Stats stats = entities.getEntity(PLAYER_UID).getComponent(Stats.class);
+			stats.addHealth(enchantment.getMagnitude());
 			bus.post(new ComponentUpdateEvent(stats));
 			break;
 		}

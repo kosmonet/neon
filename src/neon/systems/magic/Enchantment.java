@@ -16,8 +16,31 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity;
+package neon.systems.magic;
 
-public enum Slot {
-	HEAD, EYES, NECK, SHIRT, ARMOR, BELT, BACK, ARMS, HANDS, FEET, RING, WEAPON;
+import neon.common.entity.components.Component;
+
+public class Enchantment implements Component {
+	private final long uid;
+	private final Effect effect;
+	private final int magnitude;
+
+	public Enchantment(long uid, Effect effect, int magnitude) {
+		this.uid = uid;
+		this.effect = effect;
+		this.magnitude = magnitude;
+	}
+	
+	public Effect getEffect() {
+		return effect;
+	}
+	
+	public int getMagnitude() {
+		return magnitude;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
+	}
 }
