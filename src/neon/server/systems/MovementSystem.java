@@ -23,13 +23,12 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Action;
+import neon.common.entity.Entity;
 import neon.common.entity.Skill;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Entity;
 import neon.common.event.CollisionEvent;
 import neon.common.event.TimerEvent;
 import neon.common.resources.RMap;
@@ -66,7 +65,7 @@ public class MovementSystem implements NeonSystem {
 	 * 
 	 * @param event
 	 */
-	void move(Creature player, Direction direction, RMap map) {
+	void move(Entity player, Direction direction, RMap map) {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();

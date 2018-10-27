@@ -16,23 +16,23 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.combat;
 
-public class Armor implements Component {
-	private final long uid;
-	private final int rating;
-	
-	public Armor(long uid, int rating) {
-		this.uid = uid;
-		this.rating = rating;
-	}
-	
+import neon.common.entity.Entity;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Shape;
+import neon.common.resources.RItem;
+import neon.server.entity.EntityBuilder;
+
+public class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
 	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public int getRating() {
-		return rating;
+	public Entity build(long uid, RItem.Weapon resource) {
+		Entity weapon = new Entity(uid);
+		weapon.setComponent(new Shape(uid));
+		weapon.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		weapon.setComponent(new Graphics(uid, resource.glyph, resource.color));
+		weapon.setComponent(new Weapon(uid, resource.damage));
+		return weapon;
 	}
 }

@@ -50,17 +50,18 @@ import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
 import neon.common.event.CollisionEvent;
-import neon.common.event.CombatEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.SaveEvent;
+import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.systems.combat.CombatEvent;
 import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
 import neon.util.Direction;
@@ -171,6 +172,16 @@ public class GameState extends State {
 		Platform.runLater(() -> redraw());		
 	}
 	
+	@Subscribe
+	private void onPickpocketFail(StealthEvent.Empty event) {
+		ui.showOverlayMessage("Victim has no possessions.", 1000);
+	}
+	
+	@Subscribe
+	private void onPickpocketSuccess(StealthEvent.Success event) {
+		ui.showOverlayMessage("You've stolen something.", 1000);
+	}
+	
 	private void changeMode() {
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
@@ -238,8 +249,6 @@ public class GameState extends State {
 	}
 	
 	private void redraw() {
-		System.out.println("redraw");
-		
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		modeLabel.setText(record.getMode().toString());
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
@@ -316,24 +325,36 @@ public class GameState extends State {
 		long bumped = event.getBumped();
 
 		if (bumper == PLAYER_UID) {
-			PlayerInfo record = components.getComponent(bumper, PlayerInfo.class);
+			PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);
 			Behavior brain = components.getComponent(bumped, Behavior.class);
 	    	Graphics graphics = components.getComponent(bumped, Graphics.class);
-	    	CreatureInfo resource = components.getComponent(bumped, CreatureInfo.class);
+	    	CreatureInfo creature = components.getComponent(bumped, CreatureInfo.class);
 			
-			switch (record.getMode()) {
+			switch (player.getMode()) {
 			case NONE:
 				if (brain.isFriendly(bumper)) {
-					bus.post(new TransitionEvent("talk", graphics, resource));
+					bus.post(new TransitionEvent("talk", graphics, creature));
 				} else {
 					bus.post(new CombatEvent.Start(bumper, bumped));	
 				}
 				break;
 			case STEALTH:
 				if (brain.isFriendly(bumper)) {
-					bus.post(new TransitionEvent("talk", graphics, resource));
+					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
+							ButtonTypes.talk, ButtonTypes.pick, ButtonTypes.cancel);
+					if (result.get().equals(ButtonTypes.talk)) {
+						bus.post(new TransitionEvent("talk", graphics, creature));
+					} else if (result.get().equals(ButtonTypes.pick)) {
+						bus.post(new StealthEvent.Pick(bumped));
+					}
 				} else {
-					bus.post(new CombatEvent.Start(bumper, bumped));	
+					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
+							ButtonTypes.pick, ButtonTypes.attack, ButtonTypes.cancel);
+					if (result.get().equals(ButtonTypes.pick)) {
+						bus.post(new StealthEvent.Pick(bumped));
+					} else if (result.get().equals(ButtonTypes.attack)) {
+						bus.post(new CombatEvent.Start(bumper, bumped));	
+					}
 				}
 				break;
 			case AGGRESSION:
@@ -341,7 +362,7 @@ public class GameState extends State {
 					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", graphics, resource));
+						bus.post(new TransitionEvent("talk", graphics, creature));
 					} else if (result.get().equals(ButtonTypes.attack)) {
 						bus.post(new CombatEvent.Start(bumper, bumped));	
 					}

@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 
 import org.jdom2.Element;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Shape;
-import neon.common.entity.entities.Entity;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
@@ -204,7 +204,7 @@ public class MapLoader implements ResourceLoader<RMap> {
 			try {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
-				Entity creature = tracker.createEntity(uid, rc);
+				Entity creature = tracker.createEntity(uid, rc);				
 				initEntity(entity, creature.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
 				logger.severe("unknown creature on map " + map.id + ": " + entity.getAttributeValue("id"));

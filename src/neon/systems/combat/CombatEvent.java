@@ -16,18 +16,31 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.entities;
+package neon.systems.combat;
 
-import neon.common.entity.components.Graphics;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Shape;
-import neon.common.resources.RItem;
+import neon.common.event.NeonEvent;
 
-public class Item extends Entity {
-	public Item(long uid, RItem item) {
-		super(uid);
-		components.put(Shape.class, new Shape(uid));
-		components.put(ItemInfo.class, new ItemInfo(uid, item.id, item.name));
-		components.put(Graphics.class, new Graphics(uid, item.glyph, item.color));		
+public abstract class CombatEvent extends NeonEvent {
+	public final long attacker;
+	public final long defender;
+	
+	public CombatEvent(long attacker, long defender) {
+		this.attacker = attacker;
+		this.defender = defender;
+	}
+	
+	public static class Start extends CombatEvent {
+		public Start(long attacker, long defender) {
+			super(attacker, defender);
+		}		
+	}
+	
+	public static class Result extends CombatEvent {
+		public final long damage;
+		
+		public Result(long attacker, long defender, int damage) {
+			super(attacker, defender);
+			this.damage = damage;
+		}
 	}
 }

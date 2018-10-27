@@ -47,12 +47,10 @@ import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
-import neon.server.entity.ArmorBuilder;
 import neon.server.entity.ClothingBuilder;
 import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
-import neon.server.entity.WeaponBuilder;
 import neon.server.resource.MapLoader;
 
 /**
@@ -111,9 +109,7 @@ class ServerLoader {
 	private void initEntities(EntityManager entities) {
 		// add all builders to the entity manager
 		entities.addBuilder(RItem.class, new ItemBuilder());
-		entities.addBuilder(RItem.Armor.class, new ArmorBuilder());
 		entities.addBuilder(RItem.Clothing.class, new ClothingBuilder());
-		entities.addBuilder(RItem.Weapon.class, new WeaponBuilder());
 		entities.addBuilder(RCreature.class, new CreatureBuilder());
 	}
 	

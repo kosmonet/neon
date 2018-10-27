@@ -30,6 +30,7 @@ import neon.common.resources.GameMode;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
+import neon.systems.combat.CombatSystem;
 import neon.systems.magic.MagicSystem;
 
 /**

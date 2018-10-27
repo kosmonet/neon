@@ -21,12 +21,10 @@ package neon.server.handlers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
-import neon.common.entity.components.Weapon;
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Item;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
@@ -34,6 +32,7 @@ import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
+import neon.systems.combat.Weapon;
 
 /**
  * This class handles the inventory-related server bits.
@@ -42,6 +41,8 @@ import neon.server.entity.EntityManager;
  *
  */
 public class InventoryHandler {
+	private final static long PLAYER_UID = 0;
+	
 	private final EventBus bus;
 	private final EntityManager entities;
 	private final ResourceManager resources;
@@ -54,13 +55,13 @@ public class InventoryHandler {
 	
 	@Subscribe
 	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
-		Creature player = entities.getEntity(0);
+		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.removeItem(event.getItem());
 		Shape shape = player.getComponent(Shape.class);
 		RMap map = resources.getResource("maps", event.getMap());
 		map.addEntity(event.getItem(), shape.getX(), shape.getY());
-		Item item = entities.getEntity(event.getItem());
+		Entity item = entities.getEntity(event.getItem());
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
@@ -70,7 +71,7 @@ public class InventoryHandler {
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.getMap());
 		map.removeEntity(event.getItem());
-		Creature player = entities.getEntity(0);
+		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.addItem(event.getItem());
 
@@ -80,8 +81,8 @@ public class InventoryHandler {
 	
 	@Subscribe
 	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
-		Creature player = entities.getEntity(0);
-		Item item = entities.getEntity(event.uid);
+		Entity player = entities.getEntity(PLAYER_UID);
+		Entity item = entities.getEntity(event.uid);
 		Inventory inventory = player.getComponent(Inventory.class);
 		
 		if (inventory.getItems().contains(event.uid) && item.hasComponent(Clothing.class)) {

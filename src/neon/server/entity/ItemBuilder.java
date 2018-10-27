@@ -18,13 +18,19 @@
 
 package neon.server.entity;
 
-import neon.common.entity.entities.Entity;
-import neon.common.entity.entities.Item;
+import neon.common.entity.Entity;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 
 public class ItemBuilder implements EntityBuilder<RItem> {
 	@Override
 	public Entity build(long uid, RItem resource) {
-		return new Item(uid, resource);
+		Entity item = new Entity(uid);
+		item.setComponent(new Shape(uid));
+		item.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		item.setComponent(new Graphics(uid, resource.glyph, resource.color));
+		return item;
 	}
 }

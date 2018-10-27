@@ -16,37 +16,36 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.systems;
+package neon.systems.combat;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.Entity;
 import neon.common.entity.Slot;
-import neon.common.entity.components.Armor;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Stats;
-import neon.common.entity.components.Weapon;
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Item;
-import neon.common.event.CombatEvent;
 import neon.common.event.ComponentUpdateEvent;
-import neon.common.event.TimerEvent;
+import neon.common.resources.RItem;
 import neon.server.entity.EntityManager;
 import neon.util.Dice;
 
-public class CombatSystem implements NeonSystem {
+public class CombatSystem {
 	private final EntityManager entities;
 	private final EventBus bus;
 	
 	public CombatSystem(EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
+		
+		entities.addBuilder(RItem.Armor.class, new ArmorBuilder());
+		entities.addBuilder(RItem.Weapon.class, new WeaponBuilder());
 	}
 	
 	@Subscribe
 	private void fight(CombatEvent.Start event) {
-		Creature attacker = entities.getEntity(event.attacker);
-		Creature defender = entities.getEntity(event.defender);
+		Entity attacker = entities.getEntity(event.attacker);
+		Entity defender = entities.getEntity(event.defender);
 		
 		Stats stats = defender.getComponent(Stats.class);
 		int damage = Math.max(1, getDamage(attacker.getComponent(Inventory.class)) - getArmor(defender.getComponent(Inventory.class)));
@@ -56,14 +55,11 @@ public class CombatSystem implements NeonSystem {
 		bus.post(new CombatEvent.Result(event.attacker, event.defender, damage));
 	}
 
-	@Override
-	public void onTimerTick(TimerEvent tick) {}
-	
 	private int getDamage(Inventory inventory) {
 		int damage = 0;
 
 		if (inventory.hasEquiped(Slot.WEAPON)) {
-			Item item = entities.getEntity(inventory.getEquipedItem(Slot.WEAPON));
+			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.WEAPON));
 			if (item.hasComponent(Weapon.class)) {
 				damage = Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
@@ -76,7 +72,7 @@ public class CombatSystem implements NeonSystem {
 		int AC = 0;
 
 		for (long uid : inventory.getEquipedItems()) {
-			Item item = entities.getEntity(uid);
+			Entity item = entities.getEntity(uid);
 			if (item.hasComponent(Armor.class)) {
 				AC += item.getComponent(Armor.class).getRating();
 			}

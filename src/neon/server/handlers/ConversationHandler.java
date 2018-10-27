@@ -23,7 +23,7 @@ import java.util.HashMap;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.entity.entities.Creature;
+import neon.common.entity.Entity;
 import neon.common.event.ConversationEvent;
 import neon.common.resources.RDialog;
 import neon.common.resources.RDialog.Topic;
@@ -51,9 +51,8 @@ public class ConversationHandler {
 	 */
 	@Subscribe
 	private void talk(ConversationEvent.Start event) throws ResourceException {
-		Creature speaker = entities.getEntity(event.getFirst());
-		Creature listener = entities.getEntity(event.getSecond());
-		System.out.println(speaker + " is talking to " + listener);
+		Entity speaker = entities.getEntity(event.getFirst());
+		Entity listener = entities.getEntity(event.getSecond());
 		
 		RDialog dialog = resources.getResource("dialog", "test1");
 		HashMap<String, String> topics = new HashMap<>();

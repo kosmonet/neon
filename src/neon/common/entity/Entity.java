@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.entities;
+package neon.common.entity;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
@@ -29,7 +29,7 @@ import neon.common.entity.components.Component;
  * @author mdriesen
  *
  */
-public abstract class Entity {
+public class Entity {
 	public final long uid;
 	protected final ClassToInstanceMap<Component> components = MutableClassToInstanceMap.create();
 	

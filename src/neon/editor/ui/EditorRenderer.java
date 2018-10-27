@@ -24,8 +24,8 @@ import java.util.HashMap;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import neon.common.entity.entities.Entity;
-import neon.common.entity.entities.Item;
+import neon.common.entity.Entity;
+import neon.common.entity.components.ItemInfo;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.editor.resource.ICreature;
@@ -63,7 +63,7 @@ public class EditorRenderer implements EntityRenderer<Entity> {
 			if (one.equals(two)) {
 				return 0;
 			} else {
-				return (two instanceof Item) ? 1 : -1;
+				return (two.hasComponent(ItemInfo.class)) ? 1 : -1;
 			}
 		}		
 	}

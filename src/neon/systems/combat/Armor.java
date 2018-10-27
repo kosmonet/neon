@@ -16,17 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.combat;
 
-import neon.common.entity.Slot;
+import neon.common.entity.components.Component;
 
-public class Weapon implements Component {
+public class Armor implements Component {
 	private final long uid;
-	private final String damage;
+	private final int rating;
 	
-	public Weapon(long uid, String damage) {
+	public Armor(long uid, int rating) {
 		this.uid = uid;
-		this.damage = damage;
+		this.rating = rating;
 	}
 	
 	@Override
@@ -34,11 +34,7 @@ public class Weapon implements Component {
 		return uid;
 	}
 	
-	public String getDamage() {
-		return damage;
-	}
-	
-	public Slot getSlot() {
-		return Slot.WEAPON;
+	public int getRating() {
+		return rating;
 	}
 }

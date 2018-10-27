@@ -22,10 +22,10 @@ import java.util.Random;
 
 import com.google.common.eventbus.EventBus;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.Behavior;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
-import neon.common.entity.entities.Entity;
 import neon.common.event.TimerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;

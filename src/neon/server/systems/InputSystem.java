@@ -21,9 +21,9 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
-import neon.common.entity.entities.Creature;
 import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
@@ -54,7 +54,7 @@ public class InputSystem implements NeonSystem {
 	 */
 	@Subscribe
 	private void move(InputEvent.Move event) throws ResourceException {
-		Creature player = entities.getEntity(0);
+		Entity player = entities.getEntity(0);
 		Stats stats = player.getComponent(Stats.class);
 		
 		if(stats.isActive()) {

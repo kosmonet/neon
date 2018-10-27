@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,29 +16,30 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.systems.combat;
 
-public abstract class CombatEvent extends NeonEvent {
-	public final long attacker;
-	public final long defender;
+import neon.common.entity.Slot;
+import neon.common.entity.components.Component;
+
+public class Weapon implements Component {
+	private final long uid;
+	private final String damage;
 	
-	public CombatEvent(long attacker, long defender) {
-		this.attacker = attacker;
-		this.defender = defender;
+	public Weapon(long uid, String damage) {
+		this.uid = uid;
+		this.damage = damage;
 	}
 	
-	public static class Start extends CombatEvent {
-		public Start(long attacker, long defender) {
-			super(attacker, defender);
-		}		
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 	
-	public static class Result extends CombatEvent {
-		public final long damage;
-		
-		public Result(long attacker, long defender, int damage) {
-			super(attacker, defender);
-			this.damage = damage;
-		}
+	public String getDamage() {
+		return damage;
+	}
+	
+	public Slot getSlot() {
+		return Slot.WEAPON;
 	}
 }

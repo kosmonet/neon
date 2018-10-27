@@ -48,7 +48,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import neon.common.entity.entities.Entity;
+import neon.common.entity.Entity;
 import neon.common.graphics.RenderPane;
 import neon.editor.Card;
 import neon.editor.SaveEvent;

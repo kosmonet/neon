@@ -37,7 +37,7 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.event.ServerLoadEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.entity.components.Armor;
+import neon.common.entity.Entity;
 import neon.common.entity.components.Behavior;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
@@ -48,9 +48,6 @@ import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.entity.components.Weapon;
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Entity;
 import neon.common.event.ClientLoadEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.MessageEvent;
@@ -68,6 +65,8 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.server.entity.EntityManager;
+import neon.systems.combat.Armor;
+import neon.systems.combat.Weapon;
 import neon.systems.magic.Magic;
 
 /**
@@ -79,6 +78,7 @@ import neon.systems.magic.Magic;
  */
 public class GameLoader {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
@@ -119,8 +119,8 @@ public class GameLoader {
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.getSpecies());
-			Entity player = entities.createEntity(0, species);
-			player.setComponent(new PlayerInfo(0, event.getName(), event.getGender()));
+			Entity player = entities.createEntity(PLAYER_UID, species);
+			player.setComponent(new PlayerInfo(PLAYER_UID, event.getName(), event.getGender()));
 			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
 
 			Stats stats = player.getComponent(Stats.class);
@@ -271,7 +271,7 @@ public class GameLoader {
 	 */
 	private void notifyClient(RMap map) throws ResourceException {
 		// tell the client to start loading the map
-		Creature player = entities.getEntity(0);
+		Entity player = entities.getEntity(PLAYER_UID);
 		bus.post(new UpdateEvent.Start());		
 		notifyPlayer(player);
 
@@ -291,8 +291,7 @@ public class GameLoader {
 		}		
 	}
 	
-	private void notifyPlayer(Creature player) {
-		// then everything else
+	private void notifyPlayer(Entity player) {
 		Inventory inventory = player.getComponent(Inventory.class);
 		for (long uid : inventory.getItems()) {
 			notifyItem(entities.getEntity(uid));
@@ -308,6 +307,10 @@ public class GameLoader {
 	}
 	
 	private void notifyCreature(Entity creature) {
+		Inventory inventory = creature.getComponent(Inventory.class);
+		for (long uid : inventory.getItems()) {
+			notifyItem(entities.getEntity(uid));
+		}
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
@@ -359,7 +362,7 @@ public class GameLoader {
 		// store all cached entities
 		entities.flush();
 		// move the temp folder to the saves folder
-		Creature player = entities.getEntity(0);
+		Entity player = entities.getEntity(PLAYER_UID);
 		PlayerInfo record = player.getComponent(PlayerInfo.class);
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
 		// and request JavaFX to quit

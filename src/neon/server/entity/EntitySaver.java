@@ -20,21 +20,23 @@ package neon.server.entity;
 
 import org.jdom2.Element;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Entity;
-import neon.common.entity.entities.Item;
 import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
 public class EntitySaver {
+	private final static long PLAYER_UID = 0;
+	
 	private final ResourceManager resources;
+	private final CreatureBuilder creatureBuilder = new CreatureBuilder();
+	private final ItemBuilder itemBuilder = new ItemBuilder();
 	
 	public EntitySaver(ResourceManager resources) {
 		this.resources = resources;
@@ -100,17 +102,17 @@ public class EntitySaver {
 		
 		if (root.getName().equals("item")) {
 			RItem item = resources.getResource("items", id);
-			return new Item(uid, item);
+			return itemBuilder.build(uid, item);
 		} else if (root.getName().equals("creature")) {
 			RCreature species = resources.getResource("creatures", id);
-			Creature creature = new Creature(uid, species);
+			Entity creature = creatureBuilder.build(PLAYER_UID, species);
 			Shape shape = creature.getComponent(Shape.class);
 			shape.setX(Integer.parseInt(root.getAttributeValue("x")));
 			shape.setY(Integer.parseInt(root.getAttributeValue("y")));
 			return creature;
 		} else if (root.getName().equals("player")) {
 			RCreature species = resources.getResource("creatures", id);
-			Creature player = new Creature(0, species);
+			Entity player = creatureBuilder.build(PLAYER_UID, species);
 			player.setComponent(new PlayerInfo(0, root.getAttributeValue("name"), "gender"));
 			Shape shape = player.getComponent(Shape.class);
 			shape.setX(Integer.parseInt(root.getAttributeValue("x")));

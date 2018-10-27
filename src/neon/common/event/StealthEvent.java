@@ -16,20 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.entity;
+package neon.common.event;
 
-import neon.common.entity.components.Armor;
-import neon.common.entity.components.Clothing;
-import neon.common.entity.entities.Entity;
-import neon.common.entity.entities.Item;
-import neon.common.resources.RItem;
-
-public class ArmorBuilder implements EntityBuilder<RItem.Armor> {
-	@Override
-	public Entity build(long uid, RItem.Armor resource) {
-		Item armor = new Item(uid, resource);
-		armor.setComponent(new Armor(uid, resource.rating));
-		armor.setComponent(new Clothing(uid, resource.slot));
-		return armor;
+public abstract class StealthEvent extends NeonEvent {
+	public static class Pick extends StealthEvent {
+		public final long victim;
+		
+		public Pick(long victim) {
+			this.victim = victim;
+		}
 	}
+	
+	public static class Empty extends StealthEvent {}
+	public static class Success extends StealthEvent {}
 }

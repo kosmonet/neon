@@ -18,7 +18,7 @@
 
 package neon.server.entity;
 
-import neon.common.entity.entities.Entity;
+import neon.common.entity.Entity;
 import neon.common.resources.Resource;
 
 public interface EntityBuilder<T extends Resource> {

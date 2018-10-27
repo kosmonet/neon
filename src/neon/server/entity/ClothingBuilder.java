@@ -18,15 +18,20 @@
 
 package neon.server.entity;
 
+import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
-import neon.common.entity.entities.Entity;
-import neon.common.entity.entities.Item;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 
 public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	@Override
 	public Entity build(long uid, RItem.Clothing resource) {
-		Item cloth = new Item(uid, resource);
+		Entity cloth = new Entity(uid);
+		cloth.setComponent(new Shape(uid));
+		cloth.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		cloth.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		cloth.setComponent(new Clothing(uid, resource.slot));
 		return cloth;
 	}

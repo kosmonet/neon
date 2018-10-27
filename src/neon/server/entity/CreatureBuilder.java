@@ -18,15 +18,28 @@
 
 package neon.server.entity;
 
-import neon.common.entity.entities.Creature;
-import neon.common.entity.entities.Entity;
+import neon.common.entity.Entity;
+import neon.common.entity.components.Behavior;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Graphics;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Shape;
+import neon.common.entity.components.Skills;
+import neon.common.entity.components.Stats;
 import neon.common.resources.RCreature;
 import neon.systems.magic.Magic;
 
 public class CreatureBuilder implements EntityBuilder<RCreature> {
 	@Override
-	public Entity build(long uid, RCreature resource) {
-		Creature creature = new Creature(uid, resource);
+	public Entity build(long uid, RCreature species) {
+		Entity creature = new Entity(uid);
+		creature.setComponent(new Shape(uid));
+		creature.setComponent(new CreatureInfo(uid, species.id, species.name));
+		creature.setComponent(new Graphics(uid, species.glyph, species.color));
+		creature.setComponent(new Inventory(uid));
+		creature.setComponent(new Behavior(uid));
+		creature.setComponent(new Skills(uid));
+		creature.setComponent(new Stats(uid, species));
 		creature.setComponent(new Magic(uid));
 		return creature;
 	}

@@ -30,7 +30,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
-import neon.common.entity.entities.Entity;
+import neon.common.entity.Entity;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.Resource;

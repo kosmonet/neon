@@ -21,13 +21,14 @@ package neon.common.entity.components;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import neon.common.entity.Slot;
 
 public class Inventory implements Component {
 	private final long uid;
-	private final Collection<Long> items = new ArrayList<Long>();
+	private final List<Long> items = new ArrayList<Long>();
 //	private final EnumMap<Slot, Long> equiped = new EnumMap<>(Slot.class);
 	private final LinkedHashMap<Slot, Long> equiped = new LinkedHashMap<>();
 	
@@ -62,7 +63,7 @@ public class Inventory implements Component {
 		items.remove(uid);
 	}
 	
-	public Collection<Long> getItems() {
+	public List<Long> getItems() {
 		return items;
 	}
 	
