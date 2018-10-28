@@ -46,4 +46,9 @@ public abstract class Resource {
 		this.id = id;
 		this.namespace = namespace;
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ":" + namespace + ":" + id;
+	}
 }

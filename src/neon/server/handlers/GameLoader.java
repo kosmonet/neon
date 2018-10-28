@@ -184,7 +184,7 @@ public class GameLoader {
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
-				map = module.getStartMap().isEmpty() ? map : module.getStartMap();
+				map = module.startMap.isEmpty() ? map : module.startMap;
 				x = (module.getStartX() >= 0) ? module.getStartX() : x;
 				y = (module.getStartY() >= 0) ? module.getStartY() : y;
 				money = (module.getStartMoney() >= 0) ? module.getStartMoney() : money;

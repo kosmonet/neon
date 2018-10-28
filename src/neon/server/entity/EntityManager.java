@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import org.jdom2.Document;
 
@@ -44,6 +45,8 @@ import neon.common.resources.ResourceException;
  *
  */
 public class EntityManager implements RemovalListener<Long, Entity> {
+	private static final Logger logger = Logger.getGlobal();
+
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
 	private final HashMap<Class<? extends Resource>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
@@ -97,7 +100,7 @@ public class EntityManager implements RemovalListener<Long, Entity> {
 
 	@Override
 	public void onRemoval(RemovalNotification<Long, Entity> notification) {
-		System.out.println("entity removed from tracker");
+		logger.finest(notification.getValue() + " removed from manager");
 		saveEntity(notification.getValue());
 	}
 	
@@ -105,9 +108,7 @@ public class EntityManager implements RemovalListener<Long, Entity> {
 	 * Stores all remaining entities in the cache in the temp folder on disk.
 	 */
 	public void flush() {
-		for (Entity entity : entities.asMap().values()) {
-			saveEntity(entity);
-		}
+		entities.asMap().values().forEach(entity -> saveEntity(entity));
 	}
 	
 	public long getFreeUID() {

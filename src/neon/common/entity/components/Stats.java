@@ -38,6 +38,12 @@ public class Stats implements Component {
 		AP = species.speed;
 	}
 	
+	@Override
+	public String toString() {
+		// create a string in module:map:entity format
+		return "Stats:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
+	}
+	
 	/**
 	 * Makes the creature perform an action. This means that the action point
 	 * cost of the action is deducted from the action points the creature has

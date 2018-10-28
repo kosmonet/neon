@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,28 +16,36 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources.loaders;
+package neon.systems.conversation;
+
+import java.util.ArrayList;
 
 import org.jdom2.Element;
 
-import neon.common.resources.RDialog;
-import neon.common.resources.RDialog.Topic;
+import neon.common.resources.loaders.ResourceLoader;
 
 public class DialogLoader implements ResourceLoader<RDialog> {
 	@Override
 	public RDialog load(Element root) {
-		Element cnode = root.getChild("cnode");
-		
-		Topic topic = new Topic(cnode.getAttributeValue("id"), cnode.getChildText("text"));
-		for (Element pnode : cnode.getChildren("pnode")) {
-			Topic sub = new Topic(pnode.getAttributeValue("id"), pnode.getChildText("text"));
-			topic.addTopic(sub);
-		}
-		
-		RDialog dialog = new RDialog(root.getAttributeValue("id"), topic);
+		CNode node = loadCNode(root.getChild("cnode"));
+		RDialog dialog = new RDialog(root.getAttributeValue("id"), node);
 		return dialog;
 	}
 
+	private PNode loadPNode(Element node) {	
+		CNode child = loadCNode(node.getChild("cnode"));
+		return new PNode(node.getAttributeValue("id"), node.getChildText("text"), child);
+	}
+	
+	private CNode loadCNode(Element node) {
+		ArrayList<PNode> nodes = new ArrayList<>();
+		for (Element child : node.getChildren("pnode")) {
+			nodes.add(loadPNode(child));
+		}
+		
+		return new CNode(node.getAttributeValue("id"), node.getChildText("text"), nodes);
+	}
+	
 	@Override
 	public Element save(RDialog resource) {
 		Element dialog = new Element("dialog");

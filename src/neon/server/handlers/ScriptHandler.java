@@ -34,6 +34,7 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.console.ConsoleEvent;
 import neon.common.event.ScriptEvent;
+import neon.systems.time.Calendar;
 
 public class ScriptHandler {
 	private static final Logger logger = Logger.getGlobal();
@@ -46,10 +47,11 @@ public class ScriptHandler {
 		
 		try {
 			engine.eval(new InputStreamReader(getClass().getResourceAsStream("scripts.js")));
-			engine.eval("onEngineStart()");
+			execute("onEngineStart()");
 			
 //			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
-//			
+			engine.put("cal", new Calendar());
+
 			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
 				System.out.println("binding: " + entry.getKey() + " - " + entry.getValue().getClass());
 			}
@@ -80,13 +82,12 @@ public class ScriptHandler {
 	 * @return the result of the script
 	 */
 	private Object execute(String script) {
-		Object result = null;
 		try {
-			result = engine.eval(script);
+			return engine.eval(script);
 		} catch (ScriptException e) {
 			logger.warning("could not evaluate script: " + script);
+			return null;
 		}		
-		return result;
 	}
 	
 	public static String output(String name) {

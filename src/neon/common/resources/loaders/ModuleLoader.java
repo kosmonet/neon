@@ -71,7 +71,7 @@ public class ModuleLoader implements ResourceLoader<RModule> {
 		root.addContent(title);
 		
 		Element start = new Element("start");
-		start.setAttribute("map", module.getStartMap());
+		start.setAttribute("map", module.startMap);
 		start.setAttribute("x", Integer.toString(module.getStartX()));
 		start.setAttribute("y", Integer.toString(module.getStartY()));
 		root.addContent(start);

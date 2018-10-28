@@ -40,13 +40,13 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntitySaver;
 import neon.server.entity.EntityManager;
-import neon.server.handlers.ConversationHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.ScriptHandler;
 import neon.server.handlers.SleepHandler;
 import neon.server.handlers.StealthHandler;
 import neon.server.systems.SystemManager;
+import neon.systems.conversation.ConversationSystem;
 
 /**
  * The server part of the neon engine.
@@ -84,7 +84,7 @@ public class Server implements Runnable {
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
 		bus.register(new InventoryHandler(resources, entities, bus));
-		bus.register(new ConversationHandler(resources, entities, bus));
+		bus.register(new ConversationSystem(resources, entities, bus));
 		bus.register(new StealthHandler(entities, bus));
 		bus.register(new SleepHandler(entities, bus));
 		bus.register(systems);

@@ -24,8 +24,8 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
-import neon.common.event.RestEvent;
 import neon.server.entity.EntityManager;
+import neon.systems.time.RestEvent;
 
 public class SleepHandler {
 	private final static long PLAYER_UID = 0;

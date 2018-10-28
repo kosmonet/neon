@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,34 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.conversation;
 
-public class Behavior implements Component {
-	private final long uid;
+import java.util.ArrayList;
+import java.util.Collection;
+
+class CNode {
+	final String id;
+	final String text;
+	final ArrayList<PNode> children = new ArrayList<>();
 	
-	public Behavior(long uid) {
-		this.uid = uid;
-	}
-	
-	@Override
-	public String toString() {
-		// create a string in module:map:entity format
-		return "Behavior:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	/**
-	 * Checks whether this creature is friendly towards the creature with the
-	 * given uid.
-	 * 
-	 * @param uid
-	 * @return
-	 */
-	public boolean isFriendly(long uid) {
-		return true;
+	CNode(String id, String text, Collection<PNode> nodes) {
+		this.id = id;
+		this.text = text;
+		children.addAll(nodes);
 	}
 }

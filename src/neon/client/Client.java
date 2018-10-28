@@ -64,8 +64,8 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
-import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.systems.conversation.DialogLoader;
 import neon.systems.magic.SpellLoader;
 
 /**

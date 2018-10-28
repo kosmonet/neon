@@ -16,11 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.systems.conversation;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import neon.common.event.NeonEvent;
 
 public abstract class ConversationEvent extends NeonEvent {
+	private final static Gson gson = new Gson();
+	
 	/**
 	 * Event to start a conversation.
 	 * 
@@ -53,19 +61,20 @@ public abstract class ConversationEvent extends NeonEvent {
 	 */
 	public static class Update extends ConversationEvent {
 		private final String answer;
-		private final HashMap<String, String> topics = new HashMap<>();
+		private final String topics;
 		
-		public Update(String answer, HashMap<String, String> topics) {
+		public Update(String answer, ArrayList<Topic> topics) {
 			this.answer = answer;
-			this.topics.putAll(topics);
+			this.topics = gson.toJson(topics);
 		}
 		
 		public String getAnswer() {
 			return answer;
 		}
 		
-		public HashMap<String, String> getTopics() {
-			return topics;
+		public ArrayList<Topic> getTopics() {
+			Type type = new TypeToken<ArrayList<Topic>>(){}.getType();
+			return gson.fromJson(topics, type);
 		}
 	}
 	
@@ -76,14 +85,14 @@ public abstract class ConversationEvent extends NeonEvent {
 	 *
 	 */
 	public static class Answer extends ConversationEvent {
-		private final String answer;
+		final String answer;
+		final String child;
+		final String resource;
 		
-		public Answer(String answer) {
+		public Answer(String answer, String resource, String child) {
 			this.answer = answer;
-		}
-		
-		public String getAnswer() {
-			return answer;
+			this.child = child;
+			this.resource = resource;
 		}
 	}
 }

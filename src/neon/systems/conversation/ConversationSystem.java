@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,27 +16,25 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.handlers;
+package neon.systems.conversation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
-import neon.common.event.ConversationEvent;
-import neon.common.resources.RDialog;
-import neon.common.resources.RDialog.Topic;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
-public class ConversationHandler {
+public class ConversationSystem {
 	private final EntityManager entities;
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public ConversationHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public ConversationSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
 		this.resources = resources;
@@ -54,17 +52,31 @@ public class ConversationHandler {
 		Entity speaker = entities.getEntity(event.getFirst());
 		Entity listener = entities.getEntity(event.getSecond());
 		
-		RDialog dialog = resources.getResource("dialog", "test1");
-		HashMap<String, String> topics = new HashMap<>();
-		for (Topic topic : dialog.getRoot().getSubtopics()) {
-			topics.put(topic.getID(), topic.getText());
+		ArrayList<Topic> topics = new ArrayList<>();
+		String text = "";
+		
+		for (String id : resources.listResources("dialog")) {
+			RDialog dialog = resources.getResource("dialog", id);
+			text = dialog.getRoot().text;
+			for (PNode topic : dialog.getRoot().children) {
+				topics.add(new Topic(dialog.id, topic.id, topic.text, topic.child.id));
+			}
 		}
 		
-		bus.post(new ConversationEvent.Update(dialog.getRoot().getText(), topics));
+		bus.post(new ConversationEvent.Update(text, topics));
 	}
 
 	@Subscribe
-	private void answer(ConversationEvent.Answer event) {
-		System.out.println("Answer: " + event.getAnswer());
+	private void answer(ConversationEvent.Answer event) throws ResourceException {
+		System.out.println("Answer: " + event.answer + "; dialog: " + event.resource);
+		RDialog dialog = resources.getResource("dialog", event.resource);
+		CNode child = dialog.getNode(event.child);
+		ArrayList<Topic> topics = new ArrayList<>();
+		
+		for (PNode node : child.children) {
+			topics.add(new Topic(event.resource, node.id, node.text, node.child.id));
+		}
+
+		bus.post(new ConversationEvent.Update(child.text, topics));
 	}
 }

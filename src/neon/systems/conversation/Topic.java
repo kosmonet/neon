@@ -16,9 +16,18 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.systems.conversation;
 
-public abstract class RestEvent extends NeonEvent {
-	public static class Sleep extends RestEvent {}
-	public static class Wake extends RestEvent {}
+public class Topic {
+	public final String resource;
+	public final String child;
+	public final String id;
+	public final String text;
+	
+	Topic(String resource, String id, String text, String child) {
+		this.resource = resource;
+		this.child = child;
+		this.id = id;
+		this.text = text;
+	}
 }

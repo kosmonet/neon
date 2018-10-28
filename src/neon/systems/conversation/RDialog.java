@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,47 +16,34 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources;
+package neon.systems.conversation;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 
-public class RDialog extends Resource {
-	private final Topic root;
+import neon.common.resources.Resource;
+
+class RDialog extends Resource {
+	private final HashMap<String, CNode> nodes = new HashMap<>();
+	private final CNode root;
 	
-	public RDialog(String id, Topic root) {
+	RDialog(String id, CNode root) {
 		super(id, "dialog");
 		this.root = root;
+		addNodes(root);
 	}
 	
-	public Topic getRoot() {
+	private void addNodes(CNode node) {
+		nodes.put(node.id, node);
+		for (PNode child : node.children) {
+			addNodes(child.child);
+		}
+	}
+	
+	CNode getRoot() {
 		return root;
 	}
 	
-	public static class Topic {
-		private final Collection<Topic> topics = new ArrayList<Topic>();
-		private final String text;
-		private final String id;
-		
-		public Topic(String id, String text) {
-			this.id = id;
-			this.text = text;
-		}
-		
-		public String getID() {
-			return id;
-		}
-		
-		public Collection<Topic> getSubtopics() {
-			return topics;
-		}
-		
-		public String getText() {
-			return text;
-		}
-		
-		public void addTopic(Topic topic) {
-			topics.add(topic);
-		}
+	CNode getNode(String id) {
+		return nodes.get(id);
 	}
 }

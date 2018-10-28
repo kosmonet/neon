@@ -37,12 +37,12 @@ public class RModule extends Resource {
 	public final String title;
 	public final String subtitle;
 	public final String intro;
+	public final String startMap;
 
 	private final Set<String> species = new HashSet<>();
 	private final Set<String> parents = new HashSet<>();
 	private final List<String> items = new ArrayList<>();
 	private final Set<String> spells = new HashSet<>();
-	private final String map;
 	private final int x, y, money;
 
 	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY, String intro, int startMoney) {
@@ -50,7 +50,7 @@ public class RModule extends Resource {
 		this.title = title;
 		this.subtitle = subtitle;
 		this.intro = intro;
-		map = startMap;
+		this.startMap = startMap;
 		x = startX;
 		y = startY;
 		money = startMoney;
@@ -113,10 +113,6 @@ public class RModule extends Resource {
 	 */
 	public Set<String> getParents() {
 		return parents;
-	}
-	
-	public String getStartMap() {
-		return map;
 	}
 	
 	public int getStartX() {

@@ -59,7 +59,6 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
-import neon.common.event.RestEvent;
 import neon.common.event.SaveEvent;
 import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
@@ -72,6 +71,7 @@ import neon.systems.combat.CombatEvent;
 import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
+import neon.systems.time.RestEvent;
 import neon.util.Direction;
 
 /**

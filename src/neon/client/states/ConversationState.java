@@ -19,7 +19,6 @@
 package neon.client.states;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -43,7 +42,8 @@ import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Graphics;
-import neon.common.event.ConversationEvent;
+import neon.systems.conversation.ConversationEvent;
+import neon.systems.conversation.Topic;
 
 public class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();
@@ -100,19 +100,27 @@ public class ConversationState extends State {
 	
 	@Subscribe
 	public void update(ConversationEvent.Update event) {
+		flow.getChildren().add(new Text("\n"));
 		flow.getChildren().add(new Text(event.getAnswer()));
-		
 		subjects.getChildren().clear();
 		
-		for (Entry<String, String> topic : event.getTopics().entrySet()) {
-			Hyperlink link = new Hyperlink(topic.getValue());
+		for (Topic topic : event.getTopics()) {
+			Hyperlink link = new Hyperlink(topic.text);
 			subjects.getChildren().add(link);
-			link.setOnAction(action -> bus.post(new ConversationEvent.Answer(topic.getKey())));			
+			link.setOnAction(action -> ask(topic));			
 		}
 		
 		index = 0;
 		Platform.runLater(subjects.getChildren().get(0)::requestFocus);
 		Platform.runLater(() -> scroller.setVvalue(scroller.getVmax()));
+	}
+	
+	private void ask(Topic topic) {
+		flow.getChildren().add(new Text("\n\t"));
+		Text text = new Text(topic.text);
+		text.setStyle("-fx-fill: indianred");
+		flow.getChildren().add(text);
+		bus.post(new ConversationEvent.Answer(topic.id, topic.resource, topic.child));
 	}
 	
 	/**

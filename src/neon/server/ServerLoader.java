@@ -43,7 +43,6 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
-import neon.common.resources.loaders.DialogLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
@@ -52,6 +51,7 @@ import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
 import neon.server.resource.MapLoader;
+import neon.systems.conversation.DialogLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.

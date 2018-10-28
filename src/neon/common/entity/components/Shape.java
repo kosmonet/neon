@@ -41,6 +41,15 @@ public class Shape implements Component {
 	}
 	
 	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("Shape:");
+		// create a string in module:map:entity format
+		builder.append((uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl));
+		builder.append("[x:" + x + ", y:" + y + ", z:" + z + "]");
+		return builder.toString();
+	}
+	
+	@Override
 	public long getEntity() {
 		return uid;
 	}

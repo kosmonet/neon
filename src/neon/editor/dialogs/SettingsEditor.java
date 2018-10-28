@@ -111,7 +111,7 @@ public class SettingsEditor {
 			titleField.setText(module.title);
 			subtitleField.setText(module.subtitle);
 			
-			mapField.setText(module.getStartMap());
+			mapField.setText(module.startMap);
 			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
 			xSpinner.getValueFactory().setValue(module.getStartX());
 			ySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
