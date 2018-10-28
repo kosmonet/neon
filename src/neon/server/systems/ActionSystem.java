@@ -57,7 +57,7 @@ public class ActionSystem implements NeonSystem {
 			}
 		}
 	}
-
+	
 	@Override
 	public void onTimerTick(TimerEvent tick) {
 		

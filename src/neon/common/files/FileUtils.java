@@ -37,6 +37,11 @@ import com.google.common.io.RecursiveDeleteOption;
  */
 public class FileUtils {
 	private final static Logger logger = Logger.getGlobal();
+	
+	// suppress default constructor for noninstantiability
+	private FileUtils() {
+		throw new AssertionError();
+	}
 
 	/**
 	 * Copy the contents of a folder to another folder. This method will 

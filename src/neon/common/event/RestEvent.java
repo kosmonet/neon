@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,26 +16,9 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.util;
+package neon.common.event;
 
-import javafx.scene.paint.Color;
-
-public class GraphicsUtils {
-	// suppress default constructor for noninstantiability
-	private GraphicsUtils() {
-		throw new AssertionError();
-	}
-	
-	/**
-	 * Converts the given color to a hexadecimal RGB value.
-	 * 
-	 * @param color
-	 * @return
-	 */
-	public static String getColorString(Color color) {
-		return String.format("#%02X%02X%02X", 
-				(int) (color.getRed()*255),
-	            (int) (color.getGreen()*255),
-	            (int) (color.getBlue()*255));
-	}
+public abstract class RestEvent extends NeonEvent {
+	public static class Sleep extends RestEvent {}
+	public static class Wake extends RestEvent {}
 }

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
@@ -57,11 +59,13 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
+import neon.common.event.RestEvent;
 import neon.common.event.SaveEvent;
 import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
+import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.systems.combat.CombatEvent;
@@ -89,7 +93,7 @@ public class GameState extends State {
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
-	@FXML private Label modeLabel, healthLabel, manaLabel;
+	@FXML private Label modeLabel, healthLabel, manaLabel, infoLabel;
 	
 	private Scene scene;
 	private int scale = 20;
@@ -117,6 +121,7 @@ public class GameState extends State {
 		
 		try {
 			scene = new Scene(loader.load());
+			scene.setFill(Color.BLACK);
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
 			logger.severe("failed to load new game: " + e.getMessage());
@@ -138,6 +143,7 @@ public class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), () -> look());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> use());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.R), () -> bus.post(new RestEvent.Sleep()));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 	}
 	
@@ -222,6 +228,14 @@ public class GameState extends State {
 				shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
 				break;
 			}
+			
+			try {
+				RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(shape.getX(), shape.getY()));
+				infoLabel.setText(terrain.id);
+			} catch (ResourceException e) {
+				logger.warning("unknown terrain type: " + map.getTerrain().get(shape.getX(), shape.getY()));
+			}
+			
 			redraw();
 		}
 	}
@@ -256,17 +270,19 @@ public class GameState extends State {
 		if (!looking) {
 			Shape player = components.getComponent(PLAYER_UID, Shape.class);
 			Shape shape = new Shape(POINTER_UID, player.getX(), player.getY(), player.getZ());
-			Graphics graphics = new Graphics(POINTER_UID, "X", Color.WHITE);
+			Graphics graphics = new Graphics(POINTER_UID, "◎", Color.WHITE);
 			components.putComponent(POINTER_UID, shape);
 			components.putComponent(POINTER_UID, graphics);
 			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
 			entities.add(POINTER_UID);
 			renderPane.updateMap(entities);
+			infoLabel.setVisible(true);
 			redraw();
 			looking = true;
 		} else {
 			components.removeEntity(POINTER_UID);
 			renderPane.updateMap(map.getEntities());
+			infoLabel.setVisible(false);
 			redraw();
 			looking = false;
 		}
@@ -313,6 +329,18 @@ public class GameState extends State {
 		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
 			bus.post(new TransitionEvent("pick", map));			
 		}
+	}
+	
+	
+	@Subscribe
+	private void onSleep(RestEvent.Wake event) {
+		FadeTransition transition = new FadeTransition(Duration.millis(2000), stack);
+		transition.setFromValue(1.0);
+	    transition.setToValue(0.0);
+	    transition.setAutoReverse(true);
+	    transition.setCycleCount(2);
+	    transition.setOnFinished(action -> ui.showOverlayMessage("You have slept.", 1500));
+	    transition.play();
 	}
 	
 	private void quit() {

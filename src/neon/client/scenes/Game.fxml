@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.geometry.Insets?>
@@ -15,6 +13,14 @@
 			<Label maxHeight="Infinity" maxWidth="Infinity" text="Loading map..." style="-fx-font-size: 24px" />
 		</HBox>
 		<BorderPane fx:id="infoPane">
+			<top>
+				<HBox spacing="10" alignment="CENTER">
+					<padding>
+						<Insets top="10" right="10" bottom="10" left="10" />
+					</padding>
+					<Label fx:id="infoLabel" id="mode" text="test" visible="false" />
+				</HBox>				
+			</top>
 			<bottom>
 				<HBox spacing="10" alignment="CENTER_RIGHT">
 					<padding>

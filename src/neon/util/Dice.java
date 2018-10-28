@@ -28,6 +28,11 @@ import java.util.Random;
 public class Dice {
 	private final static Random random = new Random();
 	
+	// suppress default constructor for noninstantiability
+	private Dice() {
+		throw new AssertionError();
+	}
+
 	/**
 	 * Rolls dice.
 	 * 
@@ -61,10 +66,10 @@ public class Dice {
 		int dice = 0;
 		int mod = 0;
 		
-		if(index2 > 0 ) {			// -1 wilt zeggen dat er geen + is gevonden
+		if (index2 > 0 ) {			// -1 means no + was found
 			dice = Integer.parseInt(roll.substring(index1 + 1, index2));
 			mod = Integer.parseInt(roll.substring(index2 + 1, roll.length()));
-		} else if(index3 > 0) {		// -1 wilt zeggen dat er geen - is gevonden
+		} else if (index3 > 0) {		// -1 means no - was found
 			dice = Integer.parseInt(roll.substring(index1 + 1, index3));
 			mod = -Integer.parseInt(roll.substring(index3 + 1, roll.length()));			
 		} else {

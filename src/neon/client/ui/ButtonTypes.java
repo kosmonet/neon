@@ -31,4 +31,8 @@ public class ButtonTypes {
 	public final static ButtonType yes = new ButtonType("Yes");
 	public final static ButtonType no = new ButtonType("No");
 	
+	// suppress default constructor for noninstantiability
+	private ButtonTypes() {
+		throw new AssertionError();
+	}
 }

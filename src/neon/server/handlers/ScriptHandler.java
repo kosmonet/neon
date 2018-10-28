@@ -18,12 +18,13 @@
 
 package neon.server.handlers;
 
+import java.io.InputStreamReader;
 //import java.io.FileNotFoundException;
 //import java.io.FileReader;
-//import java.util.Map;
+import java.util.Map;
 import java.util.logging.Logger;
 
-//import javax.script.ScriptContext;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -32,7 +33,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.console.ConsoleEvent;
-import neon.common.event.NewGameEvent;
 import neon.common.event.ScriptEvent;
 
 public class ScriptHandler {
@@ -44,16 +44,18 @@ public class ScriptHandler {
 	public ScriptHandler(EventBus bus) {
 		this.bus = bus;
 		
-//		try {
-//			engine.eval(new FileReader("data/aneirin/scripts/start.js"));
+		try {
+			engine.eval(new InputStreamReader(getClass().getResourceAsStream("scripts.js")));
+			engine.eval("onEngineStart()");
+			
 //			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
 //			
-//			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
-//				System.out.println("binding: " + entry.getKey() + ": " + entry.getValue().getClass());
-//			}
-//		} catch (FileNotFoundException | ScriptException e) {
-//			e.printStackTrace();
-//		}
+			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
+				System.out.println("binding: " + entry.getKey() + " - " + entry.getValue().getClass());
+			}
+		} catch (ScriptException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -85,11 +87,6 @@ public class ScriptHandler {
 			logger.warning("could not evaluate script: " + script);
 		}		
 		return result;
-	}
-	
-	@Subscribe
-	private void onGameStart(NewGameEvent event) throws ScriptException {
-//		engine.eval("onGameStart()");		
 	}
 	
 	public static String output(String name) {

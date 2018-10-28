@@ -44,6 +44,7 @@ import neon.server.handlers.ConversationHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.ScriptHandler;
+import neon.server.handlers.SleepHandler;
 import neon.server.handlers.StealthHandler;
 import neon.server.systems.SystemManager;
 
@@ -85,6 +86,7 @@ public class Server implements Runnable {
 		bus.register(new InventoryHandler(resources, entities, bus));
 		bus.register(new ConversationHandler(resources, entities, bus));
 		bus.register(new StealthHandler(entities, bus));
+		bus.register(new SleepHandler(entities, bus));
 		bus.register(systems);
 		
 		// send configuration message to the client

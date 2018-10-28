@@ -191,12 +191,12 @@ public class NeonFileSystem {
 	 */
 	public <T> void saveFile(T output, Translator<T> translator, String... path) throws IOException {
 		// check if the filesystem is writable
-		if(!writable) {
+		if (!writable) {
 			throw new IOException("Filesystem is not writable.");			
 		}
 		
 		// check if the temp folder exists
-		if(temporary == null) {
+		if (temporary == null) {
 			throw new IOException("No temp folder registered.");
 		}
 		
@@ -278,17 +278,17 @@ public class NeonFileSystem {
 	 */
 	public void deleteFile(String... path) throws IOException {
 		// check if the temp folder exists
-		if(temporary == null) {
+		if (temporary == null) {
 			throw new IOException("No temp folder registered.");
 		}
 
 		// check if the file system is writable
-		if(!writable) {
+		if (!writable) {
 			throw new IOException("Filesystem is not writable.");
 		}
 
 		File file = Paths.get(temporary.toString(), path).toFile();
-		if(file.exists()) {
+		if (file.exists()) {
 			file.delete();
 			logger.finest("deleted file " + Arrays.toString(path));
 		}

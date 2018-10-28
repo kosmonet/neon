@@ -40,6 +40,11 @@ public class TextureFactory {
 		Font.loadFont("lib/DejaVuSansMono.ttf", 12);
 	}
 	
+	// suppress default constructor for noninstantiability
+	private TextureFactory() {
+		throw new AssertionError();
+	}
+
 	public static Image getImage(int size, Paint paint, String text) {
 		if(text.length() != 1) {
 			throw new IllegalArgumentException("String should be one character in length.");
