@@ -18,12 +18,19 @@
 
 package neon.systems.conversation;
 
-public class Topic {
-	public final String id;
-	public final String text;
+import java.util.ArrayList;
+import java.util.Collection;
+
+class PlayerNode implements ConversationNode {
+	final String id;
+	final String text;
+	final ArrayList<String> children = new ArrayList<>();
+	final NodeType type;
 	
-	Topic(String id, String text) {
+	PlayerNode(String id, String text, Collection<String> nodes, NodeType type) {
 		this.id = id;
 		this.text = text;
+		children.addAll(nodes);
+		this.type = type;
 	}
 }

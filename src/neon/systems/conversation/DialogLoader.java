@@ -27,23 +27,40 @@ import neon.common.resources.loaders.ResourceLoader;
 public class DialogLoader implements ResourceLoader<RDialog> {
 	@Override
 	public RDialog load(Element root) {
-		CNode node = loadCNode(root.getChild("cnode"));
-		RDialog dialog = new RDialog(root.getAttributeValue("id"), node);
+		RDialog dialog = new RDialog(root.getAttributeValue("id"));
+		loadCreatureNode(root, dialog);	// recursively load all nodes, starting from root
 		return dialog;
 	}
 
-	private PNode loadPNode(Element node) {	
-		CNode child = loadCNode(node.getChild("cnode"));
-		return new PNode(node.getAttributeValue("id"), node.getChildText("text"), child);
-	}
-	
-	private CNode loadCNode(Element node) {
-		ArrayList<PNode> nodes = new ArrayList<>();
-		for (Element child : node.getChildren("pnode")) {
-			nodes.add(loadPNode(child));
+	private PlayerNode loadPlayerNode(Element node, RDialog dialog) {
+		NodeType type = NodeType.NONE;
+		if (node.getAttribute("type") != null) {
+			type = NodeType.valueOf(node.getAttributeValue("type").toUpperCase());
+		} 
+		
+		ArrayList<String> nodes = new ArrayList<>();
+		if (type == NodeType.LINK) {
+			nodes.add(node.getAttributeValue("link"));
+		} else {
+			for (Element child : node.getChildren("cnode")) {
+				nodes.add(loadCreatureNode(child, dialog).id);
+			}			
 		}
 		
-		return new CNode(node.getAttributeValue("id"), node.getChildText("text"), nodes);
+		PlayerNode pnode = new PlayerNode(node.getAttributeValue("id"), node.getChildText("text"), nodes, type);
+		dialog.addNode(pnode);
+		return pnode;
+	}
+	
+	private CreatureNode loadCreatureNode(Element node, RDialog dialog) {
+		ArrayList<String> nodes = new ArrayList<>();
+		for (Element child : node.getChildren("pnode")) {
+			nodes.add(loadPlayerNode(child, dialog).id);
+		}
+		
+		CreatureNode cnode = new CreatureNode(node.getAttributeValue("id"), node.getChildText("text"), nodes);
+		dialog.addNode(cnode);
+		return cnode;
 	}
 	
 	@Override

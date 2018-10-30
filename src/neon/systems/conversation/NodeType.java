@@ -18,17 +18,6 @@
 
 package neon.systems.conversation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-class CNode {
-	final String id;
-	final String text;
-	final ArrayList<PNode> children = new ArrayList<>();
-	
-	CNode(String id, String text, Collection<PNode> nodes) {
-		this.id = id;
-		this.text = text;
-		children.addAll(nodes);
-	}
+public enum NodeType {
+	NONE, CONTINUE, END, LINK;
 }

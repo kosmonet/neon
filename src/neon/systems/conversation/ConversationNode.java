@@ -18,14 +18,6 @@
 
 package neon.systems.conversation;
 
-class PNode {
-	final String id;
-	final String text;
-	final CNode child;
-	
-	PNode(String id, String text, CNode child) {
-		this.id = id;
-		this.text = text;
-		this.child = child;
-	}
+public interface ConversationNode {
+
 }

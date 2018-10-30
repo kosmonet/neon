@@ -86,13 +86,11 @@ public abstract class ConversationEvent extends NeonEvent {
 	 */
 	public static class Answer extends ConversationEvent {
 		final String answer;
-		final String child;
-		final String resource;
 		
-		public Answer(String answer, String resource, String child) {
+		public Answer(String answer) {
 			this.answer = answer;
-			this.child = child;
-			this.resource = resource;
 		}
 	}
+	
+	public static class End extends ConversationEvent {}
 }

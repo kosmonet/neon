@@ -18,12 +18,23 @@
 
 package neon.systems.conversation;
 
-public class Topic {
-	public final String id;
-	public final String text;
+import neon.common.entity.components.Component;
+
+public class Dialog implements Component {
+	private final long uid;
+	private final String dialog;
+
+	public Dialog(long uid, String dialog) {
+		this.uid = uid;
+		this.dialog = dialog;
+	}
 	
-	Topic(String id, String text) {
-		this.id = id;
-		this.text = text;
+	public String getDialog() {
+		return dialog;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 }

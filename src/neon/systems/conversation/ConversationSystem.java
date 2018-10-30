@@ -19,7 +19,6 @@
 package neon.systems.conversation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -30,14 +29,17 @@ import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
 public class ConversationSystem {
-	private final EntityManager entities;
 	private final ResourceManager resources;
+	private final EntityManager entities;
 	private final EventBus bus;
 	
+	private RDialog currentDialog;
+	private CreatureNode currentNode;
+	
 	public ConversationSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.entities = entities;
 		this.bus = bus;
 		this.resources = resources;
+		this.entities = entities;
 	}
 	
 	/**
@@ -48,35 +50,46 @@ public class ConversationSystem {
 	 * @throws ResourceException
 	 */
 	@Subscribe
-	private void talk(ConversationEvent.Start event) throws ResourceException {
-		Entity speaker = entities.getEntity(event.getFirst());
+	private void onConversationStart(ConversationEvent.Start event) throws ResourceException {
 		Entity listener = entities.getEntity(event.getSecond());
-		
 		ArrayList<Topic> topics = new ArrayList<>();
-		String text = "";
+		currentDialog = resources.getResource("dialog", listener.getComponent(Dialog.class).getDialog());
+		currentNode = currentDialog.getRoot();
 		
-		for (String id : resources.listResources("dialog")) {
-			RDialog dialog = resources.getResource("dialog", id);
-			text = dialog.getRoot().text;
-			for (PNode topic : dialog.getRoot().children) {
-				topics.add(new Topic(dialog.id, topic.id, topic.text, topic.child.id));
-			}
+		for (String id : currentNode.children) {
+			PlayerNode topic = currentDialog.getPlayerNode(id);
+			topics.add(new Topic(topic.id, topic.text));
 		}
 		
-		bus.post(new ConversationEvent.Update(text, topics));
+		bus.post(new ConversationEvent.Update(currentNode.text, topics));
 	}
 
 	@Subscribe
-	private void answer(ConversationEvent.Answer event) throws ResourceException {
-		System.out.println("Answer: " + event.answer + "; dialog: " + event.resource);
-		RDialog dialog = resources.getResource("dialog", event.resource);
-		CNode child = dialog.getNode(event.child);
-		ArrayList<Topic> topics = new ArrayList<>();
-		
-		for (PNode node : child.children) {
-			topics.add(new Topic(event.resource, node.id, node.text, node.child.id));
-		}
+	private void onAnswer(ConversationEvent.Answer event) throws ResourceException {
+		PlayerNode pnode = currentDialog.getPlayerNode(event.answer);
 
-		bus.post(new ConversationEvent.Update(child.text, topics));
+		if (pnode.type.equals(NodeType.END)) {
+			bus.post(new ConversationEvent.End());
+		} else {
+			currentNode = currentDialog.getCreatureNode(pnode.children.get(0));
+			ArrayList<Topic> topics = new ArrayList<>();
+			for (String id : currentNode.children) {
+				PlayerNode topic = currentDialog.getPlayerNode(id);
+				switch (topic.type) {
+				case CONTINUE:
+					topics.add(new Topic(topic.id, "[continue]"));				
+					break;
+				case END:
+					topics.add(new Topic(topic.id, topic.text + " [end]"));				
+					break;
+				case LINK:	// fallthrough
+				case NONE:
+					topics.add(new Topic(topic.id, topic.text));
+					break;
+				}
+			}
+
+			bus.post(new ConversationEvent.Update(currentNode.text, topics));
+		}
 	}
 }

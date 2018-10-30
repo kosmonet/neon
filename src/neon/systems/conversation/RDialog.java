@@ -23,27 +23,30 @@ import java.util.HashMap;
 import neon.common.resources.Resource;
 
 class RDialog extends Resource {
-	private final HashMap<String, CNode> nodes = new HashMap<>();
-	private final CNode root;
+	private final HashMap<String, PlayerNode> pnodes = new HashMap<>();
+	private final HashMap<String, CreatureNode> cnodes = new HashMap<>();
 	
-	RDialog(String id, CNode root) {
+	RDialog(String id) {
 		super(id, "dialog");
-		this.root = root;
-		addNodes(root);
 	}
 	
-	private void addNodes(CNode node) {
-		nodes.put(node.id, node);
-		for (PNode child : node.children) {
-			addNodes(child.child);
-		}
+	CreatureNode getRoot() {
+		return cnodes.get(id);	// root has same id as the entire dialog
 	}
 	
-	CNode getRoot() {
-		return root;
+	void addNode(CreatureNode node) {
+		cnodes.put(node.id, node);
 	}
 	
-	CNode getNode(String id) {
-		return nodes.get(id);
+	void addNode(PlayerNode node) {
+		pnodes.put(node.id, node);
+	}
+	
+	CreatureNode getCreatureNode(String id) {
+		return cnodes.get(id);
+	}
+	
+	PlayerNode getPlayerNode(String id) {
+		return pnodes.get(id);
 	}
 }

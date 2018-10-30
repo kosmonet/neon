@@ -36,6 +36,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
 import neon.server.entity.EntityManager;
+import neon.systems.conversation.Dialog;
 
 /**
  * A loader for map resources.
@@ -204,7 +205,13 @@ public class MapLoader implements ResourceLoader<RMap> {
 			try {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
-				Entity creature = tracker.createEntity(uid, rc);				
+				Entity creature = tracker.createEntity(uid, rc);
+
+				if (entity.getAttribute("dialog") != null) {
+					String dialog = entity.getAttributeValue("dialog");	
+					creature.setComponent(new Dialog(uid, dialog));
+				}
+				
 				initEntity(entity, creature.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
 				logger.severe("unknown creature on map " + map.id + ": " + entity.getAttributeValue("id"));

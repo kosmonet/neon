@@ -95,11 +95,12 @@ public class ConversationState extends State {
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting conversation module");
+		bus.post(new ConversationEvent.End());
 		bus.unregister(this);
 	}
 	
 	@Subscribe
-	public void update(ConversationEvent.Update event) {
+	public void onConverationUpdate(ConversationEvent.Update event) {
 		flow.getChildren().add(new Text("\n"));
 		flow.getChildren().add(new Text(event.getAnswer()));
 		subjects.getChildren().clear();
@@ -115,12 +116,17 @@ public class ConversationState extends State {
 		Platform.runLater(() -> scroller.setVvalue(scroller.getVmax()));
 	}
 	
+	@Subscribe 
+	private void onConversationEnd(ConversationEvent.End event) {
+		bus.post(new TransitionEvent("cancel"));
+	}
+	
 	private void ask(Topic topic) {
 		flow.getChildren().add(new Text("\n\t"));
 		Text text = new Text(topic.text);
 		text.setStyle("-fx-fill: indianred");
 		flow.getChildren().add(text);
-		bus.post(new ConversationEvent.Answer(topic.id, topic.resource, topic.child));
+		bus.post(new ConversationEvent.Answer(topic.id));
 	}
 	
 	/**
