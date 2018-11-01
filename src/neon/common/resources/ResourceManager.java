@@ -46,7 +46,7 @@ import neon.common.resources.loaders.ResourceLoader;
  *
  */
 public class ResourceManager {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;
 	private final Table<String, String, SoftReference<Resource>> resources = HashBasedTable.create();

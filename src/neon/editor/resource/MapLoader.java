@@ -38,7 +38,7 @@ import neon.common.resources.loaders.ResourceLoader;
  *
  */
 public class MapLoader implements ResourceLoader<RMap> {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	private final ResourceManager resources;
 	

@@ -50,7 +50,7 @@ import neon.editor.dialogs.TerrainEditor;
 import neon.editor.ui.CardCellFactory;
 
 public class TerrainHandler {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> terrainTree;
 	

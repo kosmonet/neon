@@ -21,15 +21,15 @@ package neon.client.ui;
 import javafx.scene.control.ButtonType;
 
 public class ButtonTypes {
-	public final static ButtonType talk = new ButtonType("Talk");
-	public final static ButtonType attack = new ButtonType("Attack");
-	public final static ButtonType pick = new ButtonType("Pick pocket");
-	public final static ButtonType ride = new ButtonType("Ride animal");
-	public final static ButtonType swap = new ButtonType("Swap position");
+	public static final ButtonType talk = new ButtonType("Talk");
+	public static final ButtonType attack = new ButtonType("Attack");
+	public static final ButtonType pick = new ButtonType("Pick pocket");
+	public static final ButtonType ride = new ButtonType("Ride animal");
+	public static final ButtonType swap = new ButtonType("Swap position");
 	
-	public final static ButtonType cancel = new ButtonType("Cancel");
-	public final static ButtonType yes = new ButtonType("Yes");
-	public final static ButtonType no = new ButtonType("No");
+	public static final ButtonType cancel = new ButtonType("Cancel");
+	public static final ButtonType yes = new ButtonType("Yes");
+	public static final ButtonType no = new ButtonType("No");
 	
 	// suppress default constructor for noninstantiability
 	private ButtonTypes() {

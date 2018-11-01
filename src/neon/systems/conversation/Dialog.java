@@ -29,7 +29,7 @@ public class Dialog implements Component {
 		this.dialog = dialog;
 	}
 	
-	public String getDialog() {
+	String getDialog() {
 		return dialog;
 	}
 	

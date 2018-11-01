@@ -47,11 +47,8 @@ import neon.client.states.OptionState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
-import neon.common.entity.Skill;
 import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
-import neon.common.entity.components.Skills;
-import neon.common.entity.components.Stats;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.NeonEvent;
@@ -65,7 +62,6 @@ import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.TerrainLoader;
-import neon.systems.conversation.DialogLoader;
 import neon.systems.magic.SpellLoader;
 
 /**
@@ -73,7 +69,7 @@ import neon.systems.magic.SpellLoader;
  * @author mdriesen
  *
  */
-public class Client implements Runnable {
+public final class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 
@@ -112,7 +108,6 @@ public class Client implements Runnable {
 		// add all loaders to the resource manager
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creatures", new CreatureLoader());
-		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader());
 		resources.addLoader("config", new ConfigurationLoader());
 		resources.addLoader("spells", new SpellLoader());
@@ -217,15 +212,13 @@ public class Client implements Runnable {
 	
 	@Subscribe
 	private void onSkillIncrease(UpdateEvent.SkillUpdate event) throws ResourceException {
-		Skills skills = components.getComponent(event.uid, Skills.class);
-		skills.setSkill(Skill.valueOf(event.skill), event.value);
-		ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
+		if (event.uid == PLAYER_UID) {
+			ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
+		}
 	}
 	
 	@Subscribe
 	private void onLevelIncrease(UpdateEvent.Level event) throws ResourceException {
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		stats.setLevel(event.level);
 		ui.showOverlayMessage("Level up!", 1000);
 	}
 	

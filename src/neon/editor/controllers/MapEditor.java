@@ -74,9 +74,9 @@ import neon.common.resources.ResourceManager;
  *
  */
 public class MapEditor {
-	private final static ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
-	private final static ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
-	private final static Logger logger = Logger.getGlobal();
+	private static final ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
+	private static final ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
+	private static final Logger logger = Logger.getGlobal();
 	
 	private final Card card;
 	private final GridPane grid = new GridPane();

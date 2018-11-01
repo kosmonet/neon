@@ -18,6 +18,6 @@
 
 package neon.systems.conversation;
 
-public enum NodeType {
+enum NodeType {
 	NONE, CONTINUE, END, LINK;
 }

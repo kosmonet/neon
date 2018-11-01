@@ -89,7 +89,7 @@ public class JournalState extends State {
 		description.update(creatureInfo.getName(), graphics);
     	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
     	speedLabel.setText("Speed: " + stats.getSpeed());
-    	levelLabel.setText("Level " + stats.getLevel());
+    	levelLabel.setText("Level " + stats.getLevel() + " (" + skills.getSkillIncreases() + "/10)");
     	
     	strengthLabel.setText("Strength: " + stats.getBaseStr());
     	constitutionLabel.setText("Constitution: " + stats.getBaseCon());

@@ -27,7 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import neon.common.event.NeonEvent;
 
 public abstract class ConversationEvent extends NeonEvent {
-	private final static Gson gson = new Gson();
+	private static final Gson gson = new Gson();
 	
 	/**
 	 * Event to start a conversation.
@@ -44,11 +44,11 @@ public abstract class ConversationEvent extends NeonEvent {
 			this.two = two;
 		}
 		
-		public long getFirst() {
+		long getFirst() {
 			return one;
 		}
 		
-		public long getSecond() {
+		long getSecond() {
 			return two;
 		}		
 	}
@@ -63,7 +63,7 @@ public abstract class ConversationEvent extends NeonEvent {
 		private final String answer;
 		private final String topics;
 		
-		public Update(String answer, ArrayList<Topic> topics) {
+		Update(String answer, ArrayList<Topic> topics) {
 			this.answer = answer;
 			this.topics = gson.toJson(topics);
 		}

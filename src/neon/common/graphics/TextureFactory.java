@@ -31,9 +31,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
 public class TextureFactory {
-	private final static HashMap<Type, Image> map = new HashMap<>();
-	private final static SnapshotParameters parameters = new SnapshotParameters();
-	private final static Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
+	private static final HashMap<Type, Image> map = new HashMap<>();
+	private static final SnapshotParameters parameters = new SnapshotParameters();
+	private static final Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);
 	
 	static {
 		parameters.setFill(Color.TRANSPARENT);

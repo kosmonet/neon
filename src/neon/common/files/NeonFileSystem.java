@@ -45,10 +45,10 @@ import java.util.logging.Logger;
  *
  */
 public class NeonFileSystem {
-	public final static boolean WRITABLE = true;
-	public final static boolean READONLY = false;
+	public static final boolean WRITABLE = true;
+	public static final boolean READONLY = false;
 	
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	private final ArrayList<String> modules = new ArrayList<>();
 	private Path temporary, save;

@@ -32,7 +32,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
 public class EntitySaver {
-	private final static long PLAYER_UID = 0;
+	private static final long PLAYER_UID = 0;
 	
 	private final ResourceManager resources;
 	private final CreatureBuilder creatureBuilder = new CreatureBuilder();

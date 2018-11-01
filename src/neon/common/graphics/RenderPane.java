@@ -41,7 +41,7 @@ import neon.util.spatial.RegionSpatialIndex;
  *
  */
 public class RenderPane<T> extends StackPane {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;

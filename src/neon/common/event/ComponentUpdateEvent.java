@@ -38,9 +38,9 @@ import neon.common.entity.Skill;
 import neon.common.entity.components.Component;
 
 public class ComponentUpdateEvent extends NeonEvent {
-	private final static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Color.class, new ColorAdapter()).
+	private static final GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Color.class, new ColorAdapter()).
 			registerTypeAdapter(EnumMap.class, new SkillAdapter());
-	private final static Gson gson = builder.create();
+	private static final Gson gson = builder.create();
 
 	private final String component;
 	private final String type;

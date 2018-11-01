@@ -51,7 +51,6 @@ import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
 import neon.server.resource.MapLoader;
-import neon.systems.conversation.DialogLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.
@@ -137,7 +136,6 @@ class ServerLoader {
 		resources.addLoader("terrain", new TerrainLoader());
 		resources.addLoader("creatures", new CreatureLoader());
 		resources.addLoader("items", new ItemLoader());
-		resources.addLoader("dialog", new DialogLoader());
 		resources.addLoader("maps", new MapLoader(entities, resources, configuration));
 		
 		// check if all required parent modules are present

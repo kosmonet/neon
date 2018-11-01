@@ -25,7 +25,7 @@ public class Weapon implements Component {
 	private final long uid;
 	private final String damage;
 	
-	public Weapon(long uid, String damage) {
+	Weapon(long uid, String damage) {
 		this.uid = uid;
 		this.damage = damage;
 	}

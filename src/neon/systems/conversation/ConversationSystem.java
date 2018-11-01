@@ -40,6 +40,7 @@ public class ConversationSystem {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
+		resources.addLoader("dialog", new DialogLoader());
 	}
 	
 	/**

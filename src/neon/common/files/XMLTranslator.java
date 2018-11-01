@@ -37,7 +37,7 @@ import org.jdom2.output.XMLOutputter;
  *
  */
 public class XMLTranslator implements Translator<Document> {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	@Override
 	public Document translate(InputStream input) throws IOException {

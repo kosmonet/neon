@@ -25,7 +25,7 @@ import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 import neon.server.entity.EntityBuilder;
 
-public class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
+class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
 	@Override
 	public Entity build(long uid, RItem.Weapon resource) {
 		Entity weapon = new Entity(uid);

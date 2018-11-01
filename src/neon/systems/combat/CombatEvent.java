@@ -24,7 +24,7 @@ public abstract class CombatEvent extends NeonEvent {
 	public final long attacker;
 	public final long defender;
 	
-	public CombatEvent(long attacker, long defender) {
+	private CombatEvent(long attacker, long defender) {
 		this.attacker = attacker;
 		this.defender = defender;
 	}

@@ -30,8 +30,8 @@ import neon.common.event.StealthEvent;
 import neon.server.entity.EntityManager;
 
 public class StealthHandler {
-	private final static Random random = new Random();
-	private final static long PLAYER_UID = 0;
+	private static final Random random = new Random();
+	private static final long PLAYER_UID = 0;
 	
 	private final EntityManager entities;
 	private final EventBus bus;

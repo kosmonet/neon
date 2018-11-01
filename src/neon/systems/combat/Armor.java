@@ -24,7 +24,7 @@ public class Armor implements Component {
 	private final long uid;
 	private final int rating;
 	
-	public Armor(long uid, int rating) {
+	Armor(long uid, int rating) {
 		this.uid = uid;
 		this.rating = rating;
 	}

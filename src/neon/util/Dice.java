@@ -26,7 +26,7 @@ import java.util.Random;
  * @author mdriesen
  */
 public class Dice {
-	private final static Random random = new Random();
+	private static final Random random = new Random();
 	
 	// suppress default constructor for noninstantiability
 	private Dice() {

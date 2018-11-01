@@ -28,7 +28,7 @@ import neon.server.entity.EntityManager;
 import neon.systems.time.RestEvent;
 
 public class SleepHandler {
-	private final static long PLAYER_UID = 0;
+	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final EntityManager entities;

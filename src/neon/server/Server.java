@@ -54,7 +54,7 @@ import neon.systems.conversation.ConversationSystem;
  * @author mdriesen
  *
  */
-public class Server implements Runnable {
+public final class Server implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus = new EventBus("Server Bus");
@@ -107,7 +107,7 @@ public class Server implements Runnable {
 	 * on the server event bus.
 	 */
 	public void run() {
-		while(true) {
+		while (true) {
 			bus.post(socket.getEvent());
 		}
 	}

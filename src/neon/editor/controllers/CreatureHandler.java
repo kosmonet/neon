@@ -60,7 +60,7 @@ import neon.editor.ui.CardCellFactory;
  *
  */
 public class CreatureHandler {
-	private final static Logger logger = Logger.getGlobal();
+	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> creatureTree;
 	

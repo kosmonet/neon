@@ -18,6 +18,6 @@
 
 package neon.systems.magic;
 
-public enum Target {
+enum Target {
 	SELF, OTHER;
 }

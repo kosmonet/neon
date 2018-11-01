@@ -41,7 +41,7 @@ import neon.systems.combat.Weapon;
  *
  */
 public class InventoryHandler {
-	private final static long PLAYER_UID = 0;
+	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final EntityManager entities;

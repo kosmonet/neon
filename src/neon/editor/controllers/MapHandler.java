@@ -71,9 +71,9 @@ import neon.editor.ui.CardCellFactory;
  *
  */
 public class MapHandler {
-	private final static ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
-	private final static ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
-	private final static Logger logger = Logger.getGlobal();
+	private static final ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
+	private static final ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
+	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> mapTree;
 	@FXML private TabPane tabs;

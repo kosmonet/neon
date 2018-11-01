@@ -21,7 +21,7 @@ package neon.systems.conversation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-class CreatureNode implements ConversationNode {
+class CreatureNode {
 	final String id;
 	final String text;
 	final ArrayList<String> children = new ArrayList<>();

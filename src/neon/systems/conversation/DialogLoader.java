@@ -24,7 +24,7 @@ import org.jdom2.Element;
 
 import neon.common.resources.loaders.ResourceLoader;
 
-public class DialogLoader implements ResourceLoader<RDialog> {
+class DialogLoader implements ResourceLoader<RDialog> {
 	@Override
 	public RDialog load(Element root) {
 		RDialog dialog = new RDialog(root.getAttributeValue("id"));

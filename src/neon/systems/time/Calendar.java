@@ -32,12 +32,12 @@ package neon.systems.time;
  *
  */
 public class Calendar {
-	private final static int DAYS_PER_WEEK = 6;
-	private final static int WEEKS_PER_MONTH = 5;
-	private final static int DAYS_PER_MONTH = DAYS_PER_WEEK*WEEKS_PER_MONTH;
-	private final static int MONTHS_PER_YEAR = 12;
-	private final static int DAYS_PER_YEAR = DAYS_PER_MONTH*MONTHS_PER_YEAR;
-	private final static int WEEKS_PER_YEAR = WEEKS_PER_MONTH*MONTHS_PER_YEAR;
+	private static final int DAYS_PER_WEEK = 6;
+	private static final int WEEKS_PER_MONTH = 5;
+	private static final int DAYS_PER_MONTH = DAYS_PER_WEEK*WEEKS_PER_MONTH;
+	private static final int MONTHS_PER_YEAR = 12;
+	private static final int DAYS_PER_YEAR = DAYS_PER_MONTH*MONTHS_PER_YEAR;
+	private static final int WEEKS_PER_YEAR = WEEKS_PER_MONTH*MONTHS_PER_YEAR;
 	
 	/**
 	 * Returns the day of the week as an integer.

@@ -26,7 +26,7 @@ public class RSpell extends Resource {
 	public final int duration;
 	public final int magnitude;
 	
-	public RSpell(String id, Effect effect, Target target, int duration, int magnitude) {
+	RSpell(String id, Effect effect, Target target, int duration, int magnitude) {
 		super(id, "spells");
 		this.effect = effect;
 		this.target = target;
