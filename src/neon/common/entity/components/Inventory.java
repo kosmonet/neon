@@ -20,7 +20,8 @@ package neon.common.entity.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,7 @@ import neon.common.entity.Slot;
 public class Inventory implements Component {
 	private final long uid;
 	private final List<Long> items = new ArrayList<Long>();
-//	private final EnumMap<Slot, Long> equiped = new EnumMap<>(Slot.class);
-	private final LinkedHashMap<Slot, Long> equiped = new LinkedHashMap<>();
+	private final HashMap<Slot, Long> equiped = new HashMap<>();
 	
 	private int money = 0;
 	
@@ -70,7 +70,7 @@ public class Inventory implements Component {
 	}
 	
 	public List<Long> getItems() {
-		return items;
+		return Collections.unmodifiableList(items);
 	}
 	
 	public void addMoney(int amount) {
@@ -102,6 +102,6 @@ public class Inventory implements Component {
 	}
 	
 	public Collection<Long> getEquipedItems() {
-		return equiped.values();
+		return Collections.unmodifiableCollection(equiped.values());
 	}
 }

@@ -30,6 +30,7 @@ import com.google.common.eventbus.Subscribe;
 import javafx.application.Platform;
 
 import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ClientEvent;
 import neon.common.event.QuitEvent;
 import neon.common.event.TimerEvent;
 import neon.common.files.NeonFileSystem;
@@ -95,7 +96,7 @@ public final class Server implements Runnable {
 			CServer cs = resources.getResource("config", "server");
 			bus.post(new ClientConfigurationEvent(cc, cs));
 		} catch (ResourceException e) {
-			throw new IllegalStateException("Could not load client configuration", e);
+			throw new IllegalStateException("Could not load client configuration.", e);
 		}
 		
 		// start the timer for the game loop
@@ -121,6 +122,11 @@ public final class Server implements Runnable {
 	@Subscribe
 	private void monitor(DeadEvent event) {
 		logger.warning("server received a dead event: " + event.getEvent());
+	}
+	
+	@Subscribe
+	private void monitor(ClientEvent event) {
+		throw new AssertionError("Server received a client event!");
 	}
 	
 	/**

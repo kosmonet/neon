@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,8 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources;
+package neon.client;
 
-public enum GameMode {
-	TURN_BASED, REAL_TIME;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
+
+public final class ClientUtils {
+	// suppress default constructor for noninstantiability
+	private ClientUtils() {
+		throw new AssertionError();
+	}
+	
+	public static int getWeight(Inventory inventory, ComponentManager components) {
+		int weight = 0;
+		for (long uid : inventory.getItems()) {
+			weight += components.getComponent(uid, ItemInfo.class).weight;
+		}
+		return weight/100;
+	}	
 }

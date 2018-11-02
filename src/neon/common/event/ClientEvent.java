@@ -26,7 +26,7 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public class ClientEvent extends NeonEvent {
+public abstract class ClientEvent extends NeonEvent {
 	@Override
 	public boolean isBlocked() {
 		return true;

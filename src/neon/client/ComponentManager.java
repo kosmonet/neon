@@ -18,27 +18,68 @@
 
 package neon.client;
 
+import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.Table;
 
 import neon.common.entity.components.Component;
 
-public class ComponentManager {
+/**
+ * A table containing all components for all currently loaded entities.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class ComponentManager {
 	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
 	
+	/**
+	 * Puts a component for an entity in the table.
+	 * 
+	 * @param uid
+	 * @param component
+	 */
 	public void putComponent(long uid, Component component) {
 		components.put(uid, component.getClass(), component);
 	}
 	
+	/**
+	 * Removes an entity from the table.
+	 * 
+	 * @param uid
+	 */
 	public void removeEntity(long uid) {
 		components.row(uid).clear();
 	}
 	
+	/**
+	 * 
+	 * @param uid
+	 * @param type
+	 * @return	a component of the given type for the given entity
+	 */
 	public <T extends Component> T getComponent(long uid, Class<T> type) {
 		return type.cast(components.get(uid, type));
 	}
 	
+	/**
+	 * Checks whether an entity has a certain component type.
+	 * 
+	 * @param uid
+	 * @param type
+	 * @return
+	 */
 	public boolean hasComponent(long uid, Class<?> type) {
 		return components.contains(uid, type);
+	}
+	
+	/**
+	 * 
+	 * @param uid
+	 * @return	all components of the given entity
+	 */
+	public ClassToInstanceMap<Component> getComponents(long uid) {
+		return ImmutableClassToInstanceMap.copyOf(components.rowMap().get(uid));
 	}
 }

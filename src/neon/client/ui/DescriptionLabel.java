@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,21 +18,33 @@
 
 package neon.client.ui;
 
+import com.google.common.collect.ClassToInstanceMap;
+
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.TextAlignment;
+import neon.common.entity.components.Clothing;
+import neon.common.entity.components.Component;
+import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Graphics;
+import neon.common.entity.components.ItemInfo;
 import neon.common.graphics.TextureFactory;
+import neon.systems.combat.Armor;
+import neon.systems.combat.Weapon;
+import neon.systems.magic.Enchantment;
 
 /**
- * A custom label used to show item descriptions in the inventory module.
+ * A custom label to show item and creature descriptions.
  * 
  * @author mdriesen
  *
  */
-public class DescriptionLabel extends Label {
+public final class DescriptionLabel extends Label {
+	/**
+	 * Initialize this label.
+	 */
 	public DescriptionLabel() {
 		setTextAlignment(TextAlignment.CENTER);
 		setContentDisplay(ContentDisplay.TOP);
@@ -41,25 +53,82 @@ public class DescriptionLabel extends Label {
 	}
 	
 	/**
+	 * Updates the description of a creature.
 	 * 
-	 * @param name
-	 * @param graphics
+	 * @param components	all the components that make a creature
 	 */
-	public void update(String name, Graphics graphics) {
-		if (graphics != null) {
+	public void updateCreature(ClassToInstanceMap<Component> components) {
+		if (components.containsKey(Graphics.class)) {
 			// create the image like it would show in-game on the ground
+			Graphics graphics = components.getInstance(Graphics.class);
 			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
 			setGraphic(new ImageView(image));
-			
-			StringBuffer description = new StringBuffer();
-			description.append("\n");
-			description.append(name);
-			description.append("\n");
-
-			setText(description.toString());
 		} else {
 			setGraphic(null);
-			setText(null);
 		}
+		
+		StringBuilder description = new StringBuilder();
+		if (components.containsKey(CreatureInfo.class)) {
+			CreatureInfo info = components.getInstance(CreatureInfo.class);
+			description.append("\n");
+			description.append(info.getName());
+			description.append("\n");
+		}
+		
+		setText(description.toString());			
+	}
+
+	/**
+	 * Updates the description of an item.
+	 * 
+	 * @param components	all the components that make an item
+	 */
+	public void updateItem(ClassToInstanceMap<Component> components) {
+		if (components.containsKey(Graphics.class)) {
+			// create the image like it would show in-game on the ground
+			Graphics graphics = components.getInstance(Graphics.class);
+			Image image = TextureFactory.getImage(60, graphics.getColor(), graphics.getGlyph());
+			setGraphic(new ImageView(image));	
+		} else {
+			setGraphic(null);
+		}
+
+		StringBuilder builder = new StringBuilder();
+		if (components.containsKey(ItemInfo.class)) {
+			ItemInfo info = components.getInstance(ItemInfo.class);
+			builder.append(info.name);
+			builder.append("\n");
+			builder.append("weight: " + (float) info.weight/100 + " stone");
+			builder.append("\n");	
+			builder.append("price: " + info.price + " cp");
+			builder.append("\n");
+		}
+
+		if (components.containsKey(Clothing.class)) {
+			Clothing clothing = components.getInstance(Clothing.class);
+			builder.append("∷\n");
+			builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
+		}
+
+		if (components.containsKey(Armor.class)) {
+			Armor armor = components.getInstance(Armor.class);
+			builder.append("\n");
+			builder.append("Rating: " + armor.getRating());						
+		}
+
+		if (components.containsKey(Weapon.class)) {
+			Weapon weapon = components.getInstance(Weapon.class);
+			builder.append("∷\n");
+			builder.append("Damage: " + weapon.getDamage());						
+		}
+
+		if (components.containsKey(Enchantment.class)) {
+			Enchantment enchantment = components.getInstance(Enchantment.class);
+			builder.append("\n∷\n");
+			builder.append("Effect: " + enchantment.getEffect() + "\n");						
+			builder.append("Magnitude: " + enchantment.getMagnitude());						
+		}
+
+		setText(builder.toString());
 	}
 }

@@ -22,10 +22,10 @@ import javafx.scene.paint.Color;
 
 public class Graphics implements Component {
 	private final long uid;
-	private final String glyph;
+	private final char glyph;
 	private final Color color;
 	
-	public Graphics(long uid, String glyph, Color color) {
+	public Graphics(long uid, char glyph, Color color) {
 		this.uid = uid;
 		this.glyph = glyph;
 		this.color = color;
@@ -46,7 +46,7 @@ public class Graphics implements Component {
 		return color;
 	}
 
-	public String getGlyph() {
+	public char getGlyph() {
 		return glyph;
 	}
 }

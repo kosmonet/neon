@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -45,13 +45,9 @@ public class TextureFactory {
 		throw new AssertionError();
 	}
 
-	public static Image getImage(int size, Paint paint, String text) {
-		if(text.length() != 1) {
-			throw new IllegalArgumentException("String should be one character in length.");
-		}
-
+	public static Image getImage(int size, Paint paint, char glyph) {
 		size = Math.max(size, 1);
-		Type type = new Type(size, paint, text);
+		Type type = new Type(size, paint, glyph);
 		if (map.containsKey(type)) {
 			return map.get(type);
 		} else {
@@ -62,13 +58,13 @@ public class TextureFactory {
 			gc.setFill(paint);
 			
 			// @ looks ugly in DejaVu Sans Mono
-			if(!text.equals("@")) {
+			if (glyph != '@') {
 				gc.setFont(Font.font("DejaVu Sans Mono", size*6/7));
 			} else {
 				gc.setFont(Font.font(size*6/7));				
 			}
 			// 0.25 en 0.85 to get the text in the middle of the image
-			gc.fillText(text, size*0.25, size*0.85);
+			gc.fillText(Character.toString(glyph), size*0.25, size*0.85);
 
 			WritableImage image = new WritableImage(size, size);
 			map.put(type, canvas.snapshot(parameters, image));
@@ -79,14 +75,14 @@ public class TextureFactory {
 	private static class Type {
 		private final int size;
 		private final Paint paint;
-		private final String text;
+		private final char glyph;
 		private final int hash;
 		
-		private Type(int size, Paint paint, String text) {
+		private Type(int size, Paint paint, char glyph) {
 			this.size = size;
 			this.paint = paint;
-			this.text = text;
-			hash = Objects.hash(size, paint, text);
+			this.glyph = glyph;
+			hash = Objects.hash(size, paint, glyph);
 		}
 		
 		@Override
@@ -95,7 +91,7 @@ public class TextureFactory {
 				return false;
 			} else {
 				Type type = (Type) object;
-				return text.equals(type.text) && paint.equals(type.paint) && size == type.size;				
+				return glyph == type.glyph && paint.equals(type.paint) && size == type.size;				
 			}
 		}
 		

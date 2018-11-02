@@ -31,7 +31,7 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class MapLoader implements ResourceLoader<RMap> {
+public final class MapLoader implements ResourceLoader<RMap> {
 	@Override
 	public RMap load(Element root) {
 		String id = root.getAttributeValue("id");

@@ -127,7 +127,7 @@ public class TerrainHandler {
 			}
 
 			// create the terrain
-			RTerrain terrain = new RTerrain(id, id, ".", Color.WHITE);
+			RTerrain terrain = new RTerrain(id, id, '.', Color.WHITE);
 
 			try {
 				resources.addResource(terrain);

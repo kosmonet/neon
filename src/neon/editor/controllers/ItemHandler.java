@@ -145,7 +145,7 @@ public class ItemHandler {
 
 			// create the item
 			try {
-				RItem.Builder builder = new RItem.Builder(id).setName(id).setGraphics("?", Color.BLUE);
+				RItem.Builder builder = new RItem.Builder(id, id).setGraphics('?', Color.BLUE);
 				resources.addResource(new RItem(builder));
 				Card card = new Card("items", id, resources, false);
 				card.setChanged(true);

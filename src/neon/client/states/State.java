@@ -19,7 +19,7 @@
 package neon.client.states;
 
 /**
- * A module represents a state in the client finite state machine. 
+ * A state in the client finite state machine. 
  * 
  * @author mdriesen
  *
@@ -28,25 +28,25 @@ public abstract class State {
 	private boolean active;
 	
 	/**
-	 * Performs the entry actions of this module.
+	 * Performs the entry actions of this state.
 	 */
 	public abstract void enter(TransitionEvent event);
 	
 	/**
-	 * Performs the exit actions of this module.
+	 * Performs the exit actions of this state.
 	 */
 	public abstract void exit(TransitionEvent event);
 	
 	/**
 	 * 
-	 * @return whether this module is active or not
+	 * @return whether this state is active or not
 	 */
 	boolean isActive() {
 		return active;
 	}
 	
 	/**
-	 * Sets the active status of this module.
+	 * Sets the active status of this state.
 	 * 
 	 * @param active
 	 */

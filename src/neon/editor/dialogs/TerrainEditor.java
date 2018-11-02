@@ -75,13 +75,13 @@ public class TerrainEditor {
 			logger.severe("failed to load terrain editor ui" + e.getMessage());
 		}
 		
-		nameField.setText(terrain.getName());
-		textField.setText(terrain.getText());
-		colorBox.setValue(terrain.getColor());
+		nameField.setText(terrain.name);
+		textField.setText(Character.toString(terrain.glyph));
+		colorBox.setValue(terrain.color);
 		
 		previewLabel.setStyle("-fx-background-color: black;");
-		previewLabel.setTextFill(terrain.getColor());
-		previewLabel.setText(terrain.getText());
+		previewLabel.setTextFill(terrain.color);
+		previewLabel.setText(Character.toString(terrain.glyph));
 		
 		textField.textProperty().addListener((observable, oldValue, newValue) -> refresh());
 		colorBox.valueProperty().addListener(value -> refresh());
@@ -115,14 +115,14 @@ public class TerrainEditor {
 	 */
 	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
 		String name = nameField.getText().isEmpty() ? card.toString() : nameField.getText();
-		String text = textField.getText();
+		char glyph = textField.getText().charAt(0);
 		Color color = colorBox.getValue();
 		RTerrain rt = card.getResource();
 		
 		// check if the resource was actually changed
-		if (!name.equals(rt.getName()) || !text.equals(rt.getText()) || !color.equals(rt.getColor())) {
+		if (!name.equals(rt.name) || glyph != rt.glyph || !color.equals(rt.color)) {
 			card.setRedefined(card.isOriginal() ? true : false);
-			RTerrain terrain = new RTerrain(card.toString(), name, text, color);
+			RTerrain terrain = new RTerrain(card.toString(), name, glyph, color);
 			bus.post(new SaveEvent.Resources(terrain));
 			card.setChanged(true);
 		}

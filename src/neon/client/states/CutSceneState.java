@@ -36,7 +36,7 @@ import neon.common.resources.CClient;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
-public class CutSceneState extends State {
+public final class CutSceneState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;

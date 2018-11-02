@@ -172,7 +172,7 @@ public class CreatureHandler {
 
 			// create the creature
 			try {
-				resources.addResource(new RCreature.Builder(id).setName(id).setGraphics("?", Color.BLUE).
+				resources.addResource(new RCreature.Builder(id).setName(id).setGraphics('?', Color.BLUE).
 						setSpeed(10).setStats(10, 10, 10, 10, 10, 10).build());
 				Card card = new Card("creatures", id, resources, false);
 				card.setChanged(true);

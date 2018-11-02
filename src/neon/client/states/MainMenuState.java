@@ -42,12 +42,12 @@ import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.QuitEvent;
 
 /**
- * The module for the main menu screen in the game.
+ * The state for the main menu screen in the game.
  * 
  * @author mdriesen
  *
  */
-public class MainMenuState extends State {
+public final class MainMenuState extends State {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Hyperlink newLink, loadLink, optionLink, quitLink;
@@ -58,7 +58,7 @@ public class MainMenuState extends State {
 	private Scene scene;
 	
 	/**
-	 * Initializes this module.
+	 * Initializes this state.
 	 * 
 	 * @param ui
 	 * @param version
@@ -144,12 +144,12 @@ public class MainMenuState extends State {
 	}
 	
 	/**
-	 * Configures the scene of the main menu module.
+	 * Configures the scene of the main menu state.
 	 * 
 	 * @param event
 	 */
 	@Subscribe
-	public void configure(ClientConfigurationEvent event) {
+	private void configure(ClientConfigurationEvent event) {
 		titleLabel.setText(event.getTitle());
 		subtitleLabel.setText(event.getSubtitle());
 	}	

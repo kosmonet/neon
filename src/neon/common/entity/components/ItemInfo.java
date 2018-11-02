@@ -19,19 +19,20 @@
 package neon.common.entity.components;
 
 public class ItemInfo implements Component {
-	private final String id, name;
-	private final long uid;
+	public final String id, name;
+	public final int price, weight;
+	public final long uid;
 	
-	public ItemInfo(long uid, String id, String name) {
+	private long owner;
+	
+	public ItemInfo(long uid, String id, String name, int price, int weight) {
 		this.id = id;
 		this.uid = uid;
 		this.name = name;
+		this.price = price;
+		this.weight = weight;
 	}
 	
-	public String getResource() {
-		return id;
-	}
-
 	@Override
 	public String toString() {
 		// create a string in module:map:entity format
@@ -43,7 +44,11 @@ public class ItemInfo implements Component {
 		return uid;
 	}
 	
-	public String getName() {
-		return name;
+	public long getOwner() {
+		return owner;
+	}
+	
+	public void setOwner(long owner) {
+		this.owner = owner;
 	}
 }

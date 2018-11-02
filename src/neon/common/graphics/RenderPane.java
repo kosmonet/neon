@@ -115,7 +115,7 @@ public class RenderPane<T> extends StackPane {
 				try {
 					RTerrain rt = resources.getResource("terrain", terrain.get(x, y));
 					GraphicsContext gc = layers.get(elevation.get(x, y)).getGraphicsContext2D();
-					Image image = TextureFactory.getImage(scale, rt.getColor(), rt.getText());
+					Image image = TextureFactory.getImage(scale, rt.color, rt.glyph);
 					gc.drawImage(image, scale*(x - xmin), scale*(y - ymin));
 				} catch (ResourceException e) {
 					logger.warning(e.getMessage());

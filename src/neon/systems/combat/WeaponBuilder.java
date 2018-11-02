@@ -30,7 +30,7 @@ class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
 	public Entity build(long uid, RItem.Weapon resource) {
 		Entity weapon = new Entity(uid);
 		weapon.setComponent(new Shape(uid));
-		weapon.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		weapon.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
 		weapon.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		weapon.setComponent(new Weapon(uid, resource.damage));
 		return weapon;

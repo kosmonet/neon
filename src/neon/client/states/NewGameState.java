@@ -48,7 +48,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.util.GraphicsUtils;
 
-public class NewGameState extends State {
+public final class NewGameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private Button cancelButton, startButton;
@@ -130,14 +130,14 @@ public class NewGameState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering new game module");
+		logger.finest("entering new game state");
 		ui.showScene(scene);
 		nameField.requestFocus();
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting new game module");
+		logger.finest("exiting new game state");
 	}
 	
 	private void listKeyPressed(KeyEvent event) {

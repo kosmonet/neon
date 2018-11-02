@@ -29,12 +29,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import neon.client.ClientUtils;
 import neon.client.ComponentManager;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.entity.Skill;
 import neon.common.entity.components.CreatureInfo;
-import neon.common.entity.components.Graphics;
+import neon.common.entity.components.Inventory;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
@@ -44,7 +45,7 @@ import neon.common.entity.components.Stats;
  * @author mdriesen
  *
  */
-public class JournalState extends State {
+public final class JournalState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
@@ -82,11 +83,10 @@ public class JournalState extends State {
 		
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		PlayerInfo playerInfo = components.getComponent(PLAYER_UID, PlayerInfo.class);
-		Graphics graphics = components.getComponent(PLAYER_UID, Graphics.class);
 		CreatureInfo creatureInfo = components.getComponent(PLAYER_UID, CreatureInfo.class);
 		Skills skills = components.getComponent(PLAYER_UID, Skills.class);
 	
-		description.update(creatureInfo.getName(), graphics);
+		description.updateCreature(components.getComponents(PLAYER_UID));
     	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
     	speedLabel.setText("Speed: " + stats.getSpeed());
     	levelLabel.setText("Level " + stats.getLevel() + " (" + skills.getSkillIncreases() + "/10)");
@@ -98,7 +98,9 @@ public class JournalState extends State {
     	wisdomLabel.setText("Wisdom: " + stats.getBaseWis());
     	charismaLabel.setText("Charisma: " + stats.getBaseCha());
     	
-    	weightLabel.setText("Carry weight: " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr());
+    	Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+    	int weight = ClientUtils.getWeight(inventory, components);
+    	weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
     	healthLabel.setText("Health: " + stats.getHealth() + "/" + stats.getBaseHealth());
 		if (stats.getHealth()/stats.getBaseHealth() < 0.1) {
 			healthLabel.setTextFill(Color.RED);

@@ -63,6 +63,7 @@ public class SkillHandler {
 		if (skills.getEntity() == PLAYER_UID && skills.getSkillIncreases() >= 10) {
 			skills.resetSkillIncreases();
 			stats.setLevel(stats.getLevel() + 1);
+			bus.post(new ComponentUpdateEvent(skills));
 			bus.post(new ComponentUpdateEvent(stats));
 			bus.post(new UpdateEvent.Level(skills.getEntity(), stats.getLevel()));
 		}

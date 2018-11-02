@@ -47,7 +47,6 @@ import neon.client.ui.ClientRenderer;
 import neon.client.ui.UserInterface;
 import neon.common.entity.PlayerMode;
 import neon.common.entity.components.Behavior;
-import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
@@ -80,7 +79,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class GameState extends State {
+public final class GameState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	private static final long POINTER_UID = 1;
@@ -219,13 +218,13 @@ public class GameState extends State {
 				shape.setX(Math.max(0, shape.getX() - 1)); 
 				break;
 			case RIGHT: 
-				shape.setX(Math.min(map.getWidth(), shape.getX() + 1)); 
+				shape.setX(Math.min(map.width, shape.getX() + 1)); 
 				break;
 			case UP: 
 				shape.setY(Math.max(0, shape.getY() - 1)); 
 				break;
 			case DOWN: 
-				shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
+				shape.setY(Math.min(map.height, shape.getY() + 1)); 
 				break;
 			}
 			
@@ -254,7 +253,7 @@ public class GameState extends State {
 		
 		for (long item : inventory.getEquipedItems()) {
 			if (components.hasComponent(item, Enchantment.class)) {
-				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).getName());
+				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).name);
 				mapping.put(button, item);
 				items.add(button);
 			}
@@ -270,7 +269,7 @@ public class GameState extends State {
 		if (!looking) {
 			Shape player = components.getComponent(PLAYER_UID, Shape.class);
 			Shape shape = new Shape(POINTER_UID, player.getX(), player.getY(), player.getZ());
-			Graphics graphics = new Graphics(POINTER_UID, "◎", Color.WHITE);
+			Graphics graphics = new Graphics(POINTER_UID, '◎', Color.WHITE);
 			components.putComponent(POINTER_UID, shape);
 			components.putComponent(POINTER_UID, graphics);
 			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
@@ -379,13 +378,11 @@ public class GameState extends State {
 		if (bumper == PLAYER_UID) {
 			PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);
 			Behavior brain = components.getComponent(bumped, Behavior.class);
-	    	Graphics graphics = components.getComponent(bumped, Graphics.class);
-	    	CreatureInfo creature = components.getComponent(bumped, CreatureInfo.class);
 			
 			switch (player.getMode()) {
 			case NONE:
 				if (brain.isFriendly(bumper)) {
-					bus.post(new TransitionEvent("talk", graphics, creature));
+					bus.post(new TransitionEvent("talk", bumped));
 				} else {
 					bus.post(new CombatEvent.Start(bumper, bumped));	
 				}
@@ -395,7 +392,7 @@ public class GameState extends State {
 					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.pick, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", graphics, creature));
+						bus.post(new TransitionEvent("talk", bumped));
 					} else if (result.get().equals(ButtonTypes.pick)) {
 						bus.post(new StealthEvent.Pick(bumped));
 					}
@@ -414,7 +411,7 @@ public class GameState extends State {
 					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
 							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
 					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", graphics, creature));
+						bus.post(new TransitionEvent("talk", bumped));
 					} else if (result.get().equals(ButtonTypes.attack)) {
 						bus.post(new CombatEvent.Start(bumper, bumped));	
 					}

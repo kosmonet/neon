@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 	@Override
 	public RTerrain load(Element root) {
 		String id = root.getAttributeValue("id");
-		String text = root.getChild("graphics").getAttributeValue("text");
+		char glyph = root.getChild("graphics").getAttributeValue("text").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		String name = root.getAttributeValue("name");
-		RTerrain terrain = new RTerrain(id, name, text, color);
+		RTerrain terrain = new RTerrain(id, name, glyph, color);
 		
 		for (Element modifier : root.getChildren("modifier")) {
 			terrain.addModifier(RTerrain.Modifier.valueOf(modifier.getText().toUpperCase()));
@@ -51,11 +51,11 @@ public class TerrainLoader implements ResourceLoader<RTerrain> {
 	public Element save(RTerrain terrain) {
 		Element root = new Element("terrain");
 		root.setAttribute("id", terrain.id);
-		root.setAttribute("name", terrain.getName());
+		root.setAttribute("name", terrain.name);
 		
 		Element graphics = new Element("graphics");
-		graphics.setAttribute("text", terrain.getText());
-		graphics.setAttribute("color", GraphicsUtils.getColorString(terrain.getColor()));
+		graphics.setAttribute("text", Character.toString(terrain.glyph));
+		graphics.setAttribute("color", GraphicsUtils.getColorString(terrain.color));
 		root.addContent(graphics);
 		
 		for (RTerrain.Modifier modifier : terrain.getModifiers()) {

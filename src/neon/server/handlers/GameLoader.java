@@ -116,13 +116,13 @@ public class GameLoader {
 			CServer config = resources.getResource("config", "server");
 			CGame game = initGame(resources, config.getModules());
 			resources.addResource(game);
-			RMap map = resources.getResource("maps", game.getStartMap());
+			RMap map = resources.getResource("maps", game.startMap);
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.getSpecies());
 			Entity player = entities.createEntity(PLAYER_UID, species);
 			player.setComponent(new PlayerInfo(PLAYER_UID, event.getName(), event.getGender()));
-			player.getComponent(Shape.class).setPosition(game.getStartX(), game.getStartY(), 0);
+			player.getComponent(Shape.class).setPosition(game.startX, game.startY, 0);
 
 			Stats stats = player.getComponent(Stats.class);
 			stats.setBaseCha(event.charisma);
@@ -133,7 +133,7 @@ public class GameLoader {
 			stats.setBaseInt(event.intelligence);
 
 			Inventory inventory = player.getComponent(Inventory.class);
-			inventory.addMoney(game.getStartMoney());
+			inventory.addMoney(game.startMoney);
 			for (String id : game.getStartItems()) {
 				long uid = entities.getFreeUID();
 				entities.createEntity(uid, resources.getResource("items", id));
@@ -241,7 +241,7 @@ public class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		RMap map = resources.getResource("maps", game.getStartMap());
+		RMap map = resources.getResource("maps", game.startMap);
 
 		// tell the client everything is ready
 		notifyClient(map);

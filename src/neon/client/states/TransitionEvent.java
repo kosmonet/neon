@@ -29,7 +29,7 @@ import neon.common.event.ClientEvent;
  * @author mdriesen
  *
  */
-public class TransitionEvent extends ClientEvent {
+public final class TransitionEvent extends ClientEvent {
 	private final String condition;
 	private final ClassToInstanceMap<Object> parameters = MutableClassToInstanceMap.create();
 	

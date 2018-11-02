@@ -31,7 +31,7 @@ class ArmorBuilder implements EntityBuilder<RItem.Armor> {
 	public Entity build(long uid, RItem.Armor resource) {
 		Entity armor = new Entity(uid);
 		armor.setComponent(new Shape(uid));
-		armor.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		armor.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
 		armor.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		armor.setComponent(new Armor(uid, resource.rating));
 		armor.setComponent(new Clothing(uid, resource.slot));

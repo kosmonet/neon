@@ -42,7 +42,7 @@ import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
 import neon.systems.magic.RSpell;
 
-public class MagicState extends State {
+public final class MagicState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 

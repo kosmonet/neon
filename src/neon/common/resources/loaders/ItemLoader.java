@@ -31,16 +31,24 @@ import neon.systems.magic.Effect;
  * @author mdriesen
  *
  */
-public class ItemLoader implements ResourceLoader<RItem> {
+public final class ItemLoader implements ResourceLoader<RItem> {
 	@Override
 	public RItem load(Element root) {
 		String type = root.getName();
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
-		String glyph = root.getChild("graphics").getAttributeValue("char");
+		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		
-		RItem.Builder builder = new RItem.Builder(id).setName(name).setGraphics(glyph, color);
+		RItem.Builder builder = new RItem.Builder(id, name).setGraphics(glyph, color);
+		
+		if (root.getAttribute("price") != null) {
+			builder.setPrice(Integer.parseInt(root.getAttributeValue("price")));
+		}
+		
+		if (root.getAttribute("weight") != null) {
+			builder.setWeight(Integer.parseInt(root.getAttributeValue("weight")));
+		}
 		
 		Element magic = root.getChild("magic");
 		if (magic != null) {

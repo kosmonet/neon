@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -37,22 +37,67 @@ public class RItem extends Resource {
 	public final String name;
 	
 	/**
-	 * The UTF-8 character to represent the creature on screen.
+	 * The UTF-8 character to represent the item on screen.
 	 */
-	public final String glyph;
+	public final char glyph;
 	
 	/**
 	 * The color to render the character with.
 	 */
 	public final Color color;
 	
+	/**
+	 * The price of this item.
+	 */
+	public final int price;
+	
+	/**
+	 * The weight of this item.
+	 */
+	public final int weight;
+	
 	public RItem(Builder builder) {
 		super(builder.id, "items");
 		name = builder.name;
 		glyph = builder.glyph;
-		color = builder.color;		
+		color = builder.color;
+		price = builder.price;
+		weight = builder.weight;
 	}
 	
+	/**
+	 * A coin resource. Coins aren't meant to be added to an inventory
+	 * separately, they should disappear when picked up.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Coin extends RItem {
+		public Coin(Builder builder) {
+			super(builder);
+		}
+	}
+	
+	/**
+	 * A container resource. Containers aren't meant to be picked up or 
+	 * carried in an inventory. They should stay fixed in one place on the map.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static class Container extends RItem {
+		public Container(Builder builder) {
+			super(builder);
+		}
+	}
+	
+	/**
+	 * A clothing resource. Clothing can be worn on one or more body slots. 
+	 * Clohting can have an optional enchantment.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Clothing extends RItem {
 		public final Slot slot;
 		public final Optional<Effect> effect;
@@ -66,6 +111,13 @@ public class RItem extends Resource {
 		}		
 	}
 	
+	/**
+	 * An armor resource. Armor functions like clothing, but with an armor 
+	 * rating.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Armor extends Clothing {
 		public final int rating;
 		
@@ -75,6 +127,12 @@ public class RItem extends Resource {
 		}		
 	}
 	
+	/**
+	 * A weapon resource. Weapons do damage.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Weapon extends RItem {
 		public final Slot slot;
 		public final String damage;
@@ -86,9 +144,15 @@ public class RItem extends Resource {
 		}		
 	}
 	
+	/**
+	 * A builder for the {@code RItem} class.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static class Builder {
 		private final String id;
-		private String glyph;
+		private char glyph;
 		private Color color;
 		private String name;
 		private Slot slot;
@@ -96,17 +160,28 @@ public class RItem extends Resource {
 		private String damage;
 		private Effect effect;
 		private int magnitude;
+		private int price;
+		private int weight;
 		
-		public Builder(String id) {
+		/**
+		 * Initialize the builder with an id and a name.
+		 * 
+		 * @param id
+		 * @param name
+		 */
+		public Builder(String id, String name) {
 			this.id = id;
-		}
-		
-		public Builder setName(String name) {
 			this.name = name;
-			return this;
 		}
 		
-		public Builder setGraphics(String glyph, Color color) {
+		/**
+		 * Sets the glyph and the color.
+		 * 
+		 * @param glyph
+		 * @param color
+		 * @return
+		 */
+		public Builder setGraphics(char glyph, Color color) {
 			this.glyph = glyph;
 			this.color = color;
 			return this;
@@ -130,6 +205,16 @@ public class RItem extends Resource {
 		public Builder setEnchantment(Effect effect, int magnitude) {
 			this.effect = effect;
 			this.magnitude = magnitude;
+			return this;
+		}
+		
+		public Builder setPrice(int price) {
+			this.price = price;
+			return this;
+		}
+		
+		public Builder setWeight(int weight) {
+			this.weight = weight;
 			return this;
 		}
 	}

@@ -26,7 +26,7 @@ import com.google.common.eventbus.Subscribe;
  * @author mdriesen
  *
  */
-public class Transition {
+public final class Transition {
 	private final String condition;
 	private final State from, to;
 	

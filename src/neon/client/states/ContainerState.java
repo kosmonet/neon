@@ -41,7 +41,6 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
@@ -57,7 +56,7 @@ import neon.util.GraphicsUtils;
  * @author mdriesen
  *
  */
-public class ContainerState extends State {
+public final class ContainerState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
@@ -176,9 +175,7 @@ public class ContainerState extends State {
 	}
 	
 	private void updateDescription(long uid) {
-		Graphics graphics = components.getComponent(uid, Graphics.class);
-		ItemInfo info = components.getComponent(uid, ItemInfo.class);
-		description.update(info.getName(), graphics);
+		description.updateItem(components.getComponents(uid));
 	}
 	
 	/**
@@ -229,7 +226,7 @@ public class ContainerState extends State {
 				ItemInfo info = components.getComponent(uid, ItemInfo.class);
 				Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
 				setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
-				setText(info.getName());
+				setText(info.name);
 			}
 		}
 	}

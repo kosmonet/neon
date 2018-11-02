@@ -30,7 +30,7 @@ import neon.util.spatial.RegionSpatialIndex;
 /**
  * @author mdriesen
  */
-public class RMap extends Resource{
+public class RMap extends Resource {
 	
 	/**
 	 * The uid of this map.
@@ -41,10 +41,11 @@ public class RMap extends Resource{
 	 */
 	public final String name;
 	
+	public final int width, height;
+	
 	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;
 	private final PointSpatialIndex<Long> entities;
-	private final int width, height;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -124,13 +125,5 @@ public class RMap extends Resource{
 	 */
 	public void removeEntity(long uid) {
 		entities.remove(uid);
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
 	}
 }

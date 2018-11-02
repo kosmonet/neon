@@ -36,7 +36,7 @@ import javafx.stage.Stage;
  * @author mdriesen
  *
  */
-public class HelpWindow {
+public final class HelpWindow {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private WebView view;

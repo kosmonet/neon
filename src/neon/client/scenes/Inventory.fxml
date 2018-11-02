@@ -8,14 +8,14 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import neon.client.ui.DescriptionLabel?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
 		<HBox styleClass="instructions" spacing="50">
 			<children>
-				<Label fx:id="instructionLabel" text="Money: X copper pieces." />
+				<Label fx:id="moneyLabel" text="Money: X copper pieces." />
+				<Label fx:id="weightLabel" text="Encumbrance: ." />
 				<Label fx:id="armorLabel" text="Armor rating: ." />
 			</children>
 		</HBox>

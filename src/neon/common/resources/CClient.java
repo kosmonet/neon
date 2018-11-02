@@ -19,6 +19,7 @@
 package neon.common.resources;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,9 +52,9 @@ public class CClient extends Resource {
 	/**
 	 * Returns the id's of all playable species.
 	 * 
-	 * @return a {@code Set<String>} with id's
+	 * @return a String[] with id's
 	 */
 	public Set<String> getPlayableSpecies() {
-		return species;
+		return Collections.unmodifiableSet(species);
 	}
 }

@@ -83,7 +83,7 @@ public class EntitySaver {
 	private Element saveItem(Entity item) {
 		Element root = new Element("item");
 		ItemInfo info = item.getComponent(ItemInfo.class);
-		root.setAttribute("id", info.getResource());
+		root.setAttribute("id", info.id);
 		return root;			
 	}
 	

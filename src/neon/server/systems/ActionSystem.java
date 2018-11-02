@@ -22,7 +22,7 @@ import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
 import neon.common.event.TimerEvent;
 import neon.common.resources.CGame;
-import neon.common.resources.GameMode;
+import neon.common.resources.CGame.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;

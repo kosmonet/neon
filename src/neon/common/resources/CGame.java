@@ -20,13 +20,19 @@ package neon.common.resources;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class CGame extends Resource {
-	private final String startMap;
-	private final int x, y, money;
+	public enum GameMode {
+		TURN_BASED, REAL_TIME;
+	}
+
+	public final String startMap;
+	public final int startX, startY, startMoney;
+
 	private final List<String> items = new ArrayList<>();
 	private final Set<String> spells = new HashSet<>();
 	
@@ -37,9 +43,9 @@ public class CGame extends Resource {
 		super("game", "config");
 		this.startMap = startMap;
 		currentMap = startMap;
-		x = startX;
-		y = startY;
-		money = startMoney;
+		this.startX = startX;
+		this.startY = startY;
+		this.startMoney = startMoney;
 	}
 	
 	public void addStartItems(Collection<String> items) {
@@ -51,31 +57,11 @@ public class CGame extends Resource {
 	}
 	
 	public List<String> getStartItems() {
-		return items;
+		return Collections.unmodifiableList(items);
 	}
 	
 	public Set<String> getStartSpells() {
-		return spells;
-	}
-	
-	/**
-	 * 
-	 * @return	the id of the starting map
-	 */
-	public String getStartMap() {
-		return startMap;
-	}
-	
-	public int getStartX() {
-		return x;
-	}
-	
-	public int getStartY() {
-		return y;
-	}
-	
-	public int getStartMoney() {
-		return money;
+		return Collections.unmodifiableSet(spells);
 	}
 	
 	/**

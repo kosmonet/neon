@@ -76,13 +76,13 @@ public class MovementSystem implements NeonSystem {
 			x = Math.max(0, x - 1); 
 			break;
 		case RIGHT: 
-			x = Math.min(map.getWidth(), x + 1); 
+			x = Math.min(map.width, x + 1); 
 			break;
 		case UP: 
 			y = Math.max(0, y - 1); 
 			break;
 		case DOWN: 
-			y = Math.min(map.getHeight(), y + 1); 
+			y = Math.min(map.height, y + 1); 
 			break;
 		}
 		

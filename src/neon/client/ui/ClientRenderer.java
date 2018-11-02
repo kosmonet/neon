@@ -32,7 +32,7 @@ import neon.common.entity.components.Shape;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 
-public class ClientRenderer implements EntityRenderer<Long> {
+public final class ClientRenderer implements EntityRenderer<Long> {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();

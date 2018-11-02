@@ -35,7 +35,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 	public RCreature load(Element root) {
 		String id = root.getAttributeValue("id");
 		String name = root.getAttributeValue("name");
-		String glyph = root.getChild("graphics").getAttributeValue("char");
+		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		int speed = Integer.parseInt(root.getAttributeValue("speed"));
 		String description = root.getChildText("description");
@@ -59,7 +59,7 @@ public class CreatureLoader implements ResourceLoader<RCreature> {
 		creature.setAttribute("speed", Integer.toString(rc.speed));
 		
 		Element graphics = new Element("graphics");
-		graphics.setAttribute("char", rc.glyph);
+		graphics.setAttribute("char", Character.toString(rc.glyph));
 		graphics.setAttribute("color", GraphicsUtils.getColorString(rc.color));
 		creature.addContent(graphics);
 		

@@ -42,7 +42,7 @@ import neon.common.resources.ResourceManager;
  * @author mdriesen
  *
  */
-public class MapState extends State {
+public final class MapState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final UserInterface ui;
@@ -79,7 +79,7 @@ public class MapState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering map module");
+		logger.finest("entering map state");
 	    root.setCenter(pane);
 	    RMap map = event.getParameter(RMap.class);
 	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
@@ -89,6 +89,6 @@ public class MapState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting map module");
+		logger.finest("exiting map state");
 	}
 }

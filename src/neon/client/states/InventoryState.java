@@ -37,22 +37,21 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
+import neon.client.ClientUtils;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.common.entity.components.Clothing;
-import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
 import neon.systems.combat.Armor;
-import neon.systems.combat.Weapon;
 import neon.systems.magic.Enchantment;
 
-public class InventoryState extends State {
+public final class InventoryState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
@@ -63,11 +62,10 @@ public class InventoryState extends State {
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, followerList;
 	@FXML private DescriptionLabel description;
-	@FXML private Label instructionLabel, armorLabel;
+	@FXML private Label weightLabel, armorLabel, moneyLabel;
 	
 	private Scene scene;
 	private RMap map;
-	private Inventory inventory;
 	
 	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.ui = ui;
@@ -139,8 +137,11 @@ public class InventoryState extends State {
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		int rating = 0;
-		inventory = components.getComponent(PLAYER_UID, Inventory.class);
-		instructionLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		int weight = ClientUtils.getWeight(inventory, components);
+    	weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone.");
+		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 		
 		for (long uid : inventory.getItems()) {
@@ -179,38 +180,7 @@ public class InventoryState extends State {
 	    @Override
 	    public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
 	    	if (newValue != null) {
-	    		Graphics graphics = components.getComponent(newValue, Graphics.class);
-	    		ItemInfo info = components.getComponent(newValue, ItemInfo.class);
-	    		StringBuilder builder = new StringBuilder();
-	    		builder.append(info.getName());
-    			builder.append("\n");
-
-	    		if (components.hasComponent(newValue, Clothing.class)) {
-	    			Clothing clothing = components.getComponent(newValue, Clothing.class);
-	    			builder.append("∷\n");
-	    			builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
-	    		}
-
-	    		if (components.hasComponent(newValue, Armor.class)) {
-	    			Armor armor = components.getComponent(newValue, Armor.class);
-	    			builder.append("\n");
-	    			builder.append("Rating: " + armor.getRating());						
-	    		}
-
-	    		if (components.hasComponent(newValue, Weapon.class)) {
-	    			Weapon weapon = components.getComponent(newValue, Weapon.class);
-	    			builder.append("∷\n");
-	    			builder.append("Damage: " + weapon.getDamage());						
-	    		}
-
-	    		if (components.hasComponent(newValue, Enchantment.class)) {
-	    			Enchantment enchantment = components.getComponent(newValue, Enchantment.class);
-	    			builder.append("\n∷\n");
-	    			builder.append("Effect: " + enchantment.getEffect() + "\n");						
-	    			builder.append("Magnitude: " + enchantment.getMagnitude());						
-	    		}
-
-	    		description.update(builder.toString(), graphics);
+	    		description.updateItem(components.getComponents(newValue));	    		
 	    	}
 	    }
 	}
@@ -232,6 +202,7 @@ public class InventoryState extends State {
     				style.append(isSelected() ? "-fx-text-fill: white;" : "-fx-text-fill: silver;");
     			}
     			
+    			Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
     			if (inventory.hasEquiped(uid)) {
     				style.append("-fx-font-weight: bold;");    				
     			} else {
@@ -240,7 +211,7 @@ public class InventoryState extends State {
     			
     			setStyle(style.toString());
     			ItemInfo info = components.getComponent(uid, ItemInfo.class);
-    			setText(info.getName());
+    			setText(info.name);
     		}
     	}
     }

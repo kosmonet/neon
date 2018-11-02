@@ -26,7 +26,7 @@ import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.CGame;
-import neon.common.resources.GameMode;
+import neon.common.resources.CGame.GameMode;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;

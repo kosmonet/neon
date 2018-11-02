@@ -43,7 +43,7 @@ import neon.common.event.ServerLoadEvent;
  * @author mdriesen
  *
  */
-public class LoadState extends State {
+public final class LoadState extends State {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final EventBus bus;

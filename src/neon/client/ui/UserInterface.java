@@ -50,7 +50,7 @@ import neon.common.event.MessageEvent;
  * @author mdriesen
  *
  */
-public class UserInterface {
+public final class UserInterface {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final Stage stage;

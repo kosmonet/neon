@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -37,20 +37,20 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.common.entity.components.CreatureInfo;
-import neon.common.entity.components.Graphics;
 import neon.systems.conversation.ConversationEvent;
 import neon.systems.conversation.Topic;
 
-public class ConversationState extends State {
+public final class ConversationState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final UserInterface ui;
+	private final ComponentManager components;
 	
 	@FXML private TextFlow flow;
 	@FXML private Button cancelButton;
@@ -61,9 +61,10 @@ public class ConversationState extends State {
 	private Scene scene;
 	private int index;
 	
-	public ConversationState(UserInterface ui, EventBus bus) {
+	public ConversationState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.bus = bus;
 		this.ui = ui;
+		this.components = components;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Conversation.fxml"));
 		loader.setController(this);
@@ -84,11 +85,9 @@ public class ConversationState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering conversation module");
 		bus.register(this);
-    	Graphics graphics = event.getParameter(Graphics.class);
-    	CreatureInfo info = event.getParameter(CreatureInfo.class);
-		bus.post(new ConversationEvent.Start(PLAYER_UID, graphics.getEntity()));		
+		bus.post(new ConversationEvent.Start(PLAYER_UID, event.getParameter(Long.class)));		
 		flow.getChildren().clear();	
-		description.update(info.getName(), graphics);		
+		description.updateCreature(components.getComponents(event.getParameter(Long.class)));		
 		ui.showScene(scene);
 	}
 

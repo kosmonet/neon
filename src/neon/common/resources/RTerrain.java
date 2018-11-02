@@ -18,6 +18,7 @@
 
 package neon.common.resources;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,15 +35,16 @@ public class RTerrain extends Resource {
 		LIQUID;
 	}
 	
-	private final Color color;
-	private final String text;
-	private final String name;
+	public final Color color;
+	public final char glyph;
+	public final String name;
+	
 	private final Set<Modifier> modifiers = new HashSet<>();
 	
-	public RTerrain(String id, String name, String text, Color color) {
+	public RTerrain(String id, String name, char glyph, Color color) {
 		super(id, "terrain");
 		this.color = color;
-		this.text = text;
+		this.glyph = glyph;
 		this.name = name;
 	}
 	
@@ -55,18 +57,6 @@ public class RTerrain extends Resource {
 	}
 	
 	public Set<Modifier> getModifiers() {
-		return modifiers;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public Color getColor() {
-		return color;
-	}
-	
-	public String getText() {
-		return text;
+		return Collections.unmodifiableSet(modifiers);
 	}
 }

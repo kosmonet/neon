@@ -20,6 +20,7 @@ package neon.common.resources;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,11 +66,11 @@ public class RModule extends Resource {
 	}
 	
 	public Collection<String> getStartItems() {
-		return items;
+		return Collections.unmodifiableCollection(items);
 	}
 	
 	public Set<String> getStartSpells() {
-		return spells;
+		return Collections.unmodifiableSet(spells);
 	}
 	
 	/**
@@ -95,7 +96,7 @@ public class RModule extends Resource {
 	 * @return a set of playable species
 	 */
 	public Set<String> getPlayableSpecies() {
-		return species;
+		return Collections.unmodifiableSet(species);
 	}
 	
 	/**
@@ -112,7 +113,7 @@ public class RModule extends Resource {
 	 * @return a set of parent modules
 	 */
 	public Set<String> getParents() {
-		return parents;
+		return Collections.unmodifiableSet(parents);
 	}
 	
 	public int getStartX() {

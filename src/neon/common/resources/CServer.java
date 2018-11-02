@@ -66,8 +66,7 @@ public class CServer extends Resource {
 	 * @return the list of modules to be loaded
 	 */
 	public String[] getModules() {
-		String[] list = new String[modules.size()];
-		return modules.toArray(list);
+		return modules.toArray(new String[modules.size()]);
 	}
 	
 	/**

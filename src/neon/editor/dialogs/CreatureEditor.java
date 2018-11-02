@@ -99,10 +99,10 @@ public class CreatureEditor {
 		
 		previewLabel.setStyle("-fx-background-color: black;");
 		previewLabel.setTextFill(creature.color);
-		previewLabel.setText(creature.glyph);
+		previewLabel.setText(Character.toString(creature.glyph));
 
 		nameField.setText(creature.name);
-		textField.setText(creature.glyph);
+		textField.setText(Character.toString(creature.glyph));
 		colorBox.setValue(creature.color);
 		speedSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE));
 		speedSpinner.getValueFactory().setValue(creature.speed);
@@ -141,7 +141,7 @@ public class CreatureEditor {
 		RCreature rc = card.getResource();
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
-		String glyph = textField.getText();
+		char glyph = textField.getText().charAt(0);
 		speedSpinner.increment(0);	// stupid way to validate spinner value
 		int speed = speedSpinner.getValue();
 		
@@ -152,7 +152,7 @@ public class CreatureEditor {
 		int wis = 10;
 		int cha = 10;
 		// check if anything was actually changed
-		if (!name.equals(rc.name) || !glyph.equals(rc.glyph) || !color.equals(rc.color) ||
+		if (!name.equals(rc.name) || glyph != rc.glyph || !color.equals(rc.color) ||
 				speed != rc.speed) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;

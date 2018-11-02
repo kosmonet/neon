@@ -33,7 +33,7 @@ import neon.common.resources.ResourceManager;
  * 
  * @author mdriesen
  */
-public class MapPane extends Pane {
+public final class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ResourceManager resources;
@@ -63,10 +63,10 @@ public class MapPane extends Pane {
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
 				String id = map.getTerrain().get((int) (x*scale), (int) (y*scale));
-				if(id != null) {
+				if (id != null) {
 					try {
 						RTerrain terrain = resources.getResource("terrain", id);
-						canvas.getGraphicsContext2D().setFill(terrain.getColor());
+						canvas.getGraphicsContext2D().setFill(terrain.color);
 						canvas.getGraphicsContext2D().fillRect(x + xOffset, y + yOffset, 1, 1);
 					} catch (ResourceException e) {
 						logger.warning("unknown terrain type: " + id);

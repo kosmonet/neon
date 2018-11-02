@@ -121,8 +121,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 		root.setAttribute("module", "save");
 		
 		Element size = new Element("size");
-		size.setAttribute("width", Integer.toString(map.getWidth()));
-		size.setAttribute("height", Integer.toString(map.getHeight()));
+		size.setAttribute("width", Integer.toString(map.width));
+		size.setAttribute("height", Integer.toString(map.height));
 		root.addContent(size);
 		
 		Element entities = new Element("entities");

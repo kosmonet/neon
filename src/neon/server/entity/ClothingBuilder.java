@@ -31,7 +31,7 @@ public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	public Entity build(long uid, RItem.Clothing resource) {
 		Entity cloth = new Entity(uid);
 		cloth.setComponent(new Shape(uid));
-		cloth.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		cloth.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
 		cloth.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		cloth.setComponent(new Clothing(uid, resource.slot));
 		if (resource.effect.isPresent()) {

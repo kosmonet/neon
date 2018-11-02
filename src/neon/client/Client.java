@@ -53,6 +53,7 @@ import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.QuitEvent;
+import neon.common.event.ServerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
@@ -112,8 +113,8 @@ public final class Client implements Runnable {
 		resources.addLoader("config", new ConfigurationLoader());
 		resources.addLoader("spells", new SpellLoader());
 		
-		// initialize all modules and enter the first one
-		initModules(version);
+		// initialize all states and enter the first one
+		initStates(version);
 	}
 	
 	/**
@@ -127,7 +128,7 @@ public final class Client implements Runnable {
 		}
 	}
 	
-	private void initModules(String version) {
+	private void initStates(String version) {
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
 		NewGameState newGame = new NewGameState(ui, bus, resources);
 		bus.register(newGame);
@@ -137,7 +138,7 @@ public final class Client implements Runnable {
 		bus.register(game);
 		InventoryState inventory = new InventoryState(ui, bus, components);
 		MapState map = new MapState(ui, bus, resources);
-		ConversationState conversation = new ConversationState(ui, bus);
+		ConversationState conversation = new ConversationState(ui, bus, components);
 		ContainerState container = new ContainerState(ui, bus, components);
 		JournalState journal = new JournalState(ui, bus, components);
 		OptionState options = new OptionState(ui, bus);
@@ -233,6 +234,11 @@ public final class Client implements Runnable {
 		logger.warning("client received a dead event: " + event.getEvent());
 	}
 
+	@Subscribe
+	private void monitor(ServerEvent event) {
+		throw new AssertionError("Client received a server event!");
+	}
+	
 	/**
 	 * Configures the file system with the required modules.
 	 * 

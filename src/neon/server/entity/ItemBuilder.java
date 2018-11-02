@@ -29,7 +29,7 @@ public class ItemBuilder implements EntityBuilder<RItem> {
 	public Entity build(long uid, RItem resource) {
 		Entity item = new Entity(uid);
 		item.setComponent(new Shape(uid));
-		item.setComponent(new ItemInfo(uid, resource.id, resource.name));
+		item.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
 		item.setComponent(new Graphics(uid, resource.glyph, resource.color));
 		return item;
 	}

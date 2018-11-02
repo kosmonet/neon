@@ -20,7 +20,7 @@ package neon.client.ui;
 
 import javafx.scene.control.ButtonType;
 
-public class ButtonTypes {
+public final class ButtonTypes {
 	public static final ButtonType talk = new ButtonType("Talk");
 	public static final ButtonType attack = new ButtonType("Attack");
 	public static final ButtonType pick = new ButtonType("Pick pocket");

@@ -35,7 +35,7 @@ public class RCreature extends Resource {
 	/**
 	 * The UTF-8 character to represent the creature on screen.
 	 */
-	public final String glyph;
+	public final char glyph;
 	
 	/**
 	 * The color to render the character with.
@@ -68,7 +68,7 @@ public class RCreature extends Resource {
 	public static class Builder {
 		private String id;
 		private String name;
-		private String glyph;
+		private char glyph;
 		private Color color;
 		private int speed;
 		private int strength, constitution, dexterity, intelligence, wisdom, charisma;
@@ -87,7 +87,7 @@ public class RCreature extends Resource {
 			return this;
 		}
 		
-		public Builder setGraphics(String glyph, Color color) {
+		public Builder setGraphics(char glyph, Color color) {
 			this.glyph = glyph;
 			this.color = color;
 			return this;
