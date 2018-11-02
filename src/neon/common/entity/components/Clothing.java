@@ -20,7 +20,7 @@ package neon.common.entity.components;
 
 import neon.common.entity.Slot;
 
-public class Clothing implements Component {
+public final class Clothing implements Component {
 	private final long uid;
 	private final Slot slot;
 	

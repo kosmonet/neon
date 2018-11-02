@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,8 +26,15 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class InputEvent extends NeonEvent {
-	public static class Move extends InputEvent {
+public abstract class InputEvent extends NeonEvent {
+	/**
+	 * Event to request the server to move the player in a certain direction 
+	 * on the map.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Move extends InputEvent {
 		private final Direction direction;
 		private final String map;
 		
@@ -44,4 +51,38 @@ public class InputEvent extends NeonEvent {
 			return map;
 		}
 	}
+	
+	/**
+	 * Event to signal the server to pause the game. This means in practice 
+	 * that the server switches to turn-based mode.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Pause extends InputEvent {}
+
+	/**
+	 * Event to signal the server to unpause the game. This means in practice 
+	 * that the server switches to real-time mode.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Unpause extends InputEvent {}
+	
+	/**
+	 * Event to signal the server to quit.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Quit extends NeonEvent {}
+	
+	/**
+	 * Event to signal the server to save the game.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Save extends NeonEvent {}
 }

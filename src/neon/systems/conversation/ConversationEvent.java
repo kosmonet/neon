@@ -35,7 +35,7 @@ public abstract class ConversationEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Start extends ConversationEvent {
+	public static final class Start extends ConversationEvent {
 		private final long one;
 		private final long two;
 		
@@ -59,7 +59,7 @@ public abstract class ConversationEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Update extends ConversationEvent {
+	public static final class Update extends ConversationEvent {
 		private final String answer;
 		private final String topics;
 		
@@ -84,7 +84,7 @@ public abstract class ConversationEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Answer extends ConversationEvent {
+	public static final class Answer extends ConversationEvent {
 		final String answer;
 		
 		public Answer(String answer) {
@@ -92,5 +92,5 @@ public abstract class ConversationEvent extends NeonEvent {
 		}
 	}
 	
-	public static class End extends ConversationEvent {}
+	public static final class End extends ConversationEvent {}
 }

@@ -26,7 +26,7 @@ import neon.common.event.NeonEvent;
  * @author mdriesen
  *
  */
-public class ConsoleEvent extends NeonEvent{
+public final class ConsoleEvent extends NeonEvent{
 	private final String message;
 	
 	public ConsoleEvent(String message) {

@@ -29,7 +29,7 @@ import neon.common.resources.CServer;
  * @author mdriesen
  *
  */
-public class ClientConfigurationEvent extends NeonEvent {
+public final class ClientConfigurationEvent extends NeonEvent {
 	private final String[] species;
 	private final String[] modules;
 	private final String title;

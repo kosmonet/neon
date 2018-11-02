@@ -31,7 +31,7 @@ import com.google.common.collect.HashBiMap;
  * @author mdriesen
  *
  */
-public class CServer extends Resource {
+public final class CServer extends Resource {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final LinkedHashSet<String> modules = new LinkedHashSet<>();

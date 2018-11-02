@@ -97,7 +97,7 @@ public final class LoadState extends State {
 	 * @param event
 	 */
 	@Subscribe
-	private void list(ClientLoadEvent.List event) {
+	private void list(ClientLoadEvent event) {
 		saveList.getItems().clear();
 		saveList.getItems().addAll(event.getSaves());
 		saveList.getSelectionModel().select(0);

@@ -26,7 +26,7 @@ import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 import neon.server.entity.EntityBuilder;
 
-class ArmorBuilder implements EntityBuilder<RItem.Armor> {
+final class ArmorBuilder implements EntityBuilder<RItem.Armor> {
 	@Override
 	public Entity build(long uid, RItem.Armor resource) {
 		Entity armor = new Entity(uid);

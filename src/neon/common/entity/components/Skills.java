@@ -22,7 +22,13 @@ import java.util.EnumMap;
 
 import neon.common.entity.Skill;
 
-public class Skills implements Component {
+/**
+ * The set of skills a creature can have.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class Skills implements Component {
 	private final long uid;
 	private final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
 	private final EnumMap<Skill, Integer> steps = new EnumMap<>(Skill.class);

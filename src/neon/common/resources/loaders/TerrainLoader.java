@@ -31,7 +31,7 @@ import neon.util.GraphicsUtils;
  * @author mdriesen
  *
  */
-public class TerrainLoader implements ResourceLoader<RTerrain> {
+public final class TerrainLoader implements ResourceLoader<RTerrain> {
 	@Override
 	public RTerrain load(Element root) {
 		String id = root.getAttributeValue("id");

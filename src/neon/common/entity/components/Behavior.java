@@ -18,7 +18,7 @@
 
 package neon.common.entity.components;
 
-public class Behavior implements Component {
+public final class Behavior implements Component {
 	private final long uid;
 	
 	public Behavior(long uid) {

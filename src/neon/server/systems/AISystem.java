@@ -34,7 +34,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
-public class AISystem implements NeonSystem {
+public final class AISystem implements NeonSystem {
 	private final Random random = new Random();
 	private final MovementSystem mover;
 	private final EntityManager entities;

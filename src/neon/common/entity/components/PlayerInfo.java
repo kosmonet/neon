@@ -26,7 +26,7 @@ import neon.common.entity.PlayerMode;
  * @author mdriesen
  *
  */
-public class PlayerInfo implements Component {
+public final class PlayerInfo implements Component {
 	private final long uid;
 	private final String name;
 	private final String gender;

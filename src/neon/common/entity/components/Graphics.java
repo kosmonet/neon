@@ -20,7 +20,12 @@ package neon.common.entity.components;
 
 import javafx.scene.paint.Color;
 
-public class Graphics implements Component {
+/**
+ * 
+ * @author mdriesen
+ *
+ */
+public final class Graphics implements Component {
 	private final long uid;
 	private final char glyph;
 	private final Color color;

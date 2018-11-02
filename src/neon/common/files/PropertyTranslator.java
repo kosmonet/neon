@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-public class PropertyTranslator implements Translator<Properties> {
+public final class PropertyTranslator implements Translator<Properties> {
 	@Override
 	public Properties translate(InputStream input) throws IOException {
 		Properties properties = new Properties();

@@ -29,7 +29,7 @@ import neon.common.entity.components.Stats;
 import neon.common.resources.RCreature;
 import neon.systems.magic.Magic;
 
-public class CreatureBuilder implements EntityBuilder<RCreature> {
+public final class CreatureBuilder implements EntityBuilder<RCreature> {
 	@Override
 	public Entity build(long uid, RCreature species) {
 		Entity creature = new Entity(uid);

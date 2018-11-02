@@ -72,7 +72,7 @@ public class RItem extends Resource {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Coin extends RItem {
+	public static final class Coin extends RItem {
 		public Coin(Builder builder) {
 			super(builder);
 		}
@@ -85,7 +85,7 @@ public class RItem extends Resource {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Container extends RItem {
+	public static final class Container extends RItem {
 		public Container(Builder builder) {
 			super(builder);
 		}
@@ -118,7 +118,7 @@ public class RItem extends Resource {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Armor extends Clothing {
+	public static final class Armor extends Clothing {
 		public final int rating;
 		
 		public Armor(Builder builder) {
@@ -133,7 +133,7 @@ public class RItem extends Resource {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Weapon extends RItem {
+	public static final class Weapon extends RItem {
 		public final Slot slot;
 		public final String damage;
 		
@@ -150,7 +150,7 @@ public class RItem extends Resource {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Builder {
+	public static final class Builder {
 		private final String id;
 		private char glyph;
 		private Color color;

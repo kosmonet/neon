@@ -33,7 +33,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
-public class InputSystem implements NeonSystem {
+public final class InputSystem implements NeonSystem {
 	private final EntityManager entities;
 	private final EventBus bus;
 	private final MovementSystem mover;

@@ -21,6 +21,6 @@ package neon.systems.time;
 import neon.common.event.NeonEvent;
 
 public abstract class RestEvent extends NeonEvent {
-	public static class Sleep extends RestEvent {}
-	public static class Wake extends RestEvent {}
+	public static final class Sleep extends RestEvent {}
+	public static final class Wake extends RestEvent {}
 }

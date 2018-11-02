@@ -24,7 +24,7 @@ package neon.common.entity.components;
  * @author mdriesen
  *
  */
-public class Shape implements Component {
+public final class Shape implements Component {
 	private final long uid;
 	
 	private int x, y, z;

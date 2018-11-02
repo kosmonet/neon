@@ -18,7 +18,7 @@
 
 package neon.systems.conversation;
 
-public class Topic {
+public final class Topic {
 	public final String id;
 	public final String text;
 	

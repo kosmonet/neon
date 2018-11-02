@@ -26,7 +26,7 @@ import javafx.scene.paint.Color;
  * @author mdriesen
  *
  */
-public class RCreature extends Resource {
+public final class RCreature extends Resource {
 	/**
 	 * The display name.
 	 */
@@ -65,7 +65,7 @@ public class RCreature extends Resource {
 		description = builder.description;
 	}
 	
-	public static class Builder {
+	public static final class Builder {
 		private String id;
 		private String name;
 		private char glyph;

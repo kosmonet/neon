@@ -36,7 +36,7 @@ import neon.common.console.ConsoleEvent;
 import neon.common.event.ScriptEvent;
 import neon.systems.time.Calendar;
 
-public class ScriptHandler {
+public final class ScriptHandler {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");

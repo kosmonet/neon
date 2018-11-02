@@ -50,10 +50,9 @@ import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
 import neon.common.event.ClientLoadEvent;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.InputEvent;
 import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
-import neon.common.event.QuitEvent;
-import neon.common.event.SaveEvent;
 import neon.common.files.FileUtils;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.CGame;
@@ -77,7 +76,7 @@ import neon.systems.magic.Magic;
  * @author mdriesen
  * 
  */
-public class GameLoader {
+public final class GameLoader {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
@@ -119,9 +118,9 @@ public class GameLoader {
 			RMap map = resources.getResource("maps", game.startMap);
 
 			// the player character
-			RCreature species = resources.getResource("creatures", event.getSpecies());
+			RCreature species = resources.getResource("creatures", event.species);
 			Entity player = entities.createEntity(PLAYER_UID, species);
-			player.setComponent(new PlayerInfo(PLAYER_UID, event.getName(), event.getGender()));
+			player.setComponent(new PlayerInfo(PLAYER_UID, event.name, event.gender));
 			player.getComponent(Shape.class).setPosition(game.startX, game.startY, 0);
 
 			Stats stats = player.getComponent(Stats.class);
@@ -350,7 +349,7 @@ public class GameLoader {
 	private void listSavedGames(ServerLoadEvent.List event) {
 		String[] saves = FileUtils.listFiles(Paths.get("saves"));
 		logger.info("saved characters: " + Arrays.toString(saves));
-		bus.post(new ClientLoadEvent.List(saves));
+		bus.post(new ClientLoadEvent(saves));
 	}
 	
 	/**
@@ -361,7 +360,7 @@ public class GameLoader {
 	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void saveGame(SaveEvent event) throws IOException, ResourceException {
+	private void saveGame(InputEvent.Save event) throws IOException, ResourceException {
 		logger.info("save game");
 		// TODO: config en maps opslaan
 		// store all cached entities
@@ -370,7 +369,5 @@ public class GameLoader {
 		Entity player = entities.getEntity(PLAYER_UID);
 		PlayerInfo record = player.getComponent(PlayerInfo.class);
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
-		// and request JavaFX to quit
-		bus.post(new QuitEvent());
 	}
 }

@@ -44,22 +44,4 @@ public abstract class NeonEvent {
 	public boolean isBlocked() {
 		return blocked;
 	}
-	
-	/**
-	 * Event to signal the server to pause the game. This means in practice 
-	 * that the server switches to turn-based mode.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Pause extends NeonEvent {}
-
-	/**
-	 * Event to signal the server to unpause the game. This means in practice 
-	 * that the server switches to real-time mode.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	public static class Unpause extends NeonEvent {}
 }

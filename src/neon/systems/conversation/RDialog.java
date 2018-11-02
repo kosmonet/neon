@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 import neon.common.resources.Resource;
 
-class RDialog extends Resource {
+final class RDialog extends Resource {
 	private final HashMap<String, PlayerNode> pnodes = new HashMap<>();
 	private final HashMap<String, CreatureNode> cnodes = new HashMap<>();
 	

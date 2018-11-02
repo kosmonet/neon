@@ -19,13 +19,13 @@
 package neon.common.event;
 
 public abstract class InventoryEvent extends NeonEvent {
-	public static class Drop extends InventoryEvent {
+	public static final class Drop extends InventoryEvent {
 		private final long uid;
-		private final String id;
+		private final String map;
 		
-		public Drop(long uid, String id) {
+		public Drop(long uid, String map) {
 			this.uid = uid;
-			this.id = id;
+			this.map = map;
 		}
 		
 		public long getItem() {
@@ -33,11 +33,11 @@ public abstract class InventoryEvent extends NeonEvent {
 		}
 		
 		public String getMap() {
-			return id;
+			return map;
 		}
 	}
 
-	public static class Pick extends InventoryEvent {
+	public static final class Pick extends InventoryEvent {
 		private final long uid;
 		private final String map;
 		
@@ -55,7 +55,7 @@ public abstract class InventoryEvent extends NeonEvent {
 		}
 	}
 
-	public static class Equip extends InventoryEvent {
+	public static final class Equip extends InventoryEvent {
 		public final long uid;
 		
 		public Equip(long uid) {

@@ -20,7 +20,7 @@ package neon.systems.combat;
 
 import neon.common.entity.components.Component;
 
-public class Armor implements Component {
+public final class Armor implements Component {
 	private final long uid;
 	private final int rating;
 	

@@ -45,7 +45,7 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class ResourceManager {
+public final class ResourceManager {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files;

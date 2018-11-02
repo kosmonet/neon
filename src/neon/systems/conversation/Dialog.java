@@ -20,7 +20,7 @@ package neon.systems.conversation;
 
 import neon.common.entity.components.Component;
 
-public class Dialog implements Component {
+public final class Dialog implements Component {
 	private final long uid;
 	private final String dialog;
 

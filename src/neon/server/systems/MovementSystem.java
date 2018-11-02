@@ -45,7 +45,7 @@ import neon.util.Direction;
  * @author mdriesen
  *
  */
-public class MovementSystem implements NeonSystem {
+public final class MovementSystem implements NeonSystem {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;

@@ -33,7 +33,7 @@ public abstract class UpdateEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Start extends UpdateEvent {}
+	public static final class Start extends UpdateEvent {}
 	
 	/**
 	 * An event to indicate a change of map.
@@ -41,7 +41,7 @@ public abstract class UpdateEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Map extends UpdateEvent {
+	public static final class Map extends UpdateEvent {
 		public final String map;
 		
 		public Map(RMap map) {
@@ -49,7 +49,7 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Move extends UpdateEvent {
+	public static final class Move extends UpdateEvent {
 		public final long uid;
 		public final int x, y, z;
 		public final String map;
@@ -63,7 +63,7 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Remove extends UpdateEvent {
+	public static final class Remove extends UpdateEvent {
 		public final long uid;
 		public final String map;
 		
@@ -73,19 +73,19 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	public static class SkillUpdate extends UpdateEvent {
+	public static final class Skill extends UpdateEvent {
 		public final long uid;
 		public final String skill;
 		public final int value;
 		
-		public SkillUpdate(long uid, String skill, int value) {
+		public Skill(long uid, String skill, int value) {
 			this.uid = uid;
 			this.skill = skill;
 			this.value = value;
 		}
 	}
 	
-	public static class Level extends UpdateEvent {
+	public static final class Level extends UpdateEvent {
 		public final long uid;
 		public final int level;
 		

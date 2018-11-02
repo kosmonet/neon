@@ -18,7 +18,7 @@
 
 package neon.common.entity.components;
 
-public class ItemInfo implements Component {
+public final class ItemInfo implements Component {
 	public final String id, name;
 	public final int price, weight;
 	public final long uid;

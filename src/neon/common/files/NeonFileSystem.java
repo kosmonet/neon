@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  * @author mdriesen
  *
  */
-public class NeonFileSystem {
+public final class NeonFileSystem {
 	public static final boolean WRITABLE = true;
 	public static final boolean READONLY = false;
 	

@@ -20,7 +20,7 @@ package neon.systems.magic;
 
 import neon.common.resources.Resource;
 
-public class RSpell extends Resource {
+public final class RSpell extends Resource {
 	public final Effect effect;
 	public final Target target;
 	public final int duration;

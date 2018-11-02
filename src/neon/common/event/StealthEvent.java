@@ -19,7 +19,7 @@
 package neon.common.event;
 
 public abstract class StealthEvent extends NeonEvent {
-	public static class Pick extends StealthEvent {
+	public static final class Pick extends StealthEvent {
 		public final long victim;
 		
 		public Pick(long victim) {
@@ -27,6 +27,6 @@ public abstract class StealthEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Empty extends StealthEvent {}
-	public static class Success extends StealthEvent {}
+	public static final class Empty extends StealthEvent {}
+	public static final class Success extends StealthEvent {}
 }

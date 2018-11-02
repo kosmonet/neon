@@ -31,7 +31,7 @@ import java.util.Set;
  * @author mdriesen
  *
  */
-public class CClient extends Resource {
+public final class CClient extends Resource {
 	public final String title;
 	public final String subtitle;
 	public final String intro;

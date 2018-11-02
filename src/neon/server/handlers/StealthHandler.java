@@ -29,7 +29,7 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.StealthEvent;
 import neon.server.entity.EntityManager;
 
-public class StealthHandler {
+public final class StealthHandler {
 	private static final Random random = new Random();
 	private static final long PLAYER_UID = 0;
 	

@@ -27,7 +27,7 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.server.entity.EntityManager;
 import neon.systems.time.RestEvent;
 
-public class SleepHandler {
+public final class SleepHandler {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -43,6 +43,7 @@ public class SleepHandler {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Stats stats = player.getComponent(Stats.class);
 		stats.addHealth(stats.getBaseHealth() - stats.getHealth());
+		stats.addMana(stats.getBaseMana() - stats.getMana());
 		bus.post(new RestEvent.Wake());
 		bus.post(new ComponentUpdateEvent(stats));
 	}

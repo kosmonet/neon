@@ -18,7 +18,13 @@
 
 package neon.common.entity.components;
 
-public class Trap implements Component {
+/**
+ * A trap that can be placed on e.g. doors or containers.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class Trap implements Component {
 	private final long uid;
 	
 	public Trap(long uid) {

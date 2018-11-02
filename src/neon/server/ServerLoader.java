@@ -58,7 +58,7 @@ import neon.server.resource.MapLoader;
  * @author mdriesen
  *
  */
-class ServerLoader {
+final class ServerLoader {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EventBus bus;

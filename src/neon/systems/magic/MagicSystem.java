@@ -28,7 +28,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
-public class MagicSystem {
+public final class MagicSystem {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -60,14 +60,18 @@ public class MagicSystem {
 	@Subscribe
 	private void onCast(MagicEvent.Cast event) throws ResourceException {
 		RSpell spell = resources.getResource("spells", event.spell);
-		
+
 		switch (spell.effect) {
 		case HEAL:
-			Stats stats = entities.getEntity(event.target).getComponent(Stats.class);
-			stats.addHealth(spell.magnitude);
-			bus.post(new ComponentUpdateEvent(stats));
+			Stats targetStats = entities.getEntity(event.target).getComponent(Stats.class);
+			targetStats.addHealth(spell.magnitude);
+			bus.post(new ComponentUpdateEvent(targetStats));
 			break;
 		}
+		
+		Stats casterStats = entities.getEntity(event.caster).getComponent(Stats.class);
+		casterStats.addMana(-MagicUtils.getCost(spell));
+		bus.post(new ComponentUpdateEvent(casterStats));
 	}
 	
 	@Subscribe

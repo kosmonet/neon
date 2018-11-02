@@ -18,16 +18,14 @@
 
 package neon.common.event;
 
-public class ClientLoadEvent extends NeonEvent {
-	public static class List extends ClientLoadEvent {
-		private final String[] saves;
-		
-		public List(String[] saves) {
-			this.saves = saves;
-		}
-		
-		public String[] getSaves() {
-			return saves;
-		}
+public final class ClientLoadEvent extends NeonEvent {
+	private final String[] saves;
+
+	public ClientLoadEvent(String[] saves) {
+		this.saves = saves;
+	}
+
+	public String[] getSaves() {
+		return saves;
 	}
 }

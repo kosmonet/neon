@@ -21,7 +21,7 @@ package neon.common.entity.components;
 import neon.common.entity.Action;
 import neon.common.resources.RCreature;
 
-public class Stats implements Component {
+public final class Stats implements Component {
 	private final long uid;
 	private final int speed;
 	
@@ -30,7 +30,7 @@ public class Stats implements Component {
 	private int healthMod = 0;
 	private int manaMod = 0;
 	
-	private int strength = 10, constitution = 10, dexterity = 10, wisdom = 10, intelligence = 10, charisma = 10;
+	private int str = 10, con = 10, dex = 10, wis = 10, iq = 10, cha = 10;
 	
 	public Stats(long uid, RCreature species) {
 		this.uid = uid;
@@ -84,55 +84,55 @@ public class Stats implements Component {
 	}
 	
 	public int getBaseInt() {
-		return intelligence;
+		return iq;
 	}
 	
 	public int getBaseStr() {
-		return strength;
+		return str;
 	}
 	
 	public int getBaseCon() {
-		return constitution;
+		return con;
 	}
 	
 	public int getBaseDex() {
-		return dexterity;
+		return dex;
 	}
 	
 	public int getBaseWis() {
-		return wisdom;
+		return wis;
 	}
 	
 	public int getBaseCha() {
-		return charisma;
+		return cha;
 	}
 	
 	public void setBaseInt(int intelligence) {
-		this.intelligence = intelligence;
+		iq = intelligence;
 	}
 	
 	public void setBaseStr(int strength) {
-		this.strength = strength;
+		str = strength;
 	}
 	
 	public void setBaseCon(int constitution) {
-		this.constitution = constitution;
+		con = constitution;
 	}
 	
 	public void setBaseDex(int dexterity) {
-		this.dexterity = dexterity;
+		dex = dexterity;
 	}
 	
 	public void setBaseWis(int wisdom) {
-		this.wisdom = wisdom;
+		wis = wisdom;
 	}
 	
 	public void setBaseCha(int charisma) {
-		this.charisma = charisma;
+		cha = charisma;
 	}
 	
 	public int getBaseHealth() {
-		return 3*constitution + level*constitution/3;
+		return 3*con + level*con/3;
 	}
 	
 	public int getHealth() {
@@ -144,11 +144,15 @@ public class Stats implements Component {
 	}
 	
 	public int getBaseMana() {
-		return intelligence*6;
+		return iq*6;
 	}
 	
 	public int getMana() {
-		return getBaseMana() - manaMod;
+		return getBaseMana() + manaMod;
+	}
+	
+	public void addMana(int amount) {
+		manaMod += amount;
 	}
 	
 	public int getLevel() {

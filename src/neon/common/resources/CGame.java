@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CGame extends Resource {
+public final class CGame extends Resource {
 	public enum GameMode {
 		TURN_BASED, REAL_TIME;
 	}

@@ -20,7 +20,7 @@ package neon.systems.magic;
 
 import neon.common.entity.components.Component;
 
-public class Enchantment implements Component {
+public final class Enchantment implements Component {
 	private final long uid;
 	private final Effect effect;
 	private final int magnitude;

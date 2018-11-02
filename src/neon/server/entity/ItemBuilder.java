@@ -24,7 +24,7 @@ import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 
-public class ItemBuilder implements EntityBuilder<RItem> {
+public final class ItemBuilder implements EntityBuilder<RItem> {
 	@Override
 	public Entity build(long uid, RItem resource) {
 		Entity item = new Entity(uid);

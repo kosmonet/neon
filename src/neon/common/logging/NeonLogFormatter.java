@@ -28,7 +28,7 @@ import java.util.logging.LogRecord;
  * @author mdriesen
  *
  */
-public class NeonLogFormatter extends Formatter {
+public final class NeonLogFormatter extends Formatter {
 	@Override
 	public String format(LogRecord record) {
 		return record.getLevel() + " - " + record.getMessage() + "\r\n";

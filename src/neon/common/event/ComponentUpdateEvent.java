@@ -37,9 +37,10 @@ import javafx.scene.paint.Color;
 import neon.common.entity.Skill;
 import neon.common.entity.components.Component;
 
-public class ComponentUpdateEvent extends NeonEvent {
-	private static final GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Color.class, new ColorAdapter()).
-			registerTypeAdapter(EnumMap.class, new SkillAdapter());
+public final class ComponentUpdateEvent extends NeonEvent {
+	private static final GsonBuilder builder = new GsonBuilder()
+			.registerTypeAdapter(Color.class, new ColorAdapter())
+			.registerTypeAdapter(EnumMap.class, new SkillAdapter());
 	private static final Gson gson = builder.create();
 
 	private final String component;
@@ -55,7 +56,7 @@ public class ComponentUpdateEvent extends NeonEvent {
 		return Component.class.cast(gson.fromJson(component, Class.forName(type)));
 	}
 	
-	private static class SkillAdapter implements JsonSerializer<EnumMap<Skill, Integer>>, JsonDeserializer<EnumMap<Skill, Integer>> {
+	private static final class SkillAdapter implements JsonSerializer<EnumMap<Skill, Integer>>, JsonDeserializer<EnumMap<Skill, Integer>> {
 		@Override
 		public JsonElement serialize(EnumMap<Skill, Integer> map, Type type, JsonSerializationContext context) {
 			JsonObject object = new JsonObject();
@@ -76,7 +77,7 @@ public class ComponentUpdateEvent extends NeonEvent {
 		}
 	}
 	
-	private static class ColorAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
+	private static final class ColorAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
 		@Override
 		public Color deserialize(JsonElement element, Type type, JsonDeserializationContext context)
 				throws JsonParseException {

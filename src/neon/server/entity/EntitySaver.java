@@ -31,7 +31,7 @@ import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
-public class EntitySaver {
+public final class EntitySaver {
 	private static final long PLAYER_UID = 0;
 	
 	private final ResourceManager resources;

@@ -26,7 +26,7 @@ import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 import neon.systems.magic.Enchantment;
 
-public class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
+public final class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	@Override
 	public Entity build(long uid, RItem.Clothing resource) {
 		Entity cloth = new Entity(uid);

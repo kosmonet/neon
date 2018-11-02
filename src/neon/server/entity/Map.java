@@ -18,6 +18,6 @@
 
 package neon.server.entity;
 
-public class Map {
+public final class Map {
 
 }

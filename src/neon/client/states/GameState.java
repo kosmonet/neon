@@ -56,9 +56,6 @@ import neon.common.entity.components.Stats;
 import neon.common.event.CollisionEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
-import neon.common.event.NeonEvent;
-import neon.common.event.QuitEvent;
-import neon.common.event.SaveEvent;
 import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
@@ -99,6 +96,7 @@ public final class GameState extends State {
 	private RMap map;
 	private boolean paused = true;
 	private boolean looking = false;
+	private boolean redraw = true;
 	
 	/**
 	 * Initializes a new game module.
@@ -162,24 +160,31 @@ public final class GameState extends State {
 		map = resources.getResource("maps", event.map);
 		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
 		renderPane.setMap(map.getTerrain(), map.getElevation(), map.getEntities());		
-		redraw();
+		scheduleRedraw();
+	}
+	
+	private void scheduleRedraw() {
+		if (!redraw) {
+			Platform.runLater(() -> redraw());
+			redraw = true;
+		}		
 	}
 	
 	@Subscribe
 	private void onMove(UpdateEvent.Move event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		Platform.runLater(() -> redraw());
+		scheduleRedraw();
 	}
 	
 	@Subscribe
 	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
 		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		Platform.runLater(() -> redraw());
+		scheduleRedraw();
 	}
 	
 	@Subscribe
 	private void onUpdate(ComponentUpdateEvent event) {
-		Platform.runLater(() -> redraw());		
+		scheduleRedraw();
 	}
 	
 	@Subscribe
@@ -242,7 +247,7 @@ public final class GameState extends State {
 	private void cast() {
 		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
 		if (magic.getEquiped().isPresent()) {
-			bus.post(new MagicEvent.Cast(magic.getEquiped().get(), PLAYER_UID));
+			bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquiped().get(), PLAYER_UID));
 		} 
 	}
 	
@@ -293,14 +298,14 @@ public final class GameState extends State {
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		
 		healthLabel.setText("♥ " + stats.getHealth() + "/" + stats.getBaseHealth());
-		if (stats.getHealth()/stats.getBaseHealth() < 0.1) {
+		if ((float) stats.getHealth()/stats.getBaseHealth() < 0.1) {
 			healthLabel.setTextFill(Color.RED);
 		} else {
 			healthLabel.setTextFill(Color.SILVER);			
 		}
 		
 		manaLabel.setText("✳ " + stats.getMana() + "/" + stats.getBaseMana());
-		if (stats.getMana()/stats.getBaseMana() < 0.1) {
+		if ((float) stats.getMana()/stats.getBaseMana() < 0.1) {
 			manaLabel.setTextFill(Color.RED);
 		} else {
 			manaLabel.setTextFill(Color.SILVER);			
@@ -310,15 +315,16 @@ public final class GameState extends State {
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		renderPane.draw(xpos, ypos, scale);
+		redraw = false;
 	}
 	
 	private void pause() {
 		if (paused) {
 			paused = false;
-			bus.post(new NeonEvent.Unpause());
+			bus.post(new InputEvent.Unpause());
 		} else {
 			paused = true;
-			bus.post(new NeonEvent.Pause());
+			bus.post(new InputEvent.Pause());
 		}
 	}
 	
@@ -345,7 +351,7 @@ public final class GameState extends State {
 	private void quit() {
 		// pause the server
 		if (!paused) {
-			bus.post(new NeonEvent.Pause());
+			bus.post(new InputEvent.Pause());
 		}
 		
 		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
@@ -353,15 +359,16 @@ public final class GameState extends State {
 
 		if (result.get().equals(ButtonTypes.yes)) {
 			// server takes care of saving
-			bus.post(new SaveEvent());	
+			bus.post(new InputEvent.Save());
+		    bus.post(new InputEvent.Quit());
 		} else if (result.get().equals(ButtonTypes.no)) {
 			// server takes care of quitting
-		    bus.post(new QuitEvent());
+		    bus.post(new InputEvent.Quit());
 		}
 		
 		// unpause if necessary
 		if (!paused) {
-			bus.post(new NeonEvent.Unpause());
+			bus.post(new InputEvent.Unpause());
 		}
 	}
 	
@@ -369,7 +376,7 @@ public final class GameState extends State {
 	private void collide(CollisionEvent event) {
 		// pause the server
 		if (!paused) {
-			bus.post(new NeonEvent.Pause());
+			bus.post(new InputEvent.Pause());
 		}
 		
 		long bumper = event.getBumper();
@@ -424,7 +431,7 @@ public final class GameState extends State {
 
 		// unpause if necessary
 		if (!paused) {
-			bus.post(new NeonEvent.Unpause());
+			bus.post(new InputEvent.Unpause());
 		}
 	}
 	
@@ -443,7 +450,7 @@ public final class GameState extends State {
 		
 		// unpause the server when returning to the game module
 		if (!paused) {
-			bus.post(new NeonEvent.Unpause());
+			bus.post(new InputEvent.Unpause());
 		}
 	}
 
@@ -451,6 +458,6 @@ public final class GameState extends State {
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting game module");
 		// pause the server when leaving the game module
-		bus.post(new NeonEvent.Pause());
+		bus.post(new InputEvent.Pause());
 	}
 }

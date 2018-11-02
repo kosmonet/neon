@@ -28,7 +28,7 @@ import neon.common.resources.RModule;
  * @author mdriesen
  *
  */
-public class ModuleLoader implements ResourceLoader<RModule> {
+public final class ModuleLoader implements ResourceLoader<RModule> {
 	@Override
 	public RModule load(Element root) {
 		String id = root.getAttributeValue("id");

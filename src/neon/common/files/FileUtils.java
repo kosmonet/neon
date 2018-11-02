@@ -35,7 +35,7 @@ import com.google.common.io.RecursiveDeleteOption;
  * @author mdriesen
  *
  */
-public class FileUtils {
+public final class FileUtils {
 	private static final Logger logger = Logger.getGlobal();
 	
 	// suppress default constructor for noninstantiability

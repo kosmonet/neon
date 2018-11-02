@@ -24,7 +24,7 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public class ScriptEvent extends NeonEvent {
+public final class ScriptEvent extends NeonEvent {
 	private final String script;
 	
 	public ScriptEvent(String script) {

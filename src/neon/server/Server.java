@@ -31,7 +31,7 @@ import javafx.application.Platform;
 
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ClientEvent;
-import neon.common.event.QuitEvent;
+import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ServerSocket;
@@ -135,7 +135,7 @@ public final class Server implements Runnable {
 	 * @param event
 	 */
 	@Subscribe
-	private void quitGame(QuitEvent event) {
+	private void quitGame(InputEvent.Quit event) {
 		logger.info("quit game");
 		executor.shutdown();
 		Platform.exit();

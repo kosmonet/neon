@@ -44,7 +44,7 @@ import neon.systems.conversation.Dialog;
  * @author mdriesen
  *
  */
-public class MapLoader implements ResourceLoader<RMap> {
+public final class MapLoader implements ResourceLoader<RMap> {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final EntityManager tracker;

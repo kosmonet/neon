@@ -29,13 +29,13 @@ public abstract class CombatEvent extends NeonEvent {
 		this.defender = defender;
 	}
 	
-	public static class Start extends CombatEvent {
+	public final static class Start extends CombatEvent {
 		public Start(long attacker, long defender) {
 			super(attacker, defender);
 		}		
 	}
 	
-	public static class Result extends CombatEvent {
+	public final static class Result extends CombatEvent {
 		public final long damage;
 		
 		public Result(long attacker, long defender, int damage) {

@@ -28,7 +28,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
-public class ConversationSystem {
+public final class ConversationSystem {
 	private final ResourceManager resources;
 	private final EntityManager entities;
 	private final EventBus bus;

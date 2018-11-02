@@ -30,7 +30,7 @@ import neon.common.resources.RItem;
 import neon.server.entity.EntityManager;
 import neon.util.Dice;
 
-public class CombatSystem {
+public final class CombatSystem {
 	private final EntityManager entities;
 	private final EventBus bus;
 	

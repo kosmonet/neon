@@ -30,7 +30,7 @@ import neon.util.GraphicsUtils;
  * @author mdriesen
  *
  */
-public class CreatureLoader implements ResourceLoader<RCreature> {
+public final class CreatureLoader implements ResourceLoader<RCreature> {
 	@Override
 	public RCreature load(Element root) {
 		String id = root.getAttributeValue("id");

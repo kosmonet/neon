@@ -18,4 +18,4 @@
 
 package neon.common.event;
 
-public class TurnEvent extends ServerEvent {}
+public final class TurnEvent extends ServerEvent {}

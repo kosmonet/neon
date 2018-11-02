@@ -51,7 +51,7 @@ import neon.common.logging.NeonLogFormatter;
  * @author mdriesen
  *
  */
-public class Console {
+public final class Console {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TextFlow flow;

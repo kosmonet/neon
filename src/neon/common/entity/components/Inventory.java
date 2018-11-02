@@ -27,7 +27,13 @@ import java.util.Map;
 
 import neon.common.entity.Slot;
 
-public class Inventory implements Component {
+/**
+ * The inventory of a creature.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class Inventory implements Component {
 	private final long uid;
 	private final List<Long> items = new ArrayList<Long>();
 	private final HashMap<Slot, Long> equiped = new HashMap<>();

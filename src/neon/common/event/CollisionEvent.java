@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-public class CollisionEvent extends NeonEvent {
+public final class CollisionEvent extends NeonEvent {
 	private final long one;
 	private final long two;
 	

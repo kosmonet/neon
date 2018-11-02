@@ -34,7 +34,7 @@ import neon.common.resources.Resource;
  * @author mdriesen
  *
  */
-public class ConfigurationLoader implements ResourceLoader<Resource> {
+public final class ConfigurationLoader implements ResourceLoader<Resource> {
 	@Override
 	public Resource load(Element root) {
 		switch (root.getName()) {

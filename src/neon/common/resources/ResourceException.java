@@ -24,8 +24,9 @@ package neon.common.resources;
  * @author mdriesen
  *
  */
-@SuppressWarnings("serial")
-public class ResourceException extends Exception {
+public final class ResourceException extends Exception {
+	private static final long serialVersionUID = -5387261217549230934L;
+
 	public ResourceException(String message) {
 		super(message);
 	}

@@ -21,7 +21,7 @@ package neon.server.systems;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.NeonEvent;
+import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
@@ -39,7 +39,7 @@ import neon.systems.magic.MagicSystem;
  * @author mdriesen
  * 
  */
-public class SystemManager {
+public final class SystemManager {
 	private final ResourceManager resources;
 	
 	private final AISystem aiSystem;
@@ -58,7 +58,7 @@ public class SystemManager {
 		// create all systems
 		moveSystem = new MovementSystem(resources, entities, bus);
 		aiSystem = new AISystem(resources, entities, bus, moveSystem);
-		actionSystem = new ActionSystem(resources, entities);
+		actionSystem = new ActionSystem(resources, entities, bus);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
 		combatSystem = new CombatSystem(entities, bus);
 		magicSystem = new MagicSystem(resources, entities, bus);
@@ -76,12 +76,12 @@ public class SystemManager {
 	}
 	
 	@Subscribe
-	private void onPause(NeonEvent.Pause event) {
+	private void onPause(InputEvent.Pause event) {
 		config.setMode(GameMode.TURN_BASED);
 	}
 	
 	@Subscribe
-	private void onUnpause(NeonEvent.Unpause event) {
+	private void onUnpause(InputEvent.Unpause event) {
 		config.setMode(GameMode.REAL_TIME);
 	}
 	

@@ -33,7 +33,7 @@ import neon.common.event.NeonEvent;
  * @author mdriesen
  *
  */
-public class ServerSocket {
+public final class ServerSocket {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final BlockingQueue<NeonEvent> queue = new LinkedBlockingQueue<>();

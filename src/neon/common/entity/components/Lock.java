@@ -18,7 +18,13 @@
 
 package neon.common.entity.components;
 
-public class Lock implements Component {
+/**
+ * A lock that can be placed on e.g. doors or containers.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class Lock implements Component {
 	private final long uid;
 	
 	public Lock(long uid) {

@@ -18,6 +18,6 @@
 
 package neon.server.entity;
 
-public class Module {
+public final class Module {
 
 }

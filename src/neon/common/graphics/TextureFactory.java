@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
-public class TextureFactory {
+public final class TextureFactory {
 	private static final HashMap<Type, Image> map = new HashMap<>();
 	private static final SnapshotParameters parameters = new SnapshotParameters();
 	private static final Color bg = Color.BLACK.deriveColor(0, 0, 0, 0.6);

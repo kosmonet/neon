@@ -19,5 +19,13 @@
 package neon.systems.magic;
 
 public enum Effect {
-	HEAL;
+	HEAL(1, "heal");
+	
+	public final int cost;
+	public final String name;
+	
+	private Effect(int cost, String name) {
+		this.cost = cost;
+		this.name = name;
+	}
 }

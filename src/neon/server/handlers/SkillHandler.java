@@ -26,7 +26,7 @@ import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.UpdateEvent;
 
-public class SkillHandler {
+public final class SkillHandler {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -56,7 +56,7 @@ public class SkillHandler {
 			skills.setSkill(skill, skills.getSkill(skill) + 1);
 			skills.addSkillIncreases(1);
 			bus.post(new ComponentUpdateEvent(skills));
-			bus.post(new UpdateEvent.SkillUpdate(skills.getEntity(), Skill.SWIMMING.toString(), skills.getSkill(Skill.SWIMMING)));
+			bus.post(new UpdateEvent.Skill(skills.getEntity(), Skill.SWIMMING.toString(), skills.getSkill(Skill.SWIMMING)));
 		}
 		
 		// check for level up

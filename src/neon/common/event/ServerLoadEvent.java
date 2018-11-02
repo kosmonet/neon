@@ -24,20 +24,20 @@ package neon.common.event;
  * @author mdriesen
  *
  */
-public class ServerLoadEvent extends NeonEvent {
+public abstract class ServerLoadEvent extends NeonEvent {
 	/**
-	 * This event is used to request of list of saved games from the server.
+	 * This event is used to request a list of saved games from the server.
 	 * 
 	 * @author mdriesen
 	 */
-	public static class List extends ServerLoadEvent {}
+	public static final class List extends ServerLoadEvent {}
 
 	/**
 	 * This event requests the server to start a loaded game.
 	 * 
 	 * @author mdriesen
 	 */
-	public static class Start extends ServerLoadEvent {
+	public static final class Start extends ServerLoadEvent {
 		public final String save;
 		
 		public Start(String save) {

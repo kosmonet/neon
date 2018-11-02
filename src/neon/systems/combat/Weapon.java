@@ -21,7 +21,7 @@ package neon.systems.combat;
 import neon.common.entity.Slot;
 import neon.common.entity.components.Component;
 
-public class Weapon implements Component {
+public final class Weapon implements Component {
 	private final long uid;
 	private final String damage;
 	

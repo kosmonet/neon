@@ -31,7 +31,7 @@ import java.util.Set;
  * @author mdriesen
  *
  */
-public class RModule extends Resource {
+public final class RModule extends Resource {
 	/**
 	 * The title that should be displayed on the start screen. 
 	 */

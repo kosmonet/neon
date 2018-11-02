@@ -39,7 +39,7 @@ import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
 import neon.common.console.Console;
 import neon.common.event.ClientConfigurationEvent;
-import neon.common.event.QuitEvent;
+import neon.common.event.InputEvent;
 
 /**
  * The state for the main menu screen in the game.
@@ -88,7 +88,7 @@ public final class MainMenuState extends State {
 		optionLink.setOnAction(event -> bus.post(new TransitionEvent("options")));
 
 		quitLink.setOnMouseEntered(event -> quitLink.requestFocus());
-		quitLink.setOnAction(event -> bus.post(new QuitEvent()));
+		quitLink.setOnAction(event -> bus.post(new InputEvent.Quit()));
 		// also quit when pressing esc
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
 		
@@ -139,7 +139,7 @@ public final class MainMenuState extends State {
 	
 	@FXML private void quitKeyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ENTER)) {
-			bus.post(new QuitEvent());
+			bus.post(new InputEvent.Quit());
 		}
 	}
 	

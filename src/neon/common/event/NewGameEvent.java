@@ -25,8 +25,8 @@ package neon.common.event;
  *
  */
 public abstract class NewGameEvent extends NeonEvent {
-	public static class Check extends NewGameEvent {
-		private final String name, species, gender;
+	public static final class Check extends NewGameEvent {
+		public final String name, species, gender;
 		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
 
 		public Check(String name, String species, String gender, int strength, int constitution, int dexterity, int intelligence, int wisdom, int charisma) {
@@ -41,20 +41,8 @@ public abstract class NewGameEvent extends NeonEvent {
 			this.wisdom = wisdom;
 			this.charisma = charisma;
 		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getSpecies() {
-			return species;
-		}
-
-		public String getGender() {
-			return gender;
-		}
 	}
 	
-	public static class Pass extends NewGameEvent {}
-	public static class Fail extends NewGameEvent {}
+	public static final class Pass extends NewGameEvent {}
+	public static final class Fail extends NewGameEvent {}
 }

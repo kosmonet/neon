@@ -51,8 +51,8 @@ import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
 import neon.common.event.ClientConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
-import neon.common.event.QuitEvent;
 import neon.common.event.ServerEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
@@ -97,7 +97,7 @@ public final class Client implements Runnable {
 		bus.register(ui);
 		
 		// server should cleanly shut down if client is closed
-		stage.setOnCloseRequest(event -> bus.post(new QuitEvent()));
+		stage.setOnCloseRequest(event -> bus.post(new InputEvent.Quit()));
 		
 		// initialize file system
 		try {
@@ -212,7 +212,7 @@ public final class Client implements Runnable {
 	}
 	
 	@Subscribe
-	private void onSkillIncrease(UpdateEvent.SkillUpdate event) throws ResourceException {
+	private void onSkillIncrease(UpdateEvent.Skill event) throws ResourceException {
 		if (event.uid == PLAYER_UID) {
 			ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
 		}

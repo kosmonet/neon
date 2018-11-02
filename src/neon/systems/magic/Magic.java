@@ -18,13 +18,14 @@
 
 package neon.systems.magic;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import neon.common.entity.components.Component;
 
-public class Magic implements Component {
+public final class Magic implements Component {
 	private final long uid;
 	private final Set<String> spells = new HashSet<>();
 	
@@ -45,7 +46,7 @@ public class Magic implements Component {
 	}
 	
 	public Set<String> getSpells() {
-		return spells;
+		return Collections.unmodifiableSet(spells);
 	}
 	
 	public void equip(String spell) {

@@ -18,6 +18,6 @@
 
 package neon.systems.magic;
 
-public class Spell {
+public final class Spell {
 
 }

@@ -18,7 +18,7 @@
 
 package neon.common.entity.components;
 
-public class CreatureInfo implements Component {
+public final class CreatureInfo implements Component {
 	private final String id;
 	private final String name;
 	private final long uid;

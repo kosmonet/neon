@@ -30,7 +30,7 @@ import neon.util.spatial.RegionSpatialIndex;
 /**
  * @author mdriesen
  */
-public class RMap extends Resource {
+public final class RMap extends Resource {
 	
 	/**
 	 * The uid of this map.

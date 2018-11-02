@@ -44,7 +44,7 @@ import neon.common.resources.ResourceException;
  * @author mdriesen
  *
  */
-public class EntityManager implements RemovalListener<Long, Entity> {
+public final class EntityManager implements RemovalListener<Long, Entity> {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();

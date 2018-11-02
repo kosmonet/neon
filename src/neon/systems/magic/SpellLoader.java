@@ -22,7 +22,7 @@ import org.jdom2.Element;
 
 import neon.common.resources.loaders.ResourceLoader;
 
-public class SpellLoader implements ResourceLoader<RSpell> {
+public final class SpellLoader implements ResourceLoader<RSpell> {
 	@Override
 	public RSpell load(Element root) {
 		String id = root.getAttributeValue("id");

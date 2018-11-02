@@ -30,7 +30,7 @@ import javafx.scene.paint.Color;
  * @author mdriesen
  *
  */
-public class RTerrain extends Resource {
+public final class RTerrain extends Resource {
 	public enum Modifier {
 		LIQUID;
 	}

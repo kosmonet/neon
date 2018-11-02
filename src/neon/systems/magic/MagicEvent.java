@@ -21,7 +21,7 @@ package neon.systems.magic;
 import neon.common.event.NeonEvent;
 
 public abstract class MagicEvent extends NeonEvent {
-	public static class Equip extends MagicEvent {
+	public static final class Equip extends MagicEvent {
 		public final String spell;
 		
 		public Equip(String spell) {
@@ -29,7 +29,7 @@ public abstract class MagicEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Unequip extends MagicEvent {
+	public static final class Unequip extends MagicEvent {
 		public final String spell;
 		
 		public Unequip(String spell) {
@@ -37,17 +37,19 @@ public abstract class MagicEvent extends NeonEvent {
 		}
 	}
 	
-	public static class Cast extends MagicEvent {
+	public static final class Cast extends MagicEvent {
 		public final String spell;
 		public final long target;
+		public final long caster;
 		
-		public Cast(String spell, long target) {
+		public Cast(long caster, String spell, long target) {
 			this.spell = spell;
 			this.target = target;
+			this.caster = caster;
 		}
 	}
 	
-	public static class Use extends MagicEvent {
+	public static final class Use extends MagicEvent {
 		public final long item;
 		
 		public Use(long item) {
