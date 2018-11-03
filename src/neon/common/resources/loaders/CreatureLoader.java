@@ -44,11 +44,11 @@ public final class CreatureLoader implements ResourceLoader<RCreature> {
 		int str = Integer.parseInt(stats.getAttributeValue("str"));
 		int con = Integer.parseInt(stats.getAttributeValue("con"));
 		int dex = Integer.parseInt(stats.getAttributeValue("dex"));
-		int iq = Integer.parseInt(stats.getAttributeValue("int"));
+		int іnt = Integer.parseInt(stats.getAttributeValue("int"));
 		int wis = Integer.parseInt(stats.getAttributeValue("wis"));
 		int cha = Integer.parseInt(stats.getAttributeValue("cha"));
 		return new RCreature.Builder(id).setName(name).setGraphics(glyph, color).setSpeed(speed).
-				setStats(str, con, dex, iq, wis, cha).setDescription(description).build();
+				setStats(str, con, dex, іnt, wis, cha).setDescription(description).build();
 	}
 	
 	@Override

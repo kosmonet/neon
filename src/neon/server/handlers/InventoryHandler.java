@@ -55,6 +55,12 @@ public final class InventoryHandler {
 		this.resources = resources;
 	}
 	
+	/**
+	 * Makes the player drop an item on the map.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
 		Entity player = entities.getEntity(PLAYER_UID);
@@ -69,6 +75,12 @@ public final class InventoryHandler {
 		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
+	/**
+	 * Makes the player pick up an item from the map.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
@@ -78,6 +90,8 @@ public final class InventoryHandler {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
 		Entity item = entities.getEntity(event.uid);
+		
+		// currency is not added to the inventory as an item, but as money
 		if (item.hasComponent(Currency.class)) {
 			inventory.addMoney(item.getComponent(ItemInfo.class).price);
 			entities.removeEntity(event.uid);
@@ -89,28 +103,40 @@ public final class InventoryHandler {
 		bus.post(new ComponentUpdateEvent(inventory));
 	}
 	
+	/**
+	 * Unequips an item on the player.
+	 * 
+	 * @param event
+	 */
+	@Subscribe 
+	private void onItemUnequip(InventoryEvent.Unequip event) {
+		Entity player = entities.getEntity(PLAYER_UID);
+		Inventory inventory = player.getComponent(Inventory.class);
+		inventory.unequip(event.uid);
+		bus.post(new ComponentUpdateEvent(inventory));
+	}
+	
+	/**
+	 * Equips an item on the player.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Entity item = entities.getEntity(event.uid);
 		Inventory inventory = player.getComponent(Inventory.class);
 		
+		// clothing (and armor) keeps track of what slot they cover
 		if (inventory.getItems().contains(event.uid) && item.hasComponent(Clothing.class)) {
 			Clothing cloth = item.getComponent(Clothing.class);
-			if (inventory.hasEquiped(event.uid)) {
-				inventory.unEquip(cloth.getSlot());
-			} else {
-				inventory.equip(cloth.getSlot(), event.uid);				
-			}
+			inventory.equip(cloth.getSlot(), event.uid);				
 		}
 		
+		// weapons can be equipped in the hand of choice
 		if (inventory.getItems().contains(event.uid) && item.hasComponent(Weapon.class)) {
-			Weapon weapon = item.getComponent(Weapon.class);
-			if (inventory.hasEquiped(event.uid)) {
-				inventory.unEquip(weapon.getSlot());
-			} else {
-				inventory.equip(weapon.getSlot(), event.uid);				
-			}
+			inventory.equip(event.slot.get(), event.uid);				
 		}
 		
 		bus.post(new ComponentUpdateEvent(inventory));

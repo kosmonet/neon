@@ -134,13 +134,11 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static final class Weapon extends RItem {
-		public final Slot slot;
 		public final String damage;
 		
 		public Weapon(Builder builder) {
 			super(builder);
 			damage = builder.damage;
-			slot = builder.slot;
 		}		
 	}
 	

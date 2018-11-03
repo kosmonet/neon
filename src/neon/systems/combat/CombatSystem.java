@@ -58,10 +58,18 @@ public final class CombatSystem {
 	private int getDamage(Inventory inventory) {
 		int damage = 0;
 
-		if (inventory.hasEquiped(Slot.WEAPON)) {
-			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.WEAPON));
+		// creature can have weapons equipped in both hands
+		if (inventory.hasEquiped(Slot.HAND_LEFT)) {
+			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_LEFT));
 			if (item.hasComponent(Weapon.class)) {
-				damage = Dice.roll(item.getComponent(Weapon.class).getDamage());
+				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
+			}			
+		}
+
+		if (inventory.hasEquiped(Slot.HAND_RIGHT)) {
+			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_RIGHT));
+			if (item.hasComponent(Weapon.class)) {
+				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
 		}
 

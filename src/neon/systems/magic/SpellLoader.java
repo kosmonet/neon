@@ -26,12 +26,13 @@ public final class SpellLoader implements ResourceLoader<RSpell> {
 	@Override
 	public RSpell load(Element root) {
 		String id = root.getAttributeValue("id");
+		String name = root.getAttributeValue("name");
 		Effect effect = Effect.valueOf(root.getAttributeValue("effect").toUpperCase());
 		Target target = Target.valueOf(root.getAttributeValue("target").toUpperCase());
 		int duration = Integer.parseInt(root.getAttributeValue("duration"));
 		int magnitude = Integer.parseInt(root.getAttributeValue("magnitude"));
 		
-		RSpell spell = new RSpell(id, effect, target, duration, magnitude);
+		RSpell spell = new RSpell(id, name, effect, target, duration, magnitude);
 		return spell;
 	}
 

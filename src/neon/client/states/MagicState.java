@@ -25,6 +25,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -34,6 +36,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.ComponentManager;
+import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.resources.ResourceException;
@@ -53,6 +56,7 @@ public final class MagicState extends State {
 
 	@FXML private ListView<RSpell> spellList;
 	@FXML private Label instructionLabel;
+	@FXML private DescriptionLabel description;
 	
 	private Scene scene;
 
@@ -74,6 +78,8 @@ public final class MagicState extends State {
 
 		spellList.setOnKeyPressed(event -> keyPressed(event));
 		spellList.setCellFactory(spellList -> new SpellCell());
+		spellList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
+
 	}
 	
 	@Override
@@ -134,14 +140,23 @@ public final class MagicState extends State {
 		spellList.getSelectionModel().select(index);
 	}
 	
-	private class SpellCell extends ListCell<RSpell> {
+	private final class ListListener implements ChangeListener<RSpell> {
+	    @Override
+	    public void changed(ObservableValue<? extends RSpell> observable, RSpell oldValue, RSpell newValue) {
+	    	if (newValue != null) {
+	    		description.updateSpell(newValue);	    		
+	    	}
+	    }
+	}
+
+	private final class SpellCell extends ListCell<RSpell> {
 		@Override
 		public void updateItem(RSpell spell, boolean empty) {
 			super.updateItem(spell, empty);
 			if (empty || spell == null) {
 				setText(null);
 			} else {
-				setText(spell.id);
+				setText(spell.name);
 				Magic magic = components.getComponent(PLAYER_UID, Magic.class);
 				if (magic.hasEquiped(spell.id)) {
 					setStyle("-fx-font-weight: bold");

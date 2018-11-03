@@ -21,6 +21,12 @@ package neon.common.entity.components;
 import neon.common.entity.Action;
 import neon.common.resources.RCreature;
 
+/**
+ * A component that keeps track of all creature stats.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class Stats implements Component {
 	private final long uid;
 	private final int speed;
@@ -30,7 +36,7 @@ public final class Stats implements Component {
 	private int healthMod = 0;
 	private int manaMod = 0;
 	
-	private int str = 10, con = 10, dex = 10, wis = 10, iq = 10, cha = 10;
+	private int str = 10, con = 10, dex = 10, wis = 10, іnt = 10, cha = 10;
 	
 	public Stats(long uid, RCreature species) {
 		this.uid = uid;
@@ -83,8 +89,13 @@ public final class Stats implements Component {
 		AP = Math.min(speed, AP + speed/fraction);
 	}
 	
+	/**
+	 * Returns the base intelligence, without any modifiers applied.
+	 * 
+	 * @return	the base intelligence
+	 */
 	public int getBaseInt() {
-		return iq;
+		return іnt;
 	}
 	
 	public int getBaseStr() {
@@ -108,7 +119,7 @@ public final class Stats implements Component {
 	}
 	
 	public void setBaseInt(int intelligence) {
-		iq = intelligence;
+		іnt = intelligence;
 	}
 	
 	public void setBaseStr(int strength) {
@@ -144,7 +155,7 @@ public final class Stats implements Component {
 	}
 	
 	public int getBaseMana() {
-		return iq*6;
+		return іnt*6;
 	}
 	
 	public int getMana() {

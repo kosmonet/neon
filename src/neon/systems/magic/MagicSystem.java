@@ -18,6 +18,8 @@
 
 package neon.systems.magic;
 
+import java.util.logging.Logger;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -29,6 +31,7 @@ import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
 public final class MagicSystem {
+	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -60,15 +63,7 @@ public final class MagicSystem {
 	@Subscribe
 	private void onCast(MagicEvent.Cast event) throws ResourceException {
 		RSpell spell = resources.getResource("spells", event.spell);
-
-		switch (spell.effect) {
-		case HEAL:
-			Stats targetStats = entities.getEntity(event.target).getComponent(Stats.class);
-			targetStats.addHealth(spell.magnitude);
-			bus.post(new ComponentUpdateEvent(targetStats));
-			break;
-		}
-		
+		cast(spell.effect, spell.magnitude);
 		Stats casterStats = entities.getEntity(event.caster).getComponent(Stats.class);
 		casterStats.addMana(-MagicUtils.getCost(spell));
 		bus.post(new ComponentUpdateEvent(casterStats));
@@ -78,13 +73,27 @@ public final class MagicSystem {
 	private void onItemUse(MagicEvent.Use event) {
 		Entity item = entities.getEntity(event.item);
 		Enchantment enchantment = item.getComponent(Enchantment.class);
-		
-		switch (enchantment.getEffect()) {
+		cast(enchantment.getEffect(), enchantment.getMagnitude());
+	}
+	
+	private void cast(Effect effect, int magnitude) {
+		Stats stats = entities.getEntity(PLAYER_UID).getComponent(Stats.class);
+		switch (effect) {
 		case HEAL:
-			Stats stats = entities.getEntity(PLAYER_UID).getComponent(Stats.class);
-			stats.addHealth(enchantment.getMagnitude());
+			stats.addHealth(magnitude);
 			bus.post(new ComponentUpdateEvent(stats));
 			break;
-		}
+		case FREEZE:
+			stats.addHealth(-magnitude);
+			bus.post(new ComponentUpdateEvent(stats));
+			break;
+		case BURN:
+			stats.addHealth(-magnitude);
+			bus.post(new ComponentUpdateEvent(stats));
+			break;
+		default:
+			logger.warning("unknown spell effect: " + effect);
+			break;
+		}		
 	}
 }

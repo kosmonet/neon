@@ -18,6 +18,7 @@
 
 package neon.server.handlers;
 
+import java.util.Collection;
 import java.util.Random;
 
 import com.google.common.eventbus.EventBus;
@@ -45,11 +46,12 @@ public final class StealthHandler {
 	private void onPickPocket(StealthEvent.Pick event) {
 		Entity victim = entities.getEntity(event.victim);
 		Inventory victimInventory = victim.getComponent(Inventory.class);
+		Collection<Long> items = victimInventory.getItems();
 
-		if (victimInventory.getItems().isEmpty()) {
+		if (items.isEmpty()) {
 			bus.post(new StealthEvent.Empty());
 		} else {
-			long item = victimInventory.getItems().get(random.nextInt(victimInventory.getItems().size()));
+			long item = items.stream().skip(random.nextInt(items.size())).findFirst().get();
 			victimInventory.removeItem(item);
 			Inventory playerInventory = entities.getEntity(PLAYER_UID).getComponent(Inventory.class);
 			playerInventory.addItem(item);

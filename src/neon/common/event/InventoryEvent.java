@@ -18,6 +18,10 @@
 
 package neon.common.event;
 
+import com.google.common.base.Optional;
+
+import neon.common.entity.Slot;
+
 public abstract class InventoryEvent extends NeonEvent {
 	public static final class Drop extends InventoryEvent {
 		public final long uid;
@@ -39,11 +43,26 @@ public abstract class InventoryEvent extends NeonEvent {
 		}
 	}
 
+	public static final class Unequip extends InventoryEvent {
+		public final long uid;
+		
+		public Unequip(long uid) {
+			this.uid = uid;
+		}		
+	}
+	
 	public static final class Equip extends InventoryEvent {
 		public final long uid;
+		public final Optional<Slot> slot;
 		
 		public Equip(long uid) {
 			this.uid = uid;
+			slot = Optional.absent();
+		}
+
+		public Equip(long uid, Slot slot) {
+			this.uid = uid;
+			this.slot = Optional.fromNullable(slot);
 		}
 	}
 }

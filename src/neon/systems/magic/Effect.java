@@ -18,14 +18,24 @@
 
 package neon.systems.magic;
 
+import javafx.scene.paint.Color;
+
 public enum Effect {
-	HEAL(1, "heal");
+	// restoration
+	HEAL(1, "heal", '♥', Color.RED),
+	
+	// destruction
+	FREEZE(1, "freeze", '❄', Color.LIGHTSKYBLUE), BURN(1, "burn", '✷', Color.ORANGERED);
 	
 	public final int cost;
 	public final String name;
+	public final char symbol;
+	public final Color color;
 	
-	private Effect(int cost, String name) {
+	private Effect(int cost, String name, char symbol, Color color) {
 		this.cost = cost;
 		this.name = name;
+		this.symbol = symbol;
+		this.color = color;
 	}
 }

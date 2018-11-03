@@ -148,7 +148,7 @@ public class CreatureEditor {
 		int str = 10;
 		int con = 10;
 		int dex = 10;
-		int iq = 10;
+		int іnt = 10;
 		int wis = 10;
 		int cha = 10;
 		// check if anything was actually changed
@@ -157,7 +157,7 @@ public class CreatureEditor {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
 			RCreature creature = new RCreature.Builder(card.toString()).setName(name).setGraphics(glyph, color).
-					setSpeed(speed).setStats(str, con, dex, iq, wis, cha).build();
+					setSpeed(speed).setStats(str, con, dex, іnt, wis, cha).build();
 			bus.post(new SaveEvent.Resources(creature));
 			card.setChanged(true);				
 		}

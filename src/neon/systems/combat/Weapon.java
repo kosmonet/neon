@@ -18,7 +18,6 @@
 
 package neon.systems.combat;
 
-import neon.common.entity.Slot;
 import neon.common.entity.components.Component;
 
 public final class Weapon implements Component {
@@ -43,9 +42,5 @@ public final class Weapon implements Component {
 	
 	public String getDamage() {
 		return damage;
-	}
-	
-	public Slot getSlot() {
-		return Slot.WEAPON;
 	}
 }

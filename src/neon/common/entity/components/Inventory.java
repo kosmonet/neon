@@ -39,6 +39,11 @@ public final class Inventory implements Component {
 	
 	private int money = 0;
 	
+	/**
+	 * Creates an inventory for the creature with the given uid.
+	 * 
+	 * @param uid
+	 */
 	public Inventory(long uid) {
 		this.uid = uid;
 	}
@@ -49,28 +54,54 @@ public final class Inventory implements Component {
 		return "Inventory:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
 	}
 	
+	@Override
 	public long getEntity() {
 		return uid;
 	}
 	
+	/**
+	 * Adds an item to this inventory.
+	 * 
+	 * @param uid	the uid of the item to add
+	 */
 	public void addItem(long uid) {
 		items.add(uid);
 	}
 	
+	/**
+	 * Adds all items of a given collection to this inventory.
+	 * 
+	 * @param items
+	 */
 	public void addItems(Collection<Long> items) {
 		this.items.addAll(items);
 	}
 	
+	/**
+	 * Removes an item from this inventory.
+	 * 
+	 * @param uid	the uid of the item to remove
+	 */
 	public void removeItem(long uid) {
 		// unequip before removing
-		equiped.values().removeIf(value -> value == uid);
+		unequip(uid);
 		items.remove(uid);
 	}
 	
-	public List<Long> getItems() {
+	/**
+	 * Returns a collection of all items in an inventory.
+	 * 
+	 * @return
+	 */
+	public Collection<Long> getItems() {
 		return Collections.unmodifiableList(items);
 	}
 	
+	/**
+	 * Adds money to this inventory.
+	 * 
+	 * @param amount	the amount of money to add
+	 */
 	public void addMoney(int amount) {
 		money += amount;
 	}
@@ -87,8 +118,12 @@ public final class Inventory implements Component {
 		return equiped.containsKey(slot);
 	}
 	
-	public void unEquip(Slot slot) {
-		equiped.remove(slot);
+	public void unequip(Long uid) {
+		equiped.values().removeIf(uid::equals);
+	}
+	
+	public void unequip(Slot slot) {
+		unequip(equiped.get(slot));
 	}
 	
 	public void equip(Slot slot, long uid) {

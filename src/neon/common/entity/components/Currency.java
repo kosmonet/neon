@@ -26,6 +26,12 @@ public class Currency implements Component {
 	}
 	
 	@Override
+	public String toString() {
+		// create a string in module:map:entity format
+		return "Currency:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
+	}
+	
+	@Override
 	public long getEntity() {
 		return uid;
 	}

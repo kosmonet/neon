@@ -18,6 +18,17 @@
 
 package neon.common.entity.components;
 
+/**
+ * A component that can be added to an entity.
+ * 
+ * @author mdriesen
+ *
+ */
 public interface Component {
+	/**
+	 * Returns the uid of the entity this component belongs to.
+	 * 
+	 * @return	the uid of the entity the component belongs to
+	 */
 	public long getEntity();
 }
