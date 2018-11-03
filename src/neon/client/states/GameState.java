@@ -329,9 +329,9 @@ public final class GameState extends State {
 	}
 	
 	private void act() {
+		// check if there's another entity besides the player on the given position
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-
-		if (!map.getEntities(shape.getX(), shape.getY()).isEmpty()) {
+		if (map.getEntities(shape.getX(), shape.getY()).size() > 1) {
 			bus.post(new TransitionEvent("pick", map));			
 		}
 	}
@@ -379,8 +379,8 @@ public final class GameState extends State {
 			bus.post(new InputEvent.Pause());
 		}
 		
-		long bumper = event.getBumper();
-		long bumped = event.getBumped();
+		long bumper = event.bumper;
+		long bumped = event.bumped;
 
 		if (bumper == PLAYER_UID) {
 			PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);

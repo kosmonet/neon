@@ -91,15 +91,10 @@ public final class RenderPane<T> extends StackPane {
 	 * @param scale
 	 */
 	public void draw(int xmin, int ymin, int scale) {
-		for (Canvas canvas : layers.values()) {
-			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		}
-		
+		layers.values().stream()
+				.forEach(canvas -> canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight()));
 		drawMap(xmin, ymin, scale);
-		
-		for (T entity : entities) {
-			renderer.drawEntity(entity, xmin, ymin, scale);
-		}
+		entities.stream().forEach(entity -> renderer.drawEntity(entity, xmin, ymin, scale));
 	}
 	
 	/**
@@ -130,7 +125,7 @@ public final class RenderPane<T> extends StackPane {
 	 * @author mdriesen
 	 *
 	 */
-	public class RenderCanvas extends Canvas {
+	public static final class RenderCanvas extends Canvas {
 		@Override
 		public boolean isResizable() {
 		    return true;

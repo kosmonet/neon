@@ -19,19 +19,16 @@
 package neon.systems.combat;
 
 import neon.common.entity.Entity;
-import neon.common.entity.components.Graphics;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 import neon.server.entity.EntityBuilder;
+import neon.server.entity.ItemBuilder;
 
 final class WeaponBuilder implements EntityBuilder<RItem.Weapon> {
+	private final ItemBuilder builder = new ItemBuilder();
+
 	@Override
 	public Entity build(long uid, RItem.Weapon resource) {
-		Entity weapon = new Entity(uid);
-		weapon.setComponent(new Shape(uid));
-		weapon.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
-		weapon.setComponent(new Graphics(uid, resource.glyph, resource.color));
+		Entity weapon = builder.build(uid, resource);
 		weapon.setComponent(new Weapon(uid, resource.damage));
 		return weapon;
 	}

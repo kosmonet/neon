@@ -58,8 +58,8 @@ public final class InputSystem implements NeonSystem {
 		Stats stats = player.getComponent(Stats.class);
 		
 		if(stats.isActive()) {
-			RMap map = resources.getResource("maps", event.getMap());
-			mover.move(player, event.getDirection(), map);
+			RMap map = resources.getResource("maps", event.map);
+			mover.move(player, event.direction, map);
 
 			// signal the client that an entity was updated
 			Shape shape = player.getComponent(Shape.class);

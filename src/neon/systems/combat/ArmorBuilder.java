@@ -19,22 +19,17 @@
 package neon.systems.combat;
 
 import neon.common.entity.Entity;
-import neon.common.entity.components.Clothing;
-import neon.common.entity.components.Graphics;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
+import neon.server.entity.ClothingBuilder;
 import neon.server.entity.EntityBuilder;
 
 final class ArmorBuilder implements EntityBuilder<RItem.Armor> {
+	private final ClothingBuilder builder = new ClothingBuilder();
+
 	@Override
 	public Entity build(long uid, RItem.Armor resource) {
-		Entity armor = new Entity(uid);
-		armor.setComponent(new Shape(uid));
-		armor.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
-		armor.setComponent(new Graphics(uid, resource.glyph, resource.color));
+		Entity armor = builder.build(uid, resource);
 		armor.setComponent(new Armor(uid, resource.rating));
-		armor.setComponent(new Clothing(uid, resource.slot));
 		return armor;
 	}
 }

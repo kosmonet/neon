@@ -41,7 +41,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
-import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ConfigurationEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
@@ -177,8 +177,8 @@ public final class NewGameState extends State {
 			ui.showMessage("Enter a valid character name.", 1000);
 //		} else if (pointsLeft > 0) {
 //			ui.showMessage("You have unspent ability points.", 1000);			
-//		} else if (pointsLeft < 0) {
-//			ui.showMessage("You have spent too many ability points.", 1000);			
+		} else if (pointsLeft < 0) {
+			ui.showMessage("You have spent too many ability points.", 1000);			
 		} else {
 			// let the server know that the game module is waiting for game data
 			bus.post(new NewGameEvent.Check(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
@@ -203,7 +203,7 @@ public final class NewGameState extends State {
 	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void onConfigure(ClientConfigurationEvent event) throws ResourceException {
+	private void onConfigure(ConfigurationEvent event) throws ResourceException {
 		for (String id : event.getPlayableSpecies()) {
 			speciesList.getItems().add(resources.getResource("creatures", id));
 		}

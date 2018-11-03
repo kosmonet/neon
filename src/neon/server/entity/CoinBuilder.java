@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,16 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.server.entity;
 
-public final class ClientLoadEvent extends NeonEvent {
-	private final String[] saves;
+import neon.common.entity.Entity;
+import neon.common.entity.components.Currency;
+import neon.common.resources.RItem;
 
-	public ClientLoadEvent(String[] saves) {
-		this.saves = saves;
-	}
-
-	public String[] getSaves() {
-		return saves;
+public final class CoinBuilder implements EntityBuilder<RItem.Coin> {
+	private final ItemBuilder builder = new ItemBuilder();
+	
+	@Override
+	public Entity build(long uid, RItem.Coin resource) {
+		Entity coin = builder.build(uid, resource);
+		coin.setComponent(new Currency(uid));
+		return coin;
 	}
 }

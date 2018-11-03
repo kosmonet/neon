@@ -47,6 +47,8 @@ import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.server.entity.ClothingBuilder;
+import neon.server.entity.CoinBuilder;
+import neon.server.entity.ContainerBuilder;
 import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
@@ -110,6 +112,8 @@ final class ServerLoader {
 		entities.addBuilder(RItem.class, new ItemBuilder());
 		entities.addBuilder(RItem.Clothing.class, new ClothingBuilder());
 		entities.addBuilder(RCreature.class, new CreatureBuilder());
+		entities.addBuilder(RItem.Coin.class, new CoinBuilder());
+		entities.addBuilder(RItem.Container.class, new ContainerBuilder());
 	}
 	
 	/**

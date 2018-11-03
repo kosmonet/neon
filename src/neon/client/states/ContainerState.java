@@ -31,6 +31,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
@@ -67,6 +68,7 @@ public final class ContainerState extends State {
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, containerList;
 	@FXML private DescriptionLabel description;
+	@FXML private Label moneyLabel;
 	
 	private Scene scene;
 	private RMap map;
@@ -122,6 +124,7 @@ public final class ContainerState extends State {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		playerList.getItems().clear();
+		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
@@ -152,14 +155,13 @@ public final class ContainerState extends State {
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		map = event.getParameter(RMap.class);
 		containerList.getItems().clear();
-		for (long uid : map.getEntities(shape.getX(), shape.getY())) {
-			if (uid != 0) {
-				containerList.getItems().add(uid);
-			}
-		}
+		
+		map.getEntities(shape.getX(), shape.getY()).stream()
+				.filter(uid -> uid != 0)
+				.forEach(containerList.getItems()::add);
 		containerList.getSelectionModel().selectFirst();
-		refresh();
 		playerList.getSelectionModel().selectFirst();
+		refresh();
 
 		ui.showScene(scene);
 	}

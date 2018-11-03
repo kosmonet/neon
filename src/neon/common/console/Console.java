@@ -119,7 +119,7 @@ public final class Console {
 	 * @param event a {@code ConsoleEvent} with the message to be printed
 	 */
 	@Subscribe
-	public void print(ConsoleEvent event) {
+	private void print(ConsoleEvent event) {
 		Text text = new Text(event.getMessage() + "\n");
 		text.setFill(Color.BEIGE);
 		flow.getChildren().add(flow.getChildren().size() - offset, text);
@@ -160,7 +160,7 @@ public final class Console {
 		}
 	}
 	
-	private class ScrollListener implements ListChangeListener<Node> {
+	private final class ScrollListener implements ListChangeListener<Node> {
 		@Override
 		public void onChanged(ListChangeListener.Change<? extends Node> change) {
 			flow.layout();
@@ -169,7 +169,7 @@ public final class Console {
 		}
 	}
 	
-	private class ConsoleHandler extends Handler {
+	private final class ConsoleHandler extends Handler {
 		private ConsoleHandler(Level level) {
 			setLevel(level);
 			setFormatter(new NeonLogFormatter());

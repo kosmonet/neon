@@ -57,6 +57,13 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 		this.saver = saver;	
 	}
 	
+	/**
+	 * Returns the entity with the given uid. If the entity is not present, an
+	 * {@code IllegalArgumentException} is thrown.
+	 * 
+	 * @param uid
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Entity> T getEntity(long uid) {
 		try {
@@ -66,8 +73,12 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 		}
 	}
 	
-	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<T> builder) {
+	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
 		builders.put(type, builder);
+	}
+	
+	public void removeEntity(long uid) {
+		entities.invalidate(uid);
 	}
 	
 	/**

@@ -20,19 +20,15 @@ package neon.server.entity;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
-import neon.common.entity.components.Graphics;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 import neon.systems.magic.Enchantment;
 
 public final class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
+	private final ItemBuilder builder = new ItemBuilder();
+
 	@Override
 	public Entity build(long uid, RItem.Clothing resource) {
-		Entity cloth = new Entity(uid);
-		cloth.setComponent(new Shape(uid));
-		cloth.setComponent(new ItemInfo(uid, resource.id, resource.name, resource.price, resource.weight));
-		cloth.setComponent(new Graphics(uid, resource.glyph, resource.color));
+		Entity cloth = builder.build(uid, resource);
 		cloth.setComponent(new Clothing(uid, resource.slot));
 		if (resource.effect.isPresent()) {
 			cloth.setComponent(new Enchantment(uid, resource.effect.get(), resource.magnitude));

@@ -140,20 +140,18 @@ public final class InventoryState extends State {
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		int weight = ClientUtils.getWeight(inventory, components);
-    	weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone.");
+		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone.");
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
-		
+
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
 
-			if (inventory.hasEquiped(uid)) {
-				if (components.hasComponent(uid, Armor.class)) {
-					rating += components.getComponent(uid, Armor.class).getRating();
-				}
+			if (inventory.hasEquiped(uid) && components.hasComponent(uid, Armor.class)) {
+				rating += components.getComponent(uid, Armor.class).getRating();
 			}
 		}
-		
+
 		armorLabel.setText("Armor rating: " + rating);
 		playerList.getSelectionModel().select(index);
 	}

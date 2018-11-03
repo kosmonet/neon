@@ -253,7 +253,7 @@ public final class NeonFileSystem {
 		String[] temp = new String[folder.length + 1];
 		System.arraycopy(folder, 0, temp, 1, folder.length);
 		
-		// check all loaded modules to see if the requested file is present in that module
+		// check all loaded modules
 		for (String module : modules) {
 			temp[0] = module;
 			Path path = Paths.get("data", temp);

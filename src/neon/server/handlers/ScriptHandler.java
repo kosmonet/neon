@@ -69,7 +69,7 @@ public final class ScriptHandler {
 	 */
 	@Subscribe
 	private void execute(ScriptEvent event) {
-		Object result = execute(event.getScript());
+		Object result = execute(event.script);
 		if (result != null) {
 			bus.post(new ConsoleEvent(result.toString()));
 		}

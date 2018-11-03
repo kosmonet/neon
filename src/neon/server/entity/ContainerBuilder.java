@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,32 +16,16 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.server.entity;
 
-/**
- * This event is used to signal game loading-related information.
- * 
- * @author mdriesen
- *
- */
-public abstract class ServerLoadEvent extends NeonEvent {
-	/**
-	 * This event is used to request a list of saved games from the server.
-	 * 
-	 * @author mdriesen
-	 */
-	public static final class List extends ServerLoadEvent {}
+import neon.common.entity.Entity;
+import neon.common.resources.RItem;
 
-	/**
-	 * This event requests the server to start a loaded game.
-	 * 
-	 * @author mdriesen
-	 */
-	public static final class Start extends ServerLoadEvent {
-		public final String save;
-		
-		public Start(String save) {
-			this.save = save;
-		}
+public final class ContainerBuilder implements EntityBuilder<RItem.Container> {
+	private final ItemBuilder builder = new ItemBuilder();
+
+	@Override
+	public Entity build(long uid, RItem.Container resource) {
+		return builder.build(uid, resource);
 	}
 }

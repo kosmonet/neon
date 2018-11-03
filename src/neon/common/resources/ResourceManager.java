@@ -51,6 +51,7 @@ public final class ResourceManager {
 	private final NeonFileSystem files;
 	private final Table<String, String, SoftReference<Resource>> resources = HashBasedTable.create();
 	private final Map<String, ResourceLoader> loaders = new HashMap<>();
+	private final XMLTranslator translator = new XMLTranslator();
 	
 	/**
 	 * Creates a resource manager that uses the given filesystem to load its
@@ -86,9 +87,9 @@ public final class ResourceManager {
 		if (loaders.containsKey(namespace)) {
 			Document doc = new Document(loaders.get(namespace).save(resource));
 			if (namespace.equals("global")) {
-				files.saveFile(doc, new XMLTranslator(), resource.id + ".xml");			
+				files.saveFile(doc, translator, resource.id + ".xml");			
 			} else {
-				files.saveFile(doc, new XMLTranslator(), namespace, resource.id + ".xml");							
+				files.saveFile(doc, translator, namespace, resource.id + ".xml");							
 			}
 		} else {
 			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found.");
@@ -121,7 +122,7 @@ public final class ResourceManager {
 			if (resources.get(namespace, id).get() != null) {
 				return (T) resources.get(namespace, id).get();
 			} else {
-				logger.finest("Resource <" + namespace + ":" + id + "> was evicted from cache, reloading.");
+				logger.finest("resource <" + namespace + ":" + id + "> was evicted from cache, reloading");
 			}
 		} 
 
@@ -130,12 +131,12 @@ public final class ResourceManager {
 			Element resource;
 			
 			if (namespace.equals("global")) {
-				resource = files.loadFile(new XMLTranslator(), id + ".xml").getRootElement();				
+				resource = files.loadFile(translator, id + ".xml").getRootElement();				
 			} else {
-				resource = files.loadFile(new XMLTranslator(), namespace, id + ".xml").getRootElement();				
+				resource = files.loadFile(translator, namespace, id + ".xml").getRootElement();				
 			}
 			
-			if(loaders.containsKey(namespace)) {
+			if (loaders.containsKey(namespace)) {
 				T value = (T) loaders.get(namespace).load(resource);
 				resources.put(namespace, id, new SoftReference<Resource>(value));
 				return value;
@@ -148,13 +149,13 @@ public final class ResourceManager {
 	}
 	
 	/**
-	 * Adds a loader for the given resource type.
+	 * Adds a loader for the given namespace.
 	 * 
 	 * @param type
 	 * @param loader
 	 */
-	public <T extends Resource> void addLoader(String type, ResourceLoader<T> loader) {
-		loaders.put(type, loader);
+	public void addLoader(String namespace, ResourceLoader<? extends Resource> loader) {
+		loaders.put(namespace, loader);
 	}
 	
 	/**

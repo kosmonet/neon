@@ -60,7 +60,6 @@ public final class MapLoader implements ResourceLoader<RMap> {
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			String id = region.getAttributeValue("id");
-			
 			map.getTerrain().insert(new Rectangle(x, y, width, height), id);
 		}
 	}
@@ -72,7 +71,6 @@ public final class MapLoader implements ResourceLoader<RMap> {
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			int value = Integer.parseInt(region.getAttributeValue("v"));
-			
 			map.getElevation().insert(new Rectangle(x, y, width, height), value);
 		}		
 	}

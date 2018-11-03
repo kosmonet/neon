@@ -18,16 +18,44 @@
 
 package neon.common.event;
 
+import java.util.Arrays;
+
 /**
- * An event containing a script that should be executed.
+ * This event is used to signal game loading-related information.
  * 
  * @author mdriesen
  *
  */
-public final class ScriptEvent extends NeonEvent {
-	public final String script;
+public abstract class LoadEvent extends NeonEvent {
+	/**
+	 * This event is used to request a list of saved games from the server.
+	 * 
+	 * @author mdriesen
+	 */
+	public static final class Load extends LoadEvent {}
+
+	/**
+	 * This event requests the server to start a loaded game.
+	 * 
+	 * @author mdriesen
+	 */
+	public static final class Start extends LoadEvent {
+		public final String save;
+		
+		public Start(String save) {
+			this.save = save;
+		}
+	}
 	
-	public ScriptEvent(String script) {
-		this.script = script;
+	public static final class List extends LoadEvent {
+		private final String[] saves;
+
+		public List(String[] saves) {
+			this.saves = saves;
+		}
+
+		public String[] getSaves() {
+			return Arrays.copyOf(saves, saves.length);
+		}
 	}
 }

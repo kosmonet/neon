@@ -34,8 +34,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
-import neon.common.event.ClientLoadEvent;
-import neon.common.event.ServerLoadEvent;
+import neon.common.event.LoadEvent;
 
 /**
  * This module shows the load game screen.
@@ -85,7 +84,7 @@ public final class LoadState extends State {
 	@FXML private void startGame() {
 		if(!saveList.getSelectionModel().isEmpty()) {
 			// let the server know we want to load a saved game
-			bus.post(new ServerLoadEvent.Start(saveList.getSelectionModel().getSelectedItem()));
+			bus.post(new LoadEvent.Start(saveList.getSelectionModel().getSelectedItem()));
 			// transition to the actual game module
 			bus.post(new TransitionEvent("start game"));
 		}
@@ -97,7 +96,7 @@ public final class LoadState extends State {
 	 * @param event
 	 */
 	@Subscribe
-	private void list(ClientLoadEvent event) {
+	private void list(LoadEvent.List event) {
 		saveList.getItems().clear();
 		saveList.getItems().addAll(event.getSaves());
 		saveList.getSelectionModel().select(0);
@@ -122,7 +121,7 @@ public final class LoadState extends State {
 		logger.finest("entering load game state");
 		bus.register(this);
 		ui.showScene(scene);
-		bus.post(new ServerLoadEvent.List());
+		bus.post(new LoadEvent.Load());
 	}
 
 	@Override

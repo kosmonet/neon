@@ -23,7 +23,9 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
+import neon.common.entity.components.Currency;
 import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
@@ -57,11 +59,11 @@ public final class InventoryHandler {
 	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.removeItem(event.getItem());
+		inventory.removeItem(event.uid);
 		Shape shape = player.getComponent(Shape.class);
-		RMap map = resources.getResource("maps", event.getMap());
-		map.addEntity(event.getItem(), shape.getX(), shape.getY());
-		Entity item = entities.getEntity(event.getItem());
+		RMap map = resources.getResource("maps", event.map);
+		map.addEntity(event.uid, shape.getX(), shape.getY());
+		Entity item = entities.getEntity(event.uid);
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
@@ -69,13 +71,21 @@ public final class InventoryHandler {
 	
 	@Subscribe
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.getMap());
-		map.removeEntity(event.getItem());
+		RMap map = resources.getResource("maps", event.map);
+		map.removeEntity(event.uid);
+		bus.post(new UpdateEvent.Remove(event.uid, map.id));
+		
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.addItem(event.getItem());
-
-		bus.post(new UpdateEvent.Remove(event.getItem(), map.id));
+		Entity item = entities.getEntity(event.uid);
+		if (item.hasComponent(Currency.class)) {
+			inventory.addMoney(item.getComponent(ItemInfo.class).price);
+			entities.removeEntity(event.uid);
+			bus.post(new UpdateEvent.Destroy(event.uid));
+		} else {
+			inventory.addItem(event.uid);
+		}
+		
 		bus.post(new ComponentUpdateEvent(inventory));
 	}
 	

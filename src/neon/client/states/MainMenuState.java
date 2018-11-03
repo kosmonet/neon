@@ -38,7 +38,7 @@ import javafx.scene.input.KeyEvent;
 import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
 import neon.common.console.Console;
-import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ConfigurationEvent;
 import neon.common.event.InputEvent;
 
 /**
@@ -149,8 +149,8 @@ public final class MainMenuState extends State {
 	 * @param event
 	 */
 	@Subscribe
-	private void configure(ClientConfigurationEvent event) {
-		titleLabel.setText(event.getTitle());
-		subtitleLabel.setText(event.getSubtitle());
+	private void configure(ConfigurationEvent event) {
+		titleLabel.setText(event.title);
+		subtitleLabel.setText(event.subtitle);
 	}	
 }

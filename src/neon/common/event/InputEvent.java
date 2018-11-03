@@ -35,20 +35,12 @@ public abstract class InputEvent extends NeonEvent {
 	 *
 	 */
 	public static final class Move extends InputEvent {
-		private final Direction direction;
-		private final String map;
+		public final Direction direction;
+		public final String map;
 		
 		public Move(Direction direction, String map) {
 			this.direction = direction;
 			this.map = map;
-		}
-		
-		public Direction getDirection() {
-			return direction;
-		}
-		
-		public String getMap() {
-			return map;
 		}
 	}
 	

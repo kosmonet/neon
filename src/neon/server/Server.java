@@ -29,7 +29,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 
-import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ConfigurationEvent;
 import neon.common.event.ClientEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
@@ -94,7 +94,7 @@ public final class Server implements Runnable {
 		try {
 			CClient cc = resources.getResource("config", "client");
 			CServer cs = resources.getResource("config", "server");
-			bus.post(new ClientConfigurationEvent(cc, cs));
+			bus.post(new ConfigurationEvent(cc, cs));
 		} catch (ResourceException e) {
 			throw new IllegalStateException("Could not load client configuration.", e);
 		}

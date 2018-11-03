@@ -94,4 +94,12 @@ public abstract class UpdateEvent extends NeonEvent {
 			this.level = level;
 		}
 	}
+	
+	public static final class Destroy extends UpdateEvent {
+		public final long uid;
+		
+		public Destroy(long uid) {
+			this.uid = uid;
+		}
+	}
 }

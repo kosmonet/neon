@@ -35,7 +35,7 @@ import org.jdom2.input.SAXBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import neon.common.event.ServerLoadEvent;
+import neon.common.event.LoadEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Behavior;
@@ -48,7 +48,6 @@ import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.event.ClientLoadEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.MessageEvent;
@@ -210,7 +209,7 @@ public final class GameLoader {
 	 * @throws IOException
 	 */
 	@Subscribe
-	private void startOldGame(ServerLoadEvent.Start event) throws ResourceException, IOException {
+	private void startOldGame(LoadEvent.Start event) throws ResourceException, IOException {
 		logger.info("loading save character <" + event.save + ">");
 		
 		// set the save folder in the file system
@@ -293,9 +292,7 @@ public final class GameLoader {
 	
 	private void notifyPlayer(Entity player) {
 		Inventory inventory = player.getComponent(Inventory.class);
-		for (long uid : inventory.getItems()) {
-			notifyItem(entities.getEntity(uid));
-		}
+		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
@@ -308,9 +305,7 @@ public final class GameLoader {
 	
 	private void notifyCreature(Entity creature) {
 		Inventory inventory = creature.getComponent(Inventory.class);
-		for (long uid : inventory.getItems()) {
-			notifyItem(entities.getEntity(uid));
-		}
+		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
@@ -346,10 +341,10 @@ public final class GameLoader {
 	 * @param event
 	 */
 	@Subscribe
-	private void listSavedGames(ServerLoadEvent.List event) {
+	private void listSavedGames(LoadEvent.Load event) {
 		String[] saves = FileUtils.listFiles(Paths.get("saves"));
 		logger.info("saved characters: " + Arrays.toString(saves));
-		bus.post(new ClientLoadEvent(saves));
+		bus.post(new LoadEvent.List(saves));
 	}
 	
 	/**

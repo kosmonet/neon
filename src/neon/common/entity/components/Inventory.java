@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import neon.common.entity.Slot;
 
@@ -64,14 +63,7 @@ public final class Inventory implements Component {
 	
 	public void removeItem(long uid) {
 		// unequip before removing
-		if (equiped.containsValue(uid)) {
-			for (Map.Entry<Slot, Long> entry : equiped.entrySet()) {
-				if (entry.getValue() == uid) {
-					unEquip(entry.getKey());
-				}
-			}
-		}
-		
+		equiped.values().removeIf(value -> value == uid);
 		items.remove(uid);
 	}
 	

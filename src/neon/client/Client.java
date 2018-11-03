@@ -49,7 +49,7 @@ import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
-import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ConfigurationEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
@@ -212,6 +212,11 @@ public final class Client implements Runnable {
 	}
 	
 	@Subscribe
+	private void onEntityDestroy(UpdateEvent.Destroy event) throws ResourceException {
+		components.removeEntity(event.uid);
+	}
+	
+	@Subscribe
 	private void onSkillIncrease(UpdateEvent.Skill event) throws ResourceException {
 		if (event.uid == PLAYER_UID) {
 			ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
@@ -246,8 +251,8 @@ public final class Client implements Runnable {
 	 * @throws FileNotFoundException
 	 */
 	@Subscribe
-	private void configure(ClientConfigurationEvent event) throws FileNotFoundException {
-		for(String module : event.getModules()) {
+	private void configure(ConfigurationEvent event) throws FileNotFoundException {
+		for (String module : event.getModules()) {
 			files.addModule(module);
 		}
 	}	

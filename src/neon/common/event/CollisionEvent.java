@@ -19,19 +19,11 @@
 package neon.common.event;
 
 public final class CollisionEvent extends NeonEvent {
-	private final long one;
-	private final long two;
+	public final long bumper;
+	public final long bumped;
 	
-	public CollisionEvent(long one, long two) {
-		this.one = one;
-		this.two = two;
-	}
-	
-	public long getBumper() {
-		return one;
-	}
-	
-	public long getBumped() {
-		return two;
+	public CollisionEvent(long bumper, long bumped) {
+		this.bumper = bumper;
+		this.bumped = bumped;
 	}
 }

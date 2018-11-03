@@ -26,23 +26,11 @@ package neon.common.event;
  *
  */
 public final class MessageEvent extends NeonEvent {
-	private final String message;
-	private final String header;
+	public final String message;
+	public final String header;
 	
 	public MessageEvent(String message, String header) {
 		this.message = message;
 		this.header = header;
-	}
-	
-	/**
-	 * 
-	 * @return the header for the message dialog
-	 */
-	public String getHeader() {
-		return header;
-	}
-	
-	public String getMessage() {
-		return message;
 	}
 }

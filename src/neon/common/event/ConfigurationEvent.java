@@ -29,38 +29,23 @@ import neon.common.resources.CServer;
  * @author mdriesen
  *
  */
-public final class ClientConfigurationEvent extends NeonEvent {
+public final class ConfigurationEvent extends NeonEvent {
 	private final String[] species;
 	private final String[] modules;
-	private final String title;
-	private final String subtitle;
+	
+	public final String title;
+	public final String subtitle;
 	
 	/**
 	 * Initializes this event with game configuration data.
 	 * 
 	 * @param config
 	 */
-	public ClientConfigurationEvent(CClient cc, CServer cs) {
+	public ConfigurationEvent(CClient cc, CServer cs) {
 		species = cc.getPlayableSpecies().toArray(new String[cc.getPlayableSpecies().size()]);
 		title = cc.title;
 		subtitle = cc.subtitle;
 		modules = cs.getModules();
-	}
-	
-	/**
-	 * 
-	 * @return the title of the current game
-	 */
-	public String getTitle() {
-		return title;
-	}
-	
-	/**
-	 * 
-	 * @return the subtitle of the current game
-	 */
-	public String getSubtitle() {
-		return subtitle;
 	}
 	
 	/**

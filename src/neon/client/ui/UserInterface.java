@@ -40,7 +40,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-import neon.common.event.ClientConfigurationEvent;
+import neon.common.event.ConfigurationEvent;
 import neon.common.event.MessageEvent;
 
 /**
@@ -91,8 +91,8 @@ public final class UserInterface {
 	 * @param event an event containing configuration data
 	 */
 	@Subscribe
-	private void configure(ClientConfigurationEvent event) {
-		stage.setTitle(event.getTitle());
+	private void configure(ConfigurationEvent event) {
+		stage.setTitle(event.title);
 	}
 	
 	/**
@@ -104,8 +104,8 @@ public final class UserInterface {
 	private void show(MessageEvent event) {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
-		alert.setHeaderText(event.getHeader());
-		alert.setContentText(event.getMessage());
+		alert.setHeaderText(event.header);
+		alert.setContentText(event.message);
 		alert.initOwner(stage);
 		alert.showAndWait();
 	}

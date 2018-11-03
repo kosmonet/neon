@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,18 +16,17 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.common.entity.components;
 
-/**
- * An event containing a script that should be executed.
- * 
- * @author mdriesen
- *
- */
-public final class ScriptEvent extends NeonEvent {
-	public final String script;
+public class Currency implements Component {
+	private final long uid;
 	
-	public ScriptEvent(String script) {
-		this.script = script;
+	public Currency(long uid) {
+		this.uid = uid;
+	}
+	
+	@Override
+	public long getEntity() {
+		return uid;
 	}
 }
