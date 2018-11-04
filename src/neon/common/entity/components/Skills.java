@@ -19,6 +19,7 @@
 package neon.common.entity.components;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import neon.common.entity.Skill;
 
@@ -30,8 +31,8 @@ import neon.common.entity.Skill;
  */
 public final class Skills implements Component {
 	private final long uid;
-	private final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
-	private final EnumMap<Skill, Integer> steps = new EnumMap<>(Skill.class);
+	private final Map<Skill, Integer> skills = new EnumMap<>(Skill.class);
+	private final Map<Skill, Integer> steps = new EnumMap<>(Skill.class);
 	
 	private int increases = 0;
 	

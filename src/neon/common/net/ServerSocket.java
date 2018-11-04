@@ -23,6 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
 
 import neon.common.event.NeonEvent;
 
@@ -36,6 +37,7 @@ import neon.common.event.NeonEvent;
 public final class ServerSocket {
 	private static final Logger logger = Logger.getGlobal();
 	
+	private final Gson gson = new Gson();
 	private final BlockingQueue<NeonEvent> queue = new LinkedBlockingQueue<>();
 	private final String name;
 	
@@ -61,22 +63,39 @@ public final class ServerSocket {
 	 * @param message
 	 */
 	@Subscribe
-	public void send(NeonEvent message) {
+	private void send(NeonEvent message) {
 		if (cs == null) {
 			logger.warning("client socket not yet connected to a server socket");			
 		} else if (!message.isBlocked()) {
-			cs.receive(message);
+			cs.receive(gson.toJson(message), message.getClass().getTypeName());
 		}
 	}
 	
 	/**
 	 * Posts a newly received message on the event queue.
 	 * 
-	 * @param event
+	 * @param message
 	 */
 	public void receive(NeonEvent message) {
 		message.block();
 		queue.offer(message);
+	}
+	
+	/**
+	 * Posts a newly received message on the event queue.
+	 *  
+	 * @param message
+	 * @param type
+	 */
+	void receive(String message, String type) {
+//		System.out.println(message);
+		try {
+			NeonEvent event = NeonEvent.class.cast(gson.fromJson(message, Class.forName(type)));
+			event.block();
+			queue.offer(event);
+		} catch (ClassNotFoundException e) {
+			logger.severe("unknown event type received: " + type);
+		}
 	}
 	
 	/**

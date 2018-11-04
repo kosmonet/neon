@@ -19,7 +19,7 @@
 package neon.common.entity;
 
 public enum Skill {
-	SWIMMING(10);
+	SWIMMING(10), PICKPOCKET(10);
 	
 	public final int steps;
 	

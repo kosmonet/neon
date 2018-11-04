@@ -119,6 +119,7 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static final class Armor extends Clothing {
+		// TODO: MW armor rating per set + bonus per set
 		public final int rating;
 		
 		public Armor(Builder builder) {

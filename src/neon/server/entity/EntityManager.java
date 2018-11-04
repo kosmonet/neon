@@ -48,7 +48,7 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 	private static final Logger logger = Logger.getGlobal();
 
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
-	private final HashMap<Class<? extends Resource>, EntityBuilder> builders = new HashMap<>();
+	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	
@@ -64,10 +64,9 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 	 * @param uid
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Entity> T getEntity(long uid) {
+	public Entity getEntity(long uid) {
 		try {
-			return (T) entities.get(uid, () -> loadEntity(uid));
+			return entities.get(uid, () -> loadEntity(uid));
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("No entity with uid <" + uid + "> found", e);
 		}

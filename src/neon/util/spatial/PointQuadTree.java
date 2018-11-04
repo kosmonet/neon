@@ -26,8 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * 
- * TODO: naam veranderen, is eigenlijk PR quadtree
+ * A PR quadtree.
  * 
  * @author mdriesen
  * @param <T>

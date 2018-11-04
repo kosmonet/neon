@@ -21,8 +21,9 @@ package neon.common.entity.components;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import neon.common.entity.Slot;
 
@@ -35,7 +36,7 @@ import neon.common.entity.Slot;
 public final class Inventory implements Component {
 	private final long uid;
 	private final List<Long> items = new ArrayList<Long>();
-	private final HashMap<Slot, Long> equiped = new HashMap<>();
+	private final Map<Slot, Long> equiped = new EnumMap<>(Slot.class);
 	
 	private int money = 0;
 	

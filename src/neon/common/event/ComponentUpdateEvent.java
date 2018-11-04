@@ -19,8 +19,6 @@
 package neon.common.event;
 
 import java.lang.reflect.Type;
-import java.util.EnumMap;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,16 +29,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
 
 import javafx.scene.paint.Color;
-import neon.common.entity.Skill;
 import neon.common.entity.components.Component;
 
 public final class ComponentUpdateEvent extends NeonEvent {
 	private static final GsonBuilder builder = new GsonBuilder()
 			.registerTypeAdapter(Color.class, new ColorAdapter())
-			.registerTypeAdapter(EnumMap.class, new SkillAdapter());
+			.disableHtmlEscaping();
 	private static final Gson gson = builder.create();
 
 	private final String component;
@@ -52,29 +48,8 @@ public final class ComponentUpdateEvent extends NeonEvent {
 		System.out.println(this.component);
 	}
 	
-	public Component getComponent() throws JsonSyntaxException, ClassNotFoundException {
+	public Component getComponent() throws ClassNotFoundException {
 		return Component.class.cast(gson.fromJson(component, Class.forName(type)));
-	}
-	
-	private static final class SkillAdapter implements JsonSerializer<EnumMap<Skill, Integer>>, JsonDeserializer<EnumMap<Skill, Integer>> {
-		@Override
-		public JsonElement serialize(EnumMap<Skill, Integer> map, Type type, JsonSerializationContext context) {
-			JsonObject object = new JsonObject();
-			for (Map.Entry<Skill, Integer> entry : map.entrySet()) {
-				object.addProperty(entry.getKey().name(), entry.getValue());
-			}
-			return object;
-		}
-
-		@Override
-		public EnumMap<Skill, Integer> deserialize(JsonElement element, Type type, JsonDeserializationContext context)
-				throws JsonParseException {
-			EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
-			for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-				skills.put(Skill.valueOf(entry.getKey()), entry.getValue().getAsInt());
-			}
-			return skills;
-		}
 	}
 	
 	private static final class ColorAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
@@ -84,7 +59,7 @@ public final class ComponentUpdateEvent extends NeonEvent {
 			double red = element.getAsJsonObject().get("red").getAsDouble();
 			double green = element.getAsJsonObject().get("green").getAsDouble();
 			double blue = element.getAsJsonObject().get("blue").getAsDouble();
-			double opacity = element.getAsJsonObject().get("opacity").getAsDouble();
+			double opacity = element.getAsJsonObject().get("alpha").getAsDouble();
 			return new Color(red, green, blue, opacity);
 		}
 
@@ -94,7 +69,7 @@ public final class ComponentUpdateEvent extends NeonEvent {
 			object.addProperty("red", color.getRed());
 			object.addProperty("green", color.getGreen());
 			object.addProperty("blue", color.getBlue());
-			object.addProperty("opacity", color.getOpacity());
+			object.addProperty("alpha", color.getOpacity());
 			return object;
 		}
 	}

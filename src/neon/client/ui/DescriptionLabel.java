@@ -44,6 +44,7 @@ import neon.systems.magic.RSpell;
  *
  */
 public final class DescriptionLabel extends Label {
+	// TODO: geen label laten extenden, maar Node -> flexibeler van layout
 	private final int fontSize = 72;
 	
 	/**

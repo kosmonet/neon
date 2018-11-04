@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.google.gson.JsonSyntaxException;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -182,7 +181,7 @@ public final class Client implements Runnable {
 	}
 
 	@Subscribe 
-	private void onComponentUpdate(ComponentUpdateEvent event) throws JsonSyntaxException, ClassNotFoundException {
+	private void onComponentUpdate(ComponentUpdateEvent event) throws ClassNotFoundException {
 		Component component = event.getComponent();
 		components.putComponent(component.getEntity(), component);
 	}

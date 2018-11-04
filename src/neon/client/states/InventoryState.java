@@ -170,7 +170,6 @@ public final class InventoryState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
-		int rating = 0;
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		int weight = ClientUtils.getWeight(inventory, components);
@@ -178,11 +177,13 @@ public final class InventoryState extends State {
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		playerList.getItems().clear();
 
+		int rating = 0;
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
-
 			if (inventory.hasEquiped(uid) && components.hasComponent(uid, Armor.class)) {
-				rating += components.getComponent(uid, Armor.class).getRating();
+				Armor armor = components.getComponent(uid, Armor.class);
+				Clothing clothing = components.getComponent(uid, Clothing.class);
+				rating += armor.getRating()*clothing.getSlot().modifier;
 			}
 		}
 

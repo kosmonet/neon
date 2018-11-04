@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,17 +18,13 @@
 
 package neon.systems.conversation;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.util.Collections;
+import java.util.List;
 
 import neon.common.event.NeonEvent;
 
-public abstract class ConversationEvent extends NeonEvent {
-	private static final Gson gson = new Gson();
-	
+public abstract class ConversationEvent extends NeonEvent {	
 	/**
 	 * Event to start a conversation.
 	 * 
@@ -61,20 +57,19 @@ public abstract class ConversationEvent extends NeonEvent {
 	 */
 	public static final class Update extends ConversationEvent {
 		private final String answer;
-		private final String topics;
+		private final ArrayList<Topic> topics;
 		
 		Update(String answer, ArrayList<Topic> topics) {
 			this.answer = answer;
-			this.topics = gson.toJson(topics);
+			this.topics = new ArrayList<Topic>(topics);
 		}
 		
 		public String getAnswer() {
 			return answer;
 		}
 		
-		public ArrayList<Topic> getTopics() {
-			Type type = new TypeToken<ArrayList<Topic>>(){}.getType();
-			return gson.fromJson(topics, type);
+		public List<Topic> getTopics() {
+			return Collections.unmodifiableList(topics);
 		}
 	}
 	

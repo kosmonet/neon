@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import neon.common.entity.Slot;
 
@@ -57,12 +57,12 @@ public abstract class InventoryEvent extends NeonEvent {
 		
 		public Equip(long uid) {
 			this.uid = uid;
-			slot = Optional.absent();
+			slot = Optional.empty();
 		}
 
 		public Equip(long uid, Slot slot) {
 			this.uid = uid;
-			this.slot = Optional.fromNullable(slot);
+			this.slot = Optional.ofNullable(slot);
 		}
 	}
 }
