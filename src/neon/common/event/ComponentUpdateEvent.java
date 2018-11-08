@@ -18,20 +18,13 @@
 
 package neon.common.event;
 
-import java.lang.reflect.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import javafx.scene.paint.Color;
 import neon.common.entity.components.Component;
+import neon.common.net.ColorAdapter;
 
 public final class ComponentUpdateEvent extends NeonEvent {
 	private static final GsonBuilder builder = new GsonBuilder()
@@ -50,27 +43,5 @@ public final class ComponentUpdateEvent extends NeonEvent {
 	
 	public Component getComponent() throws ClassNotFoundException {
 		return Component.class.cast(gson.fromJson(component, Class.forName(type)));
-	}
-	
-	private static final class ColorAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
-		@Override
-		public Color deserialize(JsonElement element, Type type, JsonDeserializationContext context)
-				throws JsonParseException {
-			double red = element.getAsJsonObject().get("red").getAsDouble();
-			double green = element.getAsJsonObject().get("green").getAsDouble();
-			double blue = element.getAsJsonObject().get("blue").getAsDouble();
-			double opacity = element.getAsJsonObject().get("alpha").getAsDouble();
-			return new Color(red, green, blue, opacity);
-		}
-
-		@Override
-		public JsonElement serialize(Color color, Type type, JsonSerializationContext context) {
-			JsonObject object = new JsonObject();
-			object.addProperty("red", color.getRed());
-			object.addProperty("green", color.getGreen());
-			object.addProperty("blue", color.getBlue());
-			object.addProperty("alpha", color.getOpacity());
-			return object;
-		}
 	}
 }

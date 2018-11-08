@@ -102,7 +102,6 @@ public final class NewGameState extends State {
 		// text field catches the F2 key, another listener
 		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));		
 		
-		// TODO: list scrollt niet correct naar laatste item
 		speciesList.setCellFactory(speciesList -> new CreatureCell());
 		speciesList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> changeSpecies(oldValue, newValue));
 		

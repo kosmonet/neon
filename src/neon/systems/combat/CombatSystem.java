@@ -59,14 +59,14 @@ public final class CombatSystem {
 		int damage = 0;
 
 		// creature can have weapons equipped in both hands
-		if (inventory.hasEquiped(Slot.HAND_LEFT)) {
+		if (inventory.hasEquipped(Slot.HAND_LEFT)) {
 			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_LEFT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
 		}
 
-		if (inventory.hasEquiped(Slot.HAND_RIGHT)) {
+		if (inventory.hasEquipped(Slot.HAND_RIGHT)) {
 			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_RIGHT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
@@ -79,7 +79,7 @@ public final class CombatSystem {
 	private int getArmor(Inventory inventory) {
 		int AC = 0;
 
-		for (long uid : inventory.getEquipedItems()) {
+		for (long uid : inventory.getEquippedItems()) {
 			Entity item = entities.getEntity(uid);
 			if (item.hasComponent(Armor.class)) {
 				AC += item.getComponent(Armor.class).getRating();

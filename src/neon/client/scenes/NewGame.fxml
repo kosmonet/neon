@@ -101,7 +101,7 @@
 						</HBox>
 					</children>
 				</GridPane>
-				<Label fx:id="descriptionLabel" GridPane.columnIndex="2" />
+				<Label fx:id="descriptionLabel" wrapText="true" GridPane.columnIndex="2" style=" -fx-padding:20;"/>
 			</children>
 		</GridPane>
 	</center>

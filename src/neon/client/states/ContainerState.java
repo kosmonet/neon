@@ -226,7 +226,7 @@ public final class ContainerState extends State {
 				setText(null);
 			} else {
 				ItemInfo info = components.getComponent(uid, ItemInfo.class);
-				Color color = inventory.hasEquiped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
+				Color color = inventory.hasEquipped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
 				setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
 				setText(info.name);
 			}

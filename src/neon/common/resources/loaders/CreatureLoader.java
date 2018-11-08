@@ -38,7 +38,8 @@ public final class CreatureLoader implements ResourceLoader<RCreature> {
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		int speed = Integer.parseInt(root.getAttributeValue("speed"));
-		String description = root.getChildText("description");
+//		String description = root.getChildText("description").replaceAll("\t", "");
+		String description = root.getChildTextNormalize("description");
 		
 		Element stats = root.getChild("stats");
 		int str = Integer.parseInt(stats.getAttributeValue("str"));

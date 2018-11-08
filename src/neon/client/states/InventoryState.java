@@ -129,7 +129,7 @@ public final class InventoryState extends State {
 		long uid = playerList.getSelectionModel().getSelectedItem();
 		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 
-		if (inventory.hasEquiped(uid)) {
+		if (inventory.hasEquipped(uid)) {
 			bus.post(new InventoryEvent.Unequip(uid));
 		} else {
 			if (components.hasComponent(uid,  Weapon.class)) {
@@ -180,7 +180,7 @@ public final class InventoryState extends State {
 		int rating = 0;
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
-			if (inventory.hasEquiped(uid) && components.hasComponent(uid, Armor.class)) {
+			if (inventory.hasEquipped(uid) && components.hasComponent(uid, Armor.class)) {
 				Armor armor = components.getComponent(uid, Armor.class);
 				Clothing clothing = components.getComponent(uid, Clothing.class);
 				rating += armor.getRating()*clothing.getSlot().modifier;
@@ -249,7 +249,7 @@ public final class InventoryState extends State {
     			}
     			
     			Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
-    			if (inventory.hasEquiped(uid)) {
+    			if (inventory.hasEquipped(uid)) {
     				style.append("-fx-font-weight: bold;");    				
     			} else {
     				style.append("-fx-font-weight: normal;");    				

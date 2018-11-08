@@ -36,7 +36,7 @@ import neon.common.entity.Slot;
 public final class Inventory implements Component {
 	private final long uid;
 	private final List<Long> items = new ArrayList<Long>();
-	private final Map<Slot, Long> equiped = new EnumMap<>(Slot.class);
+	private final Map<Slot, Long> equipped = new EnumMap<>(Slot.class);
 	
 	private int money = 0;
 	
@@ -107,35 +107,77 @@ public final class Inventory implements Component {
 		money += amount;
 	}
 	
+	/**
+	 * Returns the creature's total money.
+	 * 
+	 * @return
+	 */
 	public int getMoney() {
 		return money;
 	}
 	
-	public boolean hasEquiped(long uid) {
-		return equiped.containsValue(uid);
+	/**
+	 * Checks whether an item is equipped.
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public boolean hasEquipped(long uid) {
+		return equipped.containsValue(uid);
 	}
 	
-	public boolean hasEquiped(Slot slot) {
-		return equiped.containsKey(slot);
+	/**
+	 * Checks whether an item is equipped in the given slot.
+	 * @param slot
+	 * @return
+	 */
+	public boolean hasEquipped(Slot slot) {
+		return equipped.containsKey(slot);
 	}
 	
+	/**
+	 * Unequip an item.
+	 * 
+	 * @param uid
+	 */
 	public void unequip(Long uid) {
-		equiped.values().removeIf(uid::equals);
+		equipped.values().removeIf(uid::equals);
 	}
 	
+	/**
+	 * Unequip the item in the given slot.
+	 * 
+	 * @param slot
+	 */
 	public void unequip(Slot slot) {
-		unequip(equiped.get(slot));
+		unequip(equipped.get(slot));
 	}
 	
+	/**
+	 * Equip an item to a slot.
+	 * 
+	 * @param slot
+	 * @param uid
+	 */
 	public void equip(Slot slot, long uid) {
-		equiped.put(slot, uid);
+		equipped.put(slot, uid);
 	}
 	
+	/**
+	 * 
+	 * @param slot
+	 * @return	the item in the given equipment slot.
+	 */
 	public long getEquipedItem(Slot slot) {
-		return equiped.get(slot);
+		return equipped.get(slot);
 	}
 	
-	public Collection<Long> getEquipedItems() {
-		return Collections.unmodifiableCollection(equiped.values());
+	/**
+	 * Returns a collection of all the equipped items.
+	 * 
+	 * @return
+	 */
+	public Collection<Long> getEquippedItems() {
+		return Collections.unmodifiableCollection(equipped.values());
 	}
 }

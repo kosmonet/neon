@@ -99,7 +99,7 @@ public final class RCreature extends Resource {
 		}
 		
 		public Builder setDescription(String description) {
-			this.description = description;
+			this.description = description.trim().replaceAll(" +", " ");;
 			return this;
 		}
 		

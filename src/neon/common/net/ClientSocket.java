@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import neon.common.event.NeonEvent;
 
@@ -36,8 +37,9 @@ import neon.common.event.NeonEvent;
  */
 public final class ClientSocket {
 	private static final Logger logger = Logger.getGlobal();
-
-	private final Gson gson = new Gson();
+	
+	private final GsonBuilder builder = new GsonBuilder().disableHtmlEscaping();
+	private final Gson gson = builder.create();
 	private final BlockingQueue<NeonEvent> queue = new LinkedBlockingQueue<>();
 	private final String name;
 	

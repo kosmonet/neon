@@ -257,7 +257,7 @@ public final class GameState extends State {
 		ArrayList<ButtonType> items = new ArrayList<>();
 		HashMap<ButtonType, Long> mapping = new HashMap<>();
 		
-		for (long item : inventory.getEquipedItems()) {
+		for (long item : inventory.getEquippedItems()) {
 			if (components.hasComponent(item, Enchantment.class)) {
 				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).name);
 				mapping.put(button, item);
