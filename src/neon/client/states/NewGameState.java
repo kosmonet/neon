@@ -43,6 +43,7 @@ import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
 import neon.common.event.ConfigurationEvent;
 import neon.common.event.NewGameEvent;
+import neon.common.resources.CClient;
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -203,7 +204,9 @@ public final class NewGameState extends State {
 	 */
 	@Subscribe
 	private void onConfigure(ConfigurationEvent event) throws ResourceException {
-		for (String id : event.getPlayableSpecies()) {
+		CClient config = resources.getResource("config", "client");
+		
+		for (String id : config.getPlayableSpecies()) {
 			speciesList.getItems().add(resources.getResource("creatures", id));
 		}
 		

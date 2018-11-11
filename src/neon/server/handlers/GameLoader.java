@@ -24,8 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
@@ -53,6 +53,7 @@ import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.files.FileUtils;
 import neon.common.files.NeonFileSystem;
+import neon.common.resources.CClient;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
@@ -159,7 +160,13 @@ public final class GameLoader {
 	 * @return
 	 */
 	private boolean isValidCharacter(NewGameEvent.Check event) {
-		return true;
+		try {
+			CClient config = resources.getResource("config", "client");			
+			return config.getPlayableSpecies().contains(event.species);
+		} catch (ResourceException e) {
+			logger.severe("client configuration not found");
+			return false;
+		}
 	}
 
 	/**
@@ -169,7 +176,7 @@ public final class GameLoader {
 	 * @param resources
 	 * @param modules
 	 */
-	private CGame initGame(ResourceManager resources, String[] modules) {
+	private CGame initGame(ResourceManager resources, Set<String> modules) {
 		// defaults
 		String map = "";
 		int x = 0;
@@ -325,14 +332,14 @@ public final class GameLoader {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
 			if (item.hasComponent(Armor.class)) {
 				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
-			}		
+			}
 		} else if (item.hasComponent(Weapon.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
 		}
 		
 		if (item.hasComponent(Enchantment.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
-		}		
+		}
 	}
 	
 	/**
@@ -342,8 +349,8 @@ public final class GameLoader {
 	 */
 	@Subscribe
 	private void listSavedGames(LoadEvent.Load event) {
-		String[] saves = FileUtils.listFiles(Paths.get("saves"));
-		logger.info("saved characters: " + Arrays.toString(saves));
+		Set<String> saves = FileUtils.listFiles(Paths.get("saves"));
+		logger.info("saved characters: " + saves);
 		bus.post(new LoadEvent.List(saves));
 	}
 	

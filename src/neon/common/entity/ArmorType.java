@@ -16,20 +16,8 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.systems.combat;
+package neon.common.entity;
 
-import neon.common.entity.Entity;
-import neon.common.resources.RItem;
-import neon.server.entity.ClothingBuilder;
-import neon.server.entity.EntityBuilder;
-
-final class ArmorBuilder implements EntityBuilder<RItem.Armor> {
-	private final ClothingBuilder builder = new ClothingBuilder();
-
-	@Override
-	public Entity build(long uid, RItem.Armor resource) {
-		Entity armor = builder.build(uid, resource);
-		armor.setComponent(new Armor(uid, resource.rating, resource.type));
-		return armor;
-	}
+public enum ArmorType {
+	LIGHT, MEDIUM, HEAVY;
 }

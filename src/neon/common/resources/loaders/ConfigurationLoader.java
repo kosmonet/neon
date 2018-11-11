@@ -73,7 +73,7 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 		CServer cs = new CServer(modules, level);
 
 		// extra step in case this was a saved configuration file
-		if(root.getName().equals("server")) {
+		if (root.getName().equals("server")) {
 			for (Element module : root.getChild("modules").getChildren()) {
 				cs.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
 			}
@@ -86,8 +86,13 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 		String title = root.getAttributeValue("title");
 		String subtitle = root.getAttributeValue("subtitle");
 		String intro = root.getChildText("intro");
-		HashSet<String> species = new HashSet<>();		
-		return new CClient(title, subtitle, species, intro);
+		
+		HashSet<String> playable = new HashSet<>();
+		for (Element species : root.getChild("playable").getChildren()) {
+			playable.add(species.getAttributeValue("id"));
+		}
+		
+		return new CClient(title, subtitle, playable, intro);
 	}
 
 	private Element saveServer(CServer server) {
@@ -103,7 +108,7 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 		root.addContent(modules);
 		
 		Element log = new Element("log");
-		log.setText(server.getLogLevel());
+		log.setText(server.getLogLevel().toString());
 		root.addContent(log);
 		
 		return root;
@@ -113,9 +118,18 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 		Element client = new Element("client");
 		client.setAttribute("title", config.title);
 		client.setAttribute("subtitle", config.subtitle);
+		
 		Element intro = new Element("intro");
 		intro.setText(config.intro);
 		client.addContent(intro);
+		
+		Element playable = new Element("playable");
+		client.addContent(playable);
+		for (String id : config.getPlayableSpecies()) {
+			Element species = new Element("species").setAttribute("id", id);
+			playable.addContent(species);
+		}
+		
 		return client;
 	}
 

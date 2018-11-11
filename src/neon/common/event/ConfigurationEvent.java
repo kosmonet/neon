@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 
 package neon.common.event;
 
-import java.util.Arrays;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import neon.common.resources.CClient;
 import neon.common.resources.CServer;
@@ -30,8 +32,7 @@ import neon.common.resources.CServer;
  *
  */
 public final class ConfigurationEvent extends NeonEvent {
-	private final String[] species;
-	private final String[] modules;
+	private final Set<String> modules;
 	
 	public final String title;
 	public final String subtitle;
@@ -42,25 +43,18 @@ public final class ConfigurationEvent extends NeonEvent {
 	 * @param config
 	 */
 	public ConfigurationEvent(CClient cc, CServer cs) {
-		species = cc.getPlayableSpecies().toArray(new String[cc.getPlayableSpecies().size()]);
+		modules = ImmutableSet.copyOf(cs.getModules());
 		title = cc.title;
 		subtitle = cc.subtitle;
-		modules = cs.getModules();
 	}
 	
 	/**
-	 * 
-	 * @return the playable species in this game
-	 */
-	public String[] getPlayableSpecies() {
-		return Arrays.copyOf(species, species.length);
-	}
-	
-	/**
+	 * Returns an unmodifiable {@code Set} that preserves the correct load 
+	 * order of modules, as defined in the neon.ini configuration file.
 	 * 
 	 * @return	the modules loaded in this game
 	 */
-	public String[] getModules() {
-		return Arrays.copyOf(modules, modules.length);
+	public Set<String> getModules() {
+		return modules;
 	}
 }

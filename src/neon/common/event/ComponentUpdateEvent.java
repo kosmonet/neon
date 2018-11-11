@@ -29,6 +29,7 @@ import neon.common.net.ColorAdapter;
 public final class ComponentUpdateEvent extends NeonEvent {
 	private static final GsonBuilder builder = new GsonBuilder()
 			.registerTypeAdapter(Color.class, new ColorAdapter())
+			.enableComplexMapKeySerialization()
 			.disableHtmlEscaping();
 	private static final Gson gson = builder.create();
 

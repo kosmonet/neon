@@ -44,11 +44,10 @@ import neon.systems.magic.RSpell;
  *
  */
 public final class DescriptionLabel extends Label {
-	// TODO: geen label laten extenden, maar Node -> flexibeler van layout
 	private final int fontSize = 72;
 	
 	/**
-	 * Initialize this label.
+	 * Initializes this label.
 	 */
 	public DescriptionLabel() {
 		setTextAlignment(TextAlignment.CENTER);
@@ -75,6 +74,7 @@ public final class DescriptionLabel extends Label {
 			builder.append("Magnitude: " + spell.magnitude + "\n");
 			builder.append("Duration: " + spell.duration + "\n");
 			builder.append("Target: " + spell.target + "\n");
+			builder.append("School: " + effect.skill + "\n");
 			setText(builder.toString());			
 		} else {
 			setGraphic(null);
@@ -140,6 +140,8 @@ public final class DescriptionLabel extends Label {
 
 		if (components.containsKey(Armor.class)) {
 			Armor armor = components.getInstance(Armor.class);
+			builder.append("\n");
+			builder.append("Type: " + armor.getType().toString().toLowerCase());						
 			builder.append("\n");
 			builder.append("Rating: " + armor.getRating());						
 		}

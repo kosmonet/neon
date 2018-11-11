@@ -88,6 +88,24 @@ public final class MovementSystem implements NeonSystem {
 		case DOWN: 
 			y = Math.min(map.height, y + 1); 
 			break;
+		case DOWN_LEFT:
+			x = Math.max(0, x - 1); 
+			y = Math.min(map.height, y + 1); 
+			break;
+		case DOWN_RIGHT:
+			x = Math.min(map.width, x + 1); 
+			y = Math.min(map.height, y + 1); 
+			break;
+		case UP_LEFT:
+			x = Math.max(0, x - 1); 
+			y = Math.max(0, y - 1); 
+			break;
+		case UP_RIGHT:
+			x = Math.min(map.width, x + 1); 
+			y = Math.max(0, y - 1); 
+			break;
+		default:
+			break;
 		}
 		
 		// check for collisions with other creatures

@@ -26,8 +26,9 @@
 					<padding>
 						<Insets top="10" right="10" bottom="10" left="10" />
 					</padding>
-					<Label fx:id="healthLabel" id="health" text="test" />
-					<Label fx:id="manaLabel" id="mana" text="test" />
+					<Label fx:id="healthLabel" id="health" text="health" />
+					<Label fx:id="manaLabel" id="mana" text="mana" />
+					<Label fx:id="staminaLabel" id="stamina" text="stamina" />
 					<Region HBox.hgrow="ALWAYS" />
 					<Label fx:id="modeLabel" id="mode" text="test" />
 				</HBox>

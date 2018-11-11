@@ -28,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import neon.client.ClientUtils;
 import neon.client.ComponentManager;
@@ -53,8 +54,8 @@ public final class JournalState extends State {
 	@FXML private DescriptionLabel description;
 	@FXML private Label infoLabel, healthLabel, manaLabel, weightLabel, levelLabel;
 	@FXML private Label speedLabel, strengthLabel, constitutionLabel, dexterityLabel;
-	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel;
-	@FXML private Label swimLabel;
+	@FXML private Label intelligenceLabel, wisdomLabel, charismaLabel, staminaLabel;
+	@FXML private VBox skillBox;
 
 	private final UserInterface ui;
 	private final ComponentManager components;
@@ -101,6 +102,7 @@ public final class JournalState extends State {
     	Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
     	int weight = ClientUtils.getWeight(inventory, components);
     	weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
+
     	healthLabel.setText("Health: " + stats.getHealth() + "/" + stats.getBaseHealth());
 		if (stats.getHealth()/stats.getBaseHealth() < 0.1) {
 			healthLabel.setTextFill(Color.RED);
@@ -115,7 +117,17 @@ public final class JournalState extends State {
 			manaLabel.setTextFill(Color.WHITE);			
 		}
    	
-    	swimLabel.setText("Swimming: " + (int) skills.getSkill(Skill.SWIMMING));
+		staminaLabel.setText("Stamina: " + stats.getStamina() + "/" + stats.getBaseStamina());
+		if (stats.getStamina()/stats.getBaseStamina() < 0.1) {
+			manaLabel.setTextFill(Color.RED);
+		} else {
+			manaLabel.setTextFill(Color.WHITE);			
+		}
+   	
+		skillBox.getChildren().clear();
+		for (Skill skill : Skill.values()) {
+			skillBox.getChildren().add(new Label(skill + ": " + (int) skills.getSkill(skill)));
+		}
     	
 		ui.showScene(scene);
 	}

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@
 
 package neon.common.event;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * This event is used to signal game loading-related information.
@@ -47,15 +50,32 @@ public abstract class LoadEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * This events lists the available saved games.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static final class List extends LoadEvent {
-		private final String[] saves;
+		private final Set<String> saves;
 
-		public List(String[] saves) {
-			this.saves = saves;
+		/**
+		 * Initializes this event. Duplicates in the collection of saves are
+		 * ignored.
+		 * 
+		 * @param saves
+		 */
+		public List(Collection<String> saves) {
+			this.saves = ImmutableSet.copyOf(saves);
 		}
 
-		public String[] getSaves() {
-			return Arrays.copyOf(saves, saves.length);
+		/**
+		 * Returns an unmodifiable set of all saved games.
+		 * 
+		 * @return
+		 */
+		public Set<String> getSaves() {
+			return saves;
 		}
 	}
 }

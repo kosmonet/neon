@@ -35,6 +35,7 @@ public final class Stats implements Component {
 	private int level = 1;
 	private int healthMod = 0;
 	private int manaMod = 0;
+	private int staminaMod = 0;
 	
 	private int str = 10, con = 10, dex = 10, wis = 10, іnt = 10, cha = 10;
 	
@@ -140,6 +141,18 @@ public final class Stats implements Component {
 	
 	public void setBaseCha(int charisma) {
 		cha = charisma;
+	}
+	
+	public int getBaseStamina() {
+		return 3*con;
+	}
+	
+	public int getStamina() {
+		return getBaseStamina() + staminaMod;
+	}
+	
+	public void addStamina(int amount) {
+		staminaMod += amount;
 	}
 	
 	public int getBaseHealth() {

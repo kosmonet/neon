@@ -18,15 +18,18 @@
 
 package neon.systems.combat;
 
+import neon.common.entity.ArmorType;
 import neon.common.entity.components.Component;
 
 public final class Armor implements Component {
 	private final long uid;
 	private final int rating;
+	private final ArmorType type;
 	
-	Armor(long uid, int rating) {
+	Armor(long uid, int rating, ArmorType type) {
 		this.uid = uid;
 		this.rating = rating;
+		this.type = type;;
 	}
 	
 	@Override
@@ -42,5 +45,9 @@ public final class Armor implements Component {
 	
 	public int getRating() {
 		return rating;
+	}
+	
+	public ArmorType getType() {
+		return type;
 	}
 }

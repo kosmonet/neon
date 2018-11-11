@@ -20,17 +20,29 @@ package neon.common.entity;
 
 public enum Skill {
 	// combat
-	BLADE(10), BLOCK(10),
+	BLADE(10, "Blade"), BLOCK(10, "Block"), HEAVY_ARMOR(10, "Heavy armor"), 
+	MEDIUM_ARMOR(10, "Medium armor"), LIGHT_ARMOR(10, "Light armor"),
 	
 	// stealth
-	PICKPOCKET(10), LOCKPICKING(10),
+	PICKPOCKET(10, "Pickpocket"), LOCKPICKING(10, "Lockpicking"),
+	
+	// magic
+	DESTRUCTION(10, "Destruction"), RESTORATION(10, "Restoration"), 
+	ALTERATION(10, "Alteration"), ILLUSION(10, "Illusion"), CONJURATION(10, "Conjuration"),
 	
 	// other
-	SWIMMING(10);
+	SWIMMING(10, "Swimming");
 	
 	public final int steps;
+	private final String name;
 	
-	private Skill(int steps) {
+	private Skill(int steps, String name) {
 		this.steps = steps;
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

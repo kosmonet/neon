@@ -24,9 +24,9 @@ import neon.common.entity.Entity;
 
 public interface NeonSystem extends Runnable {
 	/**
-	 * Updates an entity. If no further updates are necessary on this entity,
-	 * implementations should return an empty optional. If further updates 
-	 * are necessary, implementation should return an optional containing
+	 * Updates an entity. If no further updates are necessary on this or any other 
+	 * entity, implementations should return an empty optional. If further updates 
+	 * are necessary, implementations should return an optional containing
 	 * the entity.
 	 * 
 	 * @param entity

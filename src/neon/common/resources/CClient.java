@@ -19,9 +19,9 @@
 package neon.common.resources;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Configuration information for the client. This resource should be created 
@@ -36,25 +36,31 @@ public final class CClient extends Resource {
 	public final String subtitle;
 	public final String intro;
 	
-	private final Set<String> species = new HashSet<>();
+	private final ImmutableSet<String> species;
 	
 	/**
-	 * Initializes the client configuration resource.
+	 * Initializes the client configuration resource. Duplicates in the given
+	 * collection of species are ignored.
+	 * 
+	 * @param title
+	 * @param subtitle
+	 * @param species
+	 * @param intro
 	 */
 	public CClient(String title, String subtitle, Collection<String> species, String intro) {
 		super("client", "config");
 		this.title = title;
 		this.subtitle = subtitle;
-		this.species.addAll(species);
+		this.species = ImmutableSet.copyOf(species);
 		this.intro = intro;
 	}
 
 	/**
 	 * Returns the id's of all playable species.
 	 * 
-	 * @return a String[] with id's
+	 * @return an unmodifiable {@code Set} with id's
 	 */
 	public Set<String> getPlayableSpecies() {
-		return Collections.unmodifiableSet(species);
+		return species;
 	}
 }

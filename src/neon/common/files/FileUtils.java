@@ -22,8 +22,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.TreeTraverser;
 import com.google.common.io.Files;
 import com.google.common.io.MoreFiles;
@@ -143,14 +146,14 @@ public final class FileUtils {
 	 * exist or is not actually a folder, an empty array is returned.
 	 * 
 	 * @param path
-	 * @return
+	 * @return	an unmodifiable set
 	 */
-	public static String[] listFiles(Path folder) {
+	public static Set<String> listFiles(Path folder) {
 		File file = folder.toFile();
 		if (file.exists() && file.isDirectory()) {
-			return file.list();
+			return ImmutableSet.copyOf(file.list());
 		} else {
-			return new String[0];
+			return Collections.emptySet();
 		}
 	}
 }

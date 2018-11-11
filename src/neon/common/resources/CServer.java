@@ -19,9 +19,12 @@
 package neon.common.resources;
 
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Configuration information for the server. This resource should be created 
@@ -34,25 +37,25 @@ import com.google.common.collect.HashBiMap;
 public final class CServer extends Resource {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final LinkedHashSet<String> modules = new LinkedHashSet<>();
-	private final String level;
+	private final Set<String> modules;
+	private final Level level;
 	private final HashBiMap<String, Short> uids = HashBiMap.create();
 
 	/**
 	 * Initializes this server configuration resource with the given set of
-	 * modules. A {@code LinkedHashSet} is used to prevent doubles and to 
+	 * modules. A {@code LinkedHashSet} is used to prevent duplicates and to 
 	 * preserve the correct load order of the modules. 
 	 * 
 	 * @param modules
-	 * @param level
+	 * @param logLevel
 	 */
-	public CServer(LinkedHashSet<String> modules, String level) {
+	public CServer(LinkedHashSet<String> modules, String logLevel) {
 		super("server", "config");
-		this.modules.addAll(modules);
-		this.level = level;
+		this.modules = ImmutableSet.copyOf(modules);
+		level = Level.parse(logLevel);
 		
 		short index = 1;
-		for(String module : modules) {
+		for (String module : modules) {
 			uids.put(module, index++);
 		}
 		
@@ -60,20 +63,20 @@ public final class CServer extends Resource {
 	}
 	
 	/**
-	 * The returned array preserves the correct load order of modules, as 
-	 * defined in the neon.ini configuration file.
+	 * Returns an unmodifiable {@code Set} that preserves the correct load 
+	 * order of modules, as defined in the neon.ini configuration file.
 	 * 
-	 * @return the list of modules to be loaded
+	 * @return 	the set of modules to be loaded
 	 */
-	public String[] getModules() {
-		return modules.toArray(new String[modules.size()]);
+	public Set<String> getModules() {
+		return modules;
 	}
 	
 	/**
 	 * 
-	 * @return the required logging {@code Level}
+	 * @return 	the required logging {@code Level}
 	 */
-	public String getLogLevel() {
+	public Level getLogLevel() {
 		return level;
 	}
 	

@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.logging.Level;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
@@ -86,7 +86,7 @@ final class ServerLoader {
 	void configure(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		try {
 			CServer configuration = initConfiguration();
-			logger.setLevel(Level.parse(configuration.getLogLevel()));
+			logger.setLevel(configuration.getLogLevel());
 			initEntities(entities);
 			initFileSystem(files, configuration.getModules());
 			initResources(resources, configuration, entities);
@@ -122,7 +122,7 @@ final class ServerLoader {
 	 * @param files
 	 * @param modules
 	 */
-	private void initFileSystem(NeonFileSystem files, String[] modules) {
+	private void initFileSystem(NeonFileSystem files, Set<String> modules) {
 		try {
 			for (String module : modules) {
 				files.addModule(module);
@@ -169,7 +169,7 @@ final class ServerLoader {
 		}
 	}
 	
-	private void initClient(ResourceManager resources, String[] modules) {
+	private void initClient(ResourceManager resources, Set<String> modules) {
 		// use a set to prevent doubles
 		HashSet<String> species = new HashSet<>();
 		// default game title

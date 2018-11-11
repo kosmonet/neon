@@ -21,6 +21,7 @@ package neon.common.resources;
 import java.util.Optional;
 
 import javafx.scene.paint.Color;
+import neon.common.entity.ArmorType;
 import neon.common.entity.Slot;
 import neon.systems.magic.Effect;
 
@@ -119,12 +120,13 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static final class Armor extends Clothing {
-		// TODO: MW armor rating per set + bonus per set
 		public final int rating;
+		public final ArmorType type;
 		
 		public Armor(Builder builder) {
 			super(builder);
 			rating = builder.rating;
+			type = builder.type;
 		}		
 	}
 	
@@ -161,6 +163,7 @@ public class RItem extends Resource {
 		private int magnitude;
 		private int price;
 		private int weight;
+		private ArmorType type;
 		
 		/**
 		 * Initialize the builder with an id and a name.
@@ -193,6 +196,11 @@ public class RItem extends Resource {
 
 		public Builder setRating(int rating) {
 			this.rating = rating;
+			return this;
+		}
+
+		public Builder setArmorType(ArmorType type) {
+			this.type = type;
 			return this;
 		}
 

@@ -19,23 +19,27 @@
 package neon.systems.magic;
 
 import javafx.scene.paint.Color;
+import neon.common.entity.Skill;
 
 public enum Effect {
 	// restoration
-	HEAL(1, "heal", '♥', Color.RED),
+	HEAL(1, "heal", '♥', Color.RED, Skill.RESTORATION),
 	
 	// destruction
-	FREEZE(1, "freeze", '❄', Color.LIGHTSKYBLUE), BURN(1, "burn", '✷', Color.ORANGERED);
+	FREEZE(1, "freeze", '❄', Color.LIGHTSKYBLUE, Skill.DESTRUCTION), 
+	BURN(1, "burn", '✷', Color.ORANGERED, Skill.DESTRUCTION);
 	
 	public final int cost;
 	public final String name;
 	public final char symbol;
 	public final Color color;
+	public final Skill skill;
 	
-	private Effect(int cost, String name, char symbol, Color color) {
+	private Effect(int cost, String name, char symbol, Color color, Skill skill) {
 		this.cost = cost;
 		this.name = name;
 		this.symbol = symbol;
 		this.color = color;
+		this.skill = skill;
 	}
 }

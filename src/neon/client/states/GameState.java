@@ -89,7 +89,8 @@ public final class GameState extends State {
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
-	@FXML private Label modeLabel, healthLabel, manaLabel, infoLabel;
+	@FXML private Label modeLabel, infoLabel;
+	@FXML private Label healthLabel, manaLabel, staminaLabel;
 	
 	private Scene scene;
 	private int scale = 20;
@@ -232,6 +233,24 @@ public final class GameState extends State {
 			case DOWN: 
 				shape.setY(Math.min(map.height, shape.getY() + 1)); 
 				break;
+			case DOWN_LEFT:
+				shape.setX(Math.max(0, shape.getX() - 1)); 
+				shape.setY(Math.max(0, shape.getY() - 1)); 
+				break;
+			case DOWN_RIGHT:
+				shape.setX(Math.min(map.width, shape.getX() + 1)); 
+				shape.setY(Math.max(0, shape.getY() - 1)); 
+				break;
+			case UP_LEFT:
+				shape.setX(Math.max(0, shape.getX() - 1)); 
+				shape.setY(Math.max(0, shape.getY() - 1)); 
+				break;
+			case UP_RIGHT:
+				shape.setX(Math.min(map.width, shape.getX() + 1)); 
+				shape.setY(Math.max(0, shape.getY() - 1)); 
+				break;
+			default:
+				break;
 			}
 			
 			try {
@@ -310,6 +329,13 @@ public final class GameState extends State {
 			manaLabel.setTextFill(Color.RED);
 		} else {
 			manaLabel.setTextFill(Color.SILVER);			
+		}		
+		
+		staminaLabel.setText("♉ " + stats.getStamina() + "/" + stats.getBaseStamina());
+		if ((float) stats.getStamina()/stats.getBaseStamina() < 0.1) {
+			staminaLabel.setTextFill(Color.RED);
+		} else {
+			staminaLabel.setTextFill(Color.SILVER);			
 		}		
 		
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);

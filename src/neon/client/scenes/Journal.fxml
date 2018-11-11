@@ -41,13 +41,12 @@
 					<Label fx:id="weightLabel" />
 					<Label fx:id="healthLabel" />
 					<Label fx:id="manaLabel" />
+					<Label fx:id="staminaLabel" />
 				</VBox>
 				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
 					<DescriptionLabel fx:id="description" focusTraversable="false" />
 				</HBox>
-				<VBox GridPane.columnIndex="2" alignment="center">
-					<Label fx:id="swimLabel" />
-				</VBox>
+				<VBox GridPane.columnIndex="2" alignment="center" fx:id="skillBox" />
 			</children>
 		</GridPane>
 	</center>

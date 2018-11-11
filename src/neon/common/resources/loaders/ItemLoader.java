@@ -21,6 +21,7 @@ package neon.common.resources.loaders;
 import org.jdom2.Element;
 
 import javafx.scene.paint.Color;
+import neon.common.entity.ArmorType;
 import neon.common.entity.Slot;
 import neon.common.resources.RItem;
 import neon.systems.magic.Effect;
@@ -34,7 +35,6 @@ import neon.systems.magic.Effect;
 public final class ItemLoader implements ResourceLoader<RItem> {
 	@Override
 	public RItem load(Element root) {
-		String type = root.getName();
 		String name = root.getAttributeValue("name");
 		String id = root.getAttributeValue("id");
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
@@ -57,17 +57,13 @@ public final class ItemLoader implements ResourceLoader<RItem> {
 			builder.setEnchantment(effect, magnitude);
 		}
 		
-		switch (type) {
+		switch (root.getName()) {
 		case "armor":
-			Slot slot = Slot.valueOf(root.getAttributeValue("slot").toUpperCase());
-			int rating = Integer.parseInt(root.getAttributeValue("rating"));
-			return new RItem.Armor(builder.setSlot(slot).setRating(rating));
+			return createArmor(root, builder);
 		case "clothing":
-			builder.setSlot(Slot.valueOf(root.getAttributeValue("slot").toUpperCase()));
-			return new RItem.Clothing(builder);	
+			return createClothing(root, builder);
 		case "weapon":
-			builder.setDamage(root.getAttributeValue("dmg"));
-			return new RItem.Weapon(builder);
+			return createWeapon(root, builder);
 		case "coin":
 			return new RItem.Coin(builder);
 		case "container":
@@ -75,6 +71,26 @@ public final class ItemLoader implements ResourceLoader<RItem> {
 		default:
 			return new RItem(builder);
 		}
+	}
+	
+	private RItem.Weapon createWeapon(Element root, RItem.Builder builder) {
+		Element weapon = root.getChild("weapon");
+		return new RItem.Weapon(builder.setDamage(weapon.getAttributeValue("dmg")));		
+	}
+	
+	private RItem.Clothing createClothing(Element root, RItem.Builder builder) {
+		Element clothing = root.getChild("clothing");
+		builder.setSlot(Slot.valueOf(clothing.getAttributeValue("slot").toUpperCase()));
+		return new RItem.Clothing(builder);		
+	}
+	
+	private RItem.Armor createArmor(Element root, RItem.Builder builder) {
+		Element clothing = root.getChild("clothing");
+		Slot slot = Slot.valueOf(clothing.getAttributeValue("slot").toUpperCase());
+		Element armor = root.getChild("armor");
+		int rating = Integer.parseInt(armor.getAttributeValue("rating"));
+		ArmorType type = ArmorType.valueOf(armor.getAttributeValue("type").toUpperCase());
+		return new RItem.Armor(builder.setSlot(slot).setRating(rating).setArmorType(type));		
 	}
 	
 	@Override

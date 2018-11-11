@@ -31,6 +31,9 @@ import java.util.logging.LogRecord;
 public final class NeonLogFormatter extends Formatter {
 	@Override
 	public String format(LogRecord record) {
+//		String source = record.getSourceClassName();
+//		return record.getLevel() + ": " + source.substring(source.lastIndexOf('.') + 1) + 
+//				"." + record.getSourceMethodName() + " - " + record.getMessage() + "\r\n";
 		return record.getLevel() + " - " + record.getMessage() + "\r\n";
 	}
 }
