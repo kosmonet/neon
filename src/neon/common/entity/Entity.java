@@ -74,4 +74,13 @@ public class Entity {
 	public <T extends Component> void setComponent(T component) {
 		components.put(component.getClass(), component);
 	}
+	
+	/**
+	 * Removes a component.
+	 * 
+	 * @param type
+	 */
+	public void removeComponent(Class<? extends Component> type) {
+		components.remove(type);
+	}
 }

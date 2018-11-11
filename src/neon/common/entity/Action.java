@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 package neon.common.entity;
 
 public enum Action {
-	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10);
+	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10), PICKPOCKET(10);
 	
 	public final int points;
 	

@@ -18,6 +18,7 @@
 
 package neon.server.systems;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -29,8 +30,9 @@ import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
+import neon.common.entity.components.Task;
 import neon.common.event.CollisionEvent;
-import neon.common.event.TimerEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
@@ -40,7 +42,7 @@ import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
 /**
- * The system that handles all movement-related events.
+ * The system that handles all movement-related tasks and events.
  * 
  * @author mdriesen
  *
@@ -63,7 +65,9 @@ public final class MovementSystem implements NeonSystem {
 	/**
 	 * Moves the player on the current map.
 	 * 
-	 * @param event
+	 * @param player
+	 * @param direction
+	 * @param map
 	 */
 	void move(Entity player, Direction direction, RMap map) {
 		Shape shape = player.getComponent(Shape.class);
@@ -97,29 +101,33 @@ public final class MovementSystem implements NeonSystem {
 		}
 		
 		// move the player
-		try {
-			move(player, map, x, y, z);
-		} catch (ResourceException e) {
-			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
+		move(player, map, x, y, z);
+	}
+
+	@Override
+	public Optional<Entity> update(Entity creature) {
+		if (creature.hasComponent(Task.Move.class)) {
+			// move the creature if it has a move task
+			Task.Move task = creature.getComponent(Task.Move.class);
+			Shape shape = creature.getComponent(Shape.class);
+			move(creature, task.getMap(), task.x, task.y, shape.getZ());
+			task.getMap().moveEntity(creature.uid, task.x, task.y);
+			creature.removeComponent(Task.Move.class);
+			if (creature.getComponent(Stats.class).isActive()) {
+				// if the creature has more action points, let it think again
+				creature.setComponent(new Task.Think(creature.uid));
+				return Optional.of(creature);
+			} else {
+				// if not, the creature is out
+				return Optional.empty();
+			}
+		} else {
+			// if not, reschedule the creature
+			return Optional.of(creature);
 		}
 	}
 
-	/**
-	 * Moves a creature on the current map.
-	 * 
-	 * @param event
-	 */
-	void move(Entity creature, int x, int y, RMap map) {
-		try {
-			Shape shape = creature.getComponent(Shape.class);
-			move(creature, map, x, y, shape.getZ());
-			map.moveEntity(creature.uid, x, y);
-		} catch (ResourceException e) {
-			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
-		}
-	}
-	
-	private void move(Entity creature, RMap map, int x, int y, int z) throws ResourceException {
+	private void move(Entity creature, RMap map, int x, int y, int z) {
 		Shape shape = creature.getComponent(Shape.class);
 		Stats stats = creature.getComponent(Stats.class);
 		Skills skills = creature.getComponent(Skills.class);
@@ -130,17 +138,20 @@ public final class MovementSystem implements NeonSystem {
 			stats.perform(Action.MOVE_DIAGONAL);
 		}
 
-		RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
 		boolean canMove = true;
-		if (terrain.hasModifier(RTerrain.Modifier.LIQUID)) {
-			canMove = skillHandler.checkSkill(skills, Skill.SWIMMING, stats);
+
+		try {
+			RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
+			if (terrain.hasModifier(RTerrain.Modifier.LIQUID)) {
+				canMove = skillHandler.checkSkill(skills, Skill.SWIMMING, stats);
+			}
+		} catch (ResourceException e) {
+			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
 		}
-		
+
 		if (canMove) {				
 			shape.setPosition(x, y, z);				
+			bus.post(new UpdateEvent.Move(creature.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 		}
 	}
-
-	@Override
-	public void onTimerTick(TimerEvent tick) {}
 }

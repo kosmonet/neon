@@ -19,7 +19,6 @@
 package neon.server.entity;
 
 import neon.common.entity.Entity;
-import neon.common.entity.components.Behavior;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
@@ -27,6 +26,7 @@ import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
 import neon.common.resources.RCreature;
+import neon.systems.ai.Behavior;
 import neon.systems.magic.Magic;
 
 public final class CreatureBuilder implements EntityBuilder<RCreature> {

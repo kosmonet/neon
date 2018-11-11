@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,11 +18,23 @@
 
 package neon.server.systems;
 
-import com.google.common.eventbus.Subscribe;
+import java.util.Optional;
 
-import neon.common.event.TimerEvent;
+import neon.common.entity.Entity;
 
-public interface NeonSystem {
-	@Subscribe
-	public void onTimerTick(TimerEvent tick);
+public interface NeonSystem extends Runnable {
+	/**
+	 * Updates an entity. If no further updates are necessary on this entity,
+	 * implementations should return an empty optional. If further updates 
+	 * are necessary, implementation should return an optional containing
+	 * the entity.
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	public default Optional<Entity> update(Entity entity) {
+		return Optional.empty();
+	}
+	
+	public default void run() {}
 }

@@ -18,46 +18,43 @@
 
 package neon.server.systems;
 
+import java.util.Optional;
+
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
+import neon.common.entity.components.Task;
 import neon.common.event.ComponentUpdateEvent;
-import neon.common.event.TimerEvent;
-import neon.common.resources.CGame;
-import neon.common.resources.CGame.GameMode;
-import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
-import neon.server.entity.EntityManager;
 
 public final class ActionSystem implements NeonSystem {
-	private static final long PLAYER_UID = 0;
-	
-	private final EntityManager entities;
-	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public ActionSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.entities = entities;
-		this.resources = resources;
+	public ActionSystem(EventBus bus) {
 		this.bus = bus;
 	}
 
-	public void run() throws ResourceException {
-		// restore the player's action points
-		CGame config = resources.getResource("config", "game");
-		int fraction = config.getMode().equals(GameMode.REAL_TIME) ? 5 : 1;
-		restore(entities.getEntity(PLAYER_UID), fraction);
-
-		// restore all other creatures
-		RMap map = resources.getResource("maps", config.getCurrentMap());
-		map.getEntities().parallelStream()
-				.<Entity>map(uid -> entities.getEntity(uid))
-				.filter(entity -> entity.hasComponent(Stats.class))
-				.forEach(entity -> restore(entity, fraction));
+	@Override
+	public Optional<Entity> update(Entity creature) {
+		if (creature.hasComponent(Task.Action.class)) {
+			// if the creature has an action task, we add action points
+			restore(creature, creature.getComponent(Task.Action.class).fraction);
+			creature.removeComponent(Task.Action.class);
+			Stats stats = creature.getComponent(Stats.class);
+			if (stats.isActive()) {
+				// if the creature has enough action points, we return the creature
+				creature.setComponent(new Task.Think(creature.uid));
+				return Optional.of(creature);
+			} else {
+				// if not, the creature is out
+				return Optional.empty();
+			}
+		} else {
+			// if the creature had no action task, we reschedule it
+			return Optional.of(creature);
+		}
 	}
-
+	
 	private void restore(Entity entity, int fraction) {
 		Stats stats = entity.getComponent(Stats.class);
 		stats.restoreAP(fraction);
@@ -69,10 +66,5 @@ public final class ActionSystem implements NeonSystem {
 		if (health != stats.getHealth() || mana != stats.getMana()) {
 			bus.post(new ComponentUpdateEvent(stats));
 		}
-	}
-
-	@Override
-	public void onTimerTick(TimerEvent tick) {
-		
 	}
 }

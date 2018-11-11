@@ -16,7 +16,9 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.ai;
+
+import neon.common.entity.components.Component;
 
 public final class Behavior implements Component {
 	private final long uid;
