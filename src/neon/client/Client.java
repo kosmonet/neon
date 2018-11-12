@@ -29,7 +29,9 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
+import neon.client.handlers.CollisionHandler;
+import neon.client.handlers.EntityHandler;
+import neon.client.handlers.MessageHandler;
 import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
@@ -46,18 +48,12 @@ import neon.client.states.OptionState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
-import neon.common.entity.components.Component;
-import neon.common.entity.components.Shape;
 import neon.common.event.ConfigurationEvent;
-import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.ServerEvent;
-import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
-import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
@@ -71,7 +67,6 @@ import neon.systems.magic.SpellLoader;
  */
 public final class Client implements Runnable {
 	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
 
 	private final EventBus bus = new EventBus("Client Bus");
 	private final ClientSocket socket;
@@ -112,6 +107,11 @@ public final class Client implements Runnable {
 		resources.addLoader("config", new ConfigurationLoader());
 		resources.addLoader("spells", new SpellLoader());
 		
+		// set up some event handlers
+		bus.register(new CollisionHandler(ui, bus, components));
+		bus.register(new EntityHandler(components, resources));
+		bus.register(new MessageHandler(ui, components));
+		
 		// initialize all states and enter the first one
 		initStates(version);
 	}
@@ -127,10 +127,14 @@ public final class Client implements Runnable {
 		}
 	}
 	
+	/**
+	 * Initializes all the states and transtitions in the state machine.
+	 * 
+	 * @param version
+	 */
 	private void initStates(String version) {
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
 		NewGameState newGame = new NewGameState(ui, bus, resources);
-		bus.register(newGame);
 		LoadState loadGame = new LoadState(ui, bus);
 		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
 		GameState game = new GameState(ui, bus, components, resources);
@@ -180,53 +184,6 @@ public final class Client implements Runnable {
 		mainMenu.enter(new TransitionEvent("start"));
 	}
 
-	@Subscribe 
-	private void onComponentUpdate(ComponentUpdateEvent event) throws ClassNotFoundException {
-		Component component = event.getComponent();
-		components.putComponent(component.getEntity(), component);
-	}
-	
-	@Subscribe
-	private void onEntityMove(UpdateEvent.Move event) throws ResourceException {
-		if (components.hasComponent(event.uid, Shape.class)) {
-			Shape shape = components.getComponent(event.uid, Shape.class);
-			shape.setPosition(event.x, event.y, event.z);			
-		} else {
-			Shape shape = new Shape(event.uid, event.x, event.y, event.z);
-			components.putComponent(event.uid, shape);
-		}
-
-		RMap map = resources.getResource("maps", event.map);		
-		if (map.getEntities().contains(event.uid)) {
-			map.moveEntity(event.uid, event.x, event.y);
-		} else {
-			map.addEntity(event.uid, event.x, event.y);
-		}
-	}
-	
-	@Subscribe
-	private void onEntityRemove(UpdateEvent.Remove event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.map);
-		map.removeEntity(event.uid);
-	}
-	
-	@Subscribe
-	private void onEntityDestroy(UpdateEvent.Destroy event) throws ResourceException {
-		components.removeEntity(event.uid);
-	}
-	
-	@Subscribe
-	private void onSkillIncrease(UpdateEvent.Skill event) throws ResourceException {
-		if (event.uid == PLAYER_UID) {
-			ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
-		}
-	}
-	
-	@Subscribe
-	private void onLevelIncrease(UpdateEvent.Level event) throws ResourceException {
-		ui.showOverlayMessage("Level up!", 1000);
-	}
-	
 	/**
 	 * Gives a warning when an event is detected that no other object is currently 
 	 * listening to.
@@ -238,6 +195,12 @@ public final class Client implements Runnable {
 		logger.warning("client received a dead event: " + event.getEvent());
 	}
 
+	/**
+	 * Throws an error when a server event has somehow made its way into the
+	 * client.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void monitor(ServerEvent event) {
 		throw new AssertionError("Client received a server event!");
@@ -254,6 +217,5 @@ public final class Client implements Runnable {
 		for (String module : event.getModules()) {
 			files.addModule(module);
 		}
-	}	
-
+	}
 }

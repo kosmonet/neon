@@ -44,26 +44,23 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.ClientRenderer;
+import neon.client.ui.Pointer;
 import neon.client.ui.UserInterface;
 import neon.common.entity.PlayerMode;
-import neon.common.entity.components.Graphics;
+import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
-import neon.common.event.CollisionEvent;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
-import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.systems.ai.Behavior;
-import neon.systems.combat.CombatEvent;
 import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
@@ -86,6 +83,7 @@ public final class GameState extends State {
 	private final RenderPane<Long> renderPane;
 	private final ResourceManager resources;
 	private final ComponentManager components;
+	private final Pointer pointer = new Pointer(POINTER_UID);
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
@@ -144,6 +142,9 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> use());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.R), () -> bus.post(new RestEvent.Sleep()));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
+		
+		components.putComponent(pointer.getShape());
+		components.putComponent(pointer.getGraphics());
 	}
 	
 	@Subscribe
@@ -189,16 +190,6 @@ public final class GameState extends State {
 		scheduleRedraw();
 	}
 	
-	@Subscribe
-	private void onPickpocketFail(StealthEvent.Empty event) {
-		ui.showOverlayMessage("Victim has no possessions.", 1000);
-	}
-	
-	@Subscribe
-	private void onPickpocketSuccess(StealthEvent.Success event) {
-		ui.showOverlayMessage("You've stolen something.", 1000);
-	}
-	
 	private void changeMode() {
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
@@ -219,47 +210,28 @@ public final class GameState extends State {
 		if (!looking) {
 			bus.post(new InputEvent.Move(direction, map.id));
 		} else {
-			Shape shape = components.getComponent(POINTER_UID, Shape.class);
-			switch (direction) {
-			case LEFT: 
-				shape.setX(Math.max(0, shape.getX() - 1)); 
-				break;
-			case RIGHT: 
-				shape.setX(Math.min(map.width, shape.getX() + 1)); 
-				break;
-			case UP: 
-				shape.setY(Math.max(0, shape.getY() - 1)); 
-				break;
-			case DOWN: 
-				shape.setY(Math.min(map.height, shape.getY() + 1)); 
-				break;
-			case DOWN_LEFT:
-				shape.setX(Math.max(0, shape.getX() - 1)); 
-				shape.setY(Math.max(0, shape.getY() - 1)); 
-				break;
-			case DOWN_RIGHT:
-				shape.setX(Math.min(map.width, shape.getX() + 1)); 
-				shape.setY(Math.max(0, shape.getY() - 1)); 
-				break;
-			case UP_LEFT:
-				shape.setX(Math.max(0, shape.getX() - 1)); 
-				shape.setY(Math.max(0, shape.getY() - 1)); 
-				break;
-			case UP_RIGHT:
-				shape.setX(Math.min(map.width, shape.getX() + 1)); 
-				shape.setY(Math.max(0, shape.getY() - 1)); 
-				break;
-			default:
-				break;
-			}
+			pointer.move(direction, map);
+			StringBuilder builder = new StringBuilder();
 			
 			try {
-				RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(shape.getX(), shape.getY()));
-				infoLabel.setText(terrain.id);
+				RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(pointer.getX(), pointer.getY()));
+				builder.append(terrain.id);
 			} catch (ResourceException e) {
-				logger.warning("unknown terrain type: " + map.getTerrain().get(shape.getX(), shape.getY()));
+				logger.warning("unknown terrain type: " + map.getTerrain().get(pointer.getX(), pointer.getY()));
 			}
-			
+
+			for (Long uid : map.getEntities(pointer.getX(), pointer.getY())) {
+				builder.append(" - ");
+				if (components.hasComponent(uid, PlayerInfo.class)) {
+					builder.append(components.getComponent(uid, PlayerInfo.class).getName());
+				} else if (components.hasComponent(uid, CreatureInfo.class)) {
+					builder.append(components.getComponent(uid, CreatureInfo.class).getName());
+				} else if (components.hasComponent(uid, ItemInfo.class)) {
+					builder.append(components.getComponent(uid, ItemInfo.class).name);
+				}
+			}
+
+			infoLabel.setText(builder.toString());
 			redraw();
 		}
 	}
@@ -292,11 +264,7 @@ public final class GameState extends State {
 	
 	private void look() {
 		if (!looking) {
-			Shape player = components.getComponent(PLAYER_UID, Shape.class);
-			Shape shape = new Shape(POINTER_UID, player.getX(), player.getY(), player.getZ());
-			Graphics graphics = new Graphics(POINTER_UID, '◎', Color.WHITE);
-			components.putComponent(POINTER_UID, shape);
-			components.putComponent(POINTER_UID, graphics);
+			pointer.setPosition(components.getComponent(PLAYER_UID, Shape.class));
 			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
 			entities.add(POINTER_UID);
 			renderPane.updateMap(entities);
@@ -304,7 +272,6 @@ public final class GameState extends State {
 			redraw();
 			looking = true;
 		} else {
-			components.removeEntity(POINTER_UID);
 			renderPane.updateMap(map.getEntities());
 			infoLabel.setVisible(false);
 			redraw();
@@ -363,7 +330,6 @@ public final class GameState extends State {
 		}
 	}
 	
-	
 	@Subscribe
 	private void onSleep(RestEvent.Wake event) {
 		FadeTransition transition = new FadeTransition(Duration.millis(2000), stack);
@@ -397,77 +363,6 @@ public final class GameState extends State {
 		if (!paused) {
 			bus.post(new InputEvent.Unpause());
 		}
-	}
-	
-	@Subscribe
-	private void collide(CollisionEvent event) {
-		// pause the server
-		if (!paused) {
-			bus.post(new InputEvent.Pause());
-		}
-		
-		long bumper = event.bumper;
-		long bumped = event.bumped;
-
-		if (bumper == PLAYER_UID) {
-			PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);
-			Behavior brain = components.getComponent(bumped, Behavior.class);
-			
-			switch (player.getMode()) {
-			case NONE:
-				if (brain.isFriendly(bumper)) {
-					bus.post(new TransitionEvent("talk", bumped));
-				} else {
-					bus.post(new CombatEvent.Start(bumper, bumped));	
-				}
-				break;
-			case STEALTH:
-				if (brain.isFriendly(bumper)) {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.talk, ButtonTypes.pick, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", bumped));
-					} else if (result.get().equals(ButtonTypes.pick)) {
-						bus.post(new StealthEvent.Pick(bumped));
-					}
-				} else {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.pick, ButtonTypes.attack, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.pick)) {
-						bus.post(new StealthEvent.Pick(bumped));
-					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent.Start(bumper, bumped));	
-					}
-				}
-				break;
-			case AGGRESSION:
-				if (brain.isFriendly(bumper)) {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", bumped));
-					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent.Start(bumper, bumped));	
-					}
-				} else {
-					bus.post(new CombatEvent.Start(bumper, bumped));	
-				}
-				break;
-			}
-		}
-
-		// unpause if necessary
-		if (!paused) {
-			bus.post(new InputEvent.Unpause());
-		}
-	}
-	
-	@Subscribe
-	private void onCombat(CombatEvent.Result event) {
-		Stats stats = components.getComponent(event.defender, Stats.class);
-		System.out.println(stats);
-		String message = "Defender is hit for " + event.damage + "points (" + stats.getHealth() + "/" + stats.getBaseHealth() + "). ";
-		ui.showOverlayMessage(message, 1000);
 	}
 	
 	@Override

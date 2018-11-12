@@ -35,19 +35,18 @@ public final class ComponentManager {
 	private final Table<Long, Class<? extends Component>, Component> components = HashBasedTable.create();
 	
 	/**
-	 * Puts a component for an entity in the table.
+	 * Puts a component in the table.
 	 * 
-	 * @param uid
-	 * @param component
+	 * @param component	the component to add
 	 */
-	public void putComponent(long uid, Component component) {
-		components.put(uid, component.getClass(), component);
+	public void putComponent(Component component) {
+		components.put(component.getEntity(), component.getClass(), component);
 	}
 	
 	/**
 	 * Removes an entity from the table.
 	 * 
-	 * @param uid
+	 * @param uid	the uid of an entity
 	 */
 	public void removeEntity(long uid) {
 		components.row(uid).clear();
@@ -55,8 +54,8 @@ public final class ComponentManager {
 	
 	/**
 	 * 
-	 * @param uid
-	 * @param type
+	 * @param uid	the uid of an entity
+	 * @param type	the type of a component
 	 * @return	a component of the given type for the given entity
 	 */
 	public <T extends Component> T getComponent(long uid, Class<T> type) {
@@ -66,8 +65,8 @@ public final class ComponentManager {
 	/**
 	 * Checks whether an entity has a certain component type.
 	 * 
-	 * @param uid
-	 * @param type
+	 * @param uid	the uid of an entity
+	 * @param type	the type of the component
 	 * @return
 	 */
 	public boolean hasComponent(long uid, Class<?> type) {

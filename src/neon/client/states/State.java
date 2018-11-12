@@ -29,15 +29,21 @@ public abstract class State {
 	
 	/**
 	 * Performs the entry actions of this state.
+	 * 
+	 * @param event	the event that caused this state to be entered
 	 */
 	public abstract void enter(TransitionEvent event);
 	
 	/**
 	 * Performs the exit actions of this state.
+	 * 
+	 * @param event	the event that caused this state to be exited
 	 */
 	public abstract void exit(TransitionEvent event);
 	
 	/**
+	 * Returns whether this state is the currently active state of the state
+	 * machine.
 	 * 
 	 * @return whether this state is active or not
 	 */
@@ -48,7 +54,7 @@ public abstract class State {
 	/**
 	 * Sets the active status of this state.
 	 * 
-	 * @param active
+	 * @param active	the new status
 	 */
 	public void setActive(boolean active) {
 		this.active = active;

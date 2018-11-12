@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -49,22 +49,28 @@ public final class TransitionEvent extends ClientEvent {
 		}
 	}
 	
-	public <T extends Object> T getParameter(Class<T> component) {
-		return parameters.getInstance(component);
+	/**
+	 * Returns a parameter of the given type.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	<T extends Object> T getParameter(Class<T> type) {
+		return parameters.getInstance(type);
 	}
 	
 	/**
 	 * 
 	 * @return the condition for this transition
 	 */
-	public String getCondition() {
+	String getCondition() {
 		return condition;
 	}
 	
 	/**
 	 * Consumes this event, so it won't be handled by other bus subscribers.
 	 */
-	public void consume() {
+	void consume() {
 		consumed = true;
 	}
 	
@@ -72,7 +78,7 @@ public final class TransitionEvent extends ClientEvent {
 	 * 
 	 * @return whether this event was consumed by another bus subscriber
 	 */
-	public boolean isConsumed() {
+	boolean isConsumed() {
 		return consumed;
 	}
 }

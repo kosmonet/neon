@@ -41,7 +41,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import neon.client.help.HelpWindow;
 import neon.client.ui.UserInterface;
-import neon.common.event.ConfigurationEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.resources.CClient;
 import neon.common.resources.RCreature;
@@ -131,6 +130,8 @@ public final class NewGameState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering new game state");
+		configure();
+		bus.register(this);
 		ui.showScene(scene);
 		nameField.requestFocus();
 	}
@@ -138,6 +139,7 @@ public final class NewGameState extends State {
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting new game state");
+		bus.unregister(this);
 	}
 	
 	private void listKeyPressed(KeyEvent event) {
@@ -202,14 +204,16 @@ public final class NewGameState extends State {
 	 * @param event
 	 * @throws ResourceException 
 	 */
-	@Subscribe
-	private void onConfigure(ConfigurationEvent event) throws ResourceException {
-		CClient config = resources.getResource("config", "client");
-		
-		for (String id : config.getPlayableSpecies()) {
-			speciesList.getItems().add(resources.getResource("creatures", id));
+	private void configure() {
+		try {
+			CClient config = resources.getResource("config", "client");
+			for (String id : config.getPlayableSpecies()) {
+				speciesList.getItems().add(resources.getResource("creatures", id));
+			}
+		} catch (ResourceException e) {
+			logger.severe("could not initialize playable species list");
 		}
-		
+
 		speciesList.getSelectionModel().select(0);
 		
 		int strength = speciesList.getSelectionModel().getSelectedItem().strength;

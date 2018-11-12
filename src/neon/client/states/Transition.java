@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public final class Transition {
 	 * @param event
 	 */
 	@Subscribe
-	public void transition(TransitionEvent event) {
+	private void transition(TransitionEvent event) {
 		if (from.isActive() && !event.isConsumed() && event.getCondition().equals(condition)) {
 			event.consume();
 			from.setActive(false);

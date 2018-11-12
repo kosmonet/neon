@@ -256,8 +256,16 @@ public final class InventoryState extends State {
     			}
     			
     			setStyle(style.toString());
+    			
+    			StringBuilder text = new StringBuilder();
+    			
+    			if (components.hasComponent(uid, Weapon.class)) {
+    				text.append("⚔ ");
+    			}
+    			
     			ItemInfo info = components.getComponent(uid, ItemInfo.class);
-    			setText(info.name);
+    			text.append(info.name);
+    			setText(text.toString());
     		}
     	}
     }

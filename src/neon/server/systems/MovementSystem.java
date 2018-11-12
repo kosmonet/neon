@@ -33,6 +33,8 @@ import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
 import neon.common.event.CollisionEvent;
 import neon.common.event.UpdateEvent;
+import neon.common.resources.CGame;
+import neon.common.resources.CGame.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
@@ -68,8 +70,9 @@ public final class MovementSystem implements NeonSystem {
 	 * @param player
 	 * @param direction
 	 * @param map
+	 * @throws ResourceException 
 	 */
-	void move(Entity player, Direction direction, RMap map) {
+	void move(Entity player, Direction direction, RMap map) throws ResourceException {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();
@@ -109,12 +112,13 @@ public final class MovementSystem implements NeonSystem {
 		}
 		
 		// check for collisions with other creatures
-		if (!map.getEntities(x, y).isEmpty()) {
-			for (long uid : map.getEntities(x, y)) {
-				if (entities.getEntity(uid).hasComponent(CreatureInfo.class)) {
-					bus.post(new CollisionEvent(player.uid, uid));
-					return;
-				}
+		for (long uid : map.getEntities(x, y)) {
+			if (entities.getEntity(uid).hasComponent(CreatureInfo.class)) {
+				// pause the server while the collision is handled
+				CGame config = resources.getResource("config", "game");
+				config.setMode(GameMode.TURN_BASED);
+				bus.post(new CollisionEvent(player.uid, uid));
+				return;
 			}
 		}
 		

@@ -19,8 +19,9 @@
 package neon.systems.conversation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import neon.common.event.NeonEvent;
 
@@ -57,11 +58,11 @@ public abstract class ConversationEvent extends NeonEvent {
 	 */
 	public static final class Update extends ConversationEvent {
 		private final String answer;
-		private final ArrayList<Topic> topics;
+		private final List<Topic> topics;
 		
 		Update(String answer, ArrayList<Topic> topics) {
 			this.answer = answer;
-			this.topics = new ArrayList<Topic>(topics);
+			this.topics = ImmutableList.copyOf(topics);
 		}
 		
 		public String getAnswer() {
@@ -69,7 +70,7 @@ public abstract class ConversationEvent extends NeonEvent {
 		}
 		
 		public List<Topic> getTopics() {
-			return Collections.unmodifiableList(topics);
+			return topics;
 		}
 	}
 	
