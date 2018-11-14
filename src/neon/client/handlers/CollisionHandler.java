@@ -25,6 +25,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.scene.control.ButtonType;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.UserInterface;
@@ -41,23 +42,13 @@ public class CollisionHandler {
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ComponentManager components;
+	private final Configuration config;
 	
-	private boolean paused = true;
-	
-	public CollisionHandler(UserInterface ui, EventBus bus, ComponentManager components) {
+	public CollisionHandler(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
-	}
-	
-	@Subscribe 
-	private void onPause(InputEvent.Pause event) {
-		paused = true;
-	}
-	
-	@Subscribe 
-	private void onUnpause(InputEvent.Unpause event) {
-		paused = false;
+		this.config = config;
 	}
 	
 	@Subscribe
@@ -113,7 +104,7 @@ public class CollisionHandler {
 		}
 
 		// unpause if necessary
-		if (!paused) {
+		if (!config.isPaused()) {
 			bus.post(new InputEvent.Unpause());
 		}
 	}

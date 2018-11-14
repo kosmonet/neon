@@ -42,6 +42,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import neon.client.ClientUtils;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
@@ -52,7 +53,6 @@ import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
-import neon.common.resources.RMap;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
 import neon.systems.magic.Enchantment;
@@ -70,6 +70,7 @@ public final class InventoryState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
+	private final Configuration config;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, followerList;
@@ -77,12 +78,12 @@ public final class InventoryState extends State {
 	@FXML private Label weightLabel, armorLabel, moneyLabel;
 	
 	private Scene scene;
-	private RMap map;
 	
-	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components) {
+	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
+		this.config = config;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);
@@ -156,7 +157,7 @@ public final class InventoryState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering inventory module");
 		bus.register(this);
-		map = event.getParameter(RMap.class);
+		config.getCurrentMap();
 		refresh();		
 		playerList.getSelectionModel().selectFirst();		
 		ui.showScene(scene);
@@ -201,7 +202,7 @@ public final class InventoryState extends State {
 			long uid = playerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
 			playerList.getItems().remove(uid);
-			bus.post(new InventoryEvent.Drop(uid, map.id));
+			bus.post(new InventoryEvent.Drop(uid, config.getCurrentMap().id));
 		}
 	}
 

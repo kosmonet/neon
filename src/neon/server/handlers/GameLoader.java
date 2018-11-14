@@ -115,7 +115,7 @@ public final class GameLoader {
 			CServer config = resources.getResource("config", "server");
 			CGame game = initGame(resources, config.getModules());
 			resources.addResource(game);
-			RMap map = resources.getResource("maps", game.startMap);
+			RMap map = resources.getResource("maps", game.map);
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.species);
@@ -189,10 +189,10 @@ public final class GameLoader {
 		for (String id : modules) {
 			try {
 				RModule module = resources.getResource(id);
-				map = module.startMap.isEmpty() ? map : module.startMap;
-				x = (module.getStartX() >= 0) ? module.getStartX() : x;
-				y = (module.getStartY() >= 0) ? module.getStartY() : y;
-				money = (module.getStartMoney() >= 0) ? module.getStartMoney() : money;
+				map = module.map.isEmpty() ? map : module.map;
+				x = (module.x >= 0) ? module.x : x;
+				y = (module.y >= 0) ? module.y : y;
+				money = (module.money >= 0) ? module.money : money;
 				items.addAll(module.getStartItems());
 				spells.addAll(module.getStartSpells());
 			} catch (ResourceException e) {
@@ -201,9 +201,7 @@ public final class GameLoader {
 			}
 		}
 		
-		CGame game = new CGame(map, x, y, money);
-		game.addStartItems(items);
-		game.addStartSpells(spells);
+		CGame game = new CGame(map, x, y, money, items, spells);
 		return game;
 	}
 
@@ -246,7 +244,7 @@ public final class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		RMap map = resources.getResource("maps", game.startMap);
+		RMap map = resources.getResource("maps", game.map);
 
 		// tell the client everything is ready
 		notifyClient(map);

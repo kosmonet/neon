@@ -111,11 +111,11 @@ public class SettingsEditor {
 			titleField.setText(module.title);
 			subtitleField.setText(module.subtitle);
 			
-			mapField.setText(module.startMap);
+			mapField.setText(module.map);
 			xSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
-			xSpinner.getValueFactory().setValue(module.getStartX());
+			xSpinner.getValueFactory().setValue(module.x);
 			ySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, Integer.MAX_VALUE));
-			ySpinner.getValueFactory().setValue(module.getStartY());
+			ySpinner.getValueFactory().setValue(module.y);
 			
 			Set<String> creatures = resources.listResources("creatures");
 			for (String species : module.getPlayableSpecies()) {
@@ -126,7 +126,7 @@ public class SettingsEditor {
 				}
 			}
 			
-			for (String parent : module.getParents()) {
+			for (String parent : module.getParentModules()) {
 				parentList.getItems().add(parent);
 			}
 		} catch (ResourceException e) {
@@ -184,11 +184,12 @@ public class SettingsEditor {
 		String map = mapField.getText();
 		xSpinner.increment(0);
 		ySpinner.increment(0);
-		RModule module = new RModule(id, title, subtitle, map, xSpinner.getValue(), ySpinner.getValue(), "", -1);
-		module.addPlayableSpecies(speciesList.getItems());
-		parentList.getItems().forEach(parent -> module.addParent(parent));
+		RModule.Builder builder = new RModule.Builder(id).setTitle(title).setSubtitle(subtitle);
+		builder.setStartMap(map).setStartPosition(xSpinner.getValue(), ySpinner.getValue());
+		speciesList.getItems().forEach(builder::addStartItem);
+		parentList.getItems().forEach(builder::addParentModule);
 		// an RModule is in the global namespace
-		bus.post(new SaveEvent.Resources(module));
+		bus.post(new SaveEvent.Resources(builder.build()));
 	}
 	
 	@FXML private void okPressed(ActionEvent event) {

@@ -113,7 +113,7 @@ public final class MagicState extends State {
 		String id = spellList.getSelectionModel().getSelectedItem().id;
 		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
 		
-		if (magic.hasEquiped(id)) {
+		if (magic.hasEquipped(id)) {
 			bus.post(new MagicEvent.Unequip(id));
 		} else {
 			bus.post(new MagicEvent.Equip(id));	
@@ -158,7 +158,7 @@ public final class MagicState extends State {
 			} else {
 				setText(spell.name);
 				Magic magic = components.getComponent(PLAYER_UID, Magic.class);
-				if (magic.hasEquiped(spell.id)) {
+				if (magic.hasEquipped(spell.id)) {
 					setStyle("-fx-font-weight: bold");
 				} else {
 					setStyle("-fx-font-weight: normal");

@@ -39,6 +39,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
@@ -64,6 +65,7 @@ public final class ContainerState extends State {
 	private final UserInterface ui;
 	private final EventBus bus;
 	private final ComponentManager components;
+	private final Configuration config;
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, containerList;
@@ -74,10 +76,11 @@ public final class ContainerState extends State {
 	private RMap map;
 	private Inventory inventory;
 	
-	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components) {
+	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = ui;
 		this.bus = bus;
 		this.components = components;
+		this.config = config;
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
 		loader.setController(this);
@@ -153,7 +156,7 @@ public final class ContainerState extends State {
 		logger.finest("entering container state");
 		bus.register(this);
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-		map = event.getParameter(RMap.class);
+		map = config.getCurrentMap();
 		containerList.getItems().clear();
 		
 		map.getEntities(shape.getX(), shape.getY()).stream()

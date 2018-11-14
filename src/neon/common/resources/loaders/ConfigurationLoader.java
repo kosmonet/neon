@@ -18,6 +18,7 @@
 
 package neon.common.resources.loaders;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -136,13 +137,13 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 	private CGame loadGame(Element root) {
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
-		return new CGame(map, -1, -1, -1);
+		return new CGame(map, -1, -1, -1, Collections.emptyList(), Collections.emptySet());
 	}
 
 	private Element saveGame(CGame config) {
 		Element game = new Element("game");
 		Element start = new Element("start");
-		start.setAttribute("map", config.getCurrentMap());
+		start.setAttribute("map", config.map);
 		game.addContent(start);
 		return game;
 	}

@@ -30,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
+import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
 import neon.client.ui.UserInterface;
@@ -47,14 +48,16 @@ public final class MapState extends State {
 	
 	private final UserInterface ui;
 	private final MapPane pane;
+	private final Configuration config;
 	
 	@FXML private Button cancelButton;
 	@FXML private BorderPane root;
 	
 	private Scene scene;
 
-	public MapState(UserInterface ui, EventBus bus, ResourceManager resources) {
+	public MapState(UserInterface ui, EventBus bus, ResourceManager resources, Configuration config) {
 		this.ui = ui;
+		this.config = config;
 		pane = new MapPane(resources);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Map.fxml"));
@@ -81,7 +84,7 @@ public final class MapState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering map state");
 	    root.setCenter(pane);
-	    RMap map = event.getParameter(RMap.class);
+	    RMap map = config.getCurrentMap();
 	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
 	    pane.heightProperty().addListener(observable -> pane.drawMap(map));
 		ui.showScene(scene);

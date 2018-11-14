@@ -33,12 +33,12 @@ import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
 import neon.common.event.CollisionEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.CGame;
-import neon.common.resources.CGame.GameMode;
 import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
+import neon.server.Configuration.GameMode;
 import neon.server.entity.EntityManager;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
@@ -56,11 +56,13 @@ public final class MovementSystem implements NeonSystem {
 	private final EntityManager entities;
 	private final ResourceManager resources;
 	private final SkillHandler skillHandler;
+	private final Configuration config;
 	
-	MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
+	MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
 		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
+		this.config = config;
 		skillHandler = new SkillHandler(bus);
 	}
 	
@@ -115,7 +117,6 @@ public final class MovementSystem implements NeonSystem {
 		for (long uid : map.getEntities(x, y)) {
 			if (entities.getEntity(uid).hasComponent(CreatureInfo.class)) {
 				// pause the server while the collision is handled
-				CGame config = resources.getResource("config", "game");
 				config.setMode(GameMode.TURN_BASED);
 				bus.post(new CollisionEvent(player.uid, uid));
 				return;

@@ -16,8 +16,48 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.systems.magic;
+package neon.server;
 
-public enum Target {
-	SELF, OTHER, AREA;
+/**
+ * The server configuration.
+ * 
+ * @author mdriesen
+ *
+ */
+public class Configuration {
+	public enum GameMode {
+		TURN_BASED, REAL_TIME;
+	}
+
+	private String map;
+	private GameMode mode = GameMode.TURN_BASED;
+	private boolean running = false;
+	
+	public void setCurrentMap(String map) {
+		this.map = map;
+	}
+	
+	/**
+	 * 
+	 * @return	the id of the current map
+	 */
+	public String getCurrentMap() {
+		return map;
+	}
+	
+	public void setMode(GameMode mode) {
+		this.mode = mode;
+	}
+	
+	public GameMode getMode() {
+		return mode;
+	}
+	
+	public boolean isRunning() {
+		return running;
+	}
+	
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
 }

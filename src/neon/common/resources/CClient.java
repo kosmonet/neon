@@ -36,7 +36,7 @@ public final class CClient extends Resource {
 	public final String subtitle;
 	public final String intro;
 	
-	private final ImmutableSet<String> species;
+	private final Set<String> species;
 	
 	/**
 	 * Initializes the client configuration resource. Duplicates in the given
@@ -56,9 +56,10 @@ public final class CClient extends Resource {
 	}
 
 	/**
-	 * Returns the id's of all playable species.
+	 * Returns a set of all species the player can choose from during 
+	 * character creation.
 	 * 
-	 * @return an unmodifiable {@code Set} with id's
+	 * @return an unmodifiable {@code Set} with creature id's
 	 */
 	public Set<String> getPlayableSpecies() {
 		return species;

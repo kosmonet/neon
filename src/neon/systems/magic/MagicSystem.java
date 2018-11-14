@@ -30,6 +30,12 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
+/**
+ * The system that takes care of spells and enchantments.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class MagicSystem {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
@@ -60,24 +66,35 @@ public final class MagicSystem {
 		bus.post(new ComponentUpdateEvent(magic));
 	}
 
+	/**
+	 * Handles spellcasting events.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void onCast(MagicEvent.Cast event) throws ResourceException {
 		RSpell spell = resources.getResource("spells", event.spell);
-		cast(spell.effect, spell.magnitude);
+		cast(event.target, spell.effect, spell.magnitude);
 		Stats casterStats = entities.getEntity(event.caster).getComponent(Stats.class);
 		casterStats.addMana(-MagicUtils.getCost(spell));
 		bus.post(new ComponentUpdateEvent(casterStats));
 	}
 	
+	/**
+	 * Handles enchantment events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onItemUse(MagicEvent.Use event) {
 		Entity item = entities.getEntity(event.item);
 		Enchantment enchantment = item.getComponent(Enchantment.class);
-		cast(enchantment.getEffect(), enchantment.getMagnitude());
+		cast(PLAYER_UID, enchantment.getEffect(), enchantment.getMagnitude());
 	}
 	
-	private void cast(Effect effect, int magnitude) {
-		Stats stats = entities.getEntity(PLAYER_UID).getComponent(Stats.class);
+	private void cast(long target, Effect effect, int magnitude) {
+		Stats stats = entities.getEntity(target).getComponent(Stats.class);
 		switch (effect) {
 		case HEAL:
 			stats.addHealth(magnitude);

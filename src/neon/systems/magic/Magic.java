@@ -29,7 +29,7 @@ public final class Magic implements Component {
 	private final long uid;
 	private final Set<String> spells = new HashSet<>();
 	
-	private Optional<String> equiped = Optional.empty();
+	private Optional<String> equipped = Optional.empty();
 	
 	public Magic(long uid) {
 		this.uid = uid;
@@ -51,20 +51,20 @@ public final class Magic implements Component {
 	
 	public void equip(String spell) {
 		if (spells.contains(spell)) {
-			equiped = Optional.of(spell);
+			equipped = Optional.of(spell);
 		}
 	}
 	
-	public Optional<String> getEquiped() {
-		return equiped;
+	public Optional<String> getEquipped() {
+		return equipped;
 	}
 	
-	public boolean hasEquiped(String spell) {
-		return equiped.orElse("").equals(spell);
+	public boolean hasEquipped(String spell) {
+		return equipped.orElse("").equals(spell);
 	}
 	
 	public void unequip() {
-		equiped = Optional.empty();
+		equipped = Optional.empty();
 	}
 	
 	@Override

@@ -26,10 +26,10 @@ import neon.common.entity.Entity;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
-import neon.common.resources.CGame;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
 import neon.server.systems.NeonSystem;
 
 public final class AISystem implements NeonSystem {
@@ -37,14 +37,15 @@ public final class AISystem implements NeonSystem {
 	
 	private final Random random = new Random();
 	private final ResourceManager resources;
+	private final Configuration config;
 	
-	public AISystem(ResourceManager resources) {
+	public AISystem(ResourceManager resources, Configuration config) {
 		this.resources = resources;
+		this.config = config;
 	}
 	
 	private void act(Entity creature) {
 		try {
-			CGame config = resources.getResource("config", "game");
 			RMap map = resources.getResource("maps", config.getCurrentMap());
 			Shape shape = creature.getComponent(Shape.class);
 

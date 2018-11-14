@@ -20,35 +20,30 @@ package neon.client.states;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
+import neon.client.Configuration;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
-import neon.client.ui.ButtonTypes;
+import neon.client.ui.Accelerator;
 import neon.client.ui.ClientRenderer;
 import neon.client.ui.Pointer;
 import neon.client.ui.UserInterface;
-import neon.common.entity.PlayerMode;
 import neon.common.entity.components.CreatureInfo;
-import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
@@ -61,9 +56,10 @@ import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 import neon.systems.magic.MagicEvent;
+import neon.systems.magic.RSpell;
+import neon.systems.magic.Target;
 import neon.systems.time.RestEvent;
 import neon.util.Direction;
 
@@ -84,6 +80,8 @@ public final class GameState extends State {
 	private final ResourceManager resources;
 	private final ComponentManager components;
 	private final Pointer pointer = new Pointer(POINTER_UID);
+	private final Accelerator accelerator;
+	private final Configuration config;
 	
 	@FXML private StackPane stack;
 	@FXML private BorderPane infoPane;
@@ -92,8 +90,6 @@ public final class GameState extends State {
 	
 	private Scene scene;
 	private int scale = 20;
-	private RMap map;
-	private boolean paused = true;
 	private boolean looking = false;
 	private boolean redraw = true;
 	
@@ -105,12 +101,15 @@ public final class GameState extends State {
 	 * @param provider
 	 * @param resources
 	 */
-	public GameState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
+	public GameState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.ui = ui;
 		this.bus = bus;
 		this.resources = resources;
 		this.components = components;
+		this.config = config;
+		
 		renderPane = new RenderPane<Long>(resources, new ClientRenderer(components));
+		accelerator = new Accelerator(ui, bus, components, config);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -129,17 +128,17 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		// TODO: hotkeys voorzien voor spells of items
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> bus.post(new TransitionEvent("inventory", map)));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> bus.post(new TransitionEvent("inventory")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> bus.post(new TransitionEvent("journal")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map", map)));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new HelpWindow().show("game.html"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quit());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> act());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> changeMode());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> accelerator.quit());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> accelerator.act());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> accelerator.changeMode(modeLabel));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), () -> look());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> use());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> accelerator.use());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.R), () -> bus.post(new RestEvent.Sleep()));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 		
@@ -159,10 +158,25 @@ public final class GameState extends State {
 	
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-		map = resources.getResource("maps", event.map);
-		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
-		renderPane.setMap(map.getTerrain(), map.getElevation(), map.getEntities());		
+		Platform.runLater(() -> renderPane.setMap(config.getCurrentMap().getTerrain(), 
+				config.getCurrentMap().getElevation(), config.getCurrentMap().getEntities()));
+		scheduleRedraw();
+	}
+	
+	@Subscribe
+	private void onMove(UpdateEvent.Move event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(config.getCurrentMap().getEntities()));
+		scheduleRedraw();
+	}
+	
+	@Subscribe
+	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
+		Platform.runLater(() -> renderPane.updateMap(config.getCurrentMap().getEntities()));
+		scheduleRedraw();
+	}
+	
+	@Subscribe
+	private void onUpdate(ComponentUpdateEvent event) {
 		scheduleRedraw();
 	}
 	
@@ -172,41 +186,10 @@ public final class GameState extends State {
 			redraw = true;
 		}		
 	}
-	
-	@Subscribe
-	private void onMove(UpdateEvent.Move event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		scheduleRedraw();
-	}
-	
-	@Subscribe
-	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(map.getEntities()));
-		scheduleRedraw();
-	}
-	
-	@Subscribe
-	private void onUpdate(ComponentUpdateEvent event) {
-		scheduleRedraw();
-	}
-	
-	private void changeMode() {
-		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
-		switch (record.getMode()) {
-		case NONE:
-			record.setMode(PlayerMode.AGGRESSION);
-			break;
-		case AGGRESSION:
-			record.setMode(PlayerMode.STEALTH);
-			break;
-		case STEALTH:
-			record.setMode(PlayerMode.NONE);
-			break;
-		}
-		modeLabel.setText(record.getMode().toString());		
-	}
-	
+
 	private void move(Direction direction) {
+		RMap map = config.getCurrentMap();
+		
 		if (!looking) {
 			bus.post(new InputEvent.Move(direction, map.id));
 		} else {
@@ -235,44 +218,49 @@ public final class GameState extends State {
 			redraw();
 		}
 	}
-	
+
+	/**
+	 * Lets the player cast a spell.
+	 */
 	private void cast() {
 		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
-		if (magic.getEquiped().isPresent()) {
-			bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquiped().get(), PLAYER_UID));
+		if (magic.getEquipped().isPresent()) {
+			String id = magic.getEquipped().get();
+			
+			try {
+				RSpell spell = resources.getResource("spells", id);
+				
+				if (looking && spell.target == Target.OTHER) {
+					if (magic.getEquipped().isPresent()) {
+						Optional<Long> creature = config.getCurrentMap().getEntities(pointer.getX(), pointer.getY()).stream()
+								.filter(uid -> components.hasComponent(uid, CreatureInfo.class)).findFirst();
+						if (creature.isPresent() && creature.get() != PLAYER_UID) {
+							creature.ifPresent(uid -> bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquipped().get(), uid)));
+						}
+						look();
+					}
+				} else if (spell.target == Target.SELF) {
+					bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquipped().get(), PLAYER_UID));
+				} else {
+					look();
+				}
+			} catch (ResourceException e) {
+				logger.severe("spell <" + id + "> not found");
+			}
 		} 
 	}
-	
-	private void use() {
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
-		ArrayList<ButtonType> items = new ArrayList<>();
-		HashMap<ButtonType, Long> mapping = new HashMap<>();
-		
-		for (long item : inventory.getEquippedItems()) {
-			if (components.hasComponent(item, Enchantment.class)) {
-				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).name);
-				mapping.put(button, item);
-				items.add(button);
-			}
-		}
-		
-		Optional<ButtonType> result = ui.showQuestion("What item to use?", items.toArray(new ButtonType[items.size()]));
-		if (result.isPresent()) {
-			bus.post(new MagicEvent.Use(mapping.get(result.get())));
-		}
-	}
-	
+
 	private void look() {
 		if (!looking) {
 			pointer.setPosition(components.getComponent(PLAYER_UID, Shape.class));
-			ArrayList<Long> entities = new ArrayList<>(map.getEntities());
+			ArrayList<Long> entities = new ArrayList<>(config.getCurrentMap().getEntities());
 			entities.add(POINTER_UID);
 			renderPane.updateMap(entities);
 			infoLabel.setVisible(true);
 			redraw();
 			looking = true;
 		} else {
-			renderPane.updateMap(map.getEntities());
+			renderPane.updateMap(config.getCurrentMap().getEntities());
 			infoLabel.setVisible(false);
 			redraw();
 			looking = false;
@@ -313,65 +301,22 @@ public final class GameState extends State {
 	}
 	
 	private void pause() {
-		if (paused) {
-			paused = false;
+		if (config.isPaused()) {
+			config.setPaused(false);
 			bus.post(new InputEvent.Unpause());
 		} else {
-			paused = true;
+			config.setPaused(true);
 			bus.post(new InputEvent.Pause());
 		}
 	}
-	
-	private void act() {
-		// check if there's another entity besides the player on the given position
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-		if (map.getEntities(shape.getX(), shape.getY()).size() > 1) {
-			bus.post(new TransitionEvent("pick", map));			
-		}
-	}
-	
-	@Subscribe
-	private void onSleep(RestEvent.Wake event) {
-		FadeTransition transition = new FadeTransition(Duration.millis(2000), stack);
-		transition.setFromValue(1.0);
-	    transition.setToValue(0.0);
-	    transition.setAutoReverse(true);
-	    transition.setCycleCount(2);
-	    transition.setOnFinished(action -> ui.showOverlayMessage("You have slept.", 1500));
-	    transition.play();
-	}
-	
-	private void quit() {
-		// pause the server
-		if (!paused) {
-			bus.post(new InputEvent.Pause());
-		}
-		
-		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
-				ButtonTypes.yes, ButtonTypes.no, ButtonTypes.cancel);
 
-		if (result.get().equals(ButtonTypes.yes)) {
-			// server takes care of saving
-			bus.post(new InputEvent.Save());
-		    bus.post(new InputEvent.Quit());
-		} else if (result.get().equals(ButtonTypes.no)) {
-			// server takes care of quitting
-		    bus.post(new InputEvent.Quit());
-		}
-		
-		// unpause if necessary
-		if (!paused) {
-			bus.post(new InputEvent.Unpause());
-		}
-	}
-	
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering game module");
 		ui.showScene(scene);
 		
 		// unpause the server when returning to the game module
-		if (!paused) {
+		if (!config.isPaused()) {
 			bus.post(new InputEvent.Unpause());
 		}
 	}

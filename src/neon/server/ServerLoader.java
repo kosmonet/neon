@@ -148,7 +148,7 @@ final class ServerLoader {
 			for (String id : configuration.getModules()) {
 				modules.add(id);
 				RModule module = resources.getResource(id);
-				for (String parent : module.getParents()) {
+				for (String parent : module.getParentModules()) {
 					if (!modules.contains(parent)) {
 						logger.warning("module <" + id + "> is missing parent <" + parent + ">");
 						bus.post(new MessageEvent("Module <" + id + "> is missing parent <" + 

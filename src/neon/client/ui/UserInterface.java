@@ -45,7 +45,7 @@ import neon.common.event.MessageEvent;
 
 /**
  * The user interface contains a number of JavaFX-related utility methods that 
- * can be used by modules. 
+ * can be used by the client. 
  * 
  * @author mdriesen
  *
@@ -78,7 +78,7 @@ public final class UserInterface {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load loading screen :-/ " + e.getMessage());
+			logger.severe("failed to load the loading screen :-/ " + e.getMessage());
 		}
 		
 		stage.show();
@@ -175,7 +175,16 @@ public final class UserInterface {
 
 		return alert.showAndWait();
 	}
-
+	
+	/**
+	 * Returns the current scene shown on the main stage.
+	 * 
+	 * @return
+	 */
+	public Scene getCurrentScene() {
+		return stage.getScene();
+	}
+	
 	/**
 	 * Sets the {@code Scene} to show on the JavaFX primary {@code Stage}.
 	 * 

@@ -41,25 +41,26 @@ public final class ModuleLoader implements ResourceLoader<RModule> {
 		int y = Integer.parseInt(start.getAttributeValue("y"));		
 		int money = Integer.parseInt(start.getAttributeValue("money"));
 		
-		RModule module = new RModule(id, title, subtitle, map, x, y, intro, money);
+		RModule.Builder builder = new RModule.Builder(id).setTitle(title).setSubtitle(subtitle).setIntro(intro);
+		builder.setStartMap(map).setStartMoney(money).setStartPosition(x, y);
 		
 		for (Element species : root.getChild("playable").getChildren()) {
-			module.addPlayableSpecies(species.getText());
+			builder.addPlayableSpecies(species.getText());
 		}
 		
 		for (Element parent : root.getChild("parents").getChildren()) {
-			module.addParent(parent.getText());
+			builder.addParentModule(parent.getText());
 		}
 		
 		for (Element item : start.getChildren("item")) {
-			module.addStartItem(item.getAttributeValue("id"));
+			builder.addStartItem(item.getAttributeValue("id"));
 		}
 		
 		for (Element item : start.getChildren("spell")) {
-			module.addStartSpell(item.getAttributeValue("id"));
+			builder.addStartSpell(item.getAttributeValue("id"));
 		}
 		
-		return module;
+		return builder.build();
 	}
 
 	@Override
@@ -71,9 +72,9 @@ public final class ModuleLoader implements ResourceLoader<RModule> {
 		root.addContent(title);
 		
 		Element start = new Element("start");
-		start.setAttribute("map", module.startMap);
-		start.setAttribute("x", Integer.toString(module.getStartX()));
-		start.setAttribute("y", Integer.toString(module.getStartY()));
+		start.setAttribute("map", module.map);
+		start.setAttribute("x", Integer.toString(module.x));
+		start.setAttribute("y", Integer.toString(module.y));
 		root.addContent(start);
 		
 		if (!module.intro.isEmpty()) {
@@ -92,7 +93,7 @@ public final class ModuleLoader implements ResourceLoader<RModule> {
 		
 		Element parents = new Element("parents");
 		root.addContent(parents);
-		for (String parent : module.getParents()) {
+		for (String parent : module.getParentModules()) {
 			Element id = new Element("id");
 			id.setText(parent);
 			parents.addContent(id);

@@ -18,65 +18,52 @@
 
 package neon.common.resources;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 public final class CGame extends Resource {
-	public enum GameMode {
-		TURN_BASED, REAL_TIME;
-	}
+	/** The id of the map the game starts on. */
+	public final String map;
+	/** The starting x position. */
+	public final int startX;
+	/** The starting y position. */
+	public final int startY;
+	/** The amount of money the player starts with. */
+	public final int startMoney;
 
-	public final String startMap;
-	public final int startX, startY, startMoney;
-
-	private final List<String> items = new ArrayList<>();
-	private final Set<String> spells = new HashSet<>();
+	private final List<String> items;
+	private final Set<String> spells;
 	
-	private String currentMap;
-	private GameMode mode = GameMode.TURN_BASED;
-	
-	public CGame(String startMap, int startX, int startY, int startMoney) {
+	public CGame(String startMap, int startX, int startY, int startMoney, Collection<String> items, Collection<String> spells) {
 		super("game", "config");
-		this.startMap = startMap;
-		currentMap = startMap;
+		this.map = startMap;
 		this.startX = startX;
 		this.startY = startY;
 		this.startMoney = startMoney;
-	}
-	
-	public void addStartItems(Collection<String> items) {
-		this.items.addAll(items);
-	}
-	
-	public void addStartSpells(Collection<String> spells) {
-		this.spells.addAll(spells);
-	}
-	
-	public List<String> getStartItems() {
-		return Collections.unmodifiableList(items);
-	}
-	
-	public Set<String> getStartSpells() {
-		return Collections.unmodifiableSet(spells);
+		
+		this.items = ImmutableList.copyOf(items);
+		this.spells = ImmutableSet.copyOf(spells);
 	}
 	
 	/**
+	 * A list of items the player start the game with.
 	 * 
-	 * @return	the id of the current map
+	 * @return	an unmodifiable list of item id's
 	 */
-	public String getCurrentMap() {
-		return currentMap;
+	public List<String> getStartItems() {
+		return items;
 	}
 	
-	public void setMode(GameMode mode) {
-		this.mode = mode;
-	}
-	
-	public GameMode getMode() {
-		return mode;
+	/**
+	 * A set of spells the player starts the game with.
+	 * 
+	 * @return	an unmodifiable set of spell id's
+	 */
+	public Set<String> getStartSpells() {
+		return spells;
 	}
 }

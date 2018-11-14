@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,10 +20,12 @@ package neon.common.resources;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A module resource.
@@ -32,99 +34,161 @@ import java.util.Set;
  *
  */
 public final class RModule extends Resource {
-	/**
-	 * The title that should be displayed on the start screen. 
-	 */
+	/** The title that should be displayed on the start screen. */
 	public final String title;
+	/** The subtitle that should be displayed on the start screen. */
 	public final String subtitle;
+	/** The introductory text that should be shown. */
 	public final String intro;
-	public final String startMap;
+	/** The starting map. */
+	public final String map;
+	/** The starting x position. */
+	public final int x;
+	/** The starting y position. */
+	public final int y;
+	/** The starting money. */
+	public final int money;
 
-	private final Set<String> species = new HashSet<>();
-	private final Set<String> parents = new HashSet<>();
-	private final List<String> items = new ArrayList<>();
-	private final Set<String> spells = new HashSet<>();
-	private final int x, y, money;
+	private final Set<String> species;
+	private final Set<String> parents;
+	private final List<String> items;
+	private final Set<String> spells;
 
-	public RModule(String id, String title, String subtitle, String startMap, int startX, int startY, String intro, int startMoney) {
-		super(id, "global");
-		this.title = title;
-		this.subtitle = subtitle;
-		this.intro = intro;
-		this.startMap = startMap;
-		x = startX;
-		y = startY;
-		money = startMoney;
+	/**
+	 * Initializes this RModule with a builder.
+	 * 
+	 * @param builder
+	 */
+	private RModule(Builder builder) {
+		super(builder.id, "global");
+		title = builder.title;
+		subtitle = builder.subtitle;
+		intro = builder.intro;
+		map = builder.map;
+		x = builder.x;
+		y = builder.y;
+		money = builder.money;
+
+		species = ImmutableSet.copyOf(builder.creatures);
+		parents = ImmutableSet.copyOf(builder.parents);
+		spells = ImmutableSet.copyOf(builder.spells);
+		items = ImmutableList.copyOf(builder.items);
 	}
 	
-	public void addStartItem(String id) {
-		items.add(id);
-	}
-	
-	public void addStartSpell(String id) {
-		spells.add(id);
-	}
-	
+	/**
+	 * Returns a list of items the player starts the game with.
+	 * 
+	 * @return	an unmodifiable list of item id's
+	 */
 	public Collection<String> getStartItems() {
-		return Collections.unmodifiableCollection(items);
+		return items;
 	}
 	
+	/**
+	 * Returns a set of spells the player starts with.
+	 * 
+	 * @return	an unmodifiable set of spell id's
+	 */
 	public Set<String> getStartSpells() {
-		return Collections.unmodifiableSet(spells);
+		return spells;
 	}
 	
 	/**
-	 * Adds a creature to the list of playable species.
+	 * Returns a set of species the player can choose from during character
+	 * creation.
 	 * 
-	 * @param creature the id of a playable creature
-	 */
-	public void addPlayableSpecies(String creature) {
-		species.add(creature);
-	}
-	
-	/**
-	 * Adds creatures to the list of playable species.
-	 * 
-	 * @param creatures
-	 */
-	public void addPlayableSpecies(Collection<String> creatures) {
-		species.addAll(creatures);
-	}
-	
-	/**
-	 * 
-	 * @return a set of playable species
+	 * @return	an unmodifiable set of creature id's
 	 */
 	public Set<String> getPlayableSpecies() {
-		return Collections.unmodifiableSet(species);
+		return species;
 	}
 	
 	/**
-	 * Adds modules to the list of parent modules.
+	 * Returns a set of all the parent modules this module depends on.
 	 * 
-	 * @param species
+	 * @return	an unmodifiable set of module id's
 	 */
-	public void addParent(String parent) {
-		parents.add(parent);
+	public Set<String> getParentModules() {
+		return parents;
 	}
 	
 	/**
+	 * A builder for RModules.
 	 * 
-	 * @return a set of parent modules
+	 * @author mdriesen
+	 *
 	 */
-	public Set<String> getParents() {
-		return Collections.unmodifiableSet(parents);
-	}
-	
-	public int getStartX() {
-		return x;
-	}
-
-	public int getStartY() {
-		return y;
-	}
-	
-	public int getStartMoney() {
-		return money;
+	public static final class Builder {
+		private String id;
+		private String title = "";
+		private String subtitle = "";
+		private String intro = "";
+		private String map = "";
+		private int x = -1;
+		private int y = -1;
+		private int money = -1;
+		private Set<String> creatures = new HashSet<>();
+		private Set<String> spells = new HashSet<>();
+		private Set<String> parents = new HashSet<>();
+		private List<String> items = new ArrayList<>();
+		
+		public Builder(String id) {
+			this.id = id;
+		}
+		
+		public RModule build() {
+			return new RModule(this);
+		}
+		
+		public Builder setTitle(String title) {
+			this.title = title;
+			return this;
+		}
+		
+		public Builder setSubtitle(String subtitle) {
+			this.subtitle = subtitle;
+			return this;
+		}
+		
+		public Builder setIntro(String intro) {
+			this.intro = intro;
+			return this;
+		}
+		
+		public Builder setStartMap(String map) {
+			this.map = map;
+			return this;
+		}
+		
+		public Builder setStartPosition(int x, int y) {
+			this.x = x;
+			this.y = y;
+			return this;
+		}
+		
+		public Builder setStartMoney(int money) {
+			this.money = money;
+			return this;
+		}
+		
+		public Builder addStartItem(String item) {
+			items.add(item);
+			return this;
+		}
+		
+		public Builder addStartSpell(String spell) {
+			spells.add(spell);
+			return this;
+		}
+		
+		public Builder addPlayableSpecies(String species) {
+			creatures.add(species);
+			return this;
+		}
+		
+		public Builder addParentModule(String module) {
+			parents.add(module);
+			return this;
+		}
 	}
 }

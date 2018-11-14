@@ -31,6 +31,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import neon.client.handlers.CollisionHandler;
 import neon.client.handlers.EntityHandler;
+import neon.client.handlers.GameHandler;
 import neon.client.handlers.MessageHandler;
 import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
@@ -74,6 +75,7 @@ public final class Client implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
 	private final ResourceManager resources = new ResourceManager(files);
 	private final ComponentManager components = new ComponentManager();
+	private final Configuration config = new Configuration();
 
 	/**
 	 * Initializes the client.
@@ -108,9 +110,10 @@ public final class Client implements Runnable {
 		resources.addLoader("spells", new SpellLoader());
 		
 		// set up some event handlers
-		bus.register(new CollisionHandler(ui, bus, components));
+		bus.register(new CollisionHandler(ui, bus, components, config));
 		bus.register(new EntityHandler(components, resources));
 		bus.register(new MessageHandler(ui, components));
+		bus.register(new GameHandler(ui, components, resources, config));
 		
 		// initialize all states and enter the first one
 		initStates(version);
@@ -128,7 +131,7 @@ public final class Client implements Runnable {
 	}
 	
 	/**
-	 * Initializes all the states and transtitions in the state machine.
+	 * Initializes all the states and transitions in the state machine.
 	 * 
 	 * @param version
 	 */
@@ -137,12 +140,12 @@ public final class Client implements Runnable {
 		NewGameState newGame = new NewGameState(ui, bus, resources);
 		LoadState loadGame = new LoadState(ui, bus);
 		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
-		GameState game = new GameState(ui, bus, components, resources);
+		GameState game = new GameState(ui, bus, components, resources, config);
 		bus.register(game);
-		InventoryState inventory = new InventoryState(ui, bus, components);
-		MapState map = new MapState(ui, bus, resources);
+		InventoryState inventory = new InventoryState(ui, bus, components, config);
+		MapState map = new MapState(ui, bus, resources, config);
 		ConversationState conversation = new ConversationState(ui, bus, components);
-		ContainerState container = new ContainerState(ui, bus, components);
+		ContainerState container = new ContainerState(ui, bus, components, config);
 		JournalState journal = new JournalState(ui, bus, components);
 		OptionState options = new OptionState(ui, bus);
 		MagicState magic = new MagicState(ui, bus, components, resources);

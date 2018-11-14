@@ -35,11 +35,11 @@ import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.CGame;
 import neon.common.resources.RMap;
-import neon.common.resources.CGame.GameMode;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
+import neon.server.Configuration.GameMode;
 import neon.server.entity.EntityManager;
 import neon.systems.ai.AISystem;
 import neon.systems.combat.CombatSystem;
@@ -63,17 +63,15 @@ public final class SystemManager {
 	private final InputSystem inputSystem;
 	private final CombatSystem combatSystem;
 	private final MagicSystem magicSystem;
-	
-	private boolean running = false;
-	private CGame config;
+	private final Configuration config = new Configuration();
 	
 	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		
 		// create all systems
-		moveSystem = new MovementSystem(resources, entities, bus);
-		aiSystem = new AISystem(resources);
+		moveSystem = new MovementSystem(resources, entities, bus, config);
+		aiSystem = new AISystem(resources, config);
 		actionSystem = new ActionSystem(bus);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
 		combatSystem = new CombatSystem(entities, bus);
@@ -87,9 +85,13 @@ public final class SystemManager {
 	}
 	
 	@Subscribe
-	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
-		config = resources.getResource("config", "game");
-		running = true;
+	private void onMapChange(UpdateEvent.Map event) {
+		config.setCurrentMap(event.map);
+	}
+	
+	@Subscribe
+	private void onGameStart(UpdateEvent.Start event) {
+		config.setRunning(true);
 	}
 	
 	@Subscribe
@@ -103,15 +105,15 @@ public final class SystemManager {
 	}
 	
 	@Subscribe
-	private void onTimerTick(TimerEvent event) throws ResourceException {
-		if (running && config.getMode().equals(GameMode.REAL_TIME)) {
+	private void onTimerTick(TimerEvent event) {
+		if (config.isRunning() && config.getMode().equals(GameMode.REAL_TIME)) {
 			update(5);
 		}
 	}
 
 	@Subscribe
-	private void onNextTurn(TurnEvent event) throws ResourceException {
-		if (running && config.getMode().equals(GameMode.TURN_BASED)) {
+	private void onNextTurn(TurnEvent event) {
+		if (config.isRunning() && config.getMode().equals(GameMode.TURN_BASED)) {
 			update(1);
 		}
 	}

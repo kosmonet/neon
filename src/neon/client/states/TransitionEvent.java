@@ -36,11 +36,10 @@ public final class TransitionEvent extends ClientEvent {
 	private boolean consumed = false;
 	
 	/**
-	 * Initializes a new transition event with a single parameter.
+	 * Initializes a new transition event with parameters.
 	 * 
 	 * @param condition
-	 * @param key
-	 * @param parameter
+	 * @param parameters
 	 */
 	public TransitionEvent(String condition, Object... parameters) {
 		this.condition = condition;

@@ -16,8 +16,33 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.systems.magic;
+package neon.client;
 
-public enum Target {
-	SELF, OTHER, AREA;
+import neon.common.resources.RMap;
+
+/**
+ * Configuration for the client.
+ * 
+ * @author mdriesen
+ *
+ */
+public class Configuration {
+	private boolean paused = true;
+	private RMap map;
+	
+	public void setCurrentMap(RMap map) {
+		this.map = map;
+	}
+	
+	public RMap getCurrentMap() {
+		return map;
+	}
+	
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+	
+	public boolean isPaused() {
+		return paused;
+	}
 }
