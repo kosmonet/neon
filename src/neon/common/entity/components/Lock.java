@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ package neon.common.entity.components;
 public final class Lock implements Component {
 	private final long uid;
 	
+	private boolean locked = true;
+	
 	public Lock(long uid) {
 		this.uid = uid;
 	}
@@ -40,5 +42,17 @@ public final class Lock implements Component {
 	@Override
 	public long getEntity() {
 		return uid;
+	}
+	
+	public boolean isLocked() {
+		return locked;
+	}
+	
+	public void lock() {
+		locked = true;
+	}
+	
+	public void unlock() {
+		locked = false;
 	}
 }

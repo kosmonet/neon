@@ -44,6 +44,7 @@ import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Lock;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
@@ -340,6 +341,10 @@ public final class GameLoader {
 		
 		if (item.hasComponent(Enchantment.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
+		}
+		
+		if (item.hasComponent(Lock.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
 		}
 		
 		if (item.hasComponent(Inventory.class)) {

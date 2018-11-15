@@ -27,6 +27,15 @@ public abstract class StealthEvent extends NeonEvent {
 		}
 	}
 	
+	public static final class Unlock extends StealthEvent {
+		public final long lock;
+		
+		public Unlock(long lock) {
+			this.lock = lock;
+		}
+	}
+	
 	public static final class Empty extends StealthEvent {}
-	public static final class Success extends StealthEvent {}
+	public static final class Stolen extends StealthEvent {}
+	public static final class Unlocked extends StealthEvent {}
 }

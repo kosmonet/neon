@@ -20,7 +20,9 @@ package neon.client.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
 
@@ -32,9 +34,11 @@ import neon.client.states.TransitionEvent;
 import neon.common.entity.PlayerMode;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Lock;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.event.InputEvent;
+import neon.common.event.StealthEvent;
 import neon.common.resources.RMap;
 import neon.systems.magic.Enchantment;
 import neon.systems.magic.MagicEvent;
@@ -64,9 +68,43 @@ public class Accelerator {
 		// check if there's another entity besides the player on the given position
 		RMap map = config.getCurrentMap();
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-		if (map.getEntities(shape.getX(), shape.getY()).size() > 1) {
-			bus.post(new TransitionEvent("pick", map));			
+		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
+				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());
+		
+		if (entities.size() > 1) {
+			bus.post(new TransitionEvent("pick"));			
+		} else {
+			if (components.hasComponent(entities.get(0), Lock.class)) {
+				Lock lock = components.getComponent(entities.get(0), Lock.class);
+				if (lock.isLocked()) {
+					pickLock(lock);
+				} else {
+					bus.post(new TransitionEvent("pick"));					
+				}
+			} else {
+				bus.post(new TransitionEvent("pick"));				
+			}
 		}
+	}
+	
+	private void pickLock(Lock lock) {
+		// pause the server
+		if (!config.isPaused()) {
+			bus.post(new InputEvent.Pause());
+		}
+		
+		Optional<ButtonType> result = ui.showQuestion("Try to pick lock?", 
+				ButtonTypes.yes, ButtonTypes.no);
+
+		if (result.get().equals(ButtonTypes.yes)) {
+			// server takes care of saving
+			bus.post(new StealthEvent.Unlock(lock.getEntity()));
+		} 
+		
+		// unpause if necessary
+		if (!config.isPaused()) {
+			bus.post(new InputEvent.Unpause());
+		}		
 	}
 	
 	/**

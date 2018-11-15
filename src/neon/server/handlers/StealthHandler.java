@@ -28,6 +28,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Lock;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.StealthEvent;
 import neon.server.entity.EntityManager;
@@ -62,7 +63,15 @@ public final class StealthHandler {
 			playerInventory.addItem(item);
 			bus.post(new ComponentUpdateEvent(victimInventory));
 			bus.post(new ComponentUpdateEvent(playerInventory));
-			bus.post(new StealthEvent.Success());
+			bus.post(new StealthEvent.Stolen());
 		}
+	}
+	
+	@Subscribe
+	private void onLockpick(StealthEvent.Unlock event) {
+		Entity item = entities.getEntity(event.lock);
+		item.getComponent(Lock.class).unlock();
+		bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
+		bus.post(new StealthEvent.Unlocked());		
 	}
 }

@@ -71,8 +71,13 @@ public class MessageHandler {
 	}
 	
 	@Subscribe
-	private void onPickpocketSuccess(StealthEvent.Success event) {
+	private void onPickpocketSuccess(StealthEvent.Stolen event) {
 		ui.showOverlayMessage("You've stolen something.", 1000);
+	}
+	
+	@Subscribe
+	private void onLockpickSuccess(StealthEvent.Unlocked event) {
+		ui.showOverlayMessage("You've picked a lock.", 1000);
 	}
 	
 	@Subscribe
