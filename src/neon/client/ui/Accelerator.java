@@ -30,7 +30,7 @@ import neon.client.Configuration;
 import neon.client.ComponentManager;
 import neon.client.states.TransitionEvent;
 import neon.common.entity.PlayerMode;
-import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
@@ -69,6 +69,11 @@ public class Accelerator {
 		}
 	}
 	
+	/**
+	 * Changes the player mode.
+	 * 
+	 * @param modeLabel
+	 */
 	public void changeMode(Label modeLabel) {
 		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
@@ -85,12 +90,15 @@ public class Accelerator {
 		modeLabel.setText(record.getMode().toString());		
 	}
 	
+	/**
+	 * Lets the player choose an enchanted item to use.
+	 */
 	public void use() {
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
 		ArrayList<ButtonType> items = new ArrayList<>();
 		HashMap<ButtonType, Long> mapping = new HashMap<>();
 		
-		for (long item : inventory.getEquippedItems()) {
+		for (long item : equipment.getEquippedItems()) {
 			if (components.hasComponent(item, Enchantment.class)) {
 				ButtonType button = new ButtonType(components.getComponent(item, ItemInfo.class).name);
 				mapping.put(button, item);
@@ -104,6 +112,9 @@ public class Accelerator {
 		}
 	}
 	
+	/**
+	 * Asks the player to quit the game.
+	 */
 	public void quit() {
 		// pause the server
 		if (!config.isPaused()) {

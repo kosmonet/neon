@@ -69,7 +69,7 @@ public final class ItemLoader implements ResourceLoader<RItem> {
 		case "container":
 			return new RItem.Container(builder);
 		default:
-			return new RItem(builder);
+			return builder.build();
 		}
 	}
 	

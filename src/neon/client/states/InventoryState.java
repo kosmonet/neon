@@ -35,7 +35,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -45,17 +44,17 @@ import neon.client.ComponentManager;
 import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
+import neon.client.ui.ItemCell;
 import neon.client.ui.UserInterface;
 import neon.common.entity.Slot;
 import neon.common.entity.components.Clothing;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
-import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
-import neon.systems.magic.Enchantment;
 
 /**
  * A state to let the player handle their inventory.
@@ -104,7 +103,7 @@ public final class InventoryState extends State {
 		playerList.setOnKeyPressed(event -> keyPressed(event));
 		followerList.setOnKeyPressed(event -> keyPressed(event));
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
-		playerList.setCellFactory(playerList -> new ItemCell());
+		playerList.setCellFactory(playerList -> new ItemCell(components));
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -128,9 +127,9 @@ public final class InventoryState extends State {
 	
 	@FXML private void equipItem() {
 		long uid = playerList.getSelectionModel().getSelectedItem();
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
 
-		if (inventory.hasEquipped(uid)) {
+		if (equipment.hasEquipped(uid)) {
 			bus.post(new InventoryEvent.Unequip(uid));
 		} else {
 			if (components.hasComponent(uid,  Weapon.class)) {
@@ -173,6 +172,7 @@ public final class InventoryState extends State {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
 		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
 		int weight = ClientUtils.getWeight(inventory, components);
 		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone.");
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
@@ -181,7 +181,7 @@ public final class InventoryState extends State {
 		int rating = 0;
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
-			if (inventory.hasEquipped(uid) && components.hasComponent(uid, Armor.class)) {
+			if (equipment.hasEquipped(uid) && components.hasComponent(uid, Armor.class)) {
 				Armor armor = components.getComponent(uid, Armor.class);
 				Clothing clothing = components.getComponent(uid, Clothing.class);
 				rating += armor.getRating()*clothing.getSlot().modifier;
@@ -225,49 +225,4 @@ public final class InventoryState extends State {
 	    	}
 	    }
 	}
-
-	/**
-	 * A custom {@code ListCell} to render the items in the player's inventory.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-    private final class ItemCell extends ListCell<Long> {
-    	@Override
-    	public void updateItem(Long uid, boolean empty) {
-    		super.updateItem(uid, empty);
-    		
-    		if (empty) {
-    			setGraphic(null);
-    			setText(null);
-    		} else {
-    			StringBuilder style = new StringBuilder();
-    			
-    			if (components.hasComponent(uid, Enchantment.class)) {
-    				style.append(isSelected() ? "-fx-text-fill: turquoise;" : "-fx-text-fill: teal;");    				
-    			} else {
-    				style.append(isSelected() ? "-fx-text-fill: white;" : "-fx-text-fill: silver;");
-    			}
-    			
-    			Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
-    			if (inventory.hasEquipped(uid)) {
-    				style.append("-fx-font-weight: bold;");    				
-    			} else {
-    				style.append("-fx-font-weight: normal;");    				
-    			}
-    			
-    			setStyle(style.toString());
-    			
-    			StringBuilder text = new StringBuilder();
-    			
-    			if (components.hasComponent(uid, Weapon.class)) {
-    				text.append("⚔ ");
-    			}
-    			
-    			ItemInfo info = components.getComponent(uid, ItemInfo.class);
-    			text.append(info.name);
-    			setText(text.toString());
-    		}
-    	}
-    }
 }

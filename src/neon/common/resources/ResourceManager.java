@@ -50,7 +50,7 @@ public final class ResourceManager {
 	
 	private final NeonFileSystem files;
 	private final Table<String, String, SoftReference<Resource>> resources = HashBasedTable.create();
-	private final Map<String, ResourceLoader> loaders = new HashMap<>();
+	private final Map<String, ResourceLoader<? extends Resource>> loaders = new HashMap<>();
 	private final XMLTranslator translator = new XMLTranslator();
 	
 	/**
@@ -82,14 +82,14 @@ public final class ResourceManager {
 		saveToTemp(namespace, resource);
 	}
 
-	@SuppressWarnings("unchecked")
-	private void saveToTemp(String namespace, Resource resource) throws IOException {
+	private <T extends Resource> void saveToTemp(String namespace, T resource) throws IOException {
 		if (loaders.containsKey(namespace)) {
-			Document doc = new Document(loaders.get(namespace).save(resource));
+			ResourceLoader<T> loader = (ResourceLoader<T>) loaders.get(namespace);
+			Document doc = new Document(loader.save(resource));
 			if (namespace.equals("global")) {
-				files.saveFile(doc, translator, resource.id + ".xml");			
+				files.saveFile(doc, translator, resource.id + loader.getExtension());			
 			} else {
-				files.saveFile(doc, translator, namespace, resource.id + ".xml");							
+				files.saveFile(doc, translator, namespace, resource.id + loader.getExtension());							
 			}
 		} else {
 			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found.");

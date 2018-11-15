@@ -21,14 +21,10 @@ package neon.common.entity.components;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-
-import neon.common.entity.Slot;
 
 /**
- * The inventory of a creature.
+ * The inventory of an entity.
  * 
  * @author mdriesen
  *
@@ -36,12 +32,11 @@ import neon.common.entity.Slot;
 public final class Inventory implements Component {
 	private final long uid;
 	private final List<Long> items = new ArrayList<Long>();
-	private final Map<Slot, Long> equipped = new EnumMap<>(Slot.class);
 	
 	private int money = 0;
 	
 	/**
-	 * Creates an inventory for the creature with the given uid.
+	 * Creates an inventory for the entity with the given uid.
 	 * 
 	 * @param uid
 	 */
@@ -84,8 +79,6 @@ public final class Inventory implements Component {
 	 * @param uid	the uid of the item to remove
 	 */
 	public void removeItem(long uid) {
-		// unequip before removing
-		unequip(uid);
 		items.remove(uid);
 	}
 	
@@ -108,76 +101,11 @@ public final class Inventory implements Component {
 	}
 	
 	/**
-	 * Returns the creature's total money.
+	 * Returns the total money in this inventory.
 	 * 
 	 * @return
 	 */
 	public int getMoney() {
 		return money;
-	}
-	
-	/**
-	 * Checks whether an item is equipped.
-	 * 
-	 * @param uid
-	 * @return
-	 */
-	public boolean hasEquipped(long uid) {
-		return equipped.containsValue(uid);
-	}
-	
-	/**
-	 * Checks whether an item is equipped in the given slot.
-	 * @param slot
-	 * @return
-	 */
-	public boolean hasEquipped(Slot slot) {
-		return equipped.containsKey(slot);
-	}
-	
-	/**
-	 * Unequip an item.
-	 * 
-	 * @param uid
-	 */
-	public void unequip(Long uid) {
-		equipped.values().removeIf(uid::equals);
-	}
-	
-	/**
-	 * Unequip the item in the given slot.
-	 * 
-	 * @param slot
-	 */
-	public void unequip(Slot slot) {
-		unequip(equipped.get(slot));
-	}
-	
-	/**
-	 * Equip an item to a slot.
-	 * 
-	 * @param slot
-	 * @param uid
-	 */
-	public void equip(Slot slot, long uid) {
-		equipped.put(slot, uid);
-	}
-	
-	/**
-	 * 
-	 * @param slot
-	 * @return	the item in the given equipment slot.
-	 */
-	public long getEquipedItem(Slot slot) {
-		return equipped.get(slot);
-	}
-	
-	/**
-	 * Returns a collection of all the equipped items.
-	 * 
-	 * @return
-	 */
-	public Collection<Long> getEquippedItems() {
-		return Collections.unmodifiableCollection(equipped.values());
 	}
 }

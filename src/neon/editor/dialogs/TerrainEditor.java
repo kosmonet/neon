@@ -19,6 +19,7 @@
 package neon.editor.dialogs;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -122,7 +123,7 @@ public class TerrainEditor {
 		// check if the resource was actually changed
 		if (!name.equals(rt.name) || glyph != rt.glyph || !color.equals(rt.color)) {
 			card.setRedefined(card.isOriginal() ? true : false);
-			RTerrain terrain = new RTerrain(card.toString(), name, glyph, color);
+			RTerrain terrain = new RTerrain(card.toString(), name, glyph, color, Collections.emptySet());
 			bus.post(new SaveEvent.Resources(terrain));
 			card.setChanged(true);
 		}

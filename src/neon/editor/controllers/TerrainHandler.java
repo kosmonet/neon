@@ -19,6 +19,7 @@
 package neon.editor.controllers;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -127,7 +128,7 @@ public class TerrainHandler {
 			}
 
 			// create the terrain
-			RTerrain terrain = new RTerrain(id, id, '.', Color.WHITE);
+			RTerrain terrain = new RTerrain(id, id, '.', Color.WHITE, Collections.emptySet());
 
 			try {
 				resources.addResource(terrain);

@@ -32,32 +32,18 @@ import neon.systems.magic.Effect;
  *
  */
 public class RItem extends Resource {
-	/**
-	 * The display name.
-	 */
+	/** The display name. */
 	public final String name;
-	
-	/**
-	 * The UTF-8 character to represent the item on screen.
-	 */
+	/** The UTF-8 character to represent the item on screen. */
 	public final char glyph;
-	
-	/**
-	 * The color to render the character with.
-	 */
+	/** The color to render the character with. */
 	public final Color color;
-	
-	/**
-	 * The price of this item.
-	 */
+	/** The price of this item. */
 	public final int price;
-	
-	/**
-	 * The weight of this item.
-	 */
+	/** The weight of this item. */
 	public final int weight;
 	
-	public RItem(Builder builder) {
+	private RItem(Builder builder) {
 		super(builder.id, "items");
 		name = builder.name;
 		glyph = builder.glyph;
@@ -100,8 +86,11 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static class Clothing extends RItem {
+		/** The body slot this piece of clothing is worn on. */
 		public final Slot slot;
+		/** The magic effect of the enchantment. */
 		public final Optional<Effect> effect;
+		/** The magnitude of the enchantment. */
 		public final int magnitude;
 		
 		public Clothing(Builder builder) {
@@ -120,7 +109,9 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static final class Armor extends Clothing {
+		/** The armor rating. */
 		public final int rating;
+		/** The weight class. */
 		public final ArmorType type;
 		
 		public Armor(Builder builder) {
@@ -137,6 +128,7 @@ public class RItem extends Resource {
 	 *
 	 */
 	public static final class Weapon extends RItem {
+		/** The damage the weapon does. */
 		public final String damage;
 		
 		public Weapon(Builder builder) {
@@ -174,6 +166,10 @@ public class RItem extends Resource {
 		public Builder(String id, String name) {
 			this.id = id;
 			this.name = name;
+		}
+		
+		public RItem build() {
+			return new RItem(this);
 		}
 		
 		/**

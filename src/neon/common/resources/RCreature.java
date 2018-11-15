@@ -27,27 +27,17 @@ import javafx.scene.paint.Color;
  *
  */
 public final class RCreature extends Resource {
-	/**
-	 * The display name.
-	 */
+	/** The display name. */
 	public final String name;
-	
-	/**
-	 * The UTF-8 character to represent the creature on screen.
-	 */
+	/** The UTF-8 character to represent the creature on screen. */
 	public final char glyph;
-	
-	/**
-	 * The color to render the character with.
-	 */
+	/** The color to render the character with. */
 	public final Color color;
-	
-	/**
-	 * The speed stat.
-	 */
+	/** The speed stat. */
 	public final int speed;
 	
 	public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
+	/** The descripion of the creature. */
 	public final String description;
 	
 	private RCreature(Builder builder) {

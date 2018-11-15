@@ -23,23 +23,67 @@ import java.util.Optional;
 import neon.common.entity.Slot;
 
 public abstract class InventoryEvent extends NeonEvent {
+	/**
+	 * Event to indicate the player dropped something on the ground.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static final class Drop extends InventoryEvent {
-		public final long uid;
+		public final long item;
 		public final String map;
 		
-		public Drop(long uid, String map) {
-			this.uid = uid;
+		public Drop(long item, String map) {
+			this.item = item;
 			this.map = map;
 		}
 	}
 
+	/**
+	 * Event to indicate the player stored something in a container.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Store extends InventoryEvent {
+		public final long item;
+		public final long container;
+		
+		public Store(long item, long container) {
+			this.item = item;
+			this.container = container;
+		}
+	}
+
+	/**
+	 * Event to indicate the player picked something up from the ground.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static final class Pick extends InventoryEvent {
-		public final long uid;
+		public final long item;
 		public final String map;
 		
-		public Pick(long uid, String map) {
-			this.uid = uid;
+		public Pick(long item, String map) {
+			this.item = item;
 			this.map = map;
+		}
+	}
+
+	/**
+	 * Event to indicate the player took something from a container.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
+	public static final class Take extends InventoryEvent {
+		public final long item;
+		public final long container;
+		
+		public Take(long item, long container) {
+			this.item = item;
+			this.container = container;
 		}
 	}
 

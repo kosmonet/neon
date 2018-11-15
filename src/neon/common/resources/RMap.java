@@ -31,17 +31,14 @@ import neon.util.spatial.RegionSpatialIndex;
  * @author mdriesen
  */
 public final class RMap extends Resource {
-	
-	/**
-	 * The uid of this map.
-	 */
+	/** The uid of this map. */
 	public final int uid;
-	/**
-	 * The fancy display name.
-	 */
+	/** The fancy display name. */
 	public final String name;
-	
-	public final int width, height;
+	/** The width of the map. */
+	public final int width;
+	/** The height of the map. */
+	public final int height;
 	
 	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;

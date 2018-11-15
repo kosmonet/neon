@@ -20,6 +20,7 @@ package neon.server.entity;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
@@ -37,6 +38,7 @@ public final class CreatureBuilder implements EntityBuilder<RCreature> {
 		creature.setComponent(new CreatureInfo(uid, species.id, species.name));
 		creature.setComponent(new Graphics(uid, species.glyph, species.color));
 		creature.setComponent(new Inventory(uid));
+		creature.setComponent(new Equipment(uid));
 		creature.setComponent(new Behavior(uid));
 		creature.setComponent(new Skills(uid));
 		creature.setComponent(new Stats(uid, species));

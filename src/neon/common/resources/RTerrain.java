@@ -18,9 +18,10 @@
 
 package neon.common.resources;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import javafx.scene.paint.Color;
 
@@ -31,32 +32,50 @@ import javafx.scene.paint.Color;
  *
  */
 public final class RTerrain extends Resource {
+	/**
+	 * Modifiers that can be applied to a terrain type.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public enum Modifier {
+		/** Terrain type that can be passed by swimming. */
 		LIQUID;
 	}
 	
+	/** The color of this terrain type. */
 	public final Color color;
+	/** The UTF-8 character this terrain is represented with. */
 	public final char glyph;
+	/** The readable name of this terrain type. */
 	public final String name;
 	
-	private final Set<Modifier> modifiers = new HashSet<>();
+	private final Set<Modifier> modifiers;
 	
-	public RTerrain(String id, String name, char glyph, Color color) {
+	public RTerrain(String id, String name, char glyph, Color color, Collection<Modifier> modifiers) {
 		super(id, "terrain");
 		this.color = color;
 		this.glyph = glyph;
 		this.name = name;
+		this.modifiers = ImmutableSet.copyOf(modifiers);
 	}
 	
-	public void addModifier(Modifier modifier) {
-		modifiers.add(modifier);
-	}
-	
+	/**
+	 * Checks whether this terrain type has a certain modifier.
+	 * 
+	 * @param modifier
+	 * @return
+	 */
 	public boolean hasModifier(Modifier modifier) {
 		return modifiers.contains(modifier);
 	}
 	
+	/**
+	 * Returns a set of terrain modifiers for this type of terrain.
+	 * 
+	 * @return	an unmodifiable set of {@code Modifier}s
+	 */
 	public Set<Modifier> getModifiers() {
-		return Collections.unmodifiableSet(modifiers);
+		return modifiers;
 	}
 }

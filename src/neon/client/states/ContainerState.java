@@ -19,7 +19,9 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -32,24 +34,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import neon.client.ComponentManager;
 import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
+import neon.client.ui.ItemCell;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.Inventory;
-import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.RMap;
-import neon.util.GraphicsUtils;
 
 /**
  * A state to handle items when browsing a container or a random heap of 
@@ -61,6 +60,7 @@ import neon.util.GraphicsUtils;
 public final class ContainerState extends State {
 	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
+	private static final long DUMMY = 1;
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -74,7 +74,7 @@ public final class ContainerState extends State {
 	
 	private Scene scene;
 	private RMap map;
-	private Inventory inventory;
+	private long container = DUMMY;
 	
 	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = ui;
@@ -102,10 +102,10 @@ public final class ContainerState extends State {
 		// update the item description when another item is selected
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 		playerList.focusedProperty().addListener(new FocusListener());
-		playerList.setCellFactory(playerList -> new ItemCell());
+		playerList.setCellFactory(playerList -> new ItemCell(components));
 		containerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 		containerList.focusedProperty().addListener(new FocusListener());
-		containerList.setCellFactory(playerList -> new ItemCell());
+		containerList.setCellFactory(playerList -> new ItemCell(components));
 	}
 	
 	private void keyPressed(KeyEvent event) {
@@ -125,7 +125,7 @@ public final class ContainerState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
-		inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		playerList.getItems().clear();
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		
@@ -141,13 +141,21 @@ public final class ContainerState extends State {
 			// we trust the client on this one
 			playerList.getItems().remove(uid);
 			containerList.getItems().add(uid);
-			bus.post(new InventoryEvent.Drop(uid, map.id));
+			if (container == DUMMY) {
+				bus.post(new InventoryEvent.Drop(uid, map.id));
+			} else {
+				bus.post(new InventoryEvent.Store(uid, container));				
+			}
 		} else if (containerList.isFocused() && !containerList.getSelectionModel().isEmpty()) {
 			long uid = containerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
 			containerList.getItems().remove(uid);
 			playerList.getItems().add(uid);
-			bus.post(new InventoryEvent.Pick(uid, map.id));			
+			if (container == DUMMY) {
+				bus.post(new InventoryEvent.Pick(uid, map.id));
+			} else {
+				bus.post(new InventoryEvent.Take(uid, container));
+			}
 		}
 	}
 	
@@ -155,17 +163,29 @@ public final class ContainerState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering container state");
 		bus.register(this);
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		
 		map = config.getCurrentMap();
+		container = DUMMY;
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
+				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());
 		containerList.getItems().clear();
 		
-		map.getEntities(shape.getX(), shape.getY()).stream()
-				.filter(uid -> uid != 0)
-				.forEach(containerList.getItems()::add);
+		if (entities.size() == 1) {
+			long uid = entities.get(0);
+			if (components.hasComponent(uid, Inventory.class)) {
+				container = uid;
+				containerList.getItems().addAll(components.getComponent(uid, Inventory.class).getItems());
+			} else {
+				containerList.getItems().addAll(entities);
+			}
+		} else {
+			containerList.getItems().addAll(entities);
+		}
+		
 		containerList.getSelectionModel().selectFirst();
 		playerList.getSelectionModel().selectFirst();
 		refresh();
-
 		ui.showScene(scene);
 	}
 
@@ -217,21 +237,6 @@ public final class ContainerState extends State {
 		public void changed(ObservableValue<? extends Long> observable, Long oldValue, Long newValue) {
 			if (newValue != null) {
 				updateDescription(newValue);
-			}
-		}
-	}
-	
-	private class ItemCell extends ListCell<Long> {
-		@Override
-		public void updateItem(Long uid, boolean empty) {
-			super.updateItem(uid, empty);
-			if (empty || uid == null) {
-				setText(null);
-			} else {
-				ItemInfo info = components.getComponent(uid, ItemInfo.class);
-				Color color = inventory.hasEquipped(uid) ? (isSelected() ? Color.TURQUOISE : Color.TEAL) : (isSelected() ? Color.WHITE : Color.SILVER);
-				setStyle("-fx-text-fill: " + GraphicsUtils.getColorString(color));
-				setText(info.name);
 			}
 		}
 	}

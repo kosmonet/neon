@@ -20,11 +20,13 @@ package neon.server.handlers;
 
 import java.util.Collection;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.StealthEvent;
@@ -46,7 +48,10 @@ public final class StealthHandler {
 	private void onPickPocket(StealthEvent.Pick event) {
 		Entity victim = entities.getEntity(event.victim);
 		Inventory victimInventory = victim.getComponent(Inventory.class);
-		Collection<Long> items = victimInventory.getItems();
+		Equipment victimEquipment = victim.getComponent(Equipment.class);
+		// filter the items so no equipped item can be stolen
+		Collection<Long> items = victimInventory.getItems().stream()
+				.filter(uid -> !victimEquipment.hasEquipped(uid)).collect(Collectors.toList());
 
 		if (items.isEmpty()) {
 			bus.post(new StealthEvent.Empty());

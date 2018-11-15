@@ -100,7 +100,7 @@ public final class CServer extends Resource {
 		if (uids.containsValue(uid)) {
 			String mod = uids.inverse().get(uid);
 			short index = 0;
-			while(uids.containsValue(++index));
+			while (uids.containsValue(++index));
 			uids.put(mod, index);
 		}
 		

@@ -44,4 +44,13 @@ public interface ResourceLoader<T extends Resource> {
 	 * @return
 	 */
 	public Element save(T resource);
+	
+	/**
+	 * Returns the extension of the file a resource is saved with.
+	 * 
+	 * @return
+	 */
+	public default String getExtension() {
+		return ".xml";
+	}
 }

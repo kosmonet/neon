@@ -142,8 +142,7 @@ public class ItemEditor {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
 			RItem.Builder builder = new RItem.Builder(card.toString(), name).setGraphics(glyph, color);
-			RItem item = new RItem(builder);
-			bus.post(new SaveEvent.Resources(item));
+			bus.post(new SaveEvent.Resources(builder.build()));
 			card.setChanged(true);				
 		}
 	}

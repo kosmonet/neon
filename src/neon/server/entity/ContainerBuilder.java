@@ -19,6 +19,8 @@
 package neon.server.entity;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Lock;
 import neon.common.resources.RItem;
 
 public final class ContainerBuilder implements EntityBuilder<RItem.Container> {
@@ -26,6 +28,9 @@ public final class ContainerBuilder implements EntityBuilder<RItem.Container> {
 
 	@Override
 	public Entity build(long uid, RItem.Container resource) {
-		return builder.build(uid, resource);
+		Entity container = builder.build(uid, resource);
+		container.setComponent(new Lock(uid));
+		container.setComponent(new Inventory(uid));
+		return container;
 	}
 }

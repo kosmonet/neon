@@ -24,6 +24,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.Currency;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
@@ -56,6 +57,32 @@ public final class InventoryHandler {
 	}
 	
 	/**
+	 * Stores an item in a container.
+	 * 
+	 * @param event
+	 */
+	@Subscribe
+	private void onItemStore(InventoryEvent.Store event) {
+		Entity player = entities.getEntity(PLAYER_UID);
+		Entity container = entities.getEntity(event.container);
+		
+		// make sure the item is no longer equipped
+		Equipment equipment = player.getComponent(Equipment.class);
+		equipment.unequip(event.item);
+		// then actually remove the item
+		Inventory inventory = player.getComponent(Inventory.class);
+		inventory.removeItem(event.item);
+		// and store it in the container
+		Inventory contents = container.getComponent(Inventory.class);
+		contents.addItem(event.item);
+		
+		// let the client know
+		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(equipment));
+		bus.post(new ComponentUpdateEvent(contents));
+	}
+	
+	/**
 	 * Makes the player drop an item on the map.
 	 * 
 	 * @param event
@@ -64,14 +91,22 @@ public final class InventoryHandler {
 	@Subscribe
 	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
 		Entity player = entities.getEntity(PLAYER_UID);
+		// make sure the item is no longer equipped
+		Equipment equipment = player.getComponent(Equipment.class);
+		equipment.unequip(event.item);
+		// then actually remove the item
 		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.removeItem(event.uid);
+		inventory.removeItem(event.item);
+		
 		Shape shape = player.getComponent(Shape.class);
 		RMap map = resources.getResource("maps", event.map);
-		map.addEntity(event.uid, shape.getX(), shape.getY());
-		Entity item = entities.getEntity(event.uid);
+		map.addEntity(event.item, shape.getX(), shape.getY());
+		Entity item = entities.getEntity(event.item);
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
+		
+		// let the client know
 		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(equipment));
 		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
@@ -84,23 +119,55 @@ public final class InventoryHandler {
 	@Subscribe
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		RMap map = resources.getResource("maps", event.map);
-		map.removeEntity(event.uid);
-		bus.post(new UpdateEvent.Remove(event.uid, map.id));
+		map.removeEntity(event.item);
+		bus.post(new UpdateEvent.Remove(event.item, map.id));
 		
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);
-		Entity item = entities.getEntity(event.uid);
+		Entity item = entities.getEntity(event.item);
 		
 		// currency is not added to the inventory as an item, but as money
 		if (item.hasComponent(Currency.class)) {
 			inventory.addMoney(item.getComponent(ItemInfo.class).price);
-			entities.removeEntity(event.uid);
-			bus.post(new UpdateEvent.Destroy(event.uid));
+			entities.removeEntity(event.item);
+			bus.post(new UpdateEvent.Destroy(event.item));
 		} else {
-			inventory.addItem(event.uid);
+			inventory.addItem(event.item);
 		}
 		
 		bus.post(new ComponentUpdateEvent(inventory));
+	}
+	
+	/**
+	 * Makes the player pick up an item from the map.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
+	@Subscribe
+	private void onItemTake(InventoryEvent.Take event) throws ResourceException {
+		Entity player = entities.getEntity(PLAYER_UID);
+		Entity container = entities.getEntity(event.container);
+		Entity item = entities.getEntity(event.item);
+
+		// remove item from the container
+		Inventory contents = container.getComponent(Inventory.class);
+		contents.removeItem(event.item);
+		// then add the item to the player inventory
+		Inventory inventory = player.getComponent(Inventory.class);
+		// currency is not added to the inventory as an item, but as money
+		if (item.hasComponent(Currency.class)) {
+			inventory.addMoney(item.getComponent(ItemInfo.class).price);
+			entities.removeEntity(event.item);
+			bus.post(new UpdateEvent.Destroy(event.item));
+		} else {
+			inventory.addItem(event.item);
+		}
+		
+		// let the client know
+		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(contents));
+
 	}
 	
 	/**
@@ -111,9 +178,9 @@ public final class InventoryHandler {
 	@Subscribe 
 	private void onItemUnequip(InventoryEvent.Unequip event) {
 		Entity player = entities.getEntity(PLAYER_UID);
-		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.unequip(event.uid);
-		bus.post(new ComponentUpdateEvent(inventory));
+		Equipment equipment = player.getComponent(Equipment.class);
+		equipment.unequip(event.uid);
+		bus.post(new ComponentUpdateEvent(equipment));
 	}
 	
 	/**
@@ -127,18 +194,19 @@ public final class InventoryHandler {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Entity item = entities.getEntity(event.uid);
 		Inventory inventory = player.getComponent(Inventory.class);
+		Equipment equipment = player.getComponent(Equipment.class);
 		
 		// clothing (and armor) keeps track of what slot they cover
 		if (inventory.getItems().contains(event.uid) && item.hasComponent(Clothing.class)) {
 			Clothing cloth = item.getComponent(Clothing.class);
-			inventory.equip(cloth.getSlot(), event.uid);				
+			equipment.equip(cloth.getSlot(), event.uid);				
 		}
 		
 		// weapons can be equipped in the hand of choice
 		if (inventory.getItems().contains(event.uid) && item.hasComponent(Weapon.class)) {
-			inventory.equip(event.slot.get(), event.uid);				
+			equipment.equip(event.slot.get(), event.uid);				
 		}
 		
-		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(equipment));
 	}
 }

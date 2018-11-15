@@ -27,6 +27,7 @@ import org.jdom2.Element;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
@@ -221,14 +222,24 @@ public final class MapLoader implements ResourceLoader<RMap> {
 		// load items
 		for (Element entity : entities.getChildren("item")) {
 			try {
-				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
-				RItem ri = resources.getResource("items", entity.getAttributeValue("id"));
-				Entity item = tracker.createEntity(uid, ri);
+				Entity item = loadItem(entity, base);
+
+				Inventory contents = item.getComponent(Inventory.class);
+				for (Element child : entity.getChildren("item")) {
+					contents.addItem(loadItem(child, base).uid);
+				}
+				
 				initEntity(entity, item.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
 				logger.severe("unknown item on map " + map.id + ": " + entity.getAttributeValue("id"));
 			}
 		}
+	}
+	
+	private Entity loadItem(Element entity, long base) throws ResourceException {
+		long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
+		RItem item = resources.getResource("items", entity.getAttributeValue("id"));
+		return tracker.createEntity(uid, item);
 	}
 	
 	private void initEntity(Element entity, Shape shape, RMap map) {

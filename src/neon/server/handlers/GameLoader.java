@@ -40,6 +40,7 @@ import neon.common.event.UpdateEvent;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
@@ -306,6 +307,7 @@ public final class GameLoader {
 		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Equipment.class)));
 	}
 	
 	private void notifyCreature(Entity creature) {
@@ -315,6 +317,7 @@ public final class GameLoader {
 		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
 	}
 	
 	/**
@@ -337,6 +340,12 @@ public final class GameLoader {
 		
 		if (item.hasComponent(Enchantment.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
+		}
+		
+		if (item.hasComponent(Inventory.class)) {
+			Inventory inventory = item.getComponent(Inventory.class);
+			inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
 		}
 	}
 	

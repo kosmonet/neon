@@ -20,7 +20,7 @@ package neon.systems.combat;
 
 import neon.common.entity.Entity;
 import neon.common.entity.Slot;
-import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Equipment;
 import neon.server.entity.EntityManager;
 import neon.util.Dice;
 
@@ -33,23 +33,23 @@ public class SimpleDamageStrategy implements DamageStrategy {
 	
 	@Override
 	public int getDamage(Entity attacker, Entity defender) {
-		int damage = Math.max(1, getDamage(attacker.getComponent(Inventory.class)) - getArmor(defender.getComponent(Inventory.class)));
+		int damage = Math.max(1, getDamage(attacker.getComponent(Equipment.class)) - getArmor(defender.getComponent(Equipment.class)));
 		return damage;
 	}
 	
-	private int getDamage(Inventory inventory) {
+	private int getDamage(Equipment equipment) {
 		int damage = 0;
 
 		// creatures can have weapons equipped in both hands
-		if (inventory.hasEquipped(Slot.HAND_LEFT)) {
-			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_LEFT));
+		if (equipment.hasEquipped(Slot.HAND_LEFT)) {
+			Entity item = entities.getEntity(equipment.getEquipedItem(Slot.HAND_LEFT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
 		}
 
-		if (inventory.hasEquipped(Slot.HAND_RIGHT)) {
-			Entity item = entities.getEntity(inventory.getEquipedItem(Slot.HAND_RIGHT));
+		if (equipment.hasEquipped(Slot.HAND_RIGHT)) {
+			Entity item = entities.getEntity(equipment.getEquipedItem(Slot.HAND_RIGHT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
@@ -58,10 +58,10 @@ public class SimpleDamageStrategy implements DamageStrategy {
 		return damage;
 	}
 
-	private int getArmor(Inventory inventory) {
+	private int getArmor(Equipment equipment) {
 		int AC = 0;
 
-		for (long uid : inventory.getEquippedItems()) {
+		for (long uid : equipment.getEquippedItems()) {
 			Entity item = entities.getEntity(uid);
 			if (item.hasComponent(Armor.class)) {
 				AC += item.getComponent(Armor.class).getRating();
