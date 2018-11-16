@@ -18,14 +18,33 @@
 
 package neon.systems.magic;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
+import neon.common.resources.Resource;
 import neon.common.resources.loaders.ResourceLoader;
 
-public final class SpellLoader implements ResourceLoader<RSpell> {
+public final class SpellLoader implements ResourceLoader {
+	private static final String namespace = "spells";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public SpellLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RSpell load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RSpell load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		Effect effect = Effect.valueOf(root.getAttributeValue("effect").toUpperCase());
 		Target target = Target.valueOf(root.getAttributeValue("target").toUpperCase());
@@ -37,8 +56,25 @@ public final class SpellLoader implements ResourceLoader<RSpell> {
 	}
 
 	@Override
-	public Element save(RSpell resource) {
+	public void save(Resource resource) throws IOException {
 		Element spell = new Element("spell");
-		return spell;
+		files.saveFile(new Document(spell), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

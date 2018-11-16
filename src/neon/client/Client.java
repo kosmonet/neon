@@ -73,7 +73,7 @@ public final class Client implements Runnable {
 	private final ClientSocket socket;
 	private final UserInterface ui;
 	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
-	private final ResourceManager resources = new ResourceManager(files);
+	private final ResourceManager resources = new ResourceManager();
 	private final ComponentManager components = new ComponentManager();
 	private final Configuration config = new Configuration();
 
@@ -103,11 +103,11 @@ public final class Client implements Runnable {
 		}
 		
 		// add all loaders to the resource manager
-		resources.addLoader("terrain", new TerrainLoader());
-		resources.addLoader("creatures", new CreatureLoader());
-		resources.addLoader("maps", new MapLoader());
-		resources.addLoader("config", new ConfigurationLoader());
-		resources.addLoader("spells", new SpellLoader());
+		resources.addLoader(new TerrainLoader(files));
+		resources.addLoader(new CreatureLoader(files));
+		resources.addLoader(new MapLoader(files));
+		resources.addLoader(new ConfigurationLoader(files));
+		resources.addLoader(new SpellLoader(files));
 		
 		// set up some event handlers
 		bus.register(new CollisionHandler(ui, bus, components, config));

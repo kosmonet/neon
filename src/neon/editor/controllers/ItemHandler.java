@@ -42,7 +42,6 @@ import javafx.stage.Window;
 import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.ItemLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.SaveEvent;
@@ -85,7 +84,6 @@ public class ItemHandler {
 		itemTree.setShowRoot(false);
 		itemTree.setRoot(root);
 		itemTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("items", new ItemLoader());
 		
 		root.getChildren().add(items);
 		root.getChildren().add(doors);

@@ -263,7 +263,7 @@ public final class GameLoader {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("saves", save, "config", "server.xml"))) {
 			Document doc = new SAXBuilder().build(in);
-			return new ConfigurationLoader().loadServer(doc.getRootElement());
+			return new ConfigurationLoader(files).loadServer(doc.getRootElement());
 		} catch (JDOMException e) {
 			throw new IllegalStateException("failed to load server configuration file", e);
 		}

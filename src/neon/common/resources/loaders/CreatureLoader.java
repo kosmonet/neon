@@ -18,10 +18,20 @@
 
 package neon.common.resources.loaders;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
 import javafx.scene.paint.Color;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RCreature;
+import neon.common.resources.Resource;
 import neon.util.GraphicsUtils;
 
 /**
@@ -30,10 +40,19 @@ import neon.util.GraphicsUtils;
  * @author mdriesen
  *
  */
-public final class CreatureLoader implements ResourceLoader<RCreature> {
+public final class CreatureLoader implements ResourceLoader {
+	private static final String namespace = "creatures";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public CreatureLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RCreature load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RCreature load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
@@ -53,7 +72,9 @@ public final class CreatureLoader implements ResourceLoader<RCreature> {
 	}
 	
 	@Override
-	public Element save(RCreature rc) {
+	public void save(Resource resource) throws IOException {
+		RCreature rc = RCreature.class.cast(resource);
+		
 		Element creature = new Element("creature");
 		creature.setAttribute("id", rc.id);
 		creature.setAttribute("name", rc.name);
@@ -73,6 +94,23 @@ public final class CreatureLoader implements ResourceLoader<RCreature> {
 		stats.setAttribute("cha", Integer.toString(rc.charisma));
 		creature.addContent(stats);
 		
-		return creature;
+		files.saveFile(new Document(creature), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

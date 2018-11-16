@@ -18,6 +18,12 @@
 
 package neon.server.entity;
 
-public final class Map {
+import neon.common.resources.RMap;
 
+public final class Map {
+	private final RMap map;
+	
+	public Map(RMap map) {
+		this.map = map;
+	}
 }

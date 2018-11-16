@@ -18,12 +18,22 @@
 
 package neon.common.resources.loaders;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.jdom2.Document;
 import org.jdom2.Element;
+
+import com.google.common.io.Files;
 
 import javafx.scene.paint.Color;
 import neon.common.entity.ArmorType;
 import neon.common.entity.Slot;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RItem;
+import neon.common.resources.Resource;
 import neon.systems.magic.Effect;
 
 /**
@@ -32,11 +42,20 @@ import neon.systems.magic.Effect;
  * @author mdriesen
  *
  */
-public final class ItemLoader implements ResourceLoader<RItem> {
+public final class ItemLoader implements ResourceLoader {
+	private static final String namespace = "items";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public ItemLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RItem load(Element root) {
+	public RItem load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
-		String id = root.getAttributeValue("id");
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		
@@ -94,10 +113,28 @@ public final class ItemLoader implements ResourceLoader<RItem> {
 	}
 	
 	@Override
-	public Element save(RItem ri) {
+	public void save(Resource resource) throws IOException {
+		RItem ri = RItem.class.cast(resource);
 		Element item = new Element("item");
 		item.setAttribute("id", ri.id);
 		item.setAttribute("name", ri.name);
-		return item;
+		files.saveFile(new Document(item), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

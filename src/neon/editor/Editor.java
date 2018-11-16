@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -45,8 +45,12 @@ import neon.common.logging.NeonLogFormatter;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
+import neon.common.resources.loaders.TerrainLoader;
 import neon.editor.resource.CEditor;
+import neon.editor.resource.MapLoader;
 import neon.editor.ui.UserInterface;
 
 /**
@@ -59,7 +63,7 @@ public class Editor extends Application {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files = new NeonFileSystem();
-	private final ResourceManager resources = new ResourceManager(files);
+	private final ResourceManager resources = new ResourceManager();
 	private final EventBus bus = new EventBus("Editor Bus");
 	private final UserInterface ui;	// where all JavaFX business takes place
 	private final CEditor config = new CEditor();
@@ -69,7 +73,7 @@ public class Editor extends Application {
 	 */
 	public Editor() {
 		bus.register(this);
-		ui = new UserInterface(resources, bus, config);
+		ui = new UserInterface(files, resources, bus, config);
 		
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
@@ -77,7 +81,12 @@ public class Editor extends Application {
 			logger.severe("could not set the temporary folder");			
 		}
 		
-		resources.addLoader("global", new ModuleLoader());
+		// add all resource loaders
+		resources.addLoader(new ModuleLoader(files));
+		resources.addLoader(new MapLoader(files, resources));
+		resources.addLoader(new CreatureLoader(files));
+		resources.addLoader(new ItemLoader(files));
+		resources.addLoader(new TerrainLoader(files));
 	}
 	
 	@Override

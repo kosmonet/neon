@@ -19,10 +19,18 @@
 package neon.client.resource;
 
 import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RMap;
+import neon.common.resources.Resource;
 import neon.common.resources.loaders.ResourceLoader;
 
 /**
@@ -31,10 +39,19 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public final class MapLoader implements ResourceLoader<RMap> {
+public final class MapLoader implements ResourceLoader {
+	private static final String namespace = "maps";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public MapLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RMap load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RMap load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
@@ -49,8 +66,8 @@ public final class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	@Override
-	public Element save(RMap map) {
-		throw new IllegalStateException("Client is not allowed to save resources.");
+	public void save(Resource resource) {
+		throw new UnsupportedOperationException("Client is not allowed to save resources.");
 	}
 
 	private void initTerrain(RMap map, Element terrain) {
@@ -73,5 +90,22 @@ public final class MapLoader implements ResourceLoader<RMap> {
 			int value = Integer.parseInt(region.getAttributeValue("v"));
 			map.getElevation().insert(new Rectangle(x, y, width, height), value);
 		}		
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) {
+		throw new UnsupportedOperationException("Client is not allowed to remove resources.");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

@@ -40,6 +40,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -57,6 +58,7 @@ public class TerrainHandler {
 	
 	private final ResourceManager resources;
 	private final EventBus bus;
+
 	private Window parent;
 	
 	public TerrainHandler(ResourceManager resources, EventBus bus) {
@@ -84,7 +86,6 @@ public class TerrainHandler {
 		terrainTree.setShowRoot(false);
 		terrainTree.setRoot(root);
 		terrainTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("terrain", new TerrainLoader());
 
 		for (Card card : cards.get("terrain")) {
 			root.getChildren().add(new TreeItem<Card>(card));

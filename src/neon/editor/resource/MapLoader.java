@@ -19,14 +19,23 @@
 package neon.editor.resource;
 
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
 import neon.editor.resource.RMap;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RCreature;
+import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
@@ -37,18 +46,23 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class MapLoader implements ResourceLoader<RMap> {
+public class MapLoader implements ResourceLoader {
 	private static final Logger logger = Logger.getGlobal();
+	private static final String namespace = "maps";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
 	
 	private final ResourceManager resources;
 	
-	public MapLoader(ResourceManager resources) {
+	public MapLoader(NeonFileSystem files, ResourceManager resources) {
+		this.files = files;
 		this.resources = resources;
 	}
 	
 	@Override
-	public RMap load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RMap load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
 		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
@@ -103,7 +117,8 @@ public class MapLoader implements ResourceLoader<RMap> {
 	}
 
 	@Override
-	public Element save(RMap map) {
+	public void save(Resource resource) throws IOException {
+		RMap map = RMap.class.cast(resource);
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
@@ -145,6 +160,23 @@ public class MapLoader implements ResourceLoader<RMap> {
 		}
 		root.addContent(entities);
 		
-		return root;
+		files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

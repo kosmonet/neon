@@ -60,10 +60,10 @@ public final class Server implements Runnable {
 	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
-	private final ResourceManager resources = new ResourceManager(files);
+	private final ResourceManager resources = new ResourceManager();
 	private final ServerSocket socket;
 	private final EntityManager entities = new EntityManager(files, new EntitySaver(resources));
-	private final SystemManager systems = new SystemManager(resources, entities, bus);
+	private final SystemManager systems = new SystemManager(files, resources, entities, bus);
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**
@@ -85,7 +85,7 @@ public final class Server implements Runnable {
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
 		bus.register(new InventoryHandler(resources, entities, bus));
-		bus.register(new ConversationSystem(resources, entities, bus));
+		bus.register(new ConversationSystem(files, resources, entities, bus));
 		bus.register(new StealthHandler(entities, bus));
 		bus.register(new SleepHandler(entities, bus));
 		bus.register(systems);

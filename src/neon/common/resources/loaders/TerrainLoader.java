@@ -18,26 +18,44 @@
 
 package neon.common.resources.loaders;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
 import javafx.scene.paint.Color;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RTerrain;
 import neon.common.resources.RTerrain.Modifier;
+import neon.common.resources.Resource;
 import neon.util.GraphicsUtils;
 
 /**
- * This resource loader takes care of loading and saving terrain resources 
+ * This resource loader takes care of loading/saving terrain resources 
  * from/to disk. 
  * 
  * @author mdriesen
  *
  */
-public final class TerrainLoader implements ResourceLoader<RTerrain> {
+public final class TerrainLoader implements ResourceLoader {
+	private static final String namespace = "terrain";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public TerrainLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RTerrain load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RTerrain load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		char glyph = root.getChild("graphics").getAttributeValue("text").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
 		String name = root.getAttributeValue("name");
@@ -51,7 +69,9 @@ public final class TerrainLoader implements ResourceLoader<RTerrain> {
 	}
 
 	@Override
-	public Element save(RTerrain terrain) {
+	public void save(Resource resource) throws IOException {
+		RTerrain terrain = RTerrain.class.cast(resource);
+		
 		Element root = new Element("terrain");
 		root.setAttribute("id", terrain.id);
 		root.setAttribute("name", terrain.name);
@@ -67,6 +87,23 @@ public final class TerrainLoader implements ResourceLoader<RTerrain> {
 			root.addContent(mod);
 		}
 		
-		return root;
+		files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

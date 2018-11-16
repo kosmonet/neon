@@ -26,6 +26,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
@@ -44,12 +45,12 @@ public final class MagicSystem {
 	private final EntityManager entities;
 	private final ResourceManager resources;
 	
-	public MagicSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public MagicSystem(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
 		this.entities = entities;
 		this.resources = resources;
 
-		resources.addLoader("spells", new SpellLoader());
+		resources.addLoader(new SpellLoader(files));
 	}
 	
 	@Subscribe

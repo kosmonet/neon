@@ -18,16 +18,35 @@
 
 package neon.systems.conversation;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
+import neon.common.resources.Resource;
 import neon.common.resources.loaders.ResourceLoader;
 
-final class DialogLoader implements ResourceLoader<RDialog> {
+final class DialogLoader implements ResourceLoader {
+	private static final String namespace = "dialog";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public DialogLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RDialog load(Element root) {
-		RDialog dialog = new RDialog(root.getAttributeValue("id"));
+	public RDialog load(String id) throws IOException {
+		RDialog dialog = new RDialog(id);
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		loadCreatureNode(root, dialog);	// recursively load all nodes, starting from root
 		return dialog;
 	}
@@ -64,9 +83,25 @@ final class DialogLoader implements ResourceLoader<RDialog> {
 	}
 	
 	@Override
-	public Element save(RDialog resource) {
+	public void save(Resource resource) throws IOException {
 		Element dialog = new Element("dialog");
-		
-		return dialog;
+		files.saveFile(new Document(dialog), translator, namespace, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

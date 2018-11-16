@@ -21,19 +21,13 @@ package neon.common.resources;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
-import neon.common.files.NeonFileSystem;
-import neon.common.files.XMLTranslator;
 import neon.common.resources.loaders.ResourceLoader;
 
 /**
@@ -48,20 +42,8 @@ import neon.common.resources.loaders.ResourceLoader;
 public final class ResourceManager {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final NeonFileSystem files;
 	private final Table<String, String, SoftReference<Resource>> resources = HashBasedTable.create();
-	private final Map<String, ResourceLoader<? extends Resource>> loaders = new HashMap<>();
-	private final XMLTranslator translator = new XMLTranslator();
-	
-	/**
-	 * Creates a resource manager that uses the given filesystem to load its
-	 * resources.
-	 * 
-	 * @param files
-	 */
-	public ResourceManager(NeonFileSystem files) {
-		this.files = files;
-	}
+	private final Map<String, ResourceLoader> loaders = new HashMap<>();
 	
 	/**
 	 * Adds a new resource to the manager. The resource is stored in the 
@@ -79,18 +61,8 @@ public final class ResourceManager {
 		resources.put(namespace, resource.id, new SoftReference<Resource>(resource));
 		
 		// save resource to temp folder
-		saveToTemp(namespace, resource);
-	}
-
-	private <T extends Resource> void saveToTemp(String namespace, T resource) throws IOException {
 		if (loaders.containsKey(namespace)) {
-			ResourceLoader<T> loader = (ResourceLoader<T>) loaders.get(namespace);
-			Document doc = new Document(loader.save(resource));
-			if (namespace.equals("global")) {
-				files.saveFile(doc, translator, resource.id + loader.getExtension());			
-			} else {
-				files.saveFile(doc, translator, namespace, resource.id + loader.getExtension());							
-			}
+			loaders.get(namespace).save(resource);
 		} else {
 			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found.");
 		}		
@@ -127,35 +99,27 @@ public final class ResourceManager {
 		} 
 
 		// resource was not loaded, do it now
-		try {
-			Element resource;
-			
-			if (namespace.equals("global")) {
-				resource = files.loadFile(translator, id + ".xml").getRootElement();				
-			} else {
-				resource = files.loadFile(translator, namespace, id + ".xml").getRootElement();				
+		if (loaders.containsKey(namespace)) {
+			try {
+				T resource = (T) loaders.get(namespace).load(id);
+				resources.put(namespace, id, new SoftReference<Resource>(resource));
+				return resource;
+			} catch (IOException e) {
+				throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found.", e);
 			}
-			
-			if (loaders.containsKey(namespace)) {
-				T value = (T) loaders.get(namespace).load(resource);
-				resources.put(namespace, id, new SoftReference<Resource>(value));
-				return value;
-			} else {
-				throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");
-			}
-		} catch (IOException e) {
-			throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found.", e);
+		} else {
+			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");			
 		}
 	}
-	
+
 	/**
 	 * Adds a loader for the given namespace.
 	 * 
 	 * @param type
 	 * @param loader
 	 */
-	public void addLoader(String namespace, ResourceLoader<? extends Resource> loader) {
-		loaders.put(namespace, loader);
+	public void addLoader(ResourceLoader loader) {
+		loaders.put(loader.getNamespace(), loader);
 	}
 	
 	/**
@@ -165,24 +129,26 @@ public final class ResourceManager {
 	 * @return
 	 */
 	public Set<String> listResources(String namespace) {
-		HashSet<String> set = new HashSet<>();
-		
-		for (String file : files.listFiles(namespace)) {
-			set.add(file.replace(".xml", ""));
+		if (loaders.containsKey(namespace)) {
+			return loaders.get(namespace).listResources();
+		} else {
+			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");			
 		}
-		
-		return set;
 	}
 	
 	/**
-	 * Checks whether the given resource is present on disk.
+	 * Checks whether the given resource is present.
 	 * 
 	 * @param namespace
 	 * @param id
 	 * @return
 	 */
 	public boolean hasResource(String namespace, String id) {
-		return files.listFiles(namespace).contains(id + ".xml");
+		if (loaders.containsKey(namespace)) {
+			return loaders.get(namespace).listResources().contains(id);
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -194,10 +160,12 @@ public final class ResourceManager {
 	 */
 	public void removeResource(String namespace, String id) {
 		try {
-			files.deleteFile(namespace, id + ".xml");
+			resources.remove(namespace,  id);
+			if (loaders.containsKey(namespace)) {
+				loaders.get(namespace).removeResource(id);
+			}
 		} catch (IOException e) {
 			logger.finer("could not remove resource <" + namespace + ":" + id + ">"); 
 		}
-		resources.remove(namespace,  id);
 	}
 }

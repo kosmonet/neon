@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,39 +18,54 @@
 
 package neon.common.resources.loaders;
 
-import org.jdom2.Element;
+import java.io.IOException;
+import java.util.Set;
 
 import neon.common.resources.Resource;
 
 /**
- * Interface to load and save a resource from and to a JDOM XML element.
+ * Interface to load and save a resource.
  * 
  * @author mdriesen
  *
  */
-public interface ResourceLoader<T extends Resource> {
+public interface ResourceLoader {
 	/**
-	 * Load a resource from a JDOM element.
+	 * Load a resource.
 	 * 
-	 * @param root
+	 * @param id	the id of a resource
 	 * @return
+	 * @throws IOException	if the resource can't be loaded
 	 */
-	public T load(Element root);
+	public Resource load(String id) throws IOException;
 	
 	/**
-	 * Save a resource to a JDOM element.
+	 * Saves a resource.
 	 * 
 	 * @param resource
-	 * @return
+	 * @throws IOException	if the resource can't be saved
 	 */
-	public Element save(T resource);
+	public void save(Resource resource) throws IOException;
 	
 	/**
-	 * Returns the extension of the file a resource is saved with.
+	 * Lists all the resources in the namespace of this loader.
 	 * 
 	 * @return
 	 */
-	public default String getExtension() {
-		return ".xml";
-	}
+	public Set<String> listResources();
+	
+	/**
+	 * Removes a resource in the namespace of this loader.
+	 * 
+	 * @param id
+	 * @throws IOException	if the resource can't be removed
+	 */
+	public void removeResource(String id) throws IOException;
+	
+	/**
+	 * Returns the namespace this loader loads from.
+	 * 
+	 * @return
+	 */
+	public String getNamespace();
 }

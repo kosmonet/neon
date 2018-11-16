@@ -42,11 +42,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
-
 import neon.common.resources.RCreature;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.CreatureLoader;
 import neon.editor.Card;
 import neon.editor.LoadEvent;
 import neon.editor.SaveEvent;
@@ -106,7 +104,6 @@ public class CreatureHandler {
 		creatureTree.setShowRoot(false);
 		creatureTree.setRoot(root);
 		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
-		resources.addLoader("creatures", new CreatureLoader());
 
 		for (Card card : cards.get("creatures")) {
 			root.getChildren().add(new TreeItem<Card>(card));

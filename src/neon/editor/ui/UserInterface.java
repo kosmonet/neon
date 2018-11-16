@@ -28,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.ResourceManager;
 import neon.editor.LoadEvent;
 import neon.editor.controllers.CreatureHandler;
@@ -61,7 +62,7 @@ public class UserInterface {
 	 * @param editor
 	 * @param bus
 	 */
-	public UserInterface(ResourceManager resources, EventBus bus, CEditor config) {
+	public UserInterface(NeonFileSystem files, ResourceManager resources, EventBus bus, CEditor config) {
 		// separate handlers for all the different ui elements
 		menuHandler = new MenuHandler(resources, bus, this);
 		bus.register(menuHandler);

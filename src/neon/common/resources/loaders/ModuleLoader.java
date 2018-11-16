@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,9 +18,19 @@
 
 package neon.common.resources.loaders;
 
+import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RModule;
+import neon.common.resources.Resource;
 
 /**
  * Responsible for loading and saving module resources.
@@ -28,10 +38,17 @@ import neon.common.resources.RModule;
  * @author mdriesen
  *
  */
-public final class ModuleLoader implements ResourceLoader<RModule> {
+public final class ModuleLoader implements ResourceLoader {
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public ModuleLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public RModule load(Element root) {
-		String id = root.getAttributeValue("id");
+	public RModule load(String id) throws IOException {
+		Element root = files.loadFile(translator, id + ".xml").getRootElement();
 		String title = root.getChildText("title");
 		String subtitle = root.getChildText("subtitle");
 		String map = root.getChild("start").getAttributeValue("map");
@@ -64,7 +81,9 @@ public final class ModuleLoader implements ResourceLoader<RModule> {
 	}
 
 	@Override
-	public Element save(RModule module) {
+	public void save(Resource resource) throws IOException {
+		RModule module = RModule.class.cast(resource);
+		
 		Element root = new Element("module");
 		root.setAttribute("id", module.id);
 		Element title = new Element("title");
@@ -99,6 +118,23 @@ public final class ModuleLoader implements ResourceLoader<RModule> {
 			parents.addContent(id);
 		}
 		
-		return root;
+		files.saveFile(new Document(root), translator, resource.id + ".xml");
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles().parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		throw new UnsupportedOperationException("Module removal not supported.");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return "global";
 	}
 }

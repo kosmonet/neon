@@ -24,6 +24,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
@@ -36,11 +37,11 @@ public final class ConversationSystem {
 	private RDialog currentDialog;
 	private CreatureNode currentNode;
 	
-	public ConversationSystem(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public ConversationSystem(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
-		resources.addLoader("dialog", new DialogLoader());
+		resources.addLoader(new DialogLoader(files));
 	}
 	
 	/**

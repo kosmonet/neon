@@ -18,12 +18,20 @@
 
 package neon.common.resources.loaders;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.google.common.io.Files;
+
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.CClient;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
@@ -35,9 +43,19 @@ import neon.common.resources.Resource;
  * @author mdriesen
  *
  */
-public final class ConfigurationLoader implements ResourceLoader<Resource> {
+public final class ConfigurationLoader implements ResourceLoader {
+	private static final String namespace = "config";
+	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
+	
+	public ConfigurationLoader(NeonFileSystem files) {
+		this.files = files;
+	}
+	
 	@Override
-	public Resource load(Element root) {
+	public Resource load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		switch (root.getName()) {
 		case "client":
 			return loadClient(root);
@@ -51,13 +69,16 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 	}
 
 	@Override
-	public Element save(Resource resource) {
+	public void save(Resource resource) throws IOException {
 		if (resource.id.equals("game")) {
-			return saveGame((CGame) resource);
+			Element root = saveGame(CGame.class.cast(resource));
+			files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
 		} else if (resource.id.equals("client")) {
-			return saveClient((CClient) resource);
+			Element root = saveClient(CClient.class.cast(resource));
+			files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
 		} else if (resource.id.equals("server")) {
-			return saveServer((CServer) resource);
+			Element root = saveServer(CServer.class.cast(resource));
+			files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
 		} else {
 			throw new IllegalArgumentException("Argument is not a configuration resource");			
 		}
@@ -146,5 +167,22 @@ public final class ConfigurationLoader implements ResourceLoader<Resource> {
 		start.setAttribute("map", config.map);
 		game.addContent(start);
 		return game;
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

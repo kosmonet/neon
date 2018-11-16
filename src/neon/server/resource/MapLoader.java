@@ -19,20 +19,29 @@
 package neon.server.resource;
 
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
+
+import com.google.common.io.Files;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
+import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
 import neon.common.resources.RItem;
 import neon.common.resources.RMap;
+import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.ResourceLoader;
@@ -45,21 +54,27 @@ import neon.systems.conversation.Dialog;
  * @author mdriesen
  *
  */
-public final class MapLoader implements ResourceLoader<RMap> {
+public final class MapLoader implements ResourceLoader {
 	private static final Logger logger = Logger.getGlobal();
+	private static final String namespace = "maps";
 	
+	private final XMLTranslator translator = new XMLTranslator();
+	private final NeonFileSystem files;
 	private final EntityManager tracker;
 	private final ResourceManager resources;
 	private final CServer config;
 	
-	public MapLoader(EntityManager entities, ResourceManager resources, CServer config) {
+	public MapLoader(NeonFileSystem files, EntityManager entities, ResourceManager resources, CServer config) {
+		this.files = files;
 		tracker = entities;
 		this.resources = resources;
 		this.config = config;
 	}
 	
 	@Override
-	public RMap load(Element root) {
+	public RMap load(String id) throws IOException {
+		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
+		
 		// check whether this is an original map from a module, or a map from a saved game
 		if (root.getAttributeValue("module").equals("save")) {
 			return loadFromSave(root);
@@ -114,7 +129,9 @@ public final class MapLoader implements ResourceLoader<RMap> {
 	}
 	
 	@Override
-	public Element save(RMap map) {
+	public void save(Resource resource) throws IOException {
+		RMap map = RMap.class.cast(resource);
+		
 		Element root = new Element("map");
 		root.setAttribute("id", map.id);
 		root.setAttribute("name", map.name);
@@ -171,7 +188,7 @@ public final class MapLoader implements ResourceLoader<RMap> {
 			}
 		}
 		
-		return root;
+		files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
 	}
 
 	private void initTerrain(RMap map, Element terrain) {
@@ -269,5 +286,22 @@ public final class MapLoader implements ResourceLoader<RMap> {
 	 */
 	private int getMapUID(short base, String module) {
 		return ((int)config.getModuleUID(module) << 16) | base;
+	}
+
+	@Override
+	public Set<String> listResources() {
+		return files.listFiles(namespace).parallelStream()
+				.map(Files::getNameWithoutExtension)
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".xml");
+	}
+	
+	@Override
+	public String getNamespace() {
+		return namespace;
 	}
 }

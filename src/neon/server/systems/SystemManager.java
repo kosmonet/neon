@@ -35,6 +35,7 @@ import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -65,7 +66,7 @@ public final class SystemManager {
 	private final MagicSystem magicSystem;
 	private final Configuration config = new Configuration();
 	
-	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public SystemManager(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.resources = resources;
 		this.entities = entities;
 		
@@ -75,7 +76,7 @@ public final class SystemManager {
 		actionSystem = new ActionSystem(bus);
 		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
 		combatSystem = new CombatSystem(entities, bus);
-		magicSystem = new MagicSystem(resources, entities, bus);
+		magicSystem = new MagicSystem(files, resources, entities, bus);
 		
 		// and register them on the event bus
 		bus.register(combatSystem);
