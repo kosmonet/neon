@@ -137,6 +137,19 @@ public class RItem extends Resource {
 		}		
 	}
 	
+	public static final class Potion extends RItem {
+		/** The magic effect of the enchantment. */
+		public final Optional<Effect> effect;
+		/** The magnitude of the enchantment. */
+		public final int magnitude;
+
+		public Potion(Builder builder) {
+			super(builder);
+			magnitude = builder.magnitude;
+			effect = Optional.ofNullable(builder.effect);
+		}
+	}
+	
 	/**
 	 * A builder for the {@code RItem} class.
 	 * 
@@ -205,7 +218,7 @@ public class RItem extends Resource {
 			return this;
 		}
 		
-		public Builder setEnchantment(Effect effect, int magnitude) {
+		public Builder setMagic(Effect effect, int magnitude) {
 			this.effect = effect;
 			this.magnitude = magnitude;
 			return this;

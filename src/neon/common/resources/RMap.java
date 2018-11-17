@@ -41,6 +41,7 @@ public final class RMap extends Resource {
 	 * @param width
 	 * @param height
 	 * @param uid
+	 * @param module
 	 */
 	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "maps");

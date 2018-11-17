@@ -55,6 +55,8 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
+import neon.systems.magic.Enchantment;
+import neon.systems.magic.MagicEvent;
 
 /**
  * A state to let the player handle their inventory.
@@ -128,7 +130,7 @@ public final class InventoryState extends State {
 	@FXML private void equipItem() {
 		long uid = playerList.getSelectionModel().getSelectedItem();
 		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
-
+		
 		if (equipment.hasEquipped(uid)) {
 			bus.post(new InventoryEvent.Unequip(uid));
 		} else {
@@ -136,6 +138,9 @@ public final class InventoryState extends State {
 				bus.post(new InventoryEvent.Equip(uid, selectSlot()));				
 			} else if (components.hasComponent(uid, Clothing.class)) {
 				bus.post(new InventoryEvent.Equip(uid));
+			} else if (components.hasComponent(uid, Enchantment.class)) {
+				// if it's no weapon or clothing, but has an enchantment, it must be a potion
+				bus.post(new MagicEvent.Drink(uid, PLAYER_UID));
 			}
 		}
 	}

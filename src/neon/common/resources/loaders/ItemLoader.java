@@ -73,7 +73,7 @@ public final class ItemLoader implements ResourceLoader {
 		if (magic != null) {
 			Effect effect = Effect.valueOf(magic.getAttributeValue("effect").toUpperCase());
 			int magnitude = Integer.parseInt(magic.getAttributeValue("magnitude"));
-			builder.setEnchantment(effect, magnitude);
+			builder.setMagic(effect, magnitude);
 		}
 		
 		switch (root.getName()) {
@@ -87,6 +87,8 @@ public final class ItemLoader implements ResourceLoader {
 			return new RItem.Coin(builder);
 		case "container":
 			return new RItem.Container(builder);
+		case "potion":
+			return new RItem.Potion(builder);
 		default:
 			return builder.build();
 		}

@@ -136,27 +136,30 @@ public final class DescriptionLabel extends Label {
 			Clothing clothing = components.getInstance(Clothing.class);
 			builder.append("∷\n");
 			builder.append("Slot: " + clothing.getSlot().toString().toLowerCase());
+			builder.append("\n");
 		}
 
 		if (components.containsKey(Armor.class)) {
 			Armor armor = components.getInstance(Armor.class);
+			builder.append("Type: " + armor.getType().toString().toLowerCase());
 			builder.append("\n");
-			builder.append("Type: " + armor.getType().toString().toLowerCase());						
+			builder.append("Rating: " + armor.getRating());
 			builder.append("\n");
-			builder.append("Rating: " + armor.getRating());						
 		}
 
 		if (components.containsKey(Weapon.class)) {
 			Weapon weapon = components.getInstance(Weapon.class);
 			builder.append("∷\n");
-			builder.append("Damage: " + weapon.getDamage());						
+			builder.append("Damage: " + weapon.getDamage());
+			builder.append("\n");
 		}
 
 		if (components.containsKey(Enchantment.class)) {
 			Enchantment enchantment = components.getInstance(Enchantment.class);
-			builder.append("\n∷\n");
-			builder.append("Effect: " + enchantment.getEffect() + "\n");						
-			builder.append("Magnitude: " + enchantment.getMagnitude());						
+			builder.append("∷\n");
+			builder.append("Effect: " + enchantment.getEffect() + "\n");
+			builder.append("Magnitude: " + enchantment.getMagnitude());
+			builder.append("\n");
 		}
 
 		setText(builder.toString());

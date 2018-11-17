@@ -55,10 +55,10 @@ public final class CServer extends Resource {
 	}
 	
 	/**
-	 * Returns an unmodifiable {@code Set} that preserves the correct load 
-	 * order of modules, as defined in the neon.ini configuration file.
+	 * Returns a set of modules that preserves the correct load 
+	 * order, as defined in the neon.ini configuration file.
 	 * 
-	 * @return 	the set of modules to be loaded
+	 * @return 	an ordered, unmodifiable {@code Set} of module id's
 	 */
 	public Set<String> getModules() {
 		return modules;

@@ -24,9 +24,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
+import neon.common.resources.RItem;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
@@ -51,6 +54,7 @@ public final class MagicSystem {
 		this.resources = resources;
 
 		resources.addLoader(new SpellLoader(files));
+		entities.addBuilder(RItem.Potion.class, new PotionBuilder());
 	}
 	
 	@Subscribe
@@ -65,6 +69,22 @@ public final class MagicSystem {
 		Magic magic = entities.getEntity(PLAYER_UID).getComponent(Magic.class);
 		magic.unequip();
 		bus.post(new ComponentUpdateEvent(magic));
+	}
+
+	@Subscribe
+	private void onDrink(MagicEvent.Drink event) {
+		// cast the spell effect in the potion
+		Entity potion = entities.getEntity(event.potion);
+		Enchantment effect = potion.getComponent(Enchantment.class);
+		Entity drinker = entities.getEntity(event.drinker);
+		cast(drinker.uid, effect.getEffect(), effect.getMagnitude());
+
+		// remove the potion from the game
+		Inventory inventory = drinker.getComponent(Inventory.class);
+		inventory.removeItem(potion.uid);
+		entities.removeEntity(potion.uid);
+		bus.post(new UpdateEvent.Destroy(potion.uid));
+		bus.post(new ComponentUpdateEvent(inventory));
 	}
 
 	/**

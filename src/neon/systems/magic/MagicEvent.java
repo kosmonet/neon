@@ -56,4 +56,14 @@ public abstract class MagicEvent extends NeonEvent {
 			this.item = item;
 		}
 	}
+	
+	public static final class Drink extends MagicEvent {
+		public final long potion;
+		public final long drinker;
+		
+		public Drink(long potion, long drinker) {
+			this.potion = potion;
+			this.drinker = drinker;
+		}
+	}
 }
