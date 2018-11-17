@@ -22,8 +22,7 @@ import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
-
-import neon.common.resources.RMap;
+import neon.client.Map;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -51,7 +50,7 @@ public final class MapPane extends Pane {
 	    getChildren().add(canvas);
 	}
 	
-	public void drawMap(RMap map) {
+	public void drawMap(Map map) {
 		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		double width = map.getTerrain().getWidth();
 		double height = map.getTerrain().getHeight();

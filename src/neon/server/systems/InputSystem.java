@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -27,22 +27,22 @@ import neon.common.entity.components.Stats;
 import neon.common.event.InputEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
 import neon.server.entity.EntityManager;
+import neon.server.entity.Map;
 
 public final class InputSystem implements NeonSystem {
 	private final EntityManager entities;
 	private final EventBus bus;
 	private final MovementSystem mover;
-	private final ResourceManager resources;
+	private final Configuration config;
 	
-	public InputSystem(ResourceManager resources, EntityManager entities, EventBus bus, MovementSystem mover) {
+	public InputSystem(EntityManager entities, EventBus bus, MovementSystem mover, Configuration config) {
 		this.bus = bus;
 		this.entities = entities;
 		this.mover = mover;
-		this.resources = resources;
+		this.config = config;
 	}
 	
 	/**
@@ -57,12 +57,12 @@ public final class InputSystem implements NeonSystem {
 		Stats stats = player.getComponent(Stats.class);
 		
 		if(stats.isActive()) {
-			RMap map = resources.getResource("maps", event.map);
+			Map map = config.getCurrentMap();
 			mover.move(player, event.direction, map);
 
 			// signal the client that an entity was updated
 			Shape shape = player.getComponent(Shape.class);
-			bus.post(new UpdateEvent.Move(0, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			bus.post(new UpdateEvent.Move(0, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 		}
 
 		// check if the player still has action points left after moving

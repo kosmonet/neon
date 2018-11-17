@@ -18,31 +18,20 @@
 
 package neon.common.resources;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.Set;
-
-import neon.util.spatial.PointQuadTree;
-import neon.util.spatial.PointSpatialIndex;
-import neon.util.spatial.RegionQuadTree;
-import neon.util.spatial.RegionSpatialIndex;
-
 /**
  * @author mdriesen
  */
 public final class RMap extends Resource {
 	/** The uid of this map. */
-	public final int uid;
+	public final short uid;
 	/** The fancy display name. */
 	public final String name;
 	/** The width of the map. */
 	public final int width;
 	/** The height of the map. */
 	public final int height;
-	
-	private final RegionSpatialIndex<String> terrain;
-	private final RegionSpatialIndex<Integer> elevation;
-	private final PointSpatialIndex<Long> entities;
+	/** The module this map belongs to. */
+	public final String module;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities.
@@ -53,74 +42,12 @@ public final class RMap extends Resource {
 	 * @param height
 	 * @param uid
 	 */
-	public RMap(String id, String name, int width, int height, int uid) {
+	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "maps");
 		this.name = name;
 		this.width = width;
 		this.height = height;
-		terrain = new RegionQuadTree<>(width, height);
-		// initialize with a ground plane at 0 elevation
-		elevation = new RegionQuadTree<>(width,  height, 0);
-		entities = new PointQuadTree<>(0, 0, width, height, 100);
 		this.uid = uid;
-	}
-	
-	public RegionSpatialIndex<String> getTerrain() {
-		return terrain;
-	}
-	
-	public RegionSpatialIndex<Integer> getElevation() {
-		return elevation;
-	}
-	
-	/**
-	 * Adds an entity to the map in the given position.
-	 * 
-	 * @param uid
-	 * @param x
-	 * @param y
-	 */
-	public void addEntity(long uid, int x, int y) {
-		entities.insert(uid, x, y);
-	}
-	
-	/**
-	 * 
-	 * @return	all entities on the map
-	 */
-	public Set<Long> getEntities() {
-		return entities.getElements();
-	}
-	
-	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @return	all entities at the given coordinates
-	 */
-	public Set<Long> getEntities(int x, int y) {
-		return entities.get(x, y);
-	}
-	
-	/**
-	 * 
-	 * @param bounds
-	 * @return	all entities in the given bounds
-	 */
-	public Set<Long> getEntities(Rectangle bounds) {
-		return entities.get(bounds);
-	}
-	
-	public void moveEntity(long uid, int x, int y) {
-		entities.move(uid, new Point(x, y));
-	}
-	
-	/**
-	 * Removes an entity from the map.
-	 * 
-	 * @param uid
-	 */
-	public void removeEntity(long uid) {
-		entities.remove(uid);
+		this.module = module;
 	}
 }

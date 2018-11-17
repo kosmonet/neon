@@ -19,6 +19,7 @@
 package neon.client.resource;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,38 +29,35 @@ import com.google.common.io.Files;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
-import neon.common.resources.RMap;
+import neon.common.resources.CClient;
 import neon.common.resources.Resource;
 import neon.common.resources.loaders.ResourceLoader;
 
-/**
- * A loader for map resources.
- * 
- * @author mdriesen
- *
- */
-public final class MapLoader implements ResourceLoader {
-	private static final String namespace = "maps";
+public class ConfigurationLoader implements ResourceLoader {
+	private static final String namespace = "config";
 	
 	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
-	public MapLoader(NeonFileSystem files) {
+	public ConfigurationLoader(NeonFileSystem files) {
 		this.files = files;
 	}
-	
+
 	@Override
-	public RMap load(String id) throws IOException {
+	public Resource load(String id) throws IOException {
 		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
-		String name = root.getAttributeValue("name");
-		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
-		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
-		short uid = Short.parseShort(root.getAttributeValue("uid"));
-		String module = root.getAttributeValue("module");
+		String title = root.getAttributeValue("title");
+		String subtitle = root.getAttributeValue("subtitle");
+		String intro = root.getChildText("intro");
 		
-		return new RMap(id, name, width, height, uid, module);
+		HashSet<String> playable = new HashSet<>();
+		for (Element species : root.getChild("playable").getChildren()) {
+			playable.add(species.getAttributeValue("id"));
+		}
+		
+		return new CClient(title, subtitle, playable, intro);
 	}
-	
+
 	@Override
 	public void save(Resource resource) {
 		throw new UnsupportedOperationException("Client is not allowed to save resources.");
@@ -74,9 +72,9 @@ public final class MapLoader implements ResourceLoader {
 
 	@Override
 	public void removeResource(String id) {
-		throw new UnsupportedOperationException("Client is not allowed to remove resources.");
+		throw new UnsupportedOperationException("Client is not allowed to remove resources.");		
 	}
-	
+
 	@Override
 	public String getNamespace() {
 		return namespace;

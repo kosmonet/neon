@@ -33,13 +33,13 @@ import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
 import neon.common.event.CollisionEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.Configuration;
 import neon.server.Configuration.GameMode;
 import neon.server.entity.EntityManager;
+import neon.server.entity.Map;
 import neon.server.handlers.SkillHandler;
 import neon.util.Direction;
 
@@ -74,39 +74,41 @@ public final class MovementSystem implements NeonSystem {
 	 * @param map
 	 * @throws ResourceException 
 	 */
-	void move(Entity player, Direction direction, RMap map) throws ResourceException {
+	void move(Entity player, Direction direction, Map map) throws ResourceException {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();
 		int z = shape.getZ();
+		int width = map.getWidth();
+		int height = map.getHeight();
 
 		switch (direction) {
 		case LEFT: 
 			x = Math.max(0, x - 1); 
 			break;
 		case RIGHT: 
-			x = Math.min(map.width, x + 1); 
+			x = Math.min(width, x + 1); 
 			break;
 		case UP: 
 			y = Math.max(0, y - 1); 
 			break;
 		case DOWN: 
-			y = Math.min(map.height, y + 1); 
+			y = Math.min(height, y + 1); 
 			break;
 		case DOWN_LEFT:
 			x = Math.max(0, x - 1); 
-			y = Math.min(map.height, y + 1); 
+			y = Math.min(height, y + 1); 
 			break;
 		case DOWN_RIGHT:
-			x = Math.min(map.width, x + 1); 
-			y = Math.min(map.height, y + 1); 
+			x = Math.min(width, x + 1); 
+			y = Math.min(height, y + 1); 
 			break;
 		case UP_LEFT:
 			x = Math.max(0, x - 1); 
 			y = Math.max(0, y - 1); 
 			break;
 		case UP_RIGHT:
-			x = Math.min(map.width, x + 1); 
+			x = Math.min(width, x + 1); 
 			y = Math.max(0, y - 1); 
 			break;
 		default:
@@ -150,7 +152,7 @@ public final class MovementSystem implements NeonSystem {
 		}
 	}
 
-	private void move(Entity creature, RMap map, int x, int y, int z) {
+	private void move(Entity creature, Map map, int x, int y, int z) {
 		Shape shape = creature.getComponent(Shape.class);
 		Stats stats = creature.getComponent(Stats.class);
 		Skills skills = creature.getComponent(Skills.class);
@@ -174,7 +176,7 @@ public final class MovementSystem implements NeonSystem {
 
 		if (canMove) {				
 			shape.setPosition(x, y, z);				
-			bus.post(new UpdateEvent.Move(creature.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+			bus.post(new UpdateEvent.Move(creature.uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 		}
 	}
 }

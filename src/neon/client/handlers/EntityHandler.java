@@ -21,13 +21,13 @@ package neon.client.handlers;
 import com.google.common.eventbus.Subscribe;
 
 import neon.client.ComponentManager;
+import neon.client.Configuration;
+import neon.client.Map;
 import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 
 /**
  * A class to handle all entity-related events.
@@ -37,11 +37,11 @@ import neon.common.resources.ResourceManager;
  */
 public class EntityHandler {
 	private final ComponentManager components;
-	private final ResourceManager resources;
+	private final Configuration config;
 	
-	public EntityHandler(ComponentManager components, ResourceManager resources) {
+	public EntityHandler(ComponentManager components, Configuration config) {
 		this.components = components;
-		this.resources = resources;
+		this.config = config;
 	}
 	
 	@Subscribe 
@@ -60,7 +60,7 @@ public class EntityHandler {
 			components.putComponent(shape);
 		}
 
-		RMap map = resources.getResource("maps", event.map);		
+		Map map = config.getCurrentMap();		
 		if (map.getEntities().contains(event.uid)) {
 			map.moveEntity(event.uid, event.x, event.y);
 		} else {
@@ -70,7 +70,7 @@ public class EntityHandler {
 	
 	@Subscribe
 	private void onEntityRemove(UpdateEvent.Remove event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.map);
+		Map map = config.getCurrentMap();
 		map.removeEntity(event.uid);
 	}
 	

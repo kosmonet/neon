@@ -18,6 +18,8 @@
 
 package neon.server;
 
+import neon.server.entity.Map;
+
 /**
  * The server configuration.
  * 
@@ -29,34 +31,58 @@ public class Configuration {
 		TURN_BASED, REAL_TIME;
 	}
 
-	private String map;
+	private Map map;
 	private GameMode mode = GameMode.TURN_BASED;
 	private boolean running = false;
 	
-	public void setCurrentMap(String map) {
+	/**
+	 * Sets the current map.
+	 * 
+	 * @param map
+	 */
+	public void setCurrentMap(Map map) {
 		this.map = map;
 	}
 	
 	/**
 	 * 
-	 * @return	the id of the current map
+	 * @return	the current {@code Map}
 	 */
-	public String getCurrentMap() {
+	public Map getCurrentMap() {
 		return map;
 	}
 	
+	/**
+	 * Sets the current game mode.
+	 * 
+	 * @param mode
+	 */
 	public void setMode(GameMode mode) {
 		this.mode = mode;
 	}
 	
+	/**
+	 * 
+	 * @return	the current {@code GameMode}
+	 */
 	public GameMode getMode() {
 		return mode;
 	}
 	
+	/**
+	 * Checks whether a game is currently running.
+	 * 
+	 * @return
+	 */
 	public boolean isRunning() {
 		return running;
 	}
 	
+	/**
+	 * Sets whether a game is currently running or not.
+	 * 
+	 * @param running
+	 */
 	public void setRunning(boolean running) {
 		this.running = running;
 	}

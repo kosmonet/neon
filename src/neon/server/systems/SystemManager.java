@@ -18,11 +18,10 @@
 
 package neon.server.systems;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
@@ -35,8 +34,6 @@ import neon.common.event.InputEvent;
 import neon.common.event.TimerEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.files.NeonFileSystem;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.Configuration;
@@ -44,7 +41,6 @@ import neon.server.Configuration.GameMode;
 import neon.server.entity.EntityManager;
 import neon.systems.ai.AISystem;
 import neon.systems.combat.CombatSystem;
-import neon.systems.magic.MagicSystem;
 
 /**
  * Handles all game systems (the game loop, basically).
@@ -53,41 +49,36 @@ import neon.systems.magic.MagicSystem;
  * 
  */
 public final class SystemManager {
-	private static final Logger logger = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
-	private final ResourceManager resources;
 	private final EntityManager entities;
 	private final AISystem aiSystem;
 	private final ActionSystem actionSystem;
 	private final MovementSystem moveSystem;
 	private final InputSystem inputSystem;
 	private final CombatSystem combatSystem;
-	private final MagicSystem magicSystem;
-	private final Configuration config = new Configuration();
+	private final Configuration config;
 	
-	public SystemManager(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.resources = resources;
+	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
 		this.entities = entities;
+		this.config = config;
 		
 		// create all systems
 		moveSystem = new MovementSystem(resources, entities, bus, config);
-		aiSystem = new AISystem(resources, config);
+		aiSystem = new AISystem(config);
 		actionSystem = new ActionSystem(bus);
-		inputSystem = new InputSystem(resources, entities, bus, moveSystem);
+		inputSystem = new InputSystem(entities, bus, moveSystem, config);
 		combatSystem = new CombatSystem(entities, bus);
-		magicSystem = new MagicSystem(files, resources, entities, bus);
 		
 		// and register them on the event bus
 		bus.register(combatSystem);
 		bus.register(inputSystem);
-		bus.register(magicSystem);
 		bus.register(aiSystem);
 	}
 	
 	@Subscribe
-	private void onMapChange(UpdateEvent.Map event) {
-		config.setCurrentMap(event.map);
+	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
+		config.setCurrentMap(entities.getMap(event.uid));
 	}
 	
 	@Subscribe
@@ -120,14 +111,7 @@ public final class SystemManager {
 	}
 
 	private Collection<Long> getActiveEntities() {
-		HashSet<Long> entities = new HashSet<>();
-		try {
-			RMap map = resources.getResource("maps", config.getCurrentMap());
-			entities.addAll(map.getEntities());
-		} catch (ResourceException e) {
-			logger.severe("unknown map id: <" + config.getCurrentMap() + ">");
-		}
-		return entities;
+		return config.getCurrentMap().getEntities();
 	}
 	
 	/**

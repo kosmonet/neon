@@ -31,10 +31,10 @@ import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
 import neon.server.entity.EntityManager;
+import neon.server.entity.Map;
 import neon.systems.combat.Weapon;
 
 /**
@@ -48,12 +48,12 @@ public final class InventoryHandler {
 	
 	private final EventBus bus;
 	private final EntityManager entities;
-	private final ResourceManager resources;
+	private final Configuration config;
 	
-	public InventoryHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
+	public InventoryHandler(EntityManager entities, EventBus bus, Configuration config) {
 		this.bus = bus;
 		this.entities = entities;
-		this.resources = resources;
+		this.config = config;
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public final class InventoryHandler {
 		inventory.removeItem(event.item);
 		
 		Shape shape = player.getComponent(Shape.class);
-		RMap map = resources.getResource("maps", event.map);
+		Map map = config.getCurrentMap();
 		map.addEntity(event.item, shape.getX(), shape.getY());
 		Entity item = entities.getEntity(event.item);
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
@@ -107,7 +107,7 @@ public final class InventoryHandler {
 		// let the client know
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new ComponentUpdateEvent(equipment));
-		bus.post(new UpdateEvent.Move(item.uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+		bus.post(new UpdateEvent.Move(item.uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
 	/**
@@ -118,9 +118,9 @@ public final class InventoryHandler {
 	 */
 	@Subscribe
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
-		RMap map = resources.getResource("maps", event.map);
+		Map map = config.getCurrentMap();
 		map.removeEntity(event.item);
-		bus.post(new UpdateEvent.Remove(event.item, map.id));
+		bus.post(new UpdateEvent.Remove(event.item, map.getUid()));
 		
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);

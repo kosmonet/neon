@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -39,7 +38,6 @@ public final class CServer extends Resource {
 	
 	private final Set<String> modules;
 	private final Level level;
-	private final HashBiMap<String, Short> uids = HashBiMap.create();
 
 	/**
 	 * Initializes this server configuration resource with the given set of
@@ -53,13 +51,7 @@ public final class CServer extends Resource {
 		super("server", "config");
 		this.modules = ImmutableSet.copyOf(modules);
 		level = Level.parse(logLevel);
-		
-		short index = 1;
-		for (String module : modules) {
-			uids.put(module, index++);
-		}
-		
-		logger.config("module load order: " + uids);
+		logger.config("module load order: " + modules);
 	}
 	
 	/**
@@ -78,33 +70,6 @@ public final class CServer extends Resource {
 	 */
 	public Level getLogLevel() {
 		return level;
-	}
-	
-	/**
-	 * 
-	 * @param module
-	 * @return	the uid of the module
-	 */
-	public short getModuleUID(String module) {
-		return uids.get(module);
-	}
-	
-	/**
-	 * Sets the uid of the given module. If another module with the same uid 
-	 * was already present, this module is moved to the next free uid.
-	 * 
-	 * @param module
-	 * @param uid
-	 */
-	public void setModuleUID(String module, short uid) {
-		if (uids.containsValue(uid)) {
-			String mod = uids.inverse().get(uid);
-			short index = 0;
-			while (uids.containsValue(++index));
-			uids.put(mod, index);
-		}
-		
-		uids.put(module, uid);
 	}
 	
 	/**

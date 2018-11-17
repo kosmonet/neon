@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.resources.loaders;
+package neon.server.resource;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -36,6 +36,8 @@ import neon.common.resources.CClient;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.Resource;
+import neon.common.resources.loaders.ResourceLoader;
+import neon.server.entity.EntityManager;
 
 /**
  * A resource loader for client and game configuration files.
@@ -48,9 +50,11 @@ public final class ConfigurationLoader implements ResourceLoader {
 	
 	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
+	private final EntityManager entities;
 	
-	public ConfigurationLoader(NeonFileSystem files) {
+	public ConfigurationLoader(NeonFileSystem files, EntityManager entities) {
 		this.files = files;
+		this.entities = entities;
 	}
 	
 	@Override
@@ -91,17 +95,22 @@ public final class ConfigurationLoader implements ResourceLoader {
 			modules.add(module.getText());
 		}
 		
-		String level = root.getChildText("log").toUpperCase();
-		CServer cs = new CServer(modules, level);
-
-		// extra step in case this was a saved configuration file
+		// set the correct module uid's in the entity manager
 		if (root.getName().equals("server")) {
+			// in case this was a saved configuration file
 			for (Element module : root.getChild("modules").getChildren()) {
-				cs.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+				entities.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+			}
+		} else {
+			// in case configuration was loaded from neon.ini
+			short index = 1;
+			for (String module : modules) {
+				entities.setModuleUID(module, index++);
 			}
 		}
 
-		return cs; 
+		String level = root.getChildText("log").toUpperCase();
+		return new CServer(modules, level);
 	}
 
 	private CClient loadClient(Element root) {
@@ -124,7 +133,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 		for(String id : server.getModules()) {
 			Element module = new Element("module");
 			module.setText(id);
-			module.setAttribute("uid", Short.toString(server.getModuleUID(id)));
+			module.setAttribute("uid", Short.toString(entities.getModuleUID(id)));
 			modules.addContent(module);
 		}
 		root.addContent(modules);

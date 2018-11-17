@@ -202,7 +202,7 @@ public final class InventoryState extends State {
 			long uid = playerList.getSelectionModel().getSelectedItem();
 			// we trust the client on this one
 			playerList.getItems().remove(uid);
-			bus.post(new InventoryEvent.Drop(uid, config.getCurrentMap().id));
+			bus.post(new InventoryEvent.Drop(uid, config.getCurrentMap().getID()));
 		}
 	}
 

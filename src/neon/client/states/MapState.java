@@ -31,10 +31,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.BorderPane;
 import neon.client.Configuration;
+import neon.client.Map;
 import neon.client.help.HelpWindow;
 import neon.client.ui.MapPane;
 import neon.client.ui.UserInterface;
-import neon.common.resources.RMap;
 import neon.common.resources.ResourceManager;
 
 /**
@@ -84,7 +84,7 @@ public final class MapState extends State {
 	public void enter(TransitionEvent event) {
 		logger.finest("entering map state");
 	    root.setCenter(pane);
-	    RMap map = config.getCurrentMap();
+	    Map map = config.getCurrentMap();
 	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
 	    pane.heightProperty().addListener(observable -> pane.drawMap(map));
 		ui.showScene(scene);

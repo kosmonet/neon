@@ -20,43 +20,31 @@ package neon.systems.ai;
 
 import java.util.Optional;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
-import neon.common.resources.RMap;
-import neon.common.resources.ResourceException;
-import neon.common.resources.ResourceManager;
 import neon.server.Configuration;
+import neon.server.entity.Map;
 import neon.server.systems.NeonSystem;
 
 public final class AISystem implements NeonSystem {
-	private static final Logger logger = Logger.getGlobal();
-	
 	private final Random random = new Random();
-	private final ResourceManager resources;
 	private final Configuration config;
 	
-	public AISystem(ResourceManager resources, Configuration config) {
-		this.resources = resources;
+	public AISystem(Configuration config) {
 		this.config = config;
 	}
 	
 	private void act(Entity creature) {
-		try {
-			RMap map = resources.getResource("maps", config.getCurrentMap());
-			Shape shape = creature.getComponent(Shape.class);
+		Map map = config.getCurrentMap();
+		Shape shape = creature.getComponent(Shape.class);
 
-			// move the creature
-			int x = shape.getX() + random.nextInt(3) - 1;
-			int y = shape.getY() + random.nextInt(3) - 1;
-			creature.setComponent(new Task.Move(creature.uid, x, y, map));
-		} catch (ResourceException e) {
-			logger.severe("creature <" + creature + "> failed to think");
-		}
-
+		// move the creature
+		int x = shape.getX() + random.nextInt(3) - 1;
+		int y = shape.getY() + random.nextInt(3) - 1;
+		creature.setComponent(new Task.Move(creature.uid, x, y, map));
 	}
 
 	@Override

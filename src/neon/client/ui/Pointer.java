@@ -19,9 +19,9 @@
 package neon.client.ui;
 
 import javafx.scene.paint.Color;
+import neon.client.Map;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Shape;
-import neon.common.resources.RMap;
 import neon.util.Direction;
 
 /**
@@ -70,34 +70,34 @@ public class Pointer {
 	 * @param direction
 	 * @param map
 	 */
-	public void move(Direction direction, RMap map) {
+	public void move(Direction direction, Map map) {
 		switch (direction) {
 		case LEFT: 
 			shape.setX(Math.max(0, shape.getX() - 1)); 
 			break;
 		case RIGHT: 
-			shape.setX(Math.min(map.width, shape.getX() + 1)); 
+			shape.setX(Math.min(map.getWidth(), shape.getX() + 1)); 
 			break;
 		case UP: 
 			shape.setY(Math.max(0, shape.getY() - 1)); 
 			break;
 		case DOWN: 
-			shape.setY(Math.min(map.height, shape.getY() + 1)); 
+			shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
 			break;
 		case DOWN_LEFT:
 			shape.setX(Math.max(0, shape.getX() - 1)); 
-			shape.setY(Math.max(0, shape.getY() - 1)); 
+			shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
 			break;
 		case DOWN_RIGHT:
-			shape.setX(Math.min(map.width, shape.getX() + 1)); 
-			shape.setY(Math.max(0, shape.getY() - 1)); 
+			shape.setX(Math.min(map.getWidth(), shape.getX() + 1)); 
+			shape.setY(Math.min(map.getHeight(), shape.getY() + 1)); 
 			break;
 		case UP_LEFT:
 			shape.setX(Math.max(0, shape.getX() - 1)); 
 			shape.setY(Math.max(0, shape.getY() - 1)); 
 			break;
 		case UP_RIGHT:
-			shape.setX(Math.min(map.width, shape.getX() + 1)); 
+			shape.setX(Math.min(map.getWidth(), shape.getX() + 1)); 
 			shape.setY(Math.max(0, shape.getY() - 1)); 
 			break;
 		default:

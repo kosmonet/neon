@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client.ui;
+package neon.client.states;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +29,10 @@ import com.google.common.eventbus.EventBus;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import neon.client.Configuration;
+import neon.client.Map;
+import neon.client.ui.ButtonTypes;
+import neon.client.ui.UserInterface;
 import neon.client.ComponentManager;
-import neon.client.states.TransitionEvent;
 import neon.common.entity.PlayerMode;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.ItemInfo;
@@ -39,7 +41,6 @@ import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.event.InputEvent;
 import neon.common.event.StealthEvent;
-import neon.common.resources.RMap;
 import neon.systems.magic.Enchantment;
 import neon.systems.magic.MagicEvent;
 
@@ -49,7 +50,7 @@ import neon.systems.magic.MagicEvent;
  * @author mdriesen
  *
  */
-public class Accelerator {
+class Accelerator {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -66,7 +67,7 @@ public class Accelerator {
 	
 	public void act() {
 		// check if there's another entity besides the player on the given position
-		RMap map = config.getCurrentMap();
+		Map map = config.getCurrentMap();
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
 				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());

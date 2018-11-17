@@ -41,7 +41,6 @@ import neon.common.resources.RItem;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.ItemLoader;
 import neon.common.resources.loaders.ModuleLoader;
@@ -52,6 +51,7 @@ import neon.server.entity.ContainerBuilder;
 import neon.server.entity.CreatureBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
+import neon.server.resource.ConfigurationLoader;
 import neon.server.resource.MapLoader;
 
 /**
@@ -85,7 +85,7 @@ final class ServerLoader {
 	 */
 	void configure(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		try {
-			CServer configuration = initConfiguration(files);
+			CServer configuration = initConfiguration(files, entities);
 			logger.setLevel(configuration.getLogLevel());
 			initEntities(entities);
 			initFileSystem(files, configuration.getModules());
@@ -99,12 +99,12 @@ final class ServerLoader {
 		}
 	}
 
-	private CServer initConfiguration(NeonFileSystem files) throws IOException, JDOMException {
+	private CServer initConfiguration(NeonFileSystem files, EntityManager entities) throws IOException, JDOMException {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
-			return new ConfigurationLoader(files).loadServer(doc.getRootElement());
-		} 	
+			return new ConfigurationLoader(files, entities).loadServer(doc.getRootElement());
+		} 
 	}
 	
 	private void initEntities(EntityManager entities) {
@@ -135,12 +135,12 @@ final class ServerLoader {
 	
 	private void initResources(NeonFileSystem files, ResourceManager resources, CServer configuration, EntityManager entities) {
 		// add all necessary resource loaders to the manager
-		resources.addLoader(new ConfigurationLoader(files));
+		resources.addLoader(new ConfigurationLoader(files, entities));
 		resources.addLoader(new ModuleLoader(files));
 		resources.addLoader(new TerrainLoader(files));
 		resources.addLoader(new CreatureLoader(files));
 		resources.addLoader(new ItemLoader(files));
-		resources.addLoader(new MapLoader(files, entities, resources, configuration));
+		resources.addLoader(new MapLoader(files, entities));
 		
 		// check if all required parent modules are present
 		try {

@@ -24,11 +24,14 @@ import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
@@ -63,8 +66,8 @@ import neon.common.resources.RMap;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.ConfigurationLoader;
 import neon.server.entity.EntityManager;
+import neon.server.entity.Map;
 import neon.systems.ai.Behavior;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
@@ -117,7 +120,9 @@ public final class GameLoader {
 			CServer config = resources.getResource("config", "server");
 			CGame game = initGame(resources, config.getModules());
 			resources.addResource(game);
-			RMap map = resources.getResource("maps", game.map);
+			RMap resource = resources.getResource("maps", game.map);
+			Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module), files, entities, resources);
+			entities.addMap(map);
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.species);
@@ -228,25 +233,27 @@ public final class GameLoader {
 
 		// load the server configuration file from the save folder and check each module uid
 		CServer currentConfig = resources.getResource("config", "server");
-		CServer oldConfig = getConfiguration(event.save);
-		for (String module : oldConfig.getModules()) {
-			if(currentConfig.hasModule(module)) {
+		for (Entry<String, Short> entry : getConfiguration(event.save).entrySet()) {
+			if (currentConfig.hasModule(entry.getKey())) {
 				// make sure the current module uid is the same as in the saved game
-				currentConfig.setModuleUID(module, oldConfig.getModuleUID(module));
+				entities.setModuleUID(entry.getKey(), entry.getValue());
 			} else {
 				// give a warning when a module was removed from the load order
-				logger.warning("missing module <" + module + "> in saved game");
-				bus.post(new MessageEvent("Module <" + module + "> is missing from the load order. "
+				logger.warning("missing module <" + entry.getKey() + "> in saved game");
+				bus.post(new MessageEvent("Module <" + entry.getKey() + "> is missing from the load order. "
 						+ "This module was present when the game was originally saved. The game may "
 						+ "behave in unexpected ways.", "Module warning"));
 			}
 		}
+		
 		// save all changes to the current configuration
 		resources.addResource(currentConfig);
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		RMap map = resources.getResource("maps", game.map);
+		RMap resource = resources.getResource("maps", game.map);
+		Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module), files, entities, resources);
+		entities.addMap(map);
 
 		// tell the client everything is ready
 		notifyClient(map);
@@ -259,11 +266,16 @@ public final class GameLoader {
 	 * @return
 	 * @throws IOException
 	 */
-	private CServer getConfiguration(String save) throws IOException {
+	private HashMap<String, Short> getConfiguration(String save) throws IOException {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("saves", save, "config", "server.xml"))) {
+			HashMap<String, Short> modules = new HashMap<>();
 			Document doc = new SAXBuilder().build(in);
-			return new ConfigurationLoader(files).loadServer(doc.getRootElement());
+			for (Element module : doc.getRootElement().getChild("modules").getChildren()) {
+				modules.put(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+			}
+			
+			return modules;
 		} catch (JDOMException e) {
 			throw new IllegalStateException("failed to load server configuration file", e);
 		}
@@ -275,24 +287,24 @@ public final class GameLoader {
 	 * @param map
 	 * @throws ResourceException
 	 */
-	private void notifyClient(RMap map) throws ResourceException {
+	private void notifyClient(Map map) throws ResourceException {
 		// tell the client to start loading the map
 		Entity player = entities.getEntity(PLAYER_UID);
 		bus.post(new UpdateEvent.Start());		
 		notifyPlayer(player);
 
 		// then send the map
-		bus.post(new UpdateEvent.Map(map));
+		bus.post(new UpdateEvent.Map(map.getUid(), map.getId()));
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
 			Shape shape = entity.getComponent(Shape.class);
 			if (entity.hasComponent(CreatureInfo.class)) {
 				notifyCreature(entity);
-				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 			} else if (entity.hasComponent(ItemInfo.class)) {
 				notifyItem(entity);
-				bus.post(new UpdateEvent.Move(uid, map.id, shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
 	}

@@ -18,8 +18,6 @@
 
 package neon.common.event;
 
-import neon.common.resources.RMap;
-
 /**
  * An event containing updates for the client.
  * 
@@ -42,19 +40,21 @@ public abstract class UpdateEvent extends NeonEvent {
 	 *
 	 */
 	public static final class Map extends UpdateEvent {
-		public final String map;
+		public final int uid;
+		public final String id;
 		
-		public Map(RMap map) {
-			this.map = map.id;
+		public Map(int uid, String id) {
+			this.uid = uid;
+			this.id = id;
 		}
 	}
 	
 	public static final class Move extends UpdateEvent {
 		public final long uid;
 		public final int x, y, z;
-		public final String map;
+		public final int map;
 
-		public Move(long uid, String map, int x, int y, int z) {
+		public Move(long uid, int map, int x, int y, int z) {
 			this.uid = uid;
 			this.x = x;
 			this.y = y;
@@ -65,9 +65,9 @@ public abstract class UpdateEvent extends NeonEvent {
 	
 	public static final class Remove extends UpdateEvent {
 		public final long uid;
-		public final String map;
+		public final int map;
 		
-		public Remove(long uid, String map) {
+		public Remove(long uid, int map) {
 			this.uid = uid;
 			this.map = map;
 		}

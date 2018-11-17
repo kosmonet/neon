@@ -33,6 +33,7 @@ import neon.client.handlers.CollisionHandler;
 import neon.client.handlers.EntityHandler;
 import neon.client.handlers.GameHandler;
 import neon.client.handlers.MessageHandler;
+import neon.client.resource.ConfigurationLoader;
 import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
@@ -56,7 +57,6 @@ import neon.common.event.ServerEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
 import neon.common.resources.ResourceManager;
-import neon.common.resources.loaders.ConfigurationLoader;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.systems.magic.SpellLoader;
@@ -111,9 +111,9 @@ public final class Client implements Runnable {
 		
 		// set up some event handlers
 		bus.register(new CollisionHandler(ui, bus, components, config));
-		bus.register(new EntityHandler(components, resources));
+		bus.register(new EntityHandler(components, config));
 		bus.register(new MessageHandler(ui, components));
-		bus.register(new GameHandler(ui, components, resources, config));
+		bus.register(new GameHandler(ui, files, components, resources, config));
 		
 		// initialize all states and enter the first one
 		initStates(version);

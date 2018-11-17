@@ -40,6 +40,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import neon.client.ComponentManager;
 import neon.client.Configuration;
+import neon.client.Map;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.ItemCell;
@@ -48,7 +49,6 @@ import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
-import neon.common.resources.RMap;
 
 /**
  * A state to handle items when browsing a container or a random heap of 
@@ -73,7 +73,7 @@ public final class ContainerState extends State {
 	@FXML private Label moneyLabel;
 	
 	private Scene scene;
-	private RMap map;
+	private Map map;
 	private long container = DUMMY;
 	
 	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
@@ -142,7 +142,7 @@ public final class ContainerState extends State {
 			playerList.getItems().remove(uid);
 			containerList.getItems().add(uid);
 			if (container == DUMMY) {
-				bus.post(new InventoryEvent.Drop(uid, map.id));
+				bus.post(new InventoryEvent.Drop(uid, map.getID()));
 			} else {
 				bus.post(new InventoryEvent.Store(uid, container));				
 			}
@@ -152,7 +152,7 @@ public final class ContainerState extends State {
 			containerList.getItems().remove(uid);
 			playerList.getItems().add(uid);
 			if (container == DUMMY) {
-				bus.post(new InventoryEvent.Pick(uid, map.id));
+				bus.post(new InventoryEvent.Pick(uid, map.getID()));
 			} else {
 				bus.post(new InventoryEvent.Take(uid, container));
 			}

@@ -18,8 +18,6 @@
 
 package neon.client;
 
-import neon.common.resources.RMap;
-
 /**
  * Configuration for the client.
  * 
@@ -28,13 +26,13 @@ import neon.common.resources.RMap;
  */
 public class Configuration {
 	private boolean paused = true;
-	private RMap map;
+	private Map map;
 	
-	public void setCurrentMap(RMap map) {
+	public void setCurrentMap(Map map) {
 		this.map = map;
 	}
 	
-	public RMap getCurrentMap() {
+	public Map getCurrentMap() {
 		return map;
 	}
 	

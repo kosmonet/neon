@@ -30,6 +30,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.HashBiMap;
 
 import neon.common.entity.Entity;
 import neon.common.files.NeonFileSystem;
@@ -44,14 +45,16 @@ import neon.common.resources.ResourceException;
  * @author mdriesen
  *
  */
-public final class EntityManager implements RemovalListener<Long, Entity> {
+public final class EntityManager {
 	private static final Logger logger = Logger.getGlobal();
 
-	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(this).softValues().build();
+	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(new EntityListener()).softValues().build();
 	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
-	
+	private final Cache<Integer, Map> maps = CacheBuilder.newBuilder().removalListener(new MapListener()).softValues().build();
+	private final HashBiMap<String, Short> uids = HashBiMap.create();
+
 	public EntityManager(NeonFileSystem files, EntitySaver saver) {
 		this.files = files;
 		this.saver = saver;	
@@ -70,6 +73,26 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 		} catch (ExecutionException e) {
 			throw new IllegalArgumentException("No entity with uid <" + uid + "> found", e);
 		}
+	}
+	
+	/**
+	 * Calculates the full map uid given the module name and the base uid
+	 * of the map within the module.
+	 * 
+	 * @param base
+	 * @param module
+	 * @return
+	 */
+	public int getMapUID(short base, String module) {
+		return ((int)getModuleUID(module) << 16) | base;
+	}
+	
+	public Map getMap(Integer uid) {
+		return maps.getIfPresent(uid);
+	}
+	
+	public void addMap(Map map) {
+		maps.put(map.getUid(), map);
 	}
 	
 	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
@@ -108,12 +131,6 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 		return (short) (entity >>> 48);		
 	}
 
-	@Override
-	public void onRemoval(RemovalNotification<Long, Entity> notification) {
-		logger.finest(notification.getValue() + " removed from manager");
-		saveEntity(notification.getValue());
-	}
-	
 	/**
 	 * Stores all remaining entities in the cache in the temp folder on disk.
 	 */
@@ -141,5 +158,47 @@ public final class EntityManager implements RemovalListener<Long, Entity> {
 	private Entity loadEntity(long uid) throws IOException, ResourceException {
 		Document doc = files.loadFile(new XMLTranslator(), "entities", Long.toString(uid) + ".xml");
 		return saver.load(uid, doc.getRootElement());
+	}
+	
+	/**
+	 * 
+	 * @param module
+	 * @return	the uid of the module
+	 */
+	public short getModuleUID(String module) {
+		return uids.get(module);
+	}
+	
+	/**
+	 * Sets the uid of the given module. If another module with the same uid 
+	 * was already present, this module is moved to the next free uid.
+	 * 
+	 * @param module
+	 * @param uid
+	 */
+	public void setModuleUID(String module, short uid) {
+		if (uids.containsValue(uid)) {
+			String mod = uids.inverse().get(uid);
+			short index = 0;
+			while (uids.containsValue(++index));
+			uids.put(mod, index);
+		}
+		
+		uids.put(module, uid);
+	}	
+	
+	private final class EntityListener implements RemovalListener<Long, Entity> {
+		@Override
+		public void onRemoval(RemovalNotification<Long, Entity> notification) {
+			logger.finest(notification.getValue() + " removed from manager");
+			saveEntity(notification.getValue());
+		}		
+	}
+	
+	private final class MapListener implements RemovalListener<Integer, Map> {
+		@Override
+		public void onRemoval(RemovalNotification<Integer, Map> notification) {
+			logger.finest(notification.getValue() + " removed from manager");
+		}		
 	}
 }

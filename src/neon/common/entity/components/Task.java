@@ -18,7 +18,7 @@
 
 package neon.common.entity.components;
 
-import neon.common.resources.RMap;
+import neon.server.entity.Map;
 
 /**
  * A component that indicates a task that should be performed by one of the
@@ -56,16 +56,16 @@ public abstract class Task implements Component {
 	
 	public static final class Move extends Task {
 		public final int x, y;
-		private final RMap map;
+		private final Map map;
 		
-		public Move(long uid, int x, int y, RMap map) {
+		public Move(long uid, int x, int y, Map map) {
 			super(uid);
 			this.x = x;
 			this.y = y;
 			this.map = map;
 		}
 		
-		public RMap getMap() {
+		public Map getMap() {
 			return map;
 		}
 	}

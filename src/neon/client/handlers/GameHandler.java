@@ -18,15 +18,19 @@
 
 package neon.client.handlers;
 
+import java.io.IOException;
+
 import com.google.common.eventbus.Subscribe;
 
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 import neon.client.ComponentManager;
 import neon.client.Configuration;
+import neon.client.Map;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.Shape;
 import neon.common.event.UpdateEvent;
+import neon.common.files.NeonFileSystem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -39,21 +43,25 @@ public class GameHandler {
 	private final ResourceManager resources;
 	private final ComponentManager components;
 	private final Configuration config;
+	private final NeonFileSystem files;
 	
-	public GameHandler(UserInterface ui, ComponentManager components, ResourceManager resources, Configuration config) {
+	public GameHandler(UserInterface ui, NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.ui = ui;
+		this.files = files;
 		this.components = components;
 		this.resources = resources;
 		this.config = config;
 	}
 	
 	@Subscribe
-	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
+	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
-		RMap map = resources.getResource("maps", event.map);
+		RMap resource = resources.getResource("maps", event.id);
+		Map map = new Map(resource, files);
 		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
 		config.setCurrentMap(map);
 	}
+	
 	@Subscribe
 	private void onSleep(RestEvent.Wake event) {
 		FadeTransition transition = new FadeTransition(Duration.millis(2000), ui.getCurrentScene().getRoot());

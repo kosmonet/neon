@@ -37,9 +37,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import neon.client.Configuration;
+import neon.client.Map;
 import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
-import neon.client.ui.Accelerator;
 import neon.client.ui.ClientRenderer;
 import neon.client.ui.Pointer;
 import neon.client.ui.UserInterface;
@@ -52,7 +52,6 @@ import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
-import neon.common.resources.RMap;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -188,10 +187,10 @@ public final class GameState extends State {
 	}
 
 	private void move(Direction direction) {
-		RMap map = config.getCurrentMap();
+		Map map = config.getCurrentMap();
 		
 		if (!looking) {
-			bus.post(new InputEvent.Move(direction, map.id));
+			bus.post(new InputEvent.Move(direction, map.getID()));
 		} else {
 			pointer.move(direction, map);
 			StringBuilder builder = new StringBuilder();

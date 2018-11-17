@@ -48,6 +48,7 @@ import neon.server.handlers.SleepHandler;
 import neon.server.handlers.StealthHandler;
 import neon.server.systems.SystemManager;
 import neon.systems.conversation.ConversationSystem;
+import neon.systems.magic.MagicSystem;
 
 /**
  * The server part of the neon engine.
@@ -63,7 +64,8 @@ public final class Server implements Runnable {
 	private final ResourceManager resources = new ResourceManager();
 	private final ServerSocket socket;
 	private final EntityManager entities = new EntityManager(files, new EntitySaver(resources));
-	private final SystemManager systems = new SystemManager(files, resources, entities, bus);
+	private final Configuration config = new Configuration();
+	private final SystemManager systems = new SystemManager(resources, entities, bus, config);
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**
@@ -84,10 +86,11 @@ public final class Server implements Runnable {
 		// add all the systems and various other stuff to the bus
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new ScriptHandler(bus));
-		bus.register(new InventoryHandler(resources, entities, bus));
+		bus.register(new InventoryHandler(entities, bus, config));
 		bus.register(new ConversationSystem(files, resources, entities, bus));
 		bus.register(new StealthHandler(entities, bus));
 		bus.register(new SleepHandler(entities, bus));
+		bus.register(new MagicSystem(files, resources, entities, bus));
 		bus.register(systems);
 		
 		// send configuration message to the client
@@ -124,6 +127,12 @@ public final class Server implements Runnable {
 		logger.warning("server received a dead event: " + event.getEvent());
 	}
 	
+	/**
+	 * Throws an error when a client event has somehow made its way into the
+	 * server.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void monitor(ClientEvent event) {
 		throw new AssertionError("Server received a client event!");
