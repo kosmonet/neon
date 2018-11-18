@@ -16,34 +16,14 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity.components;
+package neon.systems.narrative;
 
-import neon.common.resources.Slot;
+import neon.common.files.NeonFileSystem;
+import neon.common.resources.ResourceManager;
+import neon.server.systems.NeonSystem;
 
-public final class Clothing implements Component {
-	private final long uid;
-	private final Slot slot;
-	
-	public Clothing(long uid, Slot slot) {
-		this.uid = uid;
-		this.slot = slot;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder("Clothing:");
-		// create a string in module:map:entity format
-		builder.append((uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl));
-		builder.append("[slot:" + slot + "]");
-		return builder.toString();
-	}
-	
-	@Override
-	public long getEntity() {
-		return uid;
-	}
-	
-	public Slot getSlot() {
-		return slot;
+public class QuestSystem implements NeonSystem {
+	public QuestSystem(NeonFileSystem files, ResourceManager resources) {
+		resources.addLoader(new QuestLoader(files));
 	}
 }

@@ -48,7 +48,7 @@
 				<Label text="Drop" />
 				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
 				<Label text="Cancel" />
-				<Button fx:id="helpButton" focusTraversable="false" text="F2" onAction="#showHelp" />
+				<Button fx:id="helpButton" focusTraversable="false" text="F1" onAction="#showHelp" />
 				<Label text="Help" />
 			</children>
 		</HBox>

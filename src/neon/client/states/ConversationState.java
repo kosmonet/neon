@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -41,6 +40,7 @@ import neon.client.ComponentManager;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
+import neon.common.entity.components.Provider;
 import neon.systems.conversation.ConversationEvent;
 import neon.systems.conversation.Topic;
 
@@ -61,6 +61,19 @@ public final class ConversationState extends State {
 	private Scene scene;
 	private int index;
 	
+//	private String test = "Nihonium is a synthetic chemical element with symbol Nh and atomic number "
+//			+ "113. It is extremely radioactive; its most stable known isotope, nihonium-286, has a "
+//			+ "half-life of about 10 seconds. In the periodic table, nihonium is a transactinide element "
+//			+ "at the intersection of period 7 and group 13. Its creation was reported in 2003 by a "
+//			+ "Russian–American collaboration at the Joint Institute for Nuclear Research in Dubna, Russia, "
+//			+ "and in 2004 by a team of Japanese scientists at Riken in Wakō, Japan. The discoveries were "
+//			+ "confirmed by independent teams working in the United States, Germany, Sweden, and China. In "
+//			+ "2015 the element was officially recognised; naming rights were assigned to Riken, as they "
+//			+ "were judged to have been first to confirm their discovery. The name, approved in the same "
+//			+ "year (announcement pictured), derives from a Japanese word for Japan, Nihon. Few details "
+//			+ "are known about nihonium, as it has only been formed in very small amounts that decay away "
+//			+ "within seconds.";
+	
 	public ConversationState(UserInterface ui, EventBus bus, ComponentManager components) {
 		this.bus = bus;
 		this.ui = ui;
@@ -76,9 +89,11 @@ public final class ConversationState extends State {
 			logger.severe("failed to load conversation interface: " + e.getMessage());
 		}
 		
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 		scroller.setOnKeyPressed(event -> scrollKeyPressed(event));
+		// to make the scrollpane scroll all the way down when new topics are added
+        flow.heightProperty().addListener(value -> scroller.vvalueProperty().setValue(1));
 	}
 	
 	@Override
@@ -86,22 +101,23 @@ public final class ConversationState extends State {
 		logger.finest("entering conversation module");
 		bus.register(this);
 		bus.post(new ConversationEvent.Start(PLAYER_UID, event.getParameter(Long.class)));		
+		description.updateCreature(components.getComponents(event.getParameter(Long.class)));
 		flow.getChildren().clear();	
-		description.updateCreature(components.getComponents(event.getParameter(Long.class)));		
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
 		logger.finest("exiting conversation module");
-		bus.post(new ConversationEvent.End());
 		bus.unregister(this);
 	}
 	
 	@Subscribe
 	public void onConverationUpdate(ConversationEvent.Update event) {
 		flow.getChildren().add(new Text("\n"));
-		flow.getChildren().add(new Text(event.getAnswer()));
+		flow.getChildren().add(new Text(event.answer));
+//		flow.getChildren().add(new Text(test));
+//		flow.getChildren().add(new Text(test));
 		subjects.getChildren().clear();
 		
 		for (Topic topic : event.getTopics()) {
@@ -110,9 +126,29 @@ public final class ConversationState extends State {
 			link.setOnAction(action -> ask(topic));			
 		}
 		
+		if (components.hasComponent(event.listener, Provider.class)) {
+			Provider provider = components.getComponent(event.listener, Provider.class);
+			if (provider.hasService(Provider.Service.HEALER)) {
+				Hyperlink link = new Hyperlink("Can you heal me?");
+				link.getStyleClass().add("service");
+				subjects.getChildren().add(link);
+				link.setOnAction(action -> heal());			
+			}
+
+			if (provider.hasService(Provider.Service.TRADE)) {
+				Hyperlink link = new Hyperlink("What have you got for sale?");
+				link.getStyleClass().add("service");
+				subjects.getChildren().add(link);
+				link.setOnAction(action -> bus.post(new TransitionEvent("trade")));			
+			}
+		}
+		
 		index = 0;
-		Platform.runLater(subjects.getChildren().get(0)::requestFocus);
-		Platform.runLater(() -> scroller.setVvalue(scroller.getVmax()));
+		subjects.getChildren().get(0).requestFocus();
+	}
+	
+	private void heal() {
+		ui.showMessage("Another soul saved!", 1000);
 	}
 	
 	@Subscribe 
@@ -133,9 +169,10 @@ public final class ConversationState extends State {
 	 * 
 	 * @param event
 	 */
-	private void scrollKeyPressed(KeyEvent event) {
+	private void scrollKeyPressed(KeyEvent event) {		
 		// scroll the subjects 1/30th of the scrollpane height (approximately one line)
 		double step = scroller.getHeight()/(30*(flow.getHeight() - scroller.getHeight()));
+//		System.out.println(scroller.getVvalue() + "/" + scroller.getVmax());
 		
 		switch (event.getCode()) {
 		case DOWN:

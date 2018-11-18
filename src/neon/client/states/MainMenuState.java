@@ -93,8 +93,8 @@ public final class MainMenuState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
 		
 		// other key bindings
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new Console(bus).show());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new HelpWindow().show("main.html"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new Console(bus).show());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new HelpWindow().show("main.html"));
 		
 		versionLabel.setText("release " + version);
 	}

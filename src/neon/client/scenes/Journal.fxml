@@ -55,6 +55,8 @@
 			<children>
 				<Button fx:id="cancelButton" cancelButton="true" focusTraversable="false" text="Esc" />
 				<Label text="Cancel" />
+				<Button fx:id="flipButton" focusTraversable="false" text="Q" />
+				<Label text="Quests" />
 			</children>
 		</HBox>
 	</bottom>

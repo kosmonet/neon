@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
-import neon.common.entity.Slot;
+import neon.common.resources.Slot;
 
 /**
  * A component that keeps track of equipped items.

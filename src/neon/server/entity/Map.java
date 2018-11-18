@@ -27,7 +27,9 @@ import java.util.logging.Logger;
 import org.jdom2.Element;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.Inventory;
+import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -161,10 +163,26 @@ public final class Map {
 				long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
 				RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
 				Entity creature = tracker.createEntity(uid, rc);
-
+				
+				// check if the creature has dialog
 				if (entity.getAttribute("dialog") != null) {
 					String dialog = entity.getAttributeValue("dialog");	
 					creature.setComponent(new Dialog(uid, dialog));
+				}
+				
+				// check if the creature provides any services
+				if (!entity.getChildren("service").isEmpty()) {
+					Provider services = new Provider(uid);
+					for (Element service : entity.getChildren("service")) {
+						services.addService(Provider.Service.valueOf(service.getAttributeValue("id").toUpperCase()));
+					}
+					creature.setComponent(services);
+				}
+				
+				// check if the creature is member of any factions
+				CreatureInfo info = creature.getComponent(CreatureInfo.class);
+				for (Element faction : entity.getChildren("faction")) {
+					info.addFaction(faction.getAttributeValue("id"));
 				}
 				
 				initEntity(entity, creature.getComponent(Shape.class), map);

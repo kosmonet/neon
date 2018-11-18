@@ -20,7 +20,8 @@ package neon.common.entity;
 
 public enum Skill {
 	// combat
-	BLADE(10, "Blade"), BLOCK(10, "Block"), HEAVY_ARMOR(10, "Heavy armor"), 
+	BLADE(10, "Blade"), AXE(10, "Axe"), SPEAR(10, "Spear"),	BLUNT(10, "Blunt"), 
+	HAND(10, "Unarmed"), BOW(10, "Marksman"), BLOCK(10, "Block"), HEAVY_ARMOR(10, "Heavy armor"), 
 	MEDIUM_ARMOR(10, "Medium armor"), LIGHT_ARMOR(10, "Light armor"),
 	
 	// stealth

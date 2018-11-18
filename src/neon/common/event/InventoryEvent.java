@@ -20,7 +20,7 @@ package neon.common.event;
 
 import java.util.Optional;
 
-import neon.common.entity.Slot;
+import neon.common.resources.Slot;
 
 public abstract class InventoryEvent extends NeonEvent {
 	/**

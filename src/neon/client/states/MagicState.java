@@ -96,7 +96,7 @@ public final class MagicState extends State {
 			equipSpell();
 		} else if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
-		} else if (event.getCode().equals(KeyCode.F2)) {
+		} else if (event.getCode().equals(KeyCode.F1)) {
 			showHelp();
 		}
 	}

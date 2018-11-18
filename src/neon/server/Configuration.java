@@ -19,6 +19,7 @@
 package neon.server;
 
 import neon.server.entity.Map;
+import neon.systems.time.Calendar;
 
 /**
  * The server configuration.
@@ -31,9 +32,17 @@ public class Configuration {
 		TURN_BASED, REAL_TIME;
 	}
 
+	public static final int TICKS_PER_TURN = 5;
+	public static final long PLAYER_UID = 0;
+	
 	private Map map;
 	private GameMode mode = GameMode.TURN_BASED;
 	private boolean running = false;
+	private Calendar calendar = new Calendar(0, TICKS_PER_TURN);
+	
+	public Calendar getCalendar() {
+		return calendar;
+	}
 	
 	/**
 	 * Sets the current map.

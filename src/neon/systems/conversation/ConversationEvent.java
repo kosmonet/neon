@@ -33,21 +33,13 @@ public abstract class ConversationEvent extends NeonEvent {
 	 *
 	 */
 	public static final class Start extends ConversationEvent {
-		private final long one;
-		private final long two;
+		final long speaker;
+		final long listener;
 		
-		public Start(long one, long two) {
-			this.one = one;
-			this.two = two;
+		public Start(long speaker, long listener) {
+			this.speaker = speaker;
+			this.listener = listener;
 		}
-		
-		long getFirst() {
-			return one;
-		}
-		
-		long getSecond() {
-			return two;
-		}		
 	}
 	
 	/**
@@ -57,16 +49,15 @@ public abstract class ConversationEvent extends NeonEvent {
 	 *
 	 */
 	public static final class Update extends ConversationEvent {
-		private final String answer;
+		public final String answer;
+		public final long listener;
+
 		private final List<Topic> topics;
 		
-		Update(String answer, ArrayList<Topic> topics) {
+		Update(String answer, ArrayList<Topic> topics, long listener) {
 			this.answer = answer;
 			this.topics = ImmutableList.copyOf(topics);
-		}
-		
-		public String getAnswer() {
-			return answer;
+			this.listener = listener;
 		}
 		
 		public List<Topic> getTopics() {

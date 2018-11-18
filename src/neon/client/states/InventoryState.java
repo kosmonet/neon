@@ -46,13 +46,13 @@ import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.ItemCell;
 import neon.client.ui.UserInterface;
-import neon.common.entity.Slot;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InventoryEvent;
+import neon.common.resources.Slot;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
 import neon.systems.magic.Enchantment;
@@ -98,7 +98,7 @@ public final class InventoryState extends State {
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> equipItem());
 		
 		// lists catch keys, we need a separate listener
@@ -113,7 +113,7 @@ public final class InventoryState extends State {
 		case ESCAPE:
 			bus.post(new TransitionEvent("cancel"));
 			break;
-		case F2:
+		case F1:
 			showHelp();
 			break;
 		case ENTER:
@@ -179,8 +179,8 @@ public final class InventoryState extends State {
 		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
 		int weight = ClientUtils.getWeight(inventory, components);
-		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone.");
-		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
+		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
+		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces");
 		playerList.getItems().clear();
 
 		int rating = 0;

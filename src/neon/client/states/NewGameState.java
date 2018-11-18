@@ -93,13 +93,13 @@ public final class NewGameState extends State {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
 
 		statsLabel.setText(points + " ability points to spend.");
 		
-		// list catches the esc, enter and F2 keys, we need a separate listener
+		// list catches the esc, enter and function keys, we need a separate listener
 		speciesList.setOnKeyPressed(event -> listKeyPressed(event));
-		// text field catches the F2 key, another listener
+		// text field catches the function keys, another listener
 		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));		
 		
 		speciesList.setCellFactory(speciesList -> new CreatureCell());
@@ -147,13 +147,13 @@ public final class NewGameState extends State {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			startGame();
-		} else if (event.getCode().equals(KeyCode.F2)) {
+		} else if (event.getCode().equals(KeyCode.F1)) {
 			showHelp();
 		}
 	}
 	
 	private void fieldKeyPressed(KeyEvent event) {
-		if (event.getCode().equals(KeyCode.F2)) {
+		if (event.getCode().equals(KeyCode.F1)) {
 			showHelp();
 		}
 	}

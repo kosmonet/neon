@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.handlers;
+package neon.systems.scripting;
 
 import java.io.InputStreamReader;
 //import java.io.FileNotFoundException;
@@ -34,7 +34,6 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.console.ConsoleEvent;
 import neon.common.event.ScriptEvent;
-import neon.systems.time.Calendar;
 
 public final class ScriptHandler {
 	private static final Logger logger = Logger.getGlobal();
@@ -50,7 +49,6 @@ public final class ScriptHandler {
 			execute("onEngineStart()");
 			
 //			engine.eval(new FileReader("data/aneirin/scripts/stop.js"));
-			engine.put("cal", new Calendar());
 
 			for (Map.Entry<String, Object> entry : engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()) {
 				System.out.println("binding: " + entry.getKey() + " - " + entry.getValue().getClass());
@@ -58,6 +56,16 @@ public final class ScriptHandler {
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Registers an object with the scripting engine under the given name.
+	 * 
+	 * @param name
+	 * @param object
+	 */
+	public void registerObject(String name, Object object) {
+		engine.put(name, object);
 	}
 	
 	/**

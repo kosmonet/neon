@@ -19,8 +19,8 @@
 package neon.systems.combat;
 
 import neon.common.entity.Entity;
-import neon.common.entity.Slot;
 import neon.common.entity.components.Equipment;
+import neon.common.resources.Slot;
 import neon.server.entity.EntityManager;
 import neon.util.Dice;
 

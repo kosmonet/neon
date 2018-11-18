@@ -45,29 +45,32 @@ import java.util.logging.Logger;
  *
  */
 public final class NeonFileSystem {
-	public static final boolean WRITABLE = true;
-	public static final boolean READONLY = false;
+	public enum Permission {
+		WRITABLE, READONLY;
+	}
 	
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ArrayList<String> modules = new ArrayList<>();
+	private final boolean writable;
 	private Path temporary, save;
-	private boolean writable = true;
 	
 	/**
 	 * Creates an empty, writable file system. Module folders should be added 
 	 * before the file system is usable.
 	 */
-	public NeonFileSystem() {}
+	public NeonFileSystem() {
+		this(Permission.WRITABLE);
+	}
 	
 	/**
 	 * Creates an empty file system. Module folders should be added 
 	 * before the file system is usable.
 	 * 
-	 * @param writable
+	 * @param permission
 	 */
-	public NeonFileSystem(boolean writable) {
-		this.writable = writable;
+	public NeonFileSystem(Permission permission) {
+		this.writable = permission.equals(Permission.WRITABLE);
 	}
 	
 	/**

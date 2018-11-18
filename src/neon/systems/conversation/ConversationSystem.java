@@ -36,6 +36,7 @@ public final class ConversationSystem {
 	
 	private RDialog currentDialog;
 	private CreatureNode currentNode;
+	private Entity listener;
 	
 	public ConversationSystem(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
@@ -53,7 +54,7 @@ public final class ConversationSystem {
 	 */
 	@Subscribe
 	private void onConversationStart(ConversationEvent.Start event) throws ResourceException {
-		Entity listener = entities.getEntity(event.getSecond());
+		listener = entities.getEntity(event.listener);
 		ArrayList<Topic> topics = new ArrayList<>();
 		currentDialog = resources.getResource("dialog", listener.getComponent(Dialog.class).getDialog());
 		currentNode = currentDialog.getRoot();
@@ -63,7 +64,7 @@ public final class ConversationSystem {
 			topics.add(new Topic(topic.id, topic.text));
 		}
 		
-		bus.post(new ConversationEvent.Update(currentNode.text, topics));
+		bus.post(new ConversationEvent.Update(currentNode.text, topics, listener.uid));
 	}
 
 	@Subscribe
@@ -91,7 +92,7 @@ public final class ConversationSystem {
 				}
 			}
 
-			bus.post(new ConversationEvent.Update(currentNode.text, topics));
+			bus.post(new ConversationEvent.Update(currentNode.text, topics, listener.uid));
 		}
 	}
 }

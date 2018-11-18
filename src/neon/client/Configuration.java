@@ -25,6 +25,8 @@ package neon.client;
  *
  */
 public class Configuration {
+	public static final long PLAYER_UID = 0;
+	
 	private boolean paused = true;
 	private Map map;
 	

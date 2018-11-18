@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import javafx.scene.paint.Color;
 import neon.common.entity.ArmorType;
-import neon.common.entity.Slot;
 import neon.systems.magic.Effect;
 
 /**

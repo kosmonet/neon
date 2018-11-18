@@ -165,6 +165,14 @@
 	-fx-font-size: 12;
 }
 
+.service {
+	-fx-text-fill: bisque;
+}
+
+.service:focused {
+	-fx-text-fill: gold;
+}
+
 #conversation VBox {
 	-fx-padding: 5 10 5 10;
 }

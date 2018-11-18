@@ -43,12 +43,14 @@ import neon.server.entity.EntitySaver;
 import neon.server.entity.EntityManager;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
-import neon.server.handlers.ScriptHandler;
 import neon.server.handlers.SleepHandler;
 import neon.server.handlers.StealthHandler;
 import neon.server.systems.SystemManager;
 import neon.systems.conversation.ConversationSystem;
 import neon.systems.magic.MagicSystem;
+import neon.systems.narrative.QuestSystem;
+import neon.systems.scripting.ScriptHandler;
+import neon.systems.time.TimeSystem;
 
 /**
  * The server part of the neon engine.
@@ -84,13 +86,16 @@ public final class Server implements Runnable {
 		new ServerLoader(bus).configure(files, resources, entities);
 		
 		// add all the systems and various other stuff to the bus
+		ScriptHandler scripting = new ScriptHandler(bus);
+		bus.register(scripting);
 		bus.register(new GameLoader(files, resources, entities, bus));
-		bus.register(new ScriptHandler(bus));
 		bus.register(new InventoryHandler(entities, bus, config));
 		bus.register(new ConversationSystem(files, resources, entities, bus));
 		bus.register(new StealthHandler(entities, bus));
 		bus.register(new SleepHandler(entities, bus));
 		bus.register(new MagicSystem(files, resources, entities, bus));
+		bus.register(new TimeSystem(config, scripting));
+		bus.register(new QuestSystem(files, resources));
 		bus.register(systems);
 		
 		// send configuration message to the client

@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.entity;
+package neon.common.resources;
 
 /**
  * <p>An enumeration of all equipable item slots. One single item may 
@@ -35,7 +35,7 @@ public enum Slot {
 	/**	The head slot, will accept hats and helmets. Armor modifier 0.1. Can be combined with a hood. */
 	HEAD(0.1f), 
 	
-	/** A slot for pauldrons (shoulder/upper arm protection). Armor modifier 0.2. */
+	/** A slot for pauldrons (shoulder/upper arm protection). Armor modifier 0.15. */
 	PAULDRONS(0.15f), 
 	
 	/** A slot for gloves and gauntlets (hand/forearm protection). Armor modifier 0.1. */	
@@ -44,7 +44,7 @@ public enum Slot {
 	/** Slot for a cuirass (torso protection). Armor modifier 0.4. Can be combined with a shirt and cloak. */
 	CUIRASS(0.4f), 
 	
-	/** Slot for chausses (upper leg protection). Armor modifier 0.1. Can be combined with trousers or skirt. */
+	/** Slot for chausses (upper leg protection). Armor modifier 0.15. Can be combined with trousers or skirt. */
 	CHAUSSES(0.15f), 
 	
 	/** A slot for boots or shoes. Armor modifier 0.1. */

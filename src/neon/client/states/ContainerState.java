@@ -88,7 +88,7 @@ public final class ContainerState extends State {
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
 		} catch (IOException e) {
 			logger.severe("failed to load container interface: " + e.getMessage());
 		}
@@ -111,7 +111,7 @@ public final class ContainerState extends State {
 	private void keyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
-		} else if (event.getCode().equals(KeyCode.F2)) {
+		} else if (event.getCode().equals(KeyCode.F1)) {
 			showHelp();
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			drop();

@@ -32,12 +32,30 @@ package neon.systems.time;
  *
  */
 public final class Calendar {
+	public static final int TURNS_PER_DAY = 1200;
+	
 	private static final int DAYS_PER_WEEK = 6;
 	private static final int WEEKS_PER_MONTH = 5;
 	private static final int DAYS_PER_MONTH = DAYS_PER_WEEK*WEEKS_PER_MONTH;
 	private static final int MONTHS_PER_YEAR = 12;
 	private static final int DAYS_PER_YEAR = DAYS_PER_MONTH*MONTHS_PER_YEAR;
 	private static final int WEEKS_PER_YEAR = WEEKS_PER_MONTH*MONTHS_PER_YEAR;
+	
+	private final int ticksPerTurn;
+	private int ticks;
+	
+	public Calendar(int ticks, int ticksPerTurn) {
+		this.ticks = ticks;
+		this.ticksPerTurn = ticksPerTurn;
+	}
+	
+	public void addTicks(int amount) {
+		ticks += amount;
+	}
+	
+	public int getDay() {
+		return ticks/(ticksPerTurn*TURNS_PER_DAY);
+	}
 	
 	/**
 	 * Returns the day of the week as an integer.
@@ -46,7 +64,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getDayOfWeek(int days) {
-		return (days - 1)%DAYS_PER_WEEK + 1;
+		return (days - 1) % DAYS_PER_WEEK + 1;
 	}
 	
 	/**
@@ -56,7 +74,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getDayOfMonth(int days) {
-		return (days - 1)%DAYS_PER_MONTH + 1;
+		return (days - 1) % DAYS_PER_MONTH + 1;
 	}
 	
 	/**
@@ -66,7 +84,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getDayOfYear(int days) {
-		return (days - 1)%DAYS_PER_YEAR + 1;
+		return (days - 1) % DAYS_PER_YEAR + 1;
 	}
 	
 	/**
@@ -96,7 +114,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getWeekOfMonth(int days) {
-		return (getWeek(days) - 1)%WEEKS_PER_MONTH + 1;
+		return (getWeek(days) - 1) % WEEKS_PER_MONTH + 1;
 	}
 	
 	/**
@@ -106,7 +124,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getWeekOfYear(int days) {
-		return (getWeek(days) - 1)%WEEKS_PER_YEAR + 1;
+		return (getWeek(days) - 1) % WEEKS_PER_YEAR + 1;
 	}
 	
 	/**
@@ -126,7 +144,7 @@ public final class Calendar {
 	 * @return
 	 */
 	public int getMonthOfYear(int days) {
-		return (getMonth(days) - 1)%MONTHS_PER_YEAR + 1;
+		return (getMonth(days) - 1) % MONTHS_PER_YEAR + 1;
 	}
 	
 	/**

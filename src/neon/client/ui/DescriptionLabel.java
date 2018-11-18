@@ -100,7 +100,8 @@ public final class DescriptionLabel extends Label {
 		StringBuilder builder = new StringBuilder();
 		if (components.containsKey(CreatureInfo.class)) {
 			CreatureInfo info = components.getInstance(CreatureInfo.class);
-			builder.append(info.getName() + "\n");
+			builder.append(info.getName());
+			builder.append("\n");
 		}
 		
 		setText(builder.toString());			
@@ -157,7 +158,8 @@ public final class DescriptionLabel extends Label {
 		if (components.containsKey(Enchantment.class)) {
 			Enchantment enchantment = components.getInstance(Enchantment.class);
 			builder.append("∷\n");
-			builder.append("Effect: " + enchantment.getEffect() + "\n");
+			builder.append("Effect: " + enchantment.getEffect());
+			builder.append("\n");
 			builder.append("Magnitude: " + enchantment.getMagnitude());
 			builder.append("\n");
 		}

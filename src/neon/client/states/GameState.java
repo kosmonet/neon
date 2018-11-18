@@ -33,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -130,7 +131,7 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> bus.post(new TransitionEvent("inventory")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> bus.post(new TransitionEvent("journal")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new HelpWindow().show("game.html"));
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new HelpWindow().show("game.html"));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> accelerator.quit());
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> accelerator.act());
@@ -141,8 +142,25 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.R), () -> bus.post(new RestEvent.Sleep()));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 		
+		scene.setOnMouseClicked(this::click);
+		
 		components.putComponent(pointer.getShape());
 		components.putComponent(pointer.getGraphics());
+	}
+	
+	private void click(MouseEvent event) {
+		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
+		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
+		int x = xpos + (int)(event.getSceneX()/scale);
+		int y = ypos + (int)(event.getSceneY()/scale);
+
+		try {
+			RTerrain terrain = resources.getResource("terrain", config.getCurrentMap().getTerrain().get(x, y));
+			ui.showOverlayMessage(terrain.id, 1500);
+		} catch (ResourceException e) {
+			logger.warning("unknown terrain type: " + config.getCurrentMap().getTerrain().get(x, y));
+		}
 	}
 	
 	@Subscribe

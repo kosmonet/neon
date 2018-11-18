@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@ import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import neon.client.Map;
+import neon.client.Map.Marker;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -47,6 +50,7 @@ public final class MapPane extends Pane {
 		this.resources = resources;
 	    canvas.widthProperty().bind(widthProperty());
 	    canvas.heightProperty().bind(heightProperty());
+		canvas.getGraphicsContext2D().setFont(Font.font(18));
 	    getChildren().add(canvas);
 	}
 	
@@ -56,9 +60,11 @@ public final class MapPane extends Pane {
 		double height = map.getTerrain().getHeight();
 		double scale = Math.max(width/getWidth(), height/getHeight());
 		
+		// center on the screen
 		double xOffset = (int)(getWidth() - width/scale)/2;
 		double yOffset = (int)(getHeight() - height/scale)/2;
 		
+		// draw the terrain
 		for (int x = 0; x < getWidth(); x++) {
 			for (int y = 0; y < getHeight(); y++) {
 				String id = map.getTerrain().get((int) (x*scale), (int) (y*scale));
@@ -72,6 +78,12 @@ public final class MapPane extends Pane {
 					}
 				}
 			}
+		}
+		
+		// draw the markers
+		for (Marker marker : map.getMarkers()) {
+			canvas.getGraphicsContext2D().setFill(Color.DARKSLATEGRAY);
+			canvas.getGraphicsContext2D().fillText("↙" + marker.text, marker.x/scale + xOffset, marker.y/scale + yOffset);
 		}
 	}
 }

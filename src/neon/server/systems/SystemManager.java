@@ -49,8 +49,6 @@ import neon.systems.combat.CombatSystem;
  * 
  */
 public final class SystemManager {
-	private static final long PLAYER_UID = 0;
-	
 	private final EntityManager entities;
 	private final AISystem aiSystem;
 	private final ActionSystem actionSystem;
@@ -99,7 +97,7 @@ public final class SystemManager {
 	@Subscribe
 	private void onTimerTick(TimerEvent event) {
 		if (config.isRunning() && config.getMode().equals(GameMode.REAL_TIME)) {
-			update(5);
+			update(Configuration.TICKS_PER_TURN);
 		}
 	}
 
@@ -119,8 +117,8 @@ public final class SystemManager {
 	 */
 	private void update(int fraction) {
 		// update the player separately for now
-		Entity player = entities.getEntity(PLAYER_UID);
-		player.setComponent(new Task.Action(PLAYER_UID, fraction));
+		Entity player = entities.getEntity(Configuration.PLAYER_UID);
+		player.setComponent(new Task.Action(Configuration.PLAYER_UID, fraction));
 		actionSystem.update(player);
 		
 		// collect all active creatures on the current map and mark them for updates

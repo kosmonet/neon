@@ -21,6 +21,7 @@ package neon.client;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.jdom2.Element;
@@ -39,6 +40,7 @@ public class Map {
 	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;
 	private final PointSpatialIndex<Long> entities;
+	private final Collection<Marker> markers = new ArrayList<>();
 	private final String id;
 	private final int width, height;
 	
@@ -55,6 +57,7 @@ public class Map {
 		Element root = files.loadFile(translator, "maps", map.id + ".xml").getRootElement();
 		initTerrain(root.getChild("terrain"));
 		initElevation(root.getChild("elevation"));
+		initMarkers(root.getChild("labels"));
 	}
 	
 	public String getID() {
@@ -136,5 +139,30 @@ public class Map {
 	
 	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
+	}
+	
+	private void initMarkers(Element labels) {
+		for (Element label : labels.getChildren()) {
+			int x = Integer.parseInt(label.getAttributeValue("x"));
+			int y = Integer.parseInt(label.getAttributeValue("y"));
+			String text = label.getText();
+			markers.add(new Marker(x, y, text));
+		}
+	}
+	
+	public Collection<Marker> getMarkers() {
+		return markers;
+	}
+	
+	public static final class Marker {
+		public final int x;
+		public final int y;
+		public final String text;
+		
+		private Marker(int x, int y, String text) {
+			this.x = x;
+			this.y = y;
+			this.text = text;
+		}
 	}
 }

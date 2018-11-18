@@ -47,6 +47,7 @@ import neon.client.states.MainMenuState;
 import neon.client.states.MapState;
 import neon.client.states.NewGameState;
 import neon.client.states.OptionState;
+import neon.client.states.TradeState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
@@ -72,7 +73,7 @@ public final class Client implements Runnable {
 	private final EventBus bus = new EventBus("Client Bus");
 	private final ClientSocket socket;
 	private final UserInterface ui;
-	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.READONLY);
+	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.Permission.READONLY);
 	private final ResourceManager resources = new ResourceManager();
 	private final ComponentManager components = new ComponentManager();
 	private final Configuration config = new Configuration();
@@ -149,6 +150,7 @@ public final class Client implements Runnable {
 		JournalState journal = new JournalState(ui, bus, components);
 		OptionState options = new OptionState(ui, bus);
 		MagicState magic = new MagicState(ui, bus, components, resources);
+		TradeState trade = new TradeState(ui, bus);
 		
 		// register all state transitions on the bus to listen for transition events
 		bus.register(new Transition(mainMenu, newGame, "new game"));
@@ -172,6 +174,8 @@ public final class Client implements Runnable {
 		
 		bus.register(new Transition(game, conversation, "talk"));
 		bus.register(new Transition(conversation, game, "cancel"));
+		bus.register(new Transition(conversation, trade, "trade"));
+		bus.register(new Transition(trade, game, "cancel"));		
 
 		bus.register(new Transition(game, container, "pick"));
 		bus.register(new Transition(container, game, "cancel"));
@@ -180,7 +184,7 @@ public final class Client implements Runnable {
 		bus.register(new Transition(journal, game, "cancel"));
 		
 		bus.register(new Transition(game, magic, "magic"));
-		bus.register(new Transition(magic, game, "cancel"));
+		bus.register(new Transition(magic, game, "cancel"));		
 		
 		// enter the first state
 		mainMenu.setActive(true);

@@ -29,11 +29,11 @@ import com.google.common.io.Files;
 
 import javafx.scene.paint.Color;
 import neon.common.entity.ArmorType;
-import neon.common.entity.Slot;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.RItem;
 import neon.common.resources.Resource;
+import neon.common.resources.Slot;
 import neon.systems.magic.Effect;
 
 /**

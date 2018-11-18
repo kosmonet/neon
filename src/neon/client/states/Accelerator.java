@@ -51,26 +51,24 @@ import neon.systems.magic.MagicEvent;
  *
  */
 class Accelerator {
-	private static final long PLAYER_UID = 0;
-	
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ComponentManager components;
 	private final Configuration config;
 	
-	public Accelerator(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
+	Accelerator(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.bus = bus;
 		this.ui = ui;
 		this.components = components;
 		this.config = config;
 	}
 	
-	public void act() {
+	void act() {
 		// check if there's another entity besides the player on the given position
 		Map map = config.getCurrentMap();
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
 		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
-				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());
+				.filter(uid -> uid != Configuration.PLAYER_UID).collect(Collectors.toList());
 		
 		if (entities.size() > 1) {
 			bus.post(new TransitionEvent("pick"));			
@@ -113,8 +111,8 @@ class Accelerator {
 	 * 
 	 * @param modeLabel
 	 */
-	public void changeMode(Label modeLabel) {
-		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
+	void changeMode(Label modeLabel) {
+		PlayerInfo record = components.getComponent(Configuration.PLAYER_UID, PlayerInfo.class);
 		switch (record.getMode()) {
 		case NONE:
 			record.setMode(PlayerMode.AGGRESSION);
@@ -132,8 +130,8 @@ class Accelerator {
 	/**
 	 * Lets the player choose an enchanted item to use.
 	 */
-	public void use() {
-		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
+	void use() {
+		Equipment equipment = components.getComponent(Configuration.PLAYER_UID, Equipment.class);
 		ArrayList<ButtonType> items = new ArrayList<>();
 		HashMap<ButtonType, Long> mapping = new HashMap<>();
 		
@@ -154,7 +152,7 @@ class Accelerator {
 	/**
 	 * Asks the player to quit the game.
 	 */
-	public void quit() {
+	void quit() {
 		// pause the server
 		if (!config.isPaused()) {
 			bus.post(new InputEvent.Pause());

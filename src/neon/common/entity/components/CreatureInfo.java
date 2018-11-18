@@ -18,10 +18,16 @@
 
 package neon.common.entity.components;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
 public final class CreatureInfo implements Component {
 	private final String id;
 	private final String name;
 	private final long uid;
+	private final HashSet<String> factions = new HashSet<>();
 	
 	public CreatureInfo(long uid, String id, String name) {
 		this.id = id;
@@ -46,5 +52,17 @@ public final class CreatureInfo implements Component {
 	@Override
 	public long getEntity() {
 		return uid;
+	}
+	
+	public Set<String> getFactions() {
+		return ImmutableSet.copyOf(factions);
+	}
+	
+	public void addFaction(String faction) {
+		factions.add(faction);
+	}
+	
+	public boolean isMember(String faction) {
+		return factions.contains(faction);
 	}
 }

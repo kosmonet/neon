@@ -18,24 +18,25 @@
 
 package neon.common.entity.components;
 
-import neon.common.resources.Slot;
+import java.util.EnumSet;
+import java.util.Set;
 
-public final class Clothing implements Component {
-	private final long uid;
-	private final Slot slot;
+public class Provider implements Component {
+	public enum Service {
+		HEALER, TRADE, SPELLS, ROOMS;
+	}
 	
-	public Clothing(long uid, Slot slot) {
+	private final long uid;
+	private final Set<Service> services = EnumSet.noneOf(Service.class);
+	
+	public Provider(long uid) {
 		this.uid = uid;
-		this.slot = slot;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder("Clothing:");
 		// create a string in module:map:entity format
-		builder.append((uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl));
-		builder.append("[slot:" + slot + "]");
-		return builder.toString();
+		return "Service:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
 	}
 	
 	@Override
@@ -43,7 +44,22 @@ public final class Clothing implements Component {
 		return uid;
 	}
 	
-	public Slot getSlot() {
-		return slot;
+	/**
+	 * Checks whether a service is provided.
+	 * 
+	 * @param service
+	 * @return
+	 */
+	public boolean hasService(Service service) {
+		return services.contains(service);
+	}
+	
+	/**
+	 * Adds a service.
+	 * 
+	 * @param service
+	 */
+	public void addService(Service service) {
+		services.add(service);
 	}
 }

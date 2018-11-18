@@ -75,7 +75,7 @@ public final class LoadState extends State {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
 		
 		// list catches the esc and enter keys, we need a separate listener
 		saveList.setOnKeyPressed(event -> keyPressed(event));
@@ -107,7 +107,7 @@ public final class LoadState extends State {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			startGame();
-		} else if (event.getCode().equals(KeyCode.F2)) {
+		} else if (event.getCode().equals(KeyCode.F1)) {
 			showHelp();
 		}
 	}

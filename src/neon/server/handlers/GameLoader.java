@@ -49,6 +49,7 @@ import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Lock;
 import neon.common.entity.components.PlayerInfo;
+import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
@@ -331,6 +332,9 @@ public final class GameLoader {
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
+		if (creature.hasComponent(Provider.class)) {
+			bus.post(new ComponentUpdateEvent(creature.getComponent(Provider.class)));			
+		}
 	}
 	
 	/**

@@ -169,6 +169,8 @@ public final class MovementSystem implements NeonSystem {
 			RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
 			if (terrain.hasModifier(RTerrain.Modifier.LIQUID)) {
 				canMove = skillHandler.checkSkill(skills, Skill.SWIMMING, stats);
+			} else if (terrain.hasModifier(RTerrain.Modifier.WALL)) {
+				canMove = false;
 			}
 		} catch (ResourceException e) {
 			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
