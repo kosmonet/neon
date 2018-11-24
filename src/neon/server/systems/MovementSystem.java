@@ -27,6 +27,7 @@ import neon.common.entity.Action;
 import neon.common.entity.Entity;
 import neon.common.entity.Skill;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
@@ -117,8 +118,13 @@ public final class MovementSystem implements NeonSystem {
 		
 		// check for collisions with other creatures
 		for (long uid : map.getEntities(x, y)) {
-			if (entities.getEntity(uid).hasComponent(CreatureInfo.class)) {
+			Entity entity = entities.getEntity(uid);
+			if (entity.hasComponent(CreatureInfo.class)) {
 				// pause the server while the collision is handled
+				config.setMode(GameMode.TURN_BASED);
+				bus.post(new CollisionEvent(player.uid, uid));
+				return;
+			} else if (entity.hasComponent(DoorInfo.class) && entity.getComponent(DoorInfo.class).isClosed()) {
 				config.setMode(GameMode.TURN_BASED);
 				bus.post(new CollisionEvent(player.uid, uid));
 				return;
@@ -166,19 +172,19 @@ public final class MovementSystem implements NeonSystem {
 		boolean canMove = true;
 
 		try {
-			RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(x, y));
+			RTerrain terrain = resources.getResource("terrain", map.getTerrain(x, y));
 			if (terrain.hasModifier(RTerrain.Modifier.LIQUID)) {
 				canMove = skillHandler.checkSkill(skills, Skill.SWIMMING, stats);
 			} else if (terrain.hasModifier(RTerrain.Modifier.WALL)) {
 				canMove = false;
 			}
 		} catch (ResourceException e) {
-			logger.severe("unknown terrain type: " + map.getTerrain().get(x, y));
+			logger.severe("unknown terrain type: " + map.getTerrain(x, y));
 		}
 
 		if (canMove) {				
 			shape.setPosition(x, y, z);				
-			bus.post(new UpdateEvent.Move(creature.uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
+			bus.post(new UpdateEvent.Move(creature.uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 		}
 	}
 }

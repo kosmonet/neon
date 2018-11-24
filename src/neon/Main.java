@@ -66,7 +66,6 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(13/2);
 		// set up the logger
 		logger.setLevel(Level.ALL);
 		logger.setUseParentHandlers(false);

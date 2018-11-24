@@ -44,7 +44,6 @@ import neon.util.spatial.RegionSpatialIndex;
  */
 public final class RenderPane<T> extends StackPane {
 	private static final Logger logger = Logger.getGlobal();
-//	private static final double parallax = 1.02;
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;
@@ -63,8 +62,6 @@ public final class RenderPane<T> extends StackPane {
 			Canvas canvas = new RenderCanvas();
 			layers.put(i, canvas);
 			getChildren().add(canvas);			
-//			canvas.setScaleX(Math.pow(parallax, i));
-//			canvas.setScaleY(Math.pow(parallax, i));
 			canvas.widthProperty().bind(widthProperty());
 			canvas.heightProperty().bind(heightProperty());
 		}
@@ -97,7 +94,7 @@ public final class RenderPane<T> extends StackPane {
 			Canvas canvas = entry.getValue();
 			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			ColorAdjust darken = new ColorAdjust();
-			darken.setBrightness(-0.2*entry.getKey());
+			darken.setBrightness(Math.min(0, 0.2*entry.getKey()));
 			canvas.setEffect(darken);
 		}
 		

@@ -43,16 +43,16 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.ItemLoader;
+import neon.common.resources.loaders.MapLoader;
 import neon.common.resources.loaders.ModuleLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.server.entity.ClothingBuilder;
 import neon.server.entity.CoinBuilder;
 import neon.server.entity.ContainerBuilder;
 import neon.server.entity.CreatureBuilder;
+import neon.server.entity.DoorBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
-import neon.server.resource.ConfigurationLoader;
-import neon.server.resource.MapLoader;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.
@@ -114,6 +114,7 @@ final class ServerLoader {
 		entities.addBuilder(RCreature.class, new CreatureBuilder());
 		entities.addBuilder(RItem.Coin.class, new CoinBuilder());
 		entities.addBuilder(RItem.Container.class, new ContainerBuilder());
+		entities.addBuilder(RItem.Door.class, new DoorBuilder());
 	}
 	
 	/**
@@ -140,7 +141,7 @@ final class ServerLoader {
 		resources.addLoader(new TerrainLoader(files));
 		resources.addLoader(new CreatureLoader(files));
 		resources.addLoader(new ItemLoader(files));
-		resources.addLoader(new MapLoader(files, entities));
+		resources.addLoader(new MapLoader(files));
 		
 		// check if all required parent modules are present
 		try {

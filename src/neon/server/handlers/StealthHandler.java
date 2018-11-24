@@ -26,11 +26,18 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Equipment;
+import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Lock;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.DoorEvent;
 import neon.common.event.StealthEvent;
+import neon.common.resources.RItem;
+import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
 public final class StealthHandler {
@@ -38,9 +45,11 @@ public final class StealthHandler {
 	private static final long PLAYER_UID = 0;
 	
 	private final EntityManager entities;
+	private final ResourceManager resources;
 	private final EventBus bus;
 	
-	public StealthHandler(EntityManager entities, EventBus bus) {
+	public StealthHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
+		this.resources = resources;
 		this.entities = entities;
 		this.bus = bus;
 	}
@@ -73,5 +82,17 @@ public final class StealthHandler {
 		item.getComponent(Lock.class).unlock();
 		bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
 		bus.post(new StealthEvent.Unlocked());		
+	}
+	
+	@Subscribe
+	private void onDoorOpen(DoorEvent.Open event) throws ResourceException {
+		Entity door = entities.getEntity(event.door);
+		DoorInfo info = door.getComponent(DoorInfo.class);
+		info.open();
+		RItem.Door resource = resources.getResource("items", door.getComponent(ItemInfo.class).id);
+		Graphics graphics = new Graphics(door.uid, resource.glyph, resource.color);
+		door.setComponent(graphics);
+		bus.post(new ComponentUpdateEvent(graphics));
+		bus.post(new ComponentUpdateEvent(info));
 	}
 }

@@ -43,6 +43,7 @@ import neon.common.event.UpdateEvent;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
@@ -63,12 +64,12 @@ import neon.common.resources.CClient;
 import neon.common.resources.CGame;
 import neon.common.resources.CServer;
 import neon.common.resources.RCreature;
-import neon.common.resources.RMap;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
+import neon.server.entity.MapLoader;
 import neon.systems.ai.Behavior;
 import neon.systems.combat.Armor;
 import neon.systems.combat.Weapon;
@@ -90,6 +91,7 @@ public final class GameLoader {
 	private final ResourceManager resources;
 	private final EntityManager entities;
 	private final NeonFileSystem files;
+	private final MapLoader loader;
 	
 	/**
 	 * Initializes this game loader.
@@ -103,6 +105,7 @@ public final class GameLoader {
 		this.resources = resources;
 		this.entities = entities;
 		this.files = files;
+		loader = new MapLoader(files, resources, entities, bus);
 	}
 	
 	/**
@@ -121,8 +124,7 @@ public final class GameLoader {
 			CServer config = resources.getResource("config", "server");
 			CGame game = initGame(resources, config.getModules());
 			resources.addResource(game);
-			RMap resource = resources.getResource("maps", game.map);
-			Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module), files, entities, resources);
+			Map map = loader.loadMap(resources.getResource("maps", game.map));
 			entities.addMap(map);
 
 			// the player character
@@ -252,8 +254,7 @@ public final class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		RMap resource = resources.getResource("maps", game.map);
-		Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module), files, entities, resources);
+		Map map = loader.loadMap(resources.getResource("maps", game.map));
 		entities.addMap(map);
 
 		// tell the client everything is ready
@@ -295,17 +296,17 @@ public final class GameLoader {
 		notifyPlayer(player);
 
 		// then send the map
-		bus.post(new UpdateEvent.Map(map.getUid(), map.getId()));
+		bus.post(new UpdateEvent.Map(map.getUID(), map.getID()));
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
 			Shape shape = entity.getComponent(Shape.class);
 			if (entity.hasComponent(CreatureInfo.class)) {
 				notifyCreature(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 			} else if (entity.hasComponent(ItemInfo.class)) {
 				notifyItem(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
 	}
@@ -361,6 +362,10 @@ public final class GameLoader {
 		
 		if (item.hasComponent(Lock.class)) {
 			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
+		}
+		
+		if (item.hasComponent(DoorInfo.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
 		}
 		
 		if (item.hasComponent(Inventory.class)) {

@@ -107,7 +107,7 @@ public final class InventoryHandler {
 		// let the client know
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new ComponentUpdateEvent(equipment));
-		bus.post(new UpdateEvent.Move(item.uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
+		bus.post(new UpdateEvent.Move(item.uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public final class InventoryHandler {
 	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
 		Map map = config.getCurrentMap();
 		map.removeEntity(event.item);
-		bus.post(new UpdateEvent.Remove(event.item, map.getUid()));
+		bus.post(new UpdateEvent.Remove(event.item, map.getUID()));
 		
 		Entity player = entities.getEntity(PLAYER_UID);
 		Inventory inventory = player.getComponent(Inventory.class);

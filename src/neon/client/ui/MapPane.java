@@ -65,8 +65,8 @@ public final class MapPane extends Pane {
 		double yOffset = (int)(getHeight() - height/scale)/2;
 		
 		// draw the terrain
-		for (int x = 0; x < getWidth(); x++) {
-			for (int y = 0; y < getHeight(); y++) {
+		for (int x = 0; x < getWidth() - xOffset*2; x++) {
+			for (int y = 0; y < getHeight() - yOffset*2; y++) {
 				String id = map.getTerrain().get((int) (x*scale), (int) (y*scale));
 				if (id != null) {
 					try {

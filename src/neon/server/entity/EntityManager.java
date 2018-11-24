@@ -92,7 +92,7 @@ public final class EntityManager {
 	}
 	
 	public void addMap(Map map) {
-		maps.put(map.getUid(), map);
+		maps.put(map.getUID(), map);
 	}
 	
 	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {

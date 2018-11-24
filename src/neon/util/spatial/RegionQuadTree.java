@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -41,15 +41,16 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 		}
 	}
 	
+	@Override
 	public void insert(T value, int x, int y, int width, int height) {
-		if (contains(width, height, x, y)) {
+		if (contains(x, y, width, height)) {
 			root.insert(value, x, y, width, height);
 		} else {
-			System.out.println("value: " + x + ", " + y + ", " + width + ", " + height);
 			throw new IndexOutOfBoundsException("Insertion does not fit in bounds.");
 		}
 	}
 	
+	@Override
 	public T get(int x, int y) {
 		if (contains(x, y, 1, 1)) {
 			return root.get(x, y);
@@ -58,10 +59,12 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 		}
 	}
 
+	@Override
 	public int getWidth() {
 		return root.nWidth;
 	}
 	
+	@Override
 	public int getHeight() {
 		return root.nHeight;
 	}
@@ -79,11 +82,5 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 			}
 		}
 		return leaves;
-	}
-
-	@Override
-	public void insert(Rectangle bounds, T value) {
-		// TODO Auto-generated method stub
-		insert(value, bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 }

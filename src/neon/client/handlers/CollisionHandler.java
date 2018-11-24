@@ -29,8 +29,11 @@ import neon.client.Configuration;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.ButtonTypes;
 import neon.client.ui.UserInterface;
+import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.event.CollisionEvent;
+import neon.common.event.DoorEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.StealthEvent;
 import neon.systems.ai.Behavior;
@@ -50,62 +53,77 @@ public class CollisionHandler {
 		this.components = components;
 		this.config = config;
 	}
-	
+
 	@Subscribe
 	private void onCollision(CollisionEvent event) {
 		long bumper = event.bumper;
 		long bumped = event.bumped;
 
 		if (bumper == PLAYER_UID) {
-			PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);
-			Behavior brain = components.getComponent(bumped, Behavior.class);
-			
-			switch (player.getMode()) {
-			case NONE:
-				if (brain.isFriendly(bumper)) {
-					bus.post(new TransitionEvent("talk", bumped));
-				} else {
-					bus.post(new CombatEvent.Start(bumper, bumped));	
-				}
-				break;
-			case STEALTH:
-				if (brain.isFriendly(bumper)) {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.talk, ButtonTypes.pick, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", bumped));
-					} else if (result.get().equals(ButtonTypes.pick)) {
-						bus.post(new StealthEvent.Pick(bumped));
-					}
-				} else {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.pick, ButtonTypes.attack, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.pick)) {
-						bus.post(new StealthEvent.Pick(bumped));
-					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent.Start(bumper, bumped));	
-					}
-				}
-				break;
-			case AGGRESSION:
-				if (brain.isFriendly(bumper)) {
-					Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
-							ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
-					if (result.get().equals(ButtonTypes.talk)) {
-						bus.post(new TransitionEvent("talk", bumped));
-					} else if (result.get().equals(ButtonTypes.attack)) {
-						bus.post(new CombatEvent.Start(bumper, bumped));	
-					}
-				} else {
-					bus.post(new CombatEvent.Start(bumper, bumped));	
-				}
-				break;
+			if (components.hasComponent(bumped, DoorInfo.class)) {
+				handleDoor(bumper, bumped);
+			} else if (components.hasComponent(bumped, CreatureInfo.class)){
+				handleCreature(bumper, bumped);
 			}
 		}
 
 		// unpause if necessary
 		if (!config.isPaused()) {
 			bus.post(new InputEvent.Unpause());
+		}
+	}
+	
+	private void handleDoor(long player, long door) {
+		Optional<ButtonType> result = ui.showQuestion("Open door?", ButtonTypes.yes, ButtonTypes.no);
+		if (result.orElse(ButtonTypes.no).equals(ButtonTypes.yes)) {
+			bus.post(new DoorEvent.Open(door));
+		}
+	}
+
+	private void handleCreature(long bumper, long bumped) {
+		PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);
+		Behavior brain = components.getComponent(bumped, Behavior.class);
+
+		switch (player.getMode()) {
+		case NONE:
+			if (brain.isFriendly(bumper)) {
+				bus.post(new TransitionEvent("talk", bumped));
+			} else {
+				bus.post(new CombatEvent.Start(bumper, bumped));	
+			}
+			break;
+		case STEALTH:
+			if (brain.isFriendly(bumper)) {
+				Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
+						ButtonTypes.talk, ButtonTypes.pick, ButtonTypes.cancel);
+				if (result.get().equals(ButtonTypes.talk)) {
+					bus.post(new TransitionEvent("talk", bumped));
+				} else if (result.get().equals(ButtonTypes.pick)) {
+					bus.post(new StealthEvent.Pick(bumped));
+				}
+			} else {
+				Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
+						ButtonTypes.pick, ButtonTypes.attack, ButtonTypes.cancel);
+				if (result.get().equals(ButtonTypes.pick)) {
+					bus.post(new StealthEvent.Pick(bumped));
+				} else if (result.get().equals(ButtonTypes.attack)) {
+					bus.post(new CombatEvent.Start(bumper, bumped));	
+				}
+			}
+			break;
+		case AGGRESSION:
+			if (brain.isFriendly(bumper)) {
+				Optional<ButtonType> result = ui.showQuestion("What do you want to do?", 
+						ButtonTypes.talk, ButtonTypes.attack, ButtonTypes.cancel);
+				if (result.get().equals(ButtonTypes.talk)) {
+					bus.post(new TransitionEvent("talk", bumped));
+				} else if (result.get().equals(ButtonTypes.attack)) {
+					bus.post(new CombatEvent.Start(bumper, bumped));	
+				}
+			} else {
+				bus.post(new CombatEvent.Start(bumper, bumped));	
+			}
+			break;
 		}
 	}
 }

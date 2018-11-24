@@ -91,7 +91,7 @@ public final class Server implements Runnable {
 		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new InventoryHandler(entities, bus, config));
 		bus.register(new ConversationSystem(files, resources, entities, bus));
-		bus.register(new StealthHandler(entities, bus));
+		bus.register(new StealthHandler(resources, entities, bus));
 		bus.register(new SleepHandler(entities, bus));
 		bus.register(new MagicSystem(files, resources, entities, bus));
 		bus.register(new TimeSystem(config, scripting));

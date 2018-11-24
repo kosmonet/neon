@@ -34,6 +34,7 @@ import neon.client.ui.ButtonTypes;
 import neon.client.ui.UserInterface;
 import neon.client.ComponentManager;
 import neon.common.entity.PlayerMode;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Lock;
@@ -73,12 +74,18 @@ class Accelerator {
 		if (entities.size() > 1) {
 			bus.post(new TransitionEvent("pick"));			
 		} else {
-			if (components.hasComponent(entities.get(0), Lock.class)) {
+			long entity = entities.get(0);
+			if (components.hasComponent(entity, Lock.class)) {
 				Lock lock = components.getComponent(entities.get(0), Lock.class);
 				if (lock.isLocked()) {
 					pickLock(lock);
 				} else {
 					bus.post(new TransitionEvent("pick"));					
+				}
+			} else if (components.hasComponent(entity, DoorInfo.class)) {
+				DoorInfo info = components.getComponent(entity, DoorInfo.class);
+				if (info.getDestination() != 0) {
+					ui.showOverlayMessage("Moving to " + info.getText() + ".", 1000);
 				}
 			} else {
 				bus.post(new TransitionEvent("pick"));				

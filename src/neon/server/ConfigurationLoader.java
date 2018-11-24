@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.resource;
+package neon.server;
 
 import java.io.IOException;
 import java.util.Collections;

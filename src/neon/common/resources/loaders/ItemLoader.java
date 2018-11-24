@@ -89,9 +89,16 @@ public final class ItemLoader implements ResourceLoader {
 			return new RItem.Container(builder);
 		case "potion":
 			return new RItem.Potion(builder);
+		case "door":
+			return createDoor(root, builder);
 		default:
 			return builder.build();
 		}
+	}
+	
+	private RItem.Door createDoor(Element root, RItem.Builder builder) {
+		char glyph = root.getChild("graphics").getChild("closed").getAttributeValue("char").charAt(0);
+		return new RItem.Door(builder.setClosed(glyph));
 	}
 	
 	private RItem.Weapon createWeapon(Element root, RItem.Builder builder) {

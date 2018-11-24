@@ -149,6 +149,19 @@ public class RItem extends Resource {
 		}
 	}
 	
+	public static final class Door extends RItem {
+		/** The character to represent a door in opened condition. */
+		public final char opened;
+		/** The character to represent a door in closed condition. */
+		public final char closed;
+
+		public Door(Builder builder) {
+			super(builder);
+			opened = builder.glyph;
+			closed = builder.closed;
+		}		
+	}
+	
 	/**
 	 * A builder for the {@code RItem} class.
 	 * 
@@ -168,6 +181,7 @@ public class RItem extends Resource {
 		private int price;
 		private int weight;
 		private ArmorType type;
+		private char closed;
 		
 		/**
 		 * Initialize the builder with an id and a name.
@@ -230,6 +244,11 @@ public class RItem extends Resource {
 		
 		public Builder setWeight(int weight) {
 			this.weight = weight;
+			return this;
+		}
+		
+		public Builder setClosed(char closed) {
+			this.closed = closed;
 			return this;
 		}
 	}

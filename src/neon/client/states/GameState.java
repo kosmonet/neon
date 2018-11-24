@@ -45,6 +45,7 @@ import neon.client.ui.ClientRenderer;
 import neon.client.ui.Pointer;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.CreatureInfo;
+import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
@@ -157,7 +158,7 @@ public final class GameState extends State {
 
 		try {
 			RTerrain terrain = resources.getResource("terrain", config.getCurrentMap().getTerrain().get(x, y));
-			ui.showOverlayMessage(terrain.id, 1500);
+			ui.showOverlayMessage(x + "," + y + ": " + terrain.id, 1500);
 		} catch (ResourceException e) {
 			logger.warning("unknown terrain type: " + config.getCurrentMap().getTerrain().get(x, y));
 		}
@@ -226,6 +227,12 @@ public final class GameState extends State {
 					builder.append(components.getComponent(uid, PlayerInfo.class).getName());
 				} else if (components.hasComponent(uid, CreatureInfo.class)) {
 					builder.append(components.getComponent(uid, CreatureInfo.class).getName());
+				} else if (components.hasComponent(uid, DoorInfo.class)) {
+					builder.append(components.getComponent(uid, ItemInfo.class).name.toLowerCase());
+					if (components.getComponent(uid, DoorInfo.class).getDestination() != 0) {
+						builder.append(" to ");
+						builder.append(components.getComponent(uid, DoorInfo.class).getText());
+					}
 				} else if (components.hasComponent(uid, ItemInfo.class)) {
 					builder.append(components.getComponent(uid, ItemInfo.class).name);
 				}

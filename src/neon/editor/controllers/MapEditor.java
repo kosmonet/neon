@@ -322,10 +322,12 @@ public class MapEditor {
 		RMap map = new RMap(card.toString(), name, widthSpinner.getValue(), heightSpinner.getValue(), uid, module);
 		try {
 			for (Entry<Rectangle, String> entry : card.<RMap>getResource().getTerrain().getElements().entrySet()) {
-				map.getTerrain().insert(entry.getKey(), entry.getValue());
+				Rectangle r = entry.getKey();
+				map.getTerrain().insert(entry.getValue(), r.x, r.y, r.width, r.height);
 			}
 			for (Entry<Rectangle, Integer> entry : card.<RMap>getResource().getElevation().getElements().entrySet()) {
-				map.getElevation().insert(entry.getKey(), entry.getValue());
+				Rectangle r = entry.getKey();
+				map.getElevation().insert(entry.getValue(), r.x, r.y, r.width, r.height);
 			}
 			for (REntity entity : card.<RMap>getResource().getEntities()) {
 				map.add(entity);
@@ -391,7 +393,7 @@ public class MapEditor {
 			
 			if (mode == Mode.PAINT && terrain != null && me.getButton().equals(MouseButton.PRIMARY)) {
 				int width = (int) Math.ceil(cursor.getImage().getWidth()/scale);
-				map.getTerrain().insert(new Rectangle(x - width/2, y - width/2, width, width), terrain);						
+				map.getTerrain().insert(terrain, x - width/2, y - width/2, width, width);						
 				redraw();
 			} else if (mode == Mode.EDIT && me.getButton().equals(MouseButton.SECONDARY) && !map.getEntities(x, y).isEmpty()) {
 				menu.getItems().clear();

@@ -33,8 +33,6 @@ import neon.client.handlers.CollisionHandler;
 import neon.client.handlers.EntityHandler;
 import neon.client.handlers.GameHandler;
 import neon.client.handlers.MessageHandler;
-import neon.client.resource.ConfigurationLoader;
-import neon.client.resource.MapLoader;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
 import neon.client.states.CutSceneState;
@@ -59,6 +57,7 @@ import neon.common.files.NeonFileSystem;
 import neon.common.net.ClientSocket;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.CreatureLoader;
+import neon.common.resources.loaders.MapLoader;
 import neon.common.resources.loaders.TerrainLoader;
 import neon.systems.magic.SpellLoader;
 

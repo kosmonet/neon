@@ -19,12 +19,13 @@
 package neon.client;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.jdom2.Element;
+
+import com.google.common.collect.ImmutableSet;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -60,14 +61,27 @@ public class Map {
 		initMarkers(root.getChild("labels"));
 	}
 	
+	/**
+	 * Returns the id of the resource a map was derived from.
+	 * 
+	 * @return
+	 */
 	public String getID() {
 		return id;
 	}
 	
+	/**
+	 * 
+	 * @return	the width of the map
+	 */
 	public int getWidth() {
 		return width;
 	}
 	
+	/**
+	 * 
+	 * @return	the height of the map
+	 */
 	public int getHeight() {
 		return height;
 	}
@@ -94,10 +108,22 @@ public class Map {
 		entities.move(uid, new Point(x, y));
 	}
 
+	/**
+	 * Returns all entities at the given position.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return	a {@code Collection} of entity uid's
+	 */
 	public Collection<Long> getEntities(int x, int y) {
 		return entities.get(x, y);
 	}
 
+	/**
+	 * Returns all entities on the map.
+	 * 
+	 * @return	a {@code Collection} of entity uid's
+	 */
 	public Collection<Long> getEntities() {
 		return entities.getElements();
 	}
@@ -118,7 +144,7 @@ public class Map {
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			String id = region.getAttributeValue("id");
-			this.terrain.insert(new Rectangle(x, y, width, height), id);
+			this.terrain.insert(id, x, y, width, height);
 		}
 	}
 	
@@ -129,8 +155,8 @@ public class Map {
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			int z = Integer.parseInt(region.getAttributeValue("z"));
-			this.elevation.insert(new Rectangle(x, y, width, height), z);
-		}		
+			this.elevation.insert(z, x, y, width, height);
+		}
 	}
 	
 	public RegionSpatialIndex<String> getTerrain() {
@@ -150,8 +176,12 @@ public class Map {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return	an unmodifiable {@code Collection} of {@code Marker}s
+	 */
 	public Collection<Marker> getMarkers() {
-		return markers;
+		return ImmutableSet.copyOf(markers);
 	}
 	
 	public static final class Marker {

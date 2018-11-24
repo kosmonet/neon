@@ -16,7 +16,7 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.server.resource;
+package neon.common.resources.loaders;
 
 import java.io.IOException;
 import java.util.Set;
@@ -30,8 +30,6 @@ import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.RMap;
 import neon.common.resources.Resource;
-import neon.common.resources.loaders.ResourceLoader;
-import neon.server.entity.EntityManager;
 
 /**
  * A loader for map resources.
@@ -45,7 +43,7 @@ public final class MapLoader implements ResourceLoader {
 	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
-	public MapLoader(NeonFileSystem files, EntityManager entities) {
+	public MapLoader(NeonFileSystem files) {
 		this.files = files;
 	}
 	

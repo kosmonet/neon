@@ -34,7 +34,7 @@ public interface RegionSpatialIndex<T> {
 	 * @param bounds
 	 * @param value
 	 */
-	public void insert(Rectangle bounds, T value);
+	public void insert(T value, int x, int y, int width, int height);
 	
 	/**
 	 * 

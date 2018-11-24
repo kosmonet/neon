@@ -84,7 +84,7 @@ public class MapLoader implements ResourceLoader {
 			int y = Integer.parseInt(region.getAttributeValue("y"));
 			String id = region.getAttributeValue("id");
 			
-			map.getTerrain().insert(new Rectangle(x, y, width, height), id);
+			map.getTerrain().insert(id, x, y, width, height);
 		}
 	}
 	
@@ -94,9 +94,9 @@ public class MapLoader implements ResourceLoader {
 			int height = Integer.parseInt(region.getAttributeValue("h"));
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
-			int value = Integer.parseInt(region.getAttributeValue("v"));
+			int value = Integer.parseInt(region.getAttributeValue("z"));
 			
-			map.getElevation().insert(new Rectangle(x, y, width, height), value);
+			map.getElevation().insert(value, x, y, width, height);
 		}		
 	}
 	
