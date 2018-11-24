@@ -20,12 +20,14 @@ package neon.common.graphics;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 
@@ -42,6 +44,7 @@ import neon.util.spatial.RegionSpatialIndex;
  */
 public final class RenderPane<T> extends StackPane {
 	private static final Logger logger = Logger.getGlobal();
+//	private static final double parallax = 1.02;
 	
 	private final HashMap<Integer, Canvas> layers = new HashMap<>();
 	private final ResourceManager resources;
@@ -55,14 +58,13 @@ public final class RenderPane<T> extends StackPane {
 		this.resources = resources;
 		this.renderer = renderer;
 		entities = new TreeSet<>(renderer.getComparator());
-		double parallax = 1.02;
 		
 		for (int i = -5; i < 4; i++) {
 			Canvas canvas = new RenderCanvas();
 			layers.put(i, canvas);
 			getChildren().add(canvas);			
-			canvas.setScaleX(Math.pow(parallax, i));
-			canvas.setScaleY(Math.pow(parallax, i));
+//			canvas.setScaleX(Math.pow(parallax, i));
+//			canvas.setScaleY(Math.pow(parallax, i));
 			canvas.widthProperty().bind(widthProperty());
 			canvas.heightProperty().bind(heightProperty());
 		}
@@ -91,8 +93,14 @@ public final class RenderPane<T> extends StackPane {
 	 * @param scale
 	 */
 	public void draw(int xmin, int ymin, int scale) {
-		layers.values().stream()
-				.forEach(canvas -> canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight()));
+		for (Map.Entry<Integer, Canvas> entry : layers.entrySet()) {
+			Canvas canvas = entry.getValue();
+			canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			ColorAdjust darken = new ColorAdjust();
+			darken.setBrightness(-0.2*entry.getKey());
+			canvas.setEffect(darken);
+		}
+		
 		drawMap(xmin, ymin, scale);
 		entities.stream().forEach(entity -> renderer.drawEntity(entity, xmin, ymin, scale));
 	}

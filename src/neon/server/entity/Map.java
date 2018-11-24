@@ -149,8 +149,8 @@ public final class Map {
 			int height = Integer.parseInt(region.getAttributeValue("h"));
 			int x = Integer.parseInt(region.getAttributeValue("x"));
 			int y = Integer.parseInt(region.getAttributeValue("y"));
-			int value = Integer.parseInt(region.getAttributeValue("v"));
-			this.elevation.insert(new Rectangle(x, y, width, height), value);
+			int z = Integer.parseInt(region.getAttributeValue("z"));
+			this.elevation.insert(new Rectangle(x, y, width, height), z);
 		}		
 	}
 	

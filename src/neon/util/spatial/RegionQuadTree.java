@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,88 +22,68 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A region quadtree.
- * 
- * @author mdriesen
- * @param <T>
- */
 public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
-	private final int width, height;
 	private final RegionNode<T> root;
 	
-	/**
-	 * Initializes the tree with the given size.
-	 * 
-	 * @param width
-	 * @param height
-	 */
 	public RegionQuadTree(int width, int height) {
-		this(width, height, null);
-	}
-	
-	/**
-	 * Initializes the tree with the given size and initial value.
-	 * 
-	 * @param width
-	 * @param height
-	 * @param value
-	 */
-	public RegionQuadTree(int width, int height, T value) {
-		// make a square tree with power of two size
-		int size = Math.max(1, Integer.highestOneBit(Math.max(width, height) - 1) << 1);
-		if (size < 1) {
-			throw new IllegalArgumentException("quadtree width and height must be larger than 0");
+		if (width < 1 || height < 1) {
+			throw new IllegalArgumentException("Width and height should be larger than 0.");
 		} else {
-			this.width = width;
-			this.height = height;
-			root = new RegionNode<T>(0, 0, size, size, value);
+			root = new RegionNode<>(0, 0, width, height);
 		}
 	}
 	
-	@Override
-	public void insert(Rectangle bounds, T value) {
-		root.insert(bounds, value);
+	public RegionQuadTree(int width, int height, T initialValue) {
+		if (width < 1 || height < 1) {
+			throw new IllegalArgumentException("Width and height should be larger than 0.");
+		} else {
+			root = new RegionNode<>(0, 0, width, height, initialValue);
+		}
 	}
 	
-	/**
-	 * Returns the value at coordinates (x, y). Returns null if the coordinates
-	 * fall outside the quadtree area, or if no value was added at the given
-	 * coordinates.
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	@Override
+	public void insert(T value, int x, int y, int width, int height) {
+		if (contains(width, height, x, y)) {
+			root.insert(value, x, y, width, height);
+		} else {
+			System.out.println("value: " + x + ", " + y + ", " + width + ", " + height);
+			throw new IndexOutOfBoundsException("Insertion does not fit in bounds.");
+		}
+	}
+	
 	public T get(int x, int y) {
-		if (x < 0 || x >= width || y < 0 || y >= height) {
-			return null;
-		} else {
+		if (contains(x, y, 1, 1)) {
 			return root.get(x, y);
+		} else {
+			throw new IndexOutOfBoundsException("Query does not fit in bounds.");
 		}
 	}
-	
-	@Override
+
 	public int getWidth() {
-		return width;
+		return root.nWidth;
 	}
 	
-	@Override
 	public int getHeight() {
-		return height;
+		return root.nHeight;
 	}
 	
+	private boolean contains(int x, int y, int width, int height) {
+		return !(x < 0 || y < 0 || (x + width) > root.nWidth || (y + height) > root.nHeight);
+	}
+
 	@Override
 	public Map<Rectangle, T> getElements() {
 		Map<Rectangle, T> leaves = new HashMap<>();
-		if (!root.isLeaf()) {
-			for (RegionNode<T> node : root.getLeaves()) {
-				if (node.getValue() != null) {
-					leaves.put(node.getBounds(), node.getValue());
-				}
+		for (RegionNode<T> node : root.getLeaves()) {
+			if (node.getValue() != null) {
+				leaves.put(new Rectangle(node.nx, node.ny, node.nWidth, node.nHeight), node.getValue());
 			}
 		}
 		return leaves;
+	}
+
+	@Override
+	public void insert(Rectangle bounds, T value) {
+		// TODO Auto-generated method stub
+		insert(value, bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 }

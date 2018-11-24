@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,104 +18,128 @@
 
 package neon.util.spatial;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
-/**
- * A node in the quadtree.
- * 
- * @author mdriesen
- * @param <T>
- */
 class RegionNode<T> {
-	private final int x, y, width, height;
+	final int nx, ny, nWidth, nHeight;
 	private T value;
 	private RegionNode<T> NW, NE, SW, SE;
 	
-	/**
-	 * Initializes this {@code Node} without an initial value.
-	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
 	RegionNode(int x, int y, int width, int height) {
-		this(x, y, width, height, null);
+		nx = x;
+		ny = y;
+		nWidth = width;
+		nHeight = height;
 	}
-	
-	/**
-	 * Initializes this {@code Node} with an initial value.
-	 * 
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param value
-	 */
+
 	RegionNode(int x, int y, int width, int height, T value) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this(x, y, width, height);
 		this.value = value;
 	}
 	
-	void insert(Rectangle bounds, T value) {
-		// if this node is completely contained in the bounds, set this as a leaf and discard children
-		if (bounds.contains(x, y, width, height)) {
-			this.value = value;
-			NW = null;
-			NE = null;
-			SW = null;
-			SE = null;
-		} else if (bounds.intersects(x, y, width, height)) {
-			// if this was a leaf, create children
-			if (isLeaf()) {
-				NW = new RegionNode<T>(x, y, width/2, height/2, this.value); 
-				NE = new RegionNode<T>(x + width/2, y, width - width/2, height/2, this.value);
-				SW = new RegionNode<T>(x, y + height/2, width/2, height - height/2, this.value);
-				SE = new RegionNode<T>(x + width/2, y + height/2, width - width/2, height - height/2, this.value);
-			}
-			
-			// and add value to children
-			NW.insert(bounds, value);
-			NE.insert(bounds, value);
-			SW.insert(bounds, value);
-			SE.insert(bounds, value);
+	void insert(T value, int x, int y, int width, int height) {
+		// make sure this node overlaps with the given bounds
+		if (x > nx + nWidth - 1 || y > ny + nHeight - 1 || x + width - 1 < nx || y + height - 1 < ny) {
+			return;
+		} else if (x > nx || y > ny ||  x + width < nx + nWidth || y + height < ny + nHeight) {
+			// this node is not fully contained in the given bounds
+			if (isLeaf()) {	// check if this is a leaf node
+				// check if the given value is the same as the current value (including nulls)
+				if (!Objects.equals(value, this.value)) {
+					// split the tree
+					split();
+
+					// and insert in the subnodes
+					NW.insert(value, x, y, width, height);
+					NE.insert(value, x, y, width, height);
+					SW.insert(value, x, y, width, height);
+					SE.insert(value, x, y, width, height);
+				}
+			} else {
+				// not a leaf, so insert in the subnodes
+				NW.insert(value, x, y, width, height);
+				NE.insert(value, x, y, width, height);
+				SW.insert(value, x, y, width, height);
+				SE.insert(value, x, y, width, height);
+
+				// check if subnodes can't be merged
+				if (NW.isLeaf() && NE.isLeaf() && SW.isLeaf() && SE.isLeaf()) {
+					if (Objects.equals(NW.value, NE.value) && Objects.equals(NE.value, SW.value) && Objects.equals(SW.value, SE.value)) {
+						merge(value);
+					}
+				}
+			}			
+		} else {
+			// if this node is fully contained, merge subnodes
+			merge(value);
 		}
 	}
 	
-	/**
-	 * Returns the value at coordinate (x, y).
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
+	private void merge(T value) {
+		this.value = value;
+		NW = null;
+		NE = null;
+		SW = null;
+		SE = null;		
+	}
+
+	private boolean contains(int x, int y) {
+		return x >= nx && y >= ny && x < nx + nWidth && y < ny + nHeight;
+	}
+	
 	T get(int x, int y) {
 		if (!isLeaf()) {
-			if (NW.contains(x, y)) { return NW.get(x, y); }
-			if (NE.contains(x, y)) { return NE.get(x, y); }
-			if (SW.contains(x, y)) { return SW.get(x, y); }
-			if (SE.contains(x, y)) { return SE.get(x, y); }
+			if (NW.contains(x, y)) { 
+				return NW.get(x, y); 
+			} else if (NE.contains(x, y)) { 
+				return NE.get(x, y); 
+			} else if (SW.contains(x, y)) { 
+				return SW.get(x, y); 
+			} else if (SE.contains(x, y)) { 
+				return SE.get(x, y); 
+			}
 		} 
 
 		return value;
 	}
+
+	T getValue() {
+		return value;
+	}
 	
-	/**
-	 * Returns a collection of all leaf nodes contained in this node.
-	 * 
-	 * @return
-	 */
+	private void split() {
+		int sx = nx + nWidth/2;
+		int sy = ny + nHeight/2;
+
+
+//		if (x != sx && y != sy) {
+			NW = new RegionNode<>(nx, ny, sx - nx, sy - ny, value);
+//		}
+
+//		if (y != sy) {
+			NE = new RegionNode<>(sx, ny, nWidth - (sx - nx), sy - ny, value);
+//		}
+
+//		if (x != sx) {
+			SW = new RegionNode<>(nx, sy, sx - nx, nHeight - (sy - ny), value);
+//		}
+
+		SE = new RegionNode<>(sx, sy, nWidth - (sx - nx), nHeight - (sy - ny), value);
+	}
+
+	boolean isLeaf() {
+		return NW == null && NE == null && SW == null && SE == null;
+	}
+	
 	Collection<RegionNode<T>> getLeaves() {
 		// this leaf may have zero area if the quadtree size is not a power of 2
-		if(width == 0 || height == 0) {
-			return new ArrayList<RegionNode<T>>();
-		} else if(isLeaf()) {
+		if(nWidth == 0 || nHeight == 0) {
+			return Collections.emptyList();
+		} else if (isLeaf()) {
 			return Arrays.asList(this);
 		} else {
 			Collection<RegionNode<T>> list = new ArrayList<>();
@@ -124,22 +148,6 @@ class RegionNode<T> {
 			list.addAll(SW.getLeaves());
 			list.addAll(SE.getLeaves());
 			return list;
-		}
-	}
-	
-	private boolean contains(int x, int y) {
-		return (x >= this.x && x < this.x + width && y >= this.y && y < this.y + height);
-	}
-	
-	boolean isLeaf() {
-		return NW == null;
-	}
-	
-	T getValue() {
-		return value;
-	}
-	
-	Rectangle getBounds() {
-		return new Rectangle(x, y, width, height);
+		}		
 	}
 }
