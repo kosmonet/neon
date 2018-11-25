@@ -41,16 +41,11 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.LoadEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.entity.Entity;
-import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
-import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Lock;
 import neon.common.entity.components.PlayerInfo;
-import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
@@ -68,12 +63,7 @@ import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
-import neon.server.entity.Map;
 import neon.server.entity.MapLoader;
-import neon.systems.ai.Behavior;
-import neon.systems.combat.Armor;
-import neon.systems.combat.Weapon;
-import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 
 /**
@@ -100,12 +90,12 @@ public final class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
+	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus, MapLoader loader) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
 		this.files = files;
-		loader = new MapLoader(files, resources, entities, bus);
+		this.loader = loader;
 	}
 	
 	/**
@@ -124,8 +114,6 @@ public final class GameLoader {
 			CServer config = resources.getResource("config", "server");
 			CGame game = initGame(resources, config.getModules());
 			resources.addResource(game);
-			Map map = loader.loadMap(resources.getResource("maps", game.map));
-			entities.addMap(map);
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.species);
@@ -154,9 +142,14 @@ public final class GameLoader {
 				magic.addSpell(id);
 			}
 			
-			// tell the client everything is ready
+			// tell the client that character creation succeeded
 			bus.post(new NewGameEvent.Pass());
-			notifyClient(map);
+			// send the new player character to the client
+			notifyClient(player);
+			// load the starting map (loader sends map entities to client)
+			loader.loadMap(game.map);
+			// tell the client everything is ready to start
+			bus.post(new UpdateEvent.Start());
 		} else {
 			bus.post(new NewGameEvent.Fail());			
 		}
@@ -254,13 +247,26 @@ public final class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		Map map = loader.loadMap(resources.getResource("maps", game.map));
-		entities.addMap(map);
+		loader.loadMap(game.map);
 
 		// tell the client everything is ready
-		notifyClient(map);
+		notifyClient(entities.getEntity(PLAYER_UID));
 	}
 	
+	private void notifyClient(Entity player) {
+		Inventory inventory = player.getComponent(Inventory.class);
+		inventory.getItems().parallelStream().forEach(uid -> loader.notifyItem(entities.getEntity(uid)));
+		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Magic.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
+		bus.post(new ComponentUpdateEvent(player.getComponent(Equipment.class)));
+	}
+		
 	/**
 	 * Loads the server configuration file from a previously saved game.
 	 * 
@@ -283,98 +289,6 @@ public final class GameLoader {
 		}
 	}
 
-	/**
-	 * Collects all necessary resources and sends them to the client.
-	 * 
-	 * @param map
-	 * @throws ResourceException
-	 */
-	private void notifyClient(Map map) throws ResourceException {
-		// tell the client to start loading the map
-		Entity player = entities.getEntity(PLAYER_UID);
-		bus.post(new UpdateEvent.Start());		
-		notifyPlayer(player);
-
-		// then send the map
-		bus.post(new UpdateEvent.Map(map.getUID(), map.getID()));
-
-		for (long uid : map.getEntities()) {
-			Entity entity = entities.getEntity(uid);
-			Shape shape = entity.getComponent(Shape.class);
-			if (entity.hasComponent(CreatureInfo.class)) {
-				notifyCreature(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
-			} else if (entity.hasComponent(ItemInfo.class)) {
-				notifyItem(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
-			}
-		}		
-	}
-	
-	private void notifyPlayer(Entity player) {
-		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Equipment.class)));
-	}
-	
-	private void notifyCreature(Entity creature) {
-		Inventory inventory = creature.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
-		if (creature.hasComponent(Provider.class)) {
-			bus.post(new ComponentUpdateEvent(creature.getComponent(Provider.class)));			
-		}
-	}
-	
-	/**
-	 * Notifies the client of a new {@code Item}.
-	 * 
-	 * @param item
-	 */
-	private void notifyItem(Entity item) {
-		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
-		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
-		
-		if (item.hasComponent(Clothing.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
-			if (item.hasComponent(Armor.class)) {
-				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
-			}
-		} else if (item.hasComponent(Weapon.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
-		}
-		
-		if (item.hasComponent(Enchantment.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
-		}
-		
-		if (item.hasComponent(Lock.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
-		}
-		
-		if (item.hasComponent(DoorInfo.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
-		}
-		
-		if (item.hasComponent(Inventory.class)) {
-			Inventory inventory = item.getComponent(Inventory.class);
-			inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
-			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
-		}
-	}
-	
 	/**
 	 * Sends a list of all saved characters to the client.
 	 * 

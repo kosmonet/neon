@@ -133,13 +133,13 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> bus.post(new TransitionEvent("journal")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> new HelpWindow().show("game.html"));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), () -> pause());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> accelerator.quit());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> accelerator.act());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.P), this::pause);
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), accelerator::quit);
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), accelerator::act);
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.K), () -> accelerator.changeMode(modeLabel));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> cast());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), () -> look());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), () -> accelerator.use());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.C), this::cast);
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.L), this::look);
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.U), accelerator::use);
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.R), () -> bus.post(new RestEvent.Sleep()));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S), () -> bus.post(new TransitionEvent("magic")));
 		
@@ -176,20 +176,20 @@ public final class GameState extends State {
 	
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
-		Platform.runLater(() -> renderPane.setMap(config.getCurrentMap().getTerrain(), 
-				config.getCurrentMap().getElevation(), config.getCurrentMap().getEntities()));
-		scheduleRedraw();
+		Map map = config.getCurrentMap();
+		renderPane.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
+		Platform.runLater(this::scheduleRedraw);
 	}
 	
 	@Subscribe
 	private void onMove(UpdateEvent.Move event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(config.getCurrentMap().getEntities()));
+		Platform.runLater(() -> renderPane.updateEntities(config.getCurrentMap().getEntities()));
 		scheduleRedraw();
 	}
 	
 	@Subscribe
 	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateMap(config.getCurrentMap().getEntities()));
+		Platform.runLater(() -> renderPane.updateEntities(config.getCurrentMap().getEntities()));
 		scheduleRedraw();
 	}
 	
@@ -228,10 +228,10 @@ public final class GameState extends State {
 				} else if (components.hasComponent(uid, CreatureInfo.class)) {
 					builder.append(components.getComponent(uid, CreatureInfo.class).getName());
 				} else if (components.hasComponent(uid, DoorInfo.class)) {
-					builder.append(components.getComponent(uid, ItemInfo.class).name.toLowerCase());
-					if (components.getComponent(uid, DoorInfo.class).getDestination() != 0) {
-						builder.append(" to ");
-						builder.append(components.getComponent(uid, DoorInfo.class).getText());
+					if (components.getComponent(uid, DoorInfo.class).getText().isEmpty()) {
+						builder.append(components.getComponent(uid, ItemInfo.class).name);
+					} else {
+						builder.append(components.getComponent(uid, DoorInfo.class).getText());						
 					}
 				} else if (components.hasComponent(uid, ItemInfo.class)) {
 					builder.append(components.getComponent(uid, ItemInfo.class).name);
@@ -279,12 +279,12 @@ public final class GameState extends State {
 			pointer.setPosition(components.getComponent(PLAYER_UID, Shape.class));
 			ArrayList<Long> entities = new ArrayList<>(config.getCurrentMap().getEntities());
 			entities.add(POINTER_UID);
-			renderPane.updateMap(entities);
+			renderPane.updateEntities(entities);
 			infoLabel.setVisible(true);
 			redraw();
 			looking = true;
 		} else {
-			renderPane.updateMap(config.getCurrentMap().getEntities());
+			renderPane.updateEntities(config.getCurrentMap().getEntities());
 			infoLabel.setVisible(false);
 			redraw();
 			looking = false;

@@ -76,7 +76,7 @@ public final class SystemManager {
 	
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
-		config.setCurrentMap(entities.getMap(event.uid));
+		config.setCurrentMap(entities.getMap(event.id));
 	}
 	
 	@Subscribe

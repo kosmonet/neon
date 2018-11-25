@@ -52,6 +52,7 @@ import neon.util.Direction;
  */
 public final class MovementSystem implements NeonSystem {
 	private static final Logger logger = Logger.getGlobal();
+	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final EntityManager entities;
@@ -142,7 +143,6 @@ public final class MovementSystem implements NeonSystem {
 			Task.Move task = creature.getComponent(Task.Move.class);
 			Shape shape = creature.getComponent(Shape.class);
 			move(creature, task.getMap(), task.x, task.y, shape.getZ());
-			task.getMap().moveEntity(creature.uid, task.x, task.y);
 			creature.removeComponent(Task.Move.class);
 			if (creature.getComponent(Stats.class).isActive()) {
 				// if the creature has more action points, let it think again
@@ -163,13 +163,13 @@ public final class MovementSystem implements NeonSystem {
 		Stats stats = creature.getComponent(Stats.class);
 		Skills skills = creature.getComponent(Skills.class);
 		
+		boolean canMove = true;
+
 		if (shape.getX() == x || shape.getY() == y) {
 			stats.perform(Action.MOVE_STRAIGHT);
 		} else {
 			stats.perform(Action.MOVE_DIAGONAL);
 		}
-
-		boolean canMove = true;
 
 		try {
 			RTerrain terrain = resources.getResource("terrain", map.getTerrain(x, y));
@@ -180,9 +180,15 @@ public final class MovementSystem implements NeonSystem {
 			}
 		} catch (ResourceException e) {
 			logger.severe("unknown terrain type: " + map.getTerrain(x, y));
+		} catch (IndexOutOfBoundsException e) {
+			canMove = false;
+			logger.info(creature + " trying to move out of map bounds");
 		}
 
-		if (canMove) {				
+		if (canMove) {
+			if (creature.uid != PLAYER_UID) {
+				map.moveEntity(creature.uid, x, y);
+			}
 			shape.setPosition(x, y, z);				
 			bus.post(new UpdateEvent.Move(creature.uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 		}

@@ -40,7 +40,9 @@ import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntitySaver;
+import neon.server.entity.MapLoader;
 import neon.server.entity.EntityManager;
+import neon.server.handlers.DoorHandler;
 import neon.server.handlers.GameLoader;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.SleepHandler;
@@ -88,11 +90,13 @@ public final class Server implements Runnable {
 		// add all the systems and various other stuff to the bus
 		ScriptHandler scripting = new ScriptHandler(bus);
 		bus.register(scripting);
-		bus.register(new GameLoader(files, resources, entities, bus));
 		bus.register(new InventoryHandler(entities, bus, config));
 		bus.register(new ConversationSystem(files, resources, entities, bus));
 		bus.register(new StealthHandler(resources, entities, bus));
 		bus.register(new SleepHandler(entities, bus));
+		MapLoader loader = new MapLoader(files, resources, entities, bus);
+		bus.register(new GameLoader(files, resources, entities, bus, loader));
+		bus.register(new DoorHandler(entities, bus, loader));
 		bus.register(new MagicSystem(files, resources, entities, bus));
 		bus.register(new TimeSystem(config, scripting));
 		bus.register(new QuestSystem(files, resources));

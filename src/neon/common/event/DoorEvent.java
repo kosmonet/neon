@@ -26,4 +26,12 @@ public abstract class DoorEvent extends NeonEvent {
 			this.door = door;
 		}
 	}
+
+	public static final class Transport extends DoorEvent {
+		public final long door;
+		
+		public Transport(long door) {
+			this.door = door;
+		}
+	}
 }

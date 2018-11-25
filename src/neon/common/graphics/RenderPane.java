@@ -74,10 +74,10 @@ public final class RenderPane<T> extends StackPane {
 		this.elevation = elevation;
 		this.entities.clear();
 		this.entities.addAll(entities);
-		
+		logger.fine("setting new map on render pane");
 	}
 	
-	public void updateMap(Collection<? extends T> entities) {
+	public void updateEntities(Collection<? extends T> entities) {
 		this.entities.clear();
 		this.entities.addAll(entities);
 	}

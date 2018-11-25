@@ -22,26 +22,37 @@ import neon.common.entity.DoorState;
 
 public class DoorInfo implements Component {
 	private final long uid;
-	private final int destination;
+	private final String destination;
 	private final String text;
+	private final int x, y;
 	
 	private DoorState state = DoorState.CLOSED;
 	
 	public DoorInfo(long uid) {
-		this(uid, 0, "", 0, 0);
+		this(uid, "", "", 0, 0);
 	}
 	
-	public DoorInfo(long uid, int destination, String text, int x, int y) {
+	public DoorInfo(long uid, String destination, String text, int x, int y) {
 		this.uid = uid;
 		this.destination = destination;
 		this.text = text;
+		this.x = x;
+		this.y = y;
+	}
+	
+	public int getDestinationX() {
+		return x;
+	}
+	
+	public int getDestinationY() {
+		return y;
 	}
 	
 	public String getText() {
 		return text;
 	}
 	
-	public int getDestination() {
+	public String getDestination() {
 		return destination;
 	}
 	

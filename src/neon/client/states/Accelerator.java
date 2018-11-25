@@ -40,6 +40,7 @@ import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Lock;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
+import neon.common.event.DoorEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.StealthEvent;
 import neon.systems.magic.Enchantment;
@@ -51,7 +52,7 @@ import neon.systems.magic.MagicEvent;
  * @author mdriesen
  *
  */
-class Accelerator {
+final class Accelerator {
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ComponentManager components;
@@ -72,22 +73,28 @@ class Accelerator {
 				.filter(uid -> uid != Configuration.PLAYER_UID).collect(Collectors.toList());
 		
 		if (entities.size() > 1) {
+			// if there are many items, open the container state
 			bus.post(new TransitionEvent("pick"));			
-		} else {
+		} else if (entities.size() > 0) {
 			long entity = entities.get(0);
 			if (components.hasComponent(entity, Lock.class)) {
+				// if there's only a single, locked container, try to open the lock
 				Lock lock = components.getComponent(entities.get(0), Lock.class);
 				if (lock.isLocked()) {
 					pickLock(lock);
 				} else {
+					// or go to the container state if it's already unlocked
 					bus.post(new TransitionEvent("pick"));					
 				}
 			} else if (components.hasComponent(entity, DoorInfo.class)) {
+				// if there's a linked door, go to the linked destination
 				DoorInfo info = components.getComponent(entity, DoorInfo.class);
-				if (info.getDestination() != 0) {
-					ui.showOverlayMessage("Moving to " + info.getText() + ".", 1000);
+				if (!info.getDestination().isEmpty()) {
+					bus.post(new DoorEvent.Transport(entity));
+					ui.showOverlayMessage(info.getText(), 1000);
 				}
 			} else {
+				// otherwise, go to the container state
 				bus.post(new TransitionEvent("pick"));				
 			}
 		}
@@ -101,9 +108,7 @@ class Accelerator {
 		
 		Optional<ButtonType> result = ui.showQuestion("Try to pick lock?", 
 				ButtonTypes.yes, ButtonTypes.no);
-
 		if (result.get().equals(ButtonTypes.yes)) {
-			// server takes care of saving
 			bus.post(new StealthEvent.Unlock(lock.getEntity()));
 		} 
 		

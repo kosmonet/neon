@@ -19,8 +19,8 @@
 package neon.server.entity;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -52,8 +52,9 @@ public final class EntityManager {
 	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
 	private final EntitySaver saver;
 	private final NeonFileSystem files;
-	private final Cache<Integer, Map> maps = CacheBuilder.newBuilder().removalListener(new MapListener()).softValues().build();
+	private final Cache<String, Map> maps = CacheBuilder.newBuilder().removalListener(new MapListener()).softValues().build();
 	private final HashBiMap<String, Short> uids = HashBiMap.create();
+	private final HashSet<Module> modules = new HashSet<>();
 
 	public EntityManager(NeonFileSystem files, EntitySaver saver) {
 		this.files = files;
@@ -76,29 +77,10 @@ public final class EntityManager {
 	}
 	
 	/**
-	 * Calculates the full map uid given the module name and the base uid
-	 * of the map within the module.
+	 * Removes an entity from the cache.
 	 * 
-	 * @param base
-	 * @param module
-	 * @return
+	 * @param uid
 	 */
-	public int getMapUID(short base, String module) {
-		return ((int)getModuleUID(module) << 16) | base;
-	}
-	
-	public Map getMap(Integer uid) {
-		return maps.getIfPresent(uid);
-	}
-	
-	public void addMap(Map map) {
-		maps.put(map.getUID(), map);
-	}
-	
-	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
-		builders.put(type, builder);
-	}
-	
 	public void removeEntity(long uid) {
 		entities.invalidate(uid);
 	}
@@ -118,8 +100,38 @@ public final class EntityManager {
 		return entity;
 	}
 	
-	public Collection<Entity> getEntities() {
-		return entities.asMap().values();
+	/**
+	 * Adds an entity builder.
+	 * 
+	 * @param type
+	 * @param builder
+	 */
+	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
+		builders.put(type, builder);
+	}
+	
+	/**
+	 * Calculates the full map uid given the module name and the base uid
+	 * of the map within the module.
+	 * 
+	 * @param base
+	 * @param module
+	 * @return
+	 */
+	public int getMapUID(short base, String module) {
+		return ((int)getModuleUID(module) << 16) | base;
+	}
+	
+	public boolean hasMap(String id) {
+		return maps.asMap().containsKey(id);
+	}
+	
+	public Map getMap(String id) {
+		return maps.getIfPresent(id);
+	}
+	
+	public void addMap(Map map) {
+		maps.put(map.getID(), map);
 	}
 	
 	/**
@@ -132,18 +144,27 @@ public final class EntityManager {
 	}
 
 	/**
-	 * Stores all remaining entities in the cache in the temp folder on disk.
+	 * 
+	 * @param map
+	 * @return	the uid of the module a map belongs to
 	 */
-	public void flush() {
-		entities.asMap().values().forEach(entity -> saveEntity(entity));
+	short getModuleUID(int map) {
+		return (short) (map >>> 16);		
 	}
-	
+
 	public long getFreeUID() {
 		long uid = 256;
 		while (entities.asMap().containsKey(uid)) {
 			uid++;
 		}
 		return uid;
+	}
+	
+	/**
+	 * Stores all remaining entities in the cache in the temp folder on disk.
+	 */
+	public void flush() {
+		entities.asMap().values().forEach(entity -> saveEntity(entity));
 	}
 	
 	private void saveEntity(Entity entity) {
@@ -158,6 +179,10 @@ public final class EntityManager {
 	private Entity loadEntity(long uid) throws IOException, ResourceException {
 		Document doc = files.loadFile(new XMLTranslator(), "entities", Long.toString(uid) + ".xml");
 		return saver.load(uid, doc.getRootElement());
+	}
+	
+	public void addModule(Module module) {
+		modules.add(module);
 	}
 	
 	/**
@@ -195,9 +220,9 @@ public final class EntityManager {
 		}		
 	}
 	
-	private final class MapListener implements RemovalListener<Integer, Map> {
+	private final class MapListener implements RemovalListener<String, Map> {
 		@Override
-		public void onRemoval(RemovalNotification<Integer, Map> notification) {
+		public void onRemoval(RemovalNotification<String, Map> notification) {
 			logger.finest(notification.getValue() + " removed from manager");
 		}		
 	}

@@ -26,12 +26,18 @@ import org.jdom2.Element;
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Entity;
+import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.DoorInfo;
+import neon.common.entity.components.Equipment;
+import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
+import neon.common.entity.components.ItemInfo;
+import neon.common.entity.components.Lock;
 import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.RCreature;
@@ -39,7 +45,12 @@ import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.systems.ai.Behavior;
+import neon.systems.combat.Armor;
+import neon.systems.combat.Weapon;
 import neon.systems.conversation.Dialog;
+import neon.systems.magic.Enchantment;
+import neon.systems.magic.Magic;
 import neon.util.spatial.RegionSpatialIndex;
 
 public final class MapLoader {
@@ -58,15 +69,37 @@ public final class MapLoader {
 		this.bus = bus;
 	}
 	
-	public Map loadMap(RMap resource) throws IOException {		
-		Element root = files.loadFile(translator, "maps", resource.id + ".xml").getRootElement();
+	/**
+	 * Loads a map.
+	 * 
+	 * @param id	the id of an {@code RMap}
+	 * @return	a {@code Map}
+	 * @throws IOException
+	 * @throws ResourceException 
+	 */
+	public Map loadMap(String id) throws IOException, ResourceException {
+		// load the map resource
+		RMap resource = resources.getResource("maps", id);
+		
+		// load the map
+		Element root = files.loadFile(translator, "maps", id + ".xml").getRootElement();
 		Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module));
 		initTerrain(root.getChild("terrain"), map.getTerrain());
 		initElevation(root.getChild("elevation"), map.getElevation());
 		initEntities(root.getChild("entities"), map);
+		
+		// send all entities on the map to the client
+		entities.addMap(map);
+		notifyClient(map);		
 		return map;
 	}
 	
+	/**
+	 * Initializes the terrain on a map.
+	 * 
+	 * @param terrain	a JDOM {@code Element} containing terrain data
+	 * @param index	the {@code RegionSpatialIndex} of a map.
+	 */
 	private void initTerrain(Element terrain, RegionSpatialIndex<String> index) {
 		for (Element region : terrain.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
@@ -78,6 +111,12 @@ public final class MapLoader {
 		}
 	}
 	
+	/**
+	 * Initializes the height map of a map.
+	 * 
+	 * @param elevation
+	 * @param index
+	 */
 	private void initElevation(Element elevation, RegionSpatialIndex<Integer> index) {
 		for (Element region : elevation.getChildren("region")) {
 			int width = Integer.parseInt(region.getAttributeValue("w"));
@@ -89,6 +128,12 @@ public final class MapLoader {
 		}		
 	}
 	
+	/**
+	 * Initializes all entities on a map.
+	 * 
+	 * @param entities
+	 * @param map
+	 */
 	private void initEntities(Element entities, Map map) {
 		long base = (long) map.getUID() << 32;
 		
@@ -113,6 +158,13 @@ public final class MapLoader {
 		}
 	}
 	
+	/**
+	 * Sets the position of an entity on the map. 
+	 * 
+	 * @param entity
+	 * @param shape
+	 * @param map
+	 */
 	private void registerEntity(Element entity, Shape shape, Map map) {
 		int x = Integer.parseInt(entity.getAttributeValue("x"));
 		int y = Integer.parseInt(entity.getAttributeValue("y"));
@@ -121,6 +173,14 @@ public final class MapLoader {
 		shape.setY(y);
 	}
 	
+	/**
+	 * Loads a creature.
+	 * 
+	 * @param entity
+	 * @param base
+	 * @return
+	 * @throws ResourceException
+	 */
 	private Entity loadCreature(Element entity, long base) throws ResourceException {
 		// create a new creature
 		long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
@@ -151,6 +211,14 @@ public final class MapLoader {
 		return creature;
 	}
 	
+	/**
+	 * Loads an item.
+	 * 
+	 * @param entity
+	 * @param base
+	 * @return
+	 * @throws ResourceException
+	 */
 	private Entity loadItem(Element entity, long base) throws ResourceException {
 		// create a new item
 		long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
@@ -170,12 +238,90 @@ public final class MapLoader {
 			Element link = entity.getChild("link");
 			int x = Integer.parseInt(link.getAttributeValue("x"));
 			int y = Integer.parseInt(link.getAttributeValue("y"));
-			short map = Short.parseShort(link.getAttributeValue("map"));
-			DoorInfo info = new DoorInfo(item.uid, map, link.getText(), x, y);
+			String id = link.getAttributeValue("map");
+			DoorInfo info = new DoorInfo(item.uid, id, link.getText(), x, y);
 			item.setComponent(info);
 			bus.post(new ComponentUpdateEvent(info));
 		}
 
 		return item;
+	}
+	
+	/**
+	 * Notifies the client that a new map was loaded.
+	 * 
+	 * @param map
+	 * @throws ResourceException
+	 */
+	public void notifyClient(Map map) {
+		// then send the map
+		bus.post(new UpdateEvent.Map(map.getUID(), map.getID()));
+
+		for (long uid : map.getEntities()) {
+			Entity entity = entities.getEntity(uid);
+			Shape shape = entity.getComponent(Shape.class);
+			if (entity.hasComponent(CreatureInfo.class)) {
+				notifyCreature(entity);
+				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
+			} else if (entity.hasComponent(ItemInfo.class)) {
+				notifyItem(entity);
+				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
+			}
+		}		
+	}
+	
+	/**
+	 * Notifies the client of a new creature.
+	 * 
+	 * @param creature
+	 */
+	private void notifyCreature(Entity creature) {
+		Inventory inventory = creature.getComponent(Inventory.class);
+		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
+		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
+		if (creature.hasComponent(Provider.class)) {
+			bus.post(new ComponentUpdateEvent(creature.getComponent(Provider.class)));			
+		}
+	}
+	
+	/**
+	 * Notifies the client of a new item.
+	 * 
+	 * @param item
+	 */
+	public void notifyItem(Entity item) {
+		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
+		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
+		
+		if (item.hasComponent(Clothing.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
+			if (item.hasComponent(Armor.class)) {
+				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
+			}
+		} else if (item.hasComponent(Weapon.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
+		}
+		
+		if (item.hasComponent(Enchantment.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
+		}
+		
+		if (item.hasComponent(Lock.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
+		}
+		
+		if (item.hasComponent(DoorInfo.class)) {
+			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
+		}
+		
+		if (item.hasComponent(Inventory.class)) {
+			Inventory inventory = item.getComponent(Inventory.class);
+			inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
+		}
 	}
 }

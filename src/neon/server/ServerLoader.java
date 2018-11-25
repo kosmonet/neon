@@ -53,6 +53,7 @@ import neon.server.entity.CreatureBuilder;
 import neon.server.entity.DoorBuilder;
 import neon.server.entity.EntityManager;
 import neon.server.entity.ItemBuilder;
+import neon.server.entity.Module;
 
 /**
  * Most of the server configuration is performed by the {@code ServerLoader}.
@@ -99,16 +100,29 @@ final class ServerLoader {
 		}
 	}
 
+	/**
+	 * Loads the neon.ini file.
+	 * 
+	 * @param files
+	 * @param entities
+	 * @return
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
 	private CServer initConfiguration(NeonFileSystem files, EntityManager entities) throws IOException, JDOMException {
-		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
 			return new ConfigurationLoader(files, entities).loadServer(doc.getRootElement());
 		} 
 	}
 	
+	/**
+	 * Adds some basic builders to the entity manager. Systems may add more
+	 * builders later on.
+	 * 
+	 * @param entities
+	 */
 	private void initEntities(EntityManager entities) {
-		// add all builders to the entity manager
 		entities.addBuilder(RItem.class, new ItemBuilder());
 		entities.addBuilder(RItem.Clothing.class, new ClothingBuilder());
 		entities.addBuilder(RCreature.class, new CreatureBuilder());
@@ -134,6 +148,14 @@ final class ServerLoader {
 		}
 	}
 	
+	/**
+	 * Initializes the resource manager.
+	 * 
+	 * @param files
+	 * @param resources
+	 * @param configuration
+	 * @param entities
+	 */
 	private void initResources(NeonFileSystem files, ResourceManager resources, CServer configuration, EntityManager entities) {
 		// add all necessary resource loaders to the manager
 		resources.addLoader(new ConfigurationLoader(files, entities));
@@ -148,7 +170,8 @@ final class ServerLoader {
 			HashSet<String> modules = new HashSet<>();
 			for (String id : configuration.getModules()) {
 				modules.add(id);
-				RModule module = resources.getResource(id);
+				RModule module = resources.getResource(id);				
+				entities.addModule(new Module(module, files));
 				for (String parent : module.getParentModules()) {
 					if (!modules.contains(parent)) {
 						logger.warning("module <" + id + "> is missing parent <" + parent + ">");
