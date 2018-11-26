@@ -18,7 +18,10 @@
 
 package neon.common.entity;
 
+import java.util.Set;
+
 import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MutableClassToInstanceMap;
 
 import neon.common.entity.components.Component;
@@ -82,5 +85,14 @@ public class Entity {
 	 */
 	public void removeComponent(Class<? extends Component> type) {
 		components.remove(type);
+	}
+	
+	/**
+	 * Returns all components of an entity.
+	 * 
+	 * @return	an unmodifiable {@code Set} of {@code Component}s
+	 */
+	public Set<Component> getComponents() {
+		return ImmutableSet.copyOf(components.values());
 	}
 }

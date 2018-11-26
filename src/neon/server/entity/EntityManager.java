@@ -24,19 +24,22 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import org.jdom2.Document;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.HashBiMap;
+import com.google.common.eventbus.EventBus;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 import neon.common.entity.Entity;
+import neon.common.files.JsonTranslator;
 import neon.common.files.NeonFileSystem;
-import neon.common.files.XMLTranslator;
 import neon.common.resources.Resource;
 import neon.common.resources.ResourceException;
+import neon.common.resources.ResourceManager;
 
 /**
  * This class manages all loaded entities in the current game (and by extension
@@ -50,15 +53,19 @@ public final class EntityManager {
 
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(new EntityListener()).softValues().build();
 	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
-	private final EntitySaver saver;
 	private final NeonFileSystem files;
 	private final Cache<String, Map> maps = CacheBuilder.newBuilder().removalListener(new MapListener()).softValues().build();
 	private final HashBiMap<String, Short> uids = HashBiMap.create();
 	private final HashSet<Module> modules = new HashSet<>();
+	private final MapLoader loader;
+	
+	private static final GsonBuilder builder = new GsonBuilder()
+			.registerTypeAdapter(Entity.class, new EntityAdapter());
+	private static final Gson gson = builder.create();
 
-	public EntityManager(NeonFileSystem files, EntitySaver saver) {
+	public EntityManager(NeonFileSystem files, ResourceManager resources, EventBus bus) {
 		this.files = files;
-		this.saver = saver;	
+		loader = new MapLoader(files, resources, this, bus);
 	}
 	
 	/**
@@ -96,7 +103,7 @@ public final class EntityManager {
 	@SuppressWarnings("unchecked")
 	public Entity createEntity(long uid, Resource resource) {
 		Entity entity = builders.get(resource.getClass()).build(uid, resource);
-		entities.put(uid, entity);
+		entities.put(uid, entity);		
 		return entity;
 	}
 	
@@ -122,16 +129,13 @@ public final class EntityManager {
 		return ((int)getModuleUID(module) << 16) | base;
 	}
 	
-	public boolean hasMap(String id) {
-		return maps.asMap().containsKey(id);
-	}
-	
-	public Map getMap(String id) {
+	public Map getMap(String id) throws IOException, ResourceException {
+		// load the map if it didn't exist yet
+		if (!maps.asMap().containsKey(id)) {
+			maps.put(id,  loader.loadMap(id));
+		}
+		
 		return maps.getIfPresent(id);
-	}
-	
-	public void addMap(Map map) {
-		maps.put(map.getID(), map);
 	}
 	
 	/**
@@ -164,21 +168,25 @@ public final class EntityManager {
 	 * Stores all remaining entities in the cache in the temp folder on disk.
 	 */
 	public void flush() {
-		entities.asMap().values().forEach(entity -> saveEntity(entity));
+		entities.asMap().values().forEach(this::saveEntity);
 	}
 	
+	/**
+	 * Saves an entity in a json file.
+	 * 
+	 * @param entity
+	 */
 	private void saveEntity(Entity entity) {
-		Document doc = new Document(saver.save(entity));
 		try {
-			files.saveFile(doc, new XMLTranslator(), "entities", Long.toString(entity.uid) + ".xml");
+			files.saveFile(gson.toJsonTree(entity), new JsonTranslator(), "entities", entity.uid + ".json");
 		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+			logger.severe("could not save " + entity);
+		}
 	}
 
-	private Entity loadEntity(long uid) throws IOException, ResourceException {
-		Document doc = files.loadFile(new XMLTranslator(), "entities", Long.toString(uid) + ".xml");
-		return saver.load(uid, doc.getRootElement());
+	private Entity loadEntity(long uid) throws IOException {
+		JsonElement element = files.loadFile(new JsonTranslator(), "entities", uid + ".json");
+		return gson.fromJson(element, Entity.class);
 	}
 	
 	public void addModule(Module module) {

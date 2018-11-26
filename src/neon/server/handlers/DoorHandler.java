@@ -51,12 +51,8 @@ public class DoorHandler {
 		Entity door = entities.getEntity(event.door);
 		DoorInfo info = door.getComponent(DoorInfo.class);
 		
-		if (entities.hasMap(info.getDestination())) {
-			Map map = entities.getMap(info.getDestination());
-			loader.notifyClient(map);
-		} else {
-			loader.loadMap(info.getDestination());
-		}
+		Map map = entities.getMap(info.getDestination());
+		loader.notifyClient(map);
 
 		Shape player = entities.getEntity(PLAYER_UID).getComponent(Shape.class);
 		player.setPosition(info.getDestinationX(), info.getDestinationY(), 0);

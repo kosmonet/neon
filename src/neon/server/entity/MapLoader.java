@@ -88,9 +88,7 @@ public final class MapLoader {
 		initElevation(root.getChild("elevation"), map.getElevation());
 		initEntities(root.getChild("entities"), map);
 		
-		// send all entities on the map to the client
-		entities.addMap(map);
-		notifyClient(map);		
+		// add map to the entity manager
 		return map;
 	}
 	

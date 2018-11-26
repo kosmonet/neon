@@ -27,7 +27,6 @@ import java.io.OutputStream;
  * Java type.
  * 
  * @author mdriesen
- *
  * @param <E>
  */
 public interface Translator<E> {
@@ -47,5 +46,5 @@ public interface Translator<E> {
 	 * @param out
 	 * @throws IOException
 	 */
-	public void translate(E output, OutputStream out) throws IOException;
+	public void translate(E out, OutputStream output) throws IOException;
 }

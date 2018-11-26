@@ -39,7 +39,6 @@ import neon.common.resources.CClient;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.server.entity.EntitySaver;
 import neon.server.entity.MapLoader;
 import neon.server.entity.EntityManager;
 import neon.server.handlers.DoorHandler;
@@ -67,7 +66,7 @@ public final class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager();
 	private final ServerSocket socket;
-	private final EntityManager entities = new EntityManager(files, new EntitySaver(resources));
+	private final EntityManager entities = new EntityManager(files, resources, bus);
 	private final Configuration config = new Configuration();
 	private final SystemManager systems = new SystemManager(resources, entities, bus, config);
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

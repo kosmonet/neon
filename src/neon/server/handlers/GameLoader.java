@@ -146,8 +146,8 @@ public final class GameLoader {
 			bus.post(new NewGameEvent.Pass());
 			// send the new player character to the client
 			notifyClient(player);
-			// load the starting map (loader sends map entities to client)
-			loader.loadMap(game.map);
+			// send the starting map to the client
+			loader.notifyClient(entities.getMap(game.map));
 			// tell the client everything is ready to start
 			bus.post(new UpdateEvent.Start());
 		} else {
@@ -247,7 +247,7 @@ public final class GameLoader {
 		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		loader.loadMap(game.map);
+		loader.notifyClient(entities.getMap(game.map));
 
 		// tell the client everything is ready
 		notifyClient(entities.getEntity(PLAYER_UID));
@@ -316,7 +316,7 @@ public final class GameLoader {
 		entities.flush();
 		// move the temp folder to the saves folder
 		Entity player = entities.getEntity(PLAYER_UID);
-		PlayerInfo record = player.getComponent(PlayerInfo.class);
-		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", record.getName()));
+		PlayerInfo info = player.getComponent(PlayerInfo.class);
+		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", info.getName()));
 	}
 }
