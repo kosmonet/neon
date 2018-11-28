@@ -39,7 +39,6 @@ import neon.common.resources.CClient;
 import neon.common.resources.CServer;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.server.entity.MapLoader;
 import neon.server.entity.EntityManager;
 import neon.server.handlers.DoorHandler;
 import neon.server.handlers.GameLoader;
@@ -66,7 +65,7 @@ public final class Server implements Runnable {
 	private final NeonFileSystem files = new NeonFileSystem();
 	private final ResourceManager resources = new ResourceManager();
 	private final ServerSocket socket;
-	private final EntityManager entities = new EntityManager(files, resources, bus);
+	private final EntityManager entities = new EntityManager(files, resources);
 	private final Configuration config = new Configuration();
 	private final SystemManager systems = new SystemManager(resources, entities, bus, config);
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -93,9 +92,8 @@ public final class Server implements Runnable {
 		bus.register(new ConversationSystem(files, resources, entities, bus));
 		bus.register(new StealthHandler(resources, entities, bus));
 		bus.register(new SleepHandler(entities, bus));
-		MapLoader loader = new MapLoader(files, resources, entities, bus);
-		bus.register(new GameLoader(files, resources, entities, bus, loader));
-		bus.register(new DoorHandler(entities, bus, loader));
+		bus.register(new GameLoader(files, resources, entities, bus));
+		bus.register(new DoorHandler(entities, bus));
 		bus.register(new MagicSystem(files, resources, entities, bus));
 		bus.register(new TimeSystem(config, scripting));
 		bus.register(new QuestSystem(files, resources));

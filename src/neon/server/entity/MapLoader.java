@@ -23,21 +23,12 @@ import java.util.logging.Logger;
 
 import org.jdom2.Element;
 
-import com.google.common.eventbus.EventBus;
-
 import neon.common.entity.Entity;
-import neon.common.entity.components.Clothing;
 import neon.common.entity.components.CreatureInfo;
 import neon.common.entity.components.DoorInfo;
-import neon.common.entity.components.Equipment;
-import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
-import neon.common.entity.components.ItemInfo;
-import neon.common.entity.components.Lock;
 import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
-import neon.common.event.ComponentUpdateEvent;
-import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
 import neon.common.resources.RCreature;
@@ -45,12 +36,7 @@ import neon.common.resources.RItem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.systems.ai.Behavior;
-import neon.systems.combat.Armor;
-import neon.systems.combat.Weapon;
 import neon.systems.conversation.Dialog;
-import neon.systems.magic.Enchantment;
-import neon.systems.magic.Magic;
 import neon.util.spatial.RegionSpatialIndex;
 
 public final class MapLoader {
@@ -60,13 +46,11 @@ public final class MapLoader {
 	private final EntityManager entities;
 	private final NeonFileSystem files;
 	private final ResourceManager resources;
-	private final EventBus bus;
 	
-	public MapLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
+	public MapLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		this.files = files;
 		this.resources = resources;
 		this.entities = entities;
-		this.bus = bus;
 	}
 	
 	/**
@@ -239,87 +223,8 @@ public final class MapLoader {
 			String id = link.getAttributeValue("map");
 			DoorInfo info = new DoorInfo(item.uid, id, link.getText(), x, y);
 			item.setComponent(info);
-			bus.post(new ComponentUpdateEvent(info));
 		}
 
 		return item;
-	}
-	
-	/**
-	 * Notifies the client that a new map was loaded.
-	 * 
-	 * @param map
-	 * @throws ResourceException
-	 */
-	public void notifyClient(Map map) {
-		// then send the map
-		bus.post(new UpdateEvent.Map(map.getUID(), map.getID()));
-
-		for (long uid : map.getEntities()) {
-			Entity entity = entities.getEntity(uid);
-			Shape shape = entity.getComponent(Shape.class);
-			if (entity.hasComponent(CreatureInfo.class)) {
-				notifyCreature(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
-			} else if (entity.hasComponent(ItemInfo.class)) {
-				notifyItem(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
-			}
-		}		
-	}
-	
-	/**
-	 * Notifies the client of a new creature.
-	 * 
-	 * @param creature
-	 */
-	private void notifyCreature(Entity creature) {
-		Inventory inventory = creature.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
-		if (creature.hasComponent(Provider.class)) {
-			bus.post(new ComponentUpdateEvent(creature.getComponent(Provider.class)));			
-		}
-	}
-	
-	/**
-	 * Notifies the client of a new item.
-	 * 
-	 * @param item
-	 */
-	public void notifyItem(Entity item) {
-		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
-		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
-		
-		if (item.hasComponent(Clothing.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
-			if (item.hasComponent(Armor.class)) {
-				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
-			}
-		} else if (item.hasComponent(Weapon.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
-		}
-		
-		if (item.hasComponent(Enchantment.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
-		}
-		
-		if (item.hasComponent(Lock.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
-		}
-		
-		if (item.hasComponent(DoorInfo.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
-		}
-		
-		if (item.hasComponent(Inventory.class)) {
-			Inventory inventory = item.getComponent(Inventory.class);
-			inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
-			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
-		}
 	}
 }

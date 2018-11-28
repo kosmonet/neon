@@ -29,7 +29,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.HashBiMap;
-import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -63,9 +62,9 @@ public final class EntityManager {
 			.registerTypeAdapter(Entity.class, new EntityAdapter());
 	private static final Gson gson = builder.create();
 
-	public EntityManager(NeonFileSystem files, ResourceManager resources, EventBus bus) {
+	public EntityManager(NeonFileSystem files, ResourceManager resources) {
 		this.files = files;
-		loader = new MapLoader(files, resources, this, bus);
+		loader = new MapLoader(files, resources, this);
 	}
 	
 	/**
@@ -126,7 +125,7 @@ public final class EntityManager {
 	 * @return
 	 */
 	public int getMapUID(short base, String module) {
-		return ((int)getModuleUID(module) << 16) | base;
+		return ((int) getModuleUID(module) << 16) | base;
 	}
 	
 	public Map getMap(String id) throws IOException, ResourceException {

@@ -31,19 +31,18 @@ import neon.common.event.DoorEvent;
 import neon.common.resources.ResourceException;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
-import neon.server.entity.MapLoader;
 
 public class DoorHandler {
 	private static final long PLAYER_UID = 0;
 	
-	private final MapLoader loader;
 	private final EntityManager entities;
 	private final EventBus bus;
+	private final Notifier notifier;
 	
-	public DoorHandler(EntityManager entities, EventBus bus, MapLoader loader) {
+	public DoorHandler(EntityManager entities, EventBus bus) {
 		this.entities = entities;
 		this.bus = bus;
-		this.loader = loader;
+		notifier = new Notifier(entities, bus);
 	}
 	
 	@Subscribe
@@ -52,7 +51,7 @@ public class DoorHandler {
 		DoorInfo info = door.getComponent(DoorInfo.class);
 		
 		Map map = entities.getMap(info.getDestination());
-		loader.notifyClient(map);
+		notifier.notifyClient(map);
 
 		Shape player = entities.getEntity(PLAYER_UID).getComponent(Shape.class);
 		player.setPosition(info.getDestinationX(), info.getDestinationY(), 0);

@@ -41,15 +41,10 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.event.LoadEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.entity.Entity;
-import neon.common.entity.components.CreatureInfo;
-import neon.common.entity.components.Equipment;
-import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
-import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
@@ -63,7 +58,6 @@ import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
-import neon.server.entity.MapLoader;
 import neon.systems.magic.Magic;
 
 /**
@@ -81,7 +75,7 @@ public final class GameLoader {
 	private final ResourceManager resources;
 	private final EntityManager entities;
 	private final NeonFileSystem files;
-	private final MapLoader loader;
+	private final Notifier notifier;
 	
 	/**
 	 * Initializes this game loader.
@@ -90,12 +84,12 @@ public final class GameLoader {
 	 * @param resources
 	 * @param entities
 	 */
-	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus, MapLoader loader) {
+	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = bus;
 		this.resources = resources;
 		this.entities = entities;
 		this.files = files;
-		this.loader = loader;
+		notifier = new Notifier(entities, bus);
 	}
 	
 	/**
@@ -145,9 +139,9 @@ public final class GameLoader {
 			// tell the client that character creation succeeded
 			bus.post(new NewGameEvent.Pass());
 			// send the new player character to the client
-			notifyClient(player);
+			notifier.notifyClient(player);
 			// send the starting map to the client
-			loader.notifyClient(entities.getMap(game.map));
+			notifier.notifyClient(entities.getMap(game.map));
 			// tell the client everything is ready to start
 			bus.post(new UpdateEvent.Start());
 		} else {
@@ -228,9 +222,9 @@ public final class GameLoader {
 		}
 
 		// load the server configuration file from the save folder and check each module uid
-		CServer currentConfig = resources.getResource("config", "server");
+		CServer config = resources.getResource("config", "server");
 		for (Entry<String, Short> entry : getConfiguration(event.save).entrySet()) {
-			if (currentConfig.hasModule(entry.getKey())) {
+			if (config.hasModule(entry.getKey())) {
 				// make sure the current module uid is the same as in the saved game
 				entities.setModuleUID(entry.getKey(), entry.getValue());
 			} else {
@@ -242,31 +236,14 @@ public final class GameLoader {
 			}
 		}
 		
-		// save all changes to the current configuration
-		resources.addResource(currentConfig);
-		
 		// get the start map
 		CGame game = resources.getResource("config", "game");
-		loader.notifyClient(entities.getMap(game.map));
+		notifier.notifyClient(entities.getMap(game.map));
 
 		// tell the client everything is ready
-		notifyClient(entities.getEntity(PLAYER_UID));
+		notifier.notifyClient(entities.getEntity(PLAYER_UID));
 	}
 	
-	private void notifyClient(Entity player) {
-		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> loader.notifyItem(entities.getEntity(uid)));
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Equipment.class)));
-	}
-		
 	/**
 	 * Loads the server configuration file from a previously saved game.
 	 * 
