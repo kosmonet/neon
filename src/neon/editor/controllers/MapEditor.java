@@ -136,15 +136,15 @@ public class MapEditor {
 	    
 		pane.setPrefSize(scale*map.getWidth(), scale*map.getHeight());
 		pane.setStyle("-fx-background-color: black;");
-	    pane.setOnMouseClicked(event -> mouseClicked(event));
+	    pane.setOnMouseClicked(this::mouseClicked);
 		
 		renderer = new RenderPane<Entity>(resources, new EditorRenderer());
-		renderer.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
+		renderer.setMap(map);
 	    renderer.setStyle("-fx-background-color: black;");
 	    renderer.setOnMouseEntered(event -> mouseEntered());
 	    renderer.setOnMouseExited(event -> mouseExited());
-	    renderer.setOnDragOver(event -> dragOver(event));
-	    renderer.setOnDragDropped(event -> dragDropped(event));
+	    renderer.setOnDragOver(this::dragOver);
+	    renderer.setOnDragDropped(this::dragDropped);
 	    
 	    // redraw when resizing or scrolling the map
 	    renderer.widthProperty().addListener(value -> redraw());
@@ -336,7 +336,7 @@ public class MapEditor {
 			logger.severe("could not save map: " + e.getMessage());
 		}
 
-		renderer.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
+		renderer.setMap(map);
 		bus.post(new SaveEvent.Resources(map));
 		card.setChanged(true);
 		saved = true;

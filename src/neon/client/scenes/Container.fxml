@@ -27,7 +27,7 @@
 			</columnConstraints>
 			<children>
 				<ListView fx:id="playerList" GridPane.columnIndex="0" />
-				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: black">
+				<HBox GridPane.columnIndex="1" alignment="center" style="-fx-background-color: #121212">
 					<DescriptionLabel fx:id="description" focusTraversable="false" />
 				</HBox>
 				<ListView fx:id="containerList" GridPane.columnIndex="2"  />

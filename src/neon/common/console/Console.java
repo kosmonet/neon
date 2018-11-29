@@ -91,10 +91,10 @@ public final class Console {
 		flow.getChildren().add(text);
 
 		// two different handlers, keyTyped can't handle the enter key
-		scene.setOnKeyPressed(event -> keyPressed(event));
-		scene.setOnKeyTyped(event -> keyTyped(event));
+		scene.setOnKeyPressed(this::keyPressed);
+		scene.setOnKeyTyped(this::keyTyped);
 		// close console when pressing esc
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> close());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), this::close);
 
 		logger.addHandler(new ConsoleHandler(Level.ALL));
 	}

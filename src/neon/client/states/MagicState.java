@@ -76,7 +76,7 @@ public final class MagicState extends State {
 			logger.severe("failed to load magic interface: " + e.getMessage());
 		}
 
-		spellList.setOnKeyPressed(event -> keyPressed(event));
+		spellList.setOnKeyPressed(this::keyPressed);
 		spellList.setCellFactory(spellList -> new SpellCell());
 		spellList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 
@@ -122,7 +122,7 @@ public final class MagicState extends State {
 	
 	@Subscribe
 	private void onSpellUpdate(ComponentUpdateEvent event) {
-		Platform.runLater(() -> refresh());
+		Platform.runLater(this::refresh);
 	}
 	
 	private void refresh() {

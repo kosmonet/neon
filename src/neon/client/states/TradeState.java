@@ -59,8 +59,8 @@ public class TradeState extends State {
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 		
 		// list catches the esc key, we need a separate listener
-		playerList.setOnKeyPressed(event -> keyPressed(event));
-		containerList.setOnKeyPressed(event -> keyPressed(event));
+		playerList.setOnKeyPressed(this::keyPressed);
+		containerList.setOnKeyPressed(this::keyPressed);
 	}
 	
 	private void keyPressed(KeyEvent event) {

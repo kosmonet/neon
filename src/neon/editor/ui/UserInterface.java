@@ -77,7 +77,7 @@ public class UserInterface {
 		
 		// load the user interface
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Editor.fxml"));
-		loader.setControllerFactory(type -> getController(type));
+		loader.setControllerFactory(this::getController);
 		
 		try {
 			scene = new Scene(loader.load());

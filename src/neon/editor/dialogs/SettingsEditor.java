@@ -138,19 +138,19 @@ public class SettingsEditor {
 		
 		ContextMenu speciesMenu = new ContextMenu();
 		MenuItem addCreatureItem = new MenuItem("Add species");
-		addCreatureItem.setOnAction(event -> addSpecies(event));
+		addCreatureItem.setOnAction(this::addSpecies);
 		speciesMenu.getItems().add(addCreatureItem);
 		MenuItem removeCreatureItem = new MenuItem("Remove species");
-		removeCreatureItem.setOnAction(event -> removeSpecies(event));
+		removeCreatureItem.setOnAction(this::removeSpecies);
 		speciesMenu.getItems().add(removeCreatureItem);
 		speciesList.setContextMenu(speciesMenu);
 
 		ContextMenu parentMenu = new ContextMenu();
 		MenuItem addParentItem = new MenuItem("Add parent");
-		addParentItem.setOnAction(event -> addParent(event));
+		addParentItem.setOnAction(this::addParent);
 		parentMenu.getItems().add(addParentItem);
 		MenuItem removeParentItem = new MenuItem("Remove parent");
-		removeParentItem.setOnAction(event -> removeParent(event));
+		removeParentItem.setOnAction(this::removeParent);
 		parentMenu.getItems().add(removeParentItem);
 		parentList.setContextMenu(parentMenu);
 		
@@ -252,7 +252,7 @@ public class SettingsEditor {
 		dialog.setContentText("Choose creature id:");
 
 		Optional<String> result = dialog.showAndWait();
-		result.ifPresent(choice -> speciesList.getItems().add(choice));
+		result.ifPresent(speciesList.getItems()::add);
 	}
 	
 	/**
@@ -274,7 +274,7 @@ public class SettingsEditor {
 		Set<String> choices = new HashSet<>();		
 		try {
 			// Java 8 way of listing all available modules in the data folder
-			Files.list(data).filter(path -> Files.isDirectory(path)).forEach(path -> choices.add(path.getFileName().toString()));
+			Files.list(data).filter(Files::isDirectory).forEach(path -> choices.add(path.getFileName().toString()));
 		} catch (IOException e) {
 			logger.severe("could not list all modules");
 		}
@@ -289,7 +289,7 @@ public class SettingsEditor {
 		dialog.setContentText("Select parent folder:");
 
 		Optional<String> result = dialog.showAndWait();
-		result.ifPresent(choice -> parentList.getItems().add(choice));
+		result.ifPresent(parentList.getItems()::add);
 	}
 	
 	/**

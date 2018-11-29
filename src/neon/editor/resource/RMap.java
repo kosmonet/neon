@@ -25,11 +25,12 @@ import java.util.HashMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import neon.common.graphics.RenderableMap;
 import neon.common.resources.Resource;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
-public class RMap extends Resource {
+public class RMap extends Resource implements RenderableMap<REntity> {
 	/**
 	 * The display name.
 	 */

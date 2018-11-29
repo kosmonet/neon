@@ -90,7 +90,7 @@ public final class MainMenuState extends State {
 		quitLink.setOnMouseEntered(event -> quitLink.requestFocus());
 		quitLink.setOnAction(event -> bus.post(new InputEvent.Quit()));
 		// also quit when pressing esc
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> quitLink.fire());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), quitLink::fire);
 		
 		// other key bindings
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F2), () -> new Console(bus).show());

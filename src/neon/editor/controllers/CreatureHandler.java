@@ -74,7 +74,7 @@ public class CreatureHandler {
 	
 	@FXML public void initialize() {		
 		creatureTree.setCellFactory(new CardCellFactory());
-		creatureTree.setOnDragDetected(event -> mouseDragged(event));
+		creatureTree.setOnDragDetected(this::mouseDragged);
 	}
 
 	private void mouseDragged(MouseEvent event) {
@@ -91,10 +91,10 @@ public class CreatureHandler {
 	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu creatureMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add creature");
-		addItem.setOnAction(event -> addCreature(event));
+		addItem.setOnAction(this::addCreature);
 		creatureMenu.getItems().add(addItem);
 		MenuItem removeItem = new MenuItem("Remove creature");
-		removeItem.setOnAction(event -> removeCreature(event));
+		removeItem.setOnAction(this::removeCreature);
 		creatureMenu.getItems().add(removeItem);
 		creatureTree.setContextMenu(creatureMenu);
 
@@ -103,7 +103,7 @@ public class CreatureHandler {
 		TreeItem<Card> root = new TreeItem<>();
 		creatureTree.setShowRoot(false);
 		creatureTree.setRoot(root);
-		creatureTree.setOnMouseClicked(event -> mouseClicked(event));
+		creatureTree.setOnMouseClicked(this::mouseClicked);
 
 		for (Card card : cards.get("creatures")) {
 			root.getChildren().add(new TreeItem<Card>(card));
@@ -118,7 +118,7 @@ public class CreatureHandler {
 	@Subscribe
 	private void save(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
-		Platform.runLater(() -> creatureTree.refresh());
+		Platform.runLater(creatureTree::refresh);
 	}
 	
 	/**

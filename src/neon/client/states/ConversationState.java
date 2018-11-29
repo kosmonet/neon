@@ -89,9 +89,9 @@ public final class ConversationState extends State {
 			logger.severe("failed to load conversation interface: " + e.getMessage());
 		}
 		
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		scroller.setOnKeyPressed(event -> scrollKeyPressed(event));
+		scroller.setOnKeyPressed(this::scrollKeyPressed);
 		// to make the scrollpane scroll all the way down when new topics are added
         flow.heightProperty().addListener(value -> scroller.vvalueProperty().setValue(1));
 	}

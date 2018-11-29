@@ -93,17 +93,17 @@ public final class NewGameState extends State {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 
 		statsLabel.setText(points + " ability points to spend.");
 		
 		// list catches the esc, enter and function keys, we need a separate listener
-		speciesList.setOnKeyPressed(event -> listKeyPressed(event));
+		speciesList.setOnKeyPressed(this::listKeyPressed);
 		// text field catches the function keys, another listener
-		nameField.setOnKeyPressed(event -> fieldKeyPressed(event));		
+		nameField.setOnKeyPressed(this::fieldKeyPressed);		
 		
 		speciesList.setCellFactory(speciesList -> new CreatureCell());
-		speciesList.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> changeSpecies(oldValue, newValue));
+		speciesList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> changeSpecies(oldValue, newValue));
 		
 		strFactory = new IntegerSpinnerValueFactory(3, 18, 10);
 		conFactory = new IntegerSpinnerValueFactory(3, 18, 10);

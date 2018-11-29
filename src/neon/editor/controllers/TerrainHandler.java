@@ -71,10 +71,10 @@ public class TerrainHandler {
 	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu terrainMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add terrain");
-		addItem.setOnAction(event -> addTerrain(event));
+		addItem.setOnAction(this::addTerrain);
 		terrainMenu.getItems().add(addItem);
 		MenuItem removeItem = new MenuItem("Remove terrain");
-		removeItem.setOnAction(event -> removeTerrain(event));
+		removeItem.setOnAction(this::removeTerrain);
 		terrainMenu.getItems().add(removeItem);
 		terrainTree.setContextMenu(terrainMenu);
 
@@ -83,7 +83,7 @@ public class TerrainHandler {
 		TreeItem<Card> root = new TreeItem<>();
 		terrainTree.setShowRoot(false);
 		terrainTree.setRoot(root);
-		terrainTree.setOnMouseClicked(event -> mouseClicked(event));
+		terrainTree.setOnMouseClicked(this::mouseClicked);
 
 		for (Card card : cards.get("terrain")) {
 			root.getChildren().add(new TreeItem<Card>(card));

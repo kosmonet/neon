@@ -75,10 +75,10 @@ public final class LoadState extends State {
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 		
 		// list catches the esc and enter keys, we need a separate listener
-		saveList.setOnKeyPressed(event -> keyPressed(event));
+		saveList.setOnKeyPressed(this::keyPressed);
 	}
 	
 	@FXML private void startGame() {

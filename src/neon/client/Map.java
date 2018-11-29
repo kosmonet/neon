@@ -29,13 +29,14 @@ import com.google.common.collect.ImmutableSet;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
+import neon.common.graphics.RenderableMap;
 import neon.common.resources.RMap;
 import neon.util.spatial.PointQuadTree;
 import neon.util.spatial.PointSpatialIndex;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
-public class Map {
+public class Map implements RenderableMap<Long> {
 	private static final XMLTranslator translator = new XMLTranslator();
 
 	private final RegionSpatialIndex<String> terrain;

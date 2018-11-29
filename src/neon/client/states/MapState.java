@@ -71,7 +71,7 @@ public final class MapState extends State {
 		}
 		
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("cancel")));
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 	}

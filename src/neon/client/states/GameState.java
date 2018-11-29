@@ -19,7 +19,6 @@
 package neon.client.states;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -176,21 +175,7 @@ public final class GameState extends State {
 	
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
-		Map map = config.getCurrentMap();
-		renderPane.setMap(map.getTerrain(), map.getElevation(), map.getEntities());
-		Platform.runLater(this::scheduleRedraw);
-	}
-	
-	@Subscribe
-	private void onMove(UpdateEvent.Move event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateEntities(config.getCurrentMap().getEntities()));
-		scheduleRedraw();
-	}
-	
-	@Subscribe
-	private void onRemove(UpdateEvent.Remove event) throws ResourceException {
-		Platform.runLater(() -> renderPane.updateEntities(config.getCurrentMap().getEntities()));
-		scheduleRedraw();
+		renderPane.setMap(config.getCurrentMap());
 	}
 	
 	@Subscribe
@@ -198,9 +183,14 @@ public final class GameState extends State {
 		scheduleRedraw();
 	}
 	
+	@Subscribe
+	private void onUpdate(UpdateEvent event) {
+		scheduleRedraw();
+	}
+	
 	private void scheduleRedraw() {
 		if (!redraw) {
-			Platform.runLater(() -> redraw());
+			Platform.runLater(this::redraw);
 			redraw = true;
 		}		
 	}
@@ -277,14 +267,12 @@ public final class GameState extends State {
 	private void look() {
 		if (!looking) {
 			pointer.setPosition(components.getComponent(PLAYER_UID, Shape.class));
-			ArrayList<Long> entities = new ArrayList<>(config.getCurrentMap().getEntities());
-			entities.add(POINTER_UID);
-			renderPane.updateEntities(entities);
+			config.getCurrentMap().addEntity(POINTER_UID, pointer.getX(), pointer.getY());
 			infoLabel.setVisible(true);
 			redraw();
 			looking = true;
 		} else {
-			renderPane.updateEntities(config.getCurrentMap().getEntities());
+			config.getCurrentMap().removeEntity(POINTER_UID);
 			infoLabel.setVisible(false);
 			redraw();
 			looking = false;

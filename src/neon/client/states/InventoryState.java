@@ -98,12 +98,12 @@ public final class InventoryState extends State {
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), () -> equipItem());
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
+		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.SPACE), this::equipItem);
 		
 		// lists catch keys, we need a separate listener
-		playerList.setOnKeyPressed(event -> keyPressed(event));
-		followerList.setOnKeyPressed(event -> keyPressed(event));
+		playerList.setOnKeyPressed(this::keyPressed);
+		followerList.setOnKeyPressed(this::keyPressed);
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
 		playerList.setCellFactory(playerList -> new ItemCell(components));
 	}
@@ -199,7 +199,7 @@ public final class InventoryState extends State {
 	
 	@Subscribe
 	private void onInventoryUpdate(ComponentUpdateEvent event) {
-		Platform.runLater(() -> refresh());
+		Platform.runLater(this::refresh);
 	}
 	
 	@FXML private void dropItem() {

@@ -18,11 +18,8 @@
 
 package neon.common.graphics;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
@@ -49,14 +46,11 @@ public final class RenderPane<T> extends StackPane {
 	private final ResourceManager resources;
 	private final EntityRenderer<T> renderer;
 	
-	private RegionSpatialIndex<String> terrain;
-	private RegionSpatialIndex<Integer> elevation;
-	private SortedSet<T> entities;
+	private RenderableMap<? extends T> map;
 	
 	public RenderPane(ResourceManager resources, EntityRenderer<T> renderer) {
 		this.resources = resources;
 		this.renderer = renderer;
-		entities = new TreeSet<>(renderer.getComparator());
 		
 		for (int i = -5; i < 4; i++) {
 			Canvas canvas = new RenderCanvas();
@@ -69,17 +63,9 @@ public final class RenderPane<T> extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
-	public void setMap(RegionSpatialIndex<String> terrain, RegionSpatialIndex<Integer> elevation, Collection<? extends T> entities) {
-		this.terrain = terrain;
-		this.elevation = elevation;
-		this.entities.clear();
-		this.entities.addAll(entities);
+	public void setMap(RenderableMap<? extends T> map) {
+		this.map = map;
 		logger.fine("setting new map on render pane");
-	}
-	
-	public void updateEntities(Collection<? extends T> entities) {
-		this.entities.clear();
-		this.entities.addAll(entities);
 	}
 	
 	/**
@@ -99,7 +85,8 @@ public final class RenderPane<T> extends StackPane {
 		}
 		
 		drawMap(xmin, ymin, scale);
-		entities.stream().forEach(entity -> renderer.drawEntity(entity, xmin, ymin, scale));
+		map.getEntities().stream().sorted(renderer.getComparator())
+				.forEach(entity -> renderer.drawEntity(entity, xmin, ymin, scale));
 	}
 	
 	/**
@@ -110,6 +97,9 @@ public final class RenderPane<T> extends StackPane {
 	 * @param scale
 	 */
 	private void drawMap(int xmin, int ymin, int scale) {
+		RegionSpatialIndex<String> terrain = map.getTerrain();
+		RegionSpatialIndex<Integer> elevation = map.getElevation();
+		
 		for (int x = Math.max(0, xmin); x < Math.min(terrain.getWidth(), xmin + getWidth()/scale); x++) {
 			for (int y = Math.max(0,  ymin); y < Math.min(terrain.getHeight(), ymin + getHeight()/scale); y++) {
 				try {
@@ -130,7 +120,7 @@ public final class RenderPane<T> extends StackPane {
 	 * @author mdriesen
 	 *
 	 */
-	public static final class RenderCanvas extends Canvas {
+	private static final class RenderCanvas extends Canvas {
 		@Override
 		public boolean isResizable() {
 		    return true;

@@ -88,7 +88,7 @@ public final class ContainerState extends State {
 		try {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), () -> showHelp());
+			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 		} catch (IOException e) {
 			logger.severe("failed to load container interface: " + e.getMessage());
 		}
@@ -96,8 +96,8 @@ public final class ContainerState extends State {
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
 		
 		// list catches the esc key, we need a separate listener
-		playerList.setOnKeyPressed(event -> keyPressed(event));
-		containerList.setOnKeyPressed(event -> keyPressed(event));
+		playerList.setOnKeyPressed(this::keyPressed);
+		containerList.setOnKeyPressed(this::keyPressed);
 		
 		// update the item description when another item is selected
 		playerList.getSelectionModel().selectedItemProperty().addListener(new ListListener());
@@ -120,7 +120,7 @@ public final class ContainerState extends State {
 	
 	@Subscribe
 	private void onInventoryUpdate(ComponentUpdateEvent event) {
-		Platform.runLater(() -> refresh());
+		Platform.runLater(this::refresh);
 	}
 	
 	private void refresh() {

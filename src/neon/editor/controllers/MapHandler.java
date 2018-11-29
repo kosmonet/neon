@@ -125,17 +125,17 @@ public class MapHandler {
 	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu mapMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add map");
-		addItem.setOnAction(event -> addMap(event));
+		addItem.setOnAction(this::addMap);
 		mapMenu.getItems().add(addItem);
 		MenuItem removeItem = new MenuItem("Remove map");
-		removeItem.setOnAction(event -> removeMap(event));
+		removeItem.setOnAction(this::removeMap);
 		mapMenu.getItems().add(removeItem);
 		mapTree.setContextMenu(mapMenu);
 		
 		TreeItem<Card> root = new TreeItem<>();
 		mapTree.setShowRoot(false);
 		mapTree.setRoot(root);
-		mapTree.setOnMouseClicked(event -> mouseClicked(event));
+		mapTree.setOnMouseClicked(this::mouseClicked);
 
 		for (Card card : cards.get("maps")) {
 			root.getChildren().add(new TreeItem<Card>(card));
@@ -156,7 +156,7 @@ public class MapHandler {
 	@Subscribe
 	private void save(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
-		Platform.runLater(() -> mapTree.refresh());
+		Platform.runLater(mapTree::refresh);
 	}
 	
 	/**

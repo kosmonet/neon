@@ -73,17 +73,17 @@ public class ItemHandler {
 	private void loadResources(Multimap<String, Card> cards) {
 		ContextMenu itemMenu = new ContextMenu();
 		MenuItem addItem = new MenuItem("Add item");
-		addItem.setOnAction(event -> addItem(event));
+		addItem.setOnAction(this::addItem);
 		itemMenu.getItems().add(addItem);
 		MenuItem removeItem = new MenuItem("Remove item");
-		removeItem.setOnAction(event -> removeItem(event));
+		removeItem.setOnAction(this::removeItem);
 		itemMenu.getItems().add(removeItem);
 		itemTree.setContextMenu(itemMenu);
 
 		TreeItem<Card> root = new TreeItem<>();
 		itemTree.setShowRoot(false);
 		itemTree.setRoot(root);
-		itemTree.setOnMouseClicked(event -> mouseClicked(event));
+		itemTree.setOnMouseClicked(this::mouseClicked);
 		
 		root.getChildren().add(items);
 		root.getChildren().add(doors);
@@ -113,7 +113,7 @@ public class ItemHandler {
 	@Subscribe
 	private void save(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
-		Platform.runLater(() -> itemTree.refresh());
+		Platform.runLater(itemTree::refresh);
 	}
 	
 	/**
