@@ -107,8 +107,8 @@ final class Accelerator {
 		}
 		
 		Optional<ButtonType> result = ui.showQuestion("Try to pick lock?", 
-				ButtonTypes.yes, ButtonTypes.no);
-		if (result.get().equals(ButtonTypes.yes)) {
+				ButtonTypes.YES, ButtonTypes.NO);
+		if (result.get().equals(ButtonTypes.YES)) {
 			bus.post(new StealthEvent.Unlock(lock.getEntity()));
 		} 
 		
@@ -171,13 +171,13 @@ final class Accelerator {
 		}
 		
 		Optional<ButtonType> result = ui.showQuestion("Save current game before quitting?", 
-				ButtonTypes.yes, ButtonTypes.no, ButtonTypes.cancel);
+				ButtonTypes.YES, ButtonTypes.NO, ButtonTypes.CANCEL);
 
-		if (result.get().equals(ButtonTypes.yes)) {
+		if (result.get().equals(ButtonTypes.YES)) {
 			// server takes care of saving
 			bus.post(new InputEvent.Save());
 		    bus.post(new InputEvent.Quit());
-		} else if (result.get().equals(ButtonTypes.no)) {
+		} else if (result.get().equals(ButtonTypes.NO)) {
 			// server takes care of quitting
 		    bus.post(new InputEvent.Quit());
 		}

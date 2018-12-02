@@ -20,16 +20,22 @@ package neon.client.ui;
 
 import javafx.scene.control.ButtonType;
 
+/**
+ * A collection of standard button types in the game.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ButtonTypes {
-	public static final ButtonType talk = new ButtonType("Talk");
-	public static final ButtonType attack = new ButtonType("Attack");
-	public static final ButtonType pick = new ButtonType("Pick pocket");
-	public static final ButtonType ride = new ButtonType("Ride animal");
-	public static final ButtonType swap = new ButtonType("Swap position");
+	public static final ButtonType TALK = new ButtonType("Talk");
+	public static final ButtonType ATTACK = new ButtonType("Attack");
+	public static final ButtonType PICK = new ButtonType("Pick pocket");
+	public static final ButtonType RIDE = new ButtonType("Ride animal");
+	public static final ButtonType SWAP = new ButtonType("Swap position");
 	
-	public static final ButtonType cancel = new ButtonType("Cancel");
-	public static final ButtonType yes = new ButtonType("Yes");
-	public static final ButtonType no = new ButtonType("No");
+	public static final ButtonType CANCEL = new ButtonType("Cancel");
+	public static final ButtonType YES = new ButtonType("Yes");
+	public static final ButtonType NO = new ButtonType("No");
 	
 	// suppress default constructor for noninstantiability
 	private ButtonTypes() {

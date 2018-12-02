@@ -34,8 +34,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -93,8 +91,6 @@ public final class Console {
 		// two different handlers, keyTyped can't handle the enter key
 		scene.setOnKeyPressed(this::keyPressed);
 		scene.setOnKeyTyped(this::keyTyped);
-		// close console when pressing esc
-		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), this::close);
 
 		logger.addHandler(new ConsoleHandler(Level.ALL));
 	}
@@ -108,7 +104,7 @@ public final class Console {
 		stage.show();
 	}
 	
-	private void close() {
+	@FXML private void close() {
 		bus.unregister(this);
 		stage.close();
 	}

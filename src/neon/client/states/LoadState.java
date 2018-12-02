@@ -107,8 +107,6 @@ public final class LoadState extends State {
 			bus.post(new TransitionEvent("cancel"));
 		} else if (event.getCode().equals(KeyCode.ENTER)) {
 			startGame();
-		} else if (event.getCode().equals(KeyCode.F1)) {
-			showHelp();
 		}
 	}
 	

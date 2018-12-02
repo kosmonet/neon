@@ -4,12 +4,34 @@
 	-fx-background-color: #303030;
 }
 
-.instructions {		/* the instruction label at the top of a scene */
+.bottom-buttons {	/* the row of buttons at the bottom of a scene */
 	-fx-background-color: #202020;
 	-fx-max-width: Infinity;
 	-fx-border-color: gray;
-	-fx-border-width: 0 0 1 0;
-	-fx-padding: 20px;
-	-fx-alignment: center;
-	-fx-font-size: 14;
+	-fx-border-width: 1 0 0 0;
+	-fx-padding: 15px;
+	-fx-alignment: center-left;
+	-fx-spacing: 5px;
+	-fx-font-size: 15;
+}
+
+.bottom-buttons .button {
+	-fx-text-fill: silver;
+    -fx-background-color: #333333;
+	-fx-background-radius: 5;
+	-fx-border-color: transparent;
+}
+
+.bottom-buttons .button:hover {
+	-fx-border-radius: 5;
+	-fx-border-color: silver;
+}
+
+.bottom-buttons .button:focused {
+	-fx-border-radius: 5;
+	-fx-border-color: silver;
+}
+
+.bottom-buttons .label {
+	-fx-padding: 0 15 0 0;
 }

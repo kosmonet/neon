@@ -4,16 +4,23 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <Label styleClass="instructions" text="Press esc to close the console." />
-   </top>
-   <center>
-      <ScrollPane fx:id="scroller" fitToWidth="true">
-         <content>
-            <TextFlow fx:id="flow" />
-         </content>
-      </ScrollPane>
-   </center>
+	<center>
+		<ScrollPane fx:id="scroller" fitToWidth="true">
+			<content>
+				<TextFlow fx:id="flow" />
+			</content>
+		</ScrollPane>
+	</center>
+	<bottom>
+		<HBox styleClass="bottom-buttons">
+			<children>
+				<Button cancelButton="true" focusTraversable="false" text="Esc" onAction="#close" />
+				<Label text="Close" />
+			</children>
+		</HBox>
+	</bottom>
 </BorderPane>

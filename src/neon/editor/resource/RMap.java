@@ -69,6 +69,7 @@ public class RMap extends Resource implements RenderableMap<REntity> {
 		this.module = module;
 	}
 
+	@Override
 	public RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
@@ -77,6 +78,7 @@ public class RMap extends Resource implements RenderableMap<REntity> {
 	 * 
 	 * @return	the elevation
 	 */
+	@Override
 	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}
@@ -113,6 +115,7 @@ public class RMap extends Resource implements RenderableMap<REntity> {
 	 * 
 	 * @return	all entities on this map
 	 */
+	@Override
 	public Collection<REntity> getEntities() {
 		return entities.keySet();
 	}

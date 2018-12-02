@@ -24,8 +24,6 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
@@ -55,7 +53,6 @@ public final class HelpWindow {
 		try {
 			Scene scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
-			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> stage.close());
 			stage.setScene(scene);
 		} catch (IOException e) {
 			logger.severe("failed to load help window: " + e.getMessage());
@@ -71,5 +68,9 @@ public final class HelpWindow {
         view.getEngine().load(getClass().getResource(content).toExternalForm());
         view.getEngine().setUserStyleSheetLocation(getClass().getResource("help.css").toString());
 		stage.show();
+	}
+	
+	@FXML private void close() {
+		stage.close();
 	}
 }

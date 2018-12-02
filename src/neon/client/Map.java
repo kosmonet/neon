@@ -44,12 +44,9 @@ public class Map implements RenderableMap<Long> {
 	private final PointSpatialIndex<Long> entities;
 	private final Collection<Marker> markers = new ArrayList<>();
 	private final String id;
-	private final int width, height;
 	
 	public Map(RMap map, NeonFileSystem files) throws IOException {
 		this.id = map.id;
-		this.width = map.width;
-		this.height = map.height;
 		
 		entities = new PointQuadTree<>(0, 0, map.width, map.height, 100);
 		terrain = new RegionQuadTree<>(map.width, map.height);
@@ -76,7 +73,7 @@ public class Map implements RenderableMap<Long> {
 	 * @return	the width of the map
 	 */
 	public int getWidth() {
-		return width;
+		return terrain.getWidth();
 	}
 	
 	/**
@@ -84,7 +81,7 @@ public class Map implements RenderableMap<Long> {
 	 * @return	the height of the map
 	 */
 	public int getHeight() {
-		return height;
+		return terrain.getHeight();
 	}
 	
 	/**
@@ -125,6 +122,7 @@ public class Map implements RenderableMap<Long> {
 	 * 
 	 * @return	a {@code Collection} of entity uid's
 	 */
+	@Override
 	public Collection<Long> getEntities() {
 		return entities.getElements();
 	}
@@ -160,10 +158,12 @@ public class Map implements RenderableMap<Long> {
 		}
 	}
 	
+	@Override
 	public RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
 	
+	@Override
 	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}

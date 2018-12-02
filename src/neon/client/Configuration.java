@@ -30,10 +30,20 @@ public class Configuration {
 	private boolean paused = true;
 	private Map map;
 	
+	/**
+	 * Sets the map to be displayed.
+	 * 
+	 * @param map
+	 */
 	public void setCurrentMap(Map map) {
 		this.map = map;
 	}
 	
+	/**
+	 * Gets the map to be displayed.
+	 * 
+	 * @return
+	 */
 	public Map getCurrentMap() {
 		return map;
 	}
