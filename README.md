@@ -10,4 +10,4 @@ The following external libraries are needed to build the engine:
 * DejaVu Sans Mono font
 
 ## Installation
-You will need a Java 8 runtime. The engine has been tested under Windows, with the [Oracle JRE]((https://www.oracle.com/technetwork/java/javase/downloads/index.html), version 8. Versions later than 10 are not guaranteed to work, as JavaFX has been moved to a separate release for version 11. The Nashorn scripting engine has been deprecated in version 11, and may not be present in future versions. For Linux users, most distributions offer [OpenJDK](https://openjdk.java.net/) and OpenJFX packages.
+You will need a Java 8 runtime. The engine has been tested under Windows, with the [Oracle JRE](https://www.oracle.com/technetwork/java/javase/downloads/index.html), version 8. Versions later than 10 are not guaranteed to work, as JavaFX has been moved to a separate release for version 11. The Nashorn scripting engine has been deprecated in version 11, and may not be present in future versions. For Linux users, most distributions offer [OpenJDK](https://openjdk.java.net/) and OpenJFX packages.
