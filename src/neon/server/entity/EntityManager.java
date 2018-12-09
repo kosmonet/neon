@@ -49,6 +49,10 @@ import neon.common.resources.ResourceManager;
  */
 public final class EntityManager {
 	private static final Logger logger = Logger.getGlobal();
+	private static final GsonBuilder builder = new GsonBuilder()
+			.registerTypeAdapter(Entity.class, new EntityAdapter());
+	private static final Gson gson = builder.create();
+	private static final JsonTranslator translator = new JsonTranslator();
 
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(new EntityListener()).softValues().build();
 	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
@@ -58,10 +62,6 @@ public final class EntityManager {
 	private final HashSet<Module> modules = new HashSet<>();
 	private final MapLoader loader;
 	
-	private static final GsonBuilder builder = new GsonBuilder()
-			.registerTypeAdapter(Entity.class, new EntityAdapter());
-	private static final Gson gson = builder.create();
-
 	public EntityManager(NeonFileSystem files, ResourceManager resources) {
 		this.files = files;
 		loader = new MapLoader(files, resources, this);
@@ -177,14 +177,14 @@ public final class EntityManager {
 	 */
 	private void saveEntity(Entity entity) {
 		try {
-			files.saveFile(gson.toJsonTree(entity), new JsonTranslator(), "entities", entity.uid + ".json");
+			files.saveFile(gson.toJsonTree(entity), translator, "entities", entity.uid + ".json");
 		} catch (IOException e) {
 			logger.severe("could not save " + entity);
 		}
 	}
 
 	private Entity loadEntity(long uid) throws IOException {
-		JsonElement element = files.loadFile(new JsonTranslator(), "entities", uid + ".json");
+		JsonElement element = files.loadFile(translator, "entities", uid + ".json");
 		return gson.fromJson(element, Entity.class);
 	}
 	

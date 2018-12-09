@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A virtual file system, containing all assets related to a game. The
@@ -222,18 +224,18 @@ public final class NeonFileSystem {
 	 * listed.
 	 * 
 	 * @param folder
-	 * @return
+	 * @return	a {@code Set} of filenames
 	 * @throws IOException
 	 */
 	public Set<String> listFiles(String... folder) {
-		HashSet<String> files = new HashSet<String>();
+		HashSet<Path> files = new HashSet<>();
 		
 		// check the temp folder first
 		if (temporary != null) {
 			Path path = Paths.get(temporary.toString(), folder);
 			if (Files.isDirectory(path)) {
-				try {
-					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try (Stream<Path> paths = Files.list(path)) {
+					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));					
 				} catch (IOException e) {
 					logger.warning("could not list files in folder " + path);
 				}
@@ -244,8 +246,8 @@ public final class NeonFileSystem {
 		if (save != null) {
 			Path path = Paths.get(save.toString(), folder);
 			if (Files.isDirectory(path)) {
-				try {
-					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try (Stream<Path> paths = Files.list(path)) {
+					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));
 				} catch (IOException e) {
 					logger.warning("could not list files in the save folder " + path);
 				}
@@ -253,23 +255,23 @@ public final class NeonFileSystem {
 		}
 		
 		// copy path to larger array to make room for the module name
-		String[] temp = new String[folder.length + 1];
-		System.arraycopy(folder, 0, temp, 1, folder.length);
+		String[] mod = new String[folder.length + 1];
+		System.arraycopy(folder, 0, mod, 1, folder.length);
 		
 		// check all loaded modules
 		for (String module : modules) {
-			temp[0] = module;
-			Path path = Paths.get("data", temp);
+			mod[0] = module;
+			Path path = Paths.get("data", mod);
 			if (Files.isDirectory(path)) {
-				try {
-					Files.list(path).forEach(file -> files.add(file.getFileName().toString()));
+				try (Stream<Path> paths = Files.list(path)) {
+					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));
 				} catch (IOException e) {
 					logger.warning("could not list files in the temp folder " + path);
 				}
 			}
 		}
 		
-		return files;
+		return files.stream().map(Path::toString).collect(Collectors.toSet());
 	}
 	
 	/**

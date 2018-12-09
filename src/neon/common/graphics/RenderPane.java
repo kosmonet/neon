@@ -27,7 +27,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
-
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -85,7 +84,8 @@ public final class RenderPane<T> extends StackPane {
 		}
 		
 		drawMap(xmin, ymin, scale);
-		map.getEntities().stream().sorted(renderer.getComparator())
+		
+		map.getEntities().parallelStream().sorted(renderer.getComparator()).sequential()
 				.forEach(entity -> renderer.drawEntity(entity, xmin, ymin, scale));
 	}
 	

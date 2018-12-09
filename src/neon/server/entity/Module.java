@@ -19,15 +19,16 @@
 package neon.server.entity;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.RModule;
@@ -39,20 +40,23 @@ public final class Module {
 	
 	public Module(RModule module, NeonFileSystem files) {
 		Path path = Paths.get("data", module.id, "maps");
-		Set<String> set = new HashSet<>();
-		
-		try {
-			if (Files.exists(path)) {
-				set = Files.list(path).map(map -> map.getFileName().toString().replaceAll(".xml", "")).collect(Collectors.toSet());
-			}
+		Set<String> temp = Collections.emptySet();
+
+		try (Stream<Path> maps = java.nio.file.Files.list(path)){
+			temp = maps.map(Path::toString).map(Files::getNameWithoutExtension).collect(Collectors.toSet());
 		} catch (IOException e) {
 			logger.warning("error loading maps in module <" + module.id + ">");
 		}
-		
-		maps = ImmutableSet.copyOf(set);
+
+		maps = ImmutableSet.copyOf(temp);
 		logger.info("module <" + module.id + "> contains " + maps.size() + " maps: " + maps);
 	}
-	
+
+	/**
+	 * Returns the names of the maps in a module.
+	 * 
+	 * @return	an unmodifiable {@code Set}
+	 */
 	public Set<String> getMaps() {
 		return maps;
 	}

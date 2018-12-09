@@ -56,7 +56,7 @@ final class Notifier {
 	
 	void notifyClient(Entity player) {
 		Inventory inventory = player.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+		inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
 		bus.post(new ComponentUpdateEvent(inventory));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
 		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
@@ -98,7 +98,7 @@ final class Notifier {
 	 */
 	private void notifyCreature(Entity creature) {
 		Inventory inventory = creature.getComponent(Inventory.class);
-		inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+		inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
 		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
@@ -141,7 +141,7 @@ final class Notifier {
 
 		if (item.hasComponent(Inventory.class)) {
 			Inventory inventory = item.getComponent(Inventory.class);
-			inventory.getItems().parallelStream().forEach(uid -> notifyItem(entities.getEntity(uid)));
+			inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
 			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
 		}
 
