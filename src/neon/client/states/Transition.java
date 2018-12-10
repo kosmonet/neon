@@ -18,6 +18,8 @@
 
 package neon.client.states;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.Subscribe;
 
 /**
@@ -39,9 +41,9 @@ public final class Transition {
 	 * @param condition
 	 */
 	public Transition(State from, State to, String condition) {
-		this.condition = condition;
-		this.from = from;
-		this.to = to;
+		this.condition = Objects.requireNonNull(condition, "condition");
+		this.from = Objects.requireNonNull(from, "from");
+		this.to = Objects.requireNonNull(to, "to");
 	}
 	
 	/**

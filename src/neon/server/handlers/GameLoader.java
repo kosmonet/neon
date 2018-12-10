@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -85,10 +86,10 @@ public final class GameLoader {
 	 * @param entities
 	 */
 	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.bus = bus;
-		this.resources = resources;
-		this.entities = entities;
-		this.files = files;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.files = Objects.requireNonNull(files, "file system");
 		notifier = new Notifier(entities, bus);
 	}
 	

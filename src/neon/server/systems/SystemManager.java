@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
@@ -58,8 +59,8 @@ public final class SystemManager {
 	private final Configuration config;
 	
 	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
-		this.entities = entities;
-		this.config = config;
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 		
 		// create all systems
 		moveSystem = new MovementSystem(resources, entities, bus, config);

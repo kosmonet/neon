@@ -19,6 +19,7 @@
 package neon.systems.narrative;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class QuestLoader implements ResourceLoader {
 	private final NeonFileSystem files;
 	
 	QuestLoader(NeonFileSystem files) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override

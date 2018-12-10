@@ -18,6 +18,7 @@
 
 package neon.systems.magic;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -49,7 +50,7 @@ public final class MagicSystem {
 	private final ResourceManager resources;
 	
 	public MagicSystem(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		this.entities = entities;
 		this.resources = resources;
 

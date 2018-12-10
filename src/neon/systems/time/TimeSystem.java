@@ -27,7 +27,7 @@ import neon.server.Configuration.GameMode;
 import neon.server.systems.NeonSystem;
 import neon.systems.scripting.ScriptHandler;
 
-public class TimeSystem implements NeonSystem {
+public final class TimeSystem implements NeonSystem {
 	private final Configuration config;
 	
 	public TimeSystem(Configuration config, ScriptHandler scripting) {

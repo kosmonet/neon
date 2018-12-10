@@ -19,10 +19,16 @@
 package neon.common.graphics;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Map;
 
 import javafx.scene.canvas.Canvas;
 
+/**
+ * A class to render entities.
+ * 
+ * @author mdriesen
+ * @param <T>
+ */
 public interface EntityRenderer<T> {
 	/**
 	 * Draws the entities on the map.
@@ -39,7 +45,12 @@ public interface EntityRenderer<T> {
 	 * 
 	 * @param layers
 	 */
-	public void setLayers(HashMap<Integer, Canvas> layers);
+	public void setLayers(Map<Integer, Canvas> layers);
 	
+	/**
+	 * Returns the comparator used to decide the z-order of the entities.
+	 * 
+	 * @return
+	 */
 	public Comparator<T> getComparator();
 }

@@ -18,6 +18,8 @@
 
 package neon.server;
 
+import java.util.Objects;
+
 import neon.server.entity.Map;
 import neon.systems.time.Calendar;
 
@@ -27,7 +29,7 @@ import neon.systems.time.Calendar;
  * @author mdriesen
  *
  */
-public class Configuration {
+public final class Configuration {
 	public enum GameMode {
 		TURN_BASED, REAL_TIME;
 	}
@@ -35,10 +37,11 @@ public class Configuration {
 	public static final int TICKS_PER_TURN = 5;
 	public static final long PLAYER_UID = 0;
 	
+	private final Calendar calendar = new Calendar(0, TICKS_PER_TURN);
+
 	private Map map;
 	private GameMode mode = GameMode.TURN_BASED;
 	private boolean running = false;
-	private Calendar calendar = new Calendar(0, TICKS_PER_TURN);
 	
 	public Calendar getCalendar() {
 		return calendar;
@@ -50,7 +53,7 @@ public class Configuration {
 	 * @param map
 	 */
 	public void setCurrentMap(Map map) {
-		this.map = map;
+		this.map = Objects.requireNonNull(map, "map");
 	}
 	
 	/**
@@ -67,7 +70,7 @@ public class Configuration {
 	 * @param mode
 	 */
 	public void setMode(GameMode mode) {
-		this.mode = mode;
+		this.mode = Objects.requireNonNull(mode, "game mode");
 	}
 	
 	/**

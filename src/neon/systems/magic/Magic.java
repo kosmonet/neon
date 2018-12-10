@@ -18,10 +18,12 @@
 
 package neon.systems.magic;
 
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 import neon.common.entity.components.Component;
 
@@ -42,11 +44,11 @@ public final class Magic implements Component {
 	}
 	
 	public void addSpell(String spell) {
-		spells.add(spell);
+		spells.add(Objects.requireNonNull(spell, "spell"));
 	}
 	
 	public Set<String> getSpells() {
-		return Collections.unmodifiableSet(spells);
+		return ImmutableSet.copyOf(spells);
 	}
 	
 	public void equip(String spell) {

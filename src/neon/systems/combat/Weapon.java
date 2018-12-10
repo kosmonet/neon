@@ -18,6 +18,8 @@
 
 package neon.systems.combat;
 
+import java.util.Objects;
+
 import neon.common.entity.components.Component;
 
 public final class Weapon implements Component {
@@ -25,8 +27,8 @@ public final class Weapon implements Component {
 	private final String damage;
 	
 	Weapon(long uid, String damage) {
+		this.damage = Objects.requireNonNull(damage, "damage");
 		this.uid = uid;
-		this.damage = damage;
 	}
 	
 	@Override

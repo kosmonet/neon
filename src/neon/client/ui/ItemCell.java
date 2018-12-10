@@ -18,6 +18,8 @@
 
 package neon.client.ui;
 
+import java.util.Objects;
+
 import javafx.scene.control.ListCell;
 import neon.client.ComponentManager;
 import neon.common.entity.components.Equipment;
@@ -26,7 +28,7 @@ import neon.systems.combat.Weapon;
 import neon.systems.magic.Enchantment;
 
 /**
- * A custom {@code ListCell} to render the items in the player's inventory.
+ * A custom {@code ListCell<Long>} to render the items in the player's inventory.
  * 
  * @author mdriesen
  *
@@ -37,7 +39,7 @@ public final class ItemCell extends ListCell<Long> {
 	private final ComponentManager components;
 	
 	public ItemCell(ComponentManager components) {
-		this.components = components;
+		this.components = Objects.requireNonNull(components, "component manager");
 	}
 	
 	@Override

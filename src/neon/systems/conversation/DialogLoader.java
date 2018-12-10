@@ -20,6 +20,7 @@ package neon.systems.conversation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,12 +36,12 @@ import neon.common.resources.loaders.ResourceLoader;
 
 final class DialogLoader implements ResourceLoader {
 	private static final String namespace = "dialog";
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
 	public DialogLoader(NeonFileSystem files) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override

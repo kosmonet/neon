@@ -18,6 +18,7 @@
 
 package neon.common.resources;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javafx.scene.paint.Color;
@@ -190,8 +191,8 @@ public class RItem extends Resource {
 		 * @param name
 		 */
 		public Builder(String id, String name) {
-			this.id = id;
-			this.name = name;
+			this.id = Objects.requireNonNull(id, "id");
+			this.name = Objects.requireNonNull(name, "name");
 		}
 		
 		public RItem build() {
@@ -207,12 +208,12 @@ public class RItem extends Resource {
 		 */
 		public Builder setGraphics(char glyph, Color color) {
 			this.glyph = glyph;
-			this.color = color;
+			this.color = Objects.requireNonNull(color, "color");
 			return this;
 		}
 		
 		public Builder setSlot(Slot slot) {
-			this.slot = slot;
+			this.slot = Objects.requireNonNull(slot, "slot");
 			return this;
 		}
 
@@ -222,12 +223,12 @@ public class RItem extends Resource {
 		}
 
 		public Builder setArmorType(ArmorType type) {
-			this.type = type;
+			this.type = Objects.requireNonNull(type, "armor type");
 			return this;
 		}
 
 		public Builder setDamage(String damage) {
-			this.damage = damage;
+			this.damage = Objects.requireNonNull(damage, "damage");
 			return this;
 		}
 		

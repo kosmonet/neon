@@ -33,7 +33,9 @@ import neon.common.entity.components.Component;
  *
  */
 public class Entity {
+	/** The unique identifier of this entity. */
 	public final long uid;
+	
 	private final ClassToInstanceMap<Component> components = MutableClassToInstanceMap.create();
 	
 	/**
@@ -70,7 +72,7 @@ public class Entity {
 	}
 	
 	/**
-	 * Adds a component to this entity.
+	 * Adds a component to this entity. The component must not be null.
 	 * 
 	 * @param component
 	 */

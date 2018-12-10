@@ -18,6 +18,8 @@
 
 package neon.systems.conversation;
 
+import java.util.Objects;
+
 import neon.common.entity.components.Component;
 
 public final class Dialog implements Component {
@@ -26,7 +28,7 @@ public final class Dialog implements Component {
 
 	public Dialog(long uid, String dialog) {
 		this.uid = uid;
-		this.dialog = dialog;
+		this.dialog = Objects.requireNonNull(dialog, "dialog");
 	}
 	
 	String getDialog() {

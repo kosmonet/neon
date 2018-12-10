@@ -19,6 +19,7 @@
 package neon.server.handlers;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -40,8 +41,8 @@ public class DoorHandler {
 	private final Notifier notifier;
 	
 	public DoorHandler(EntityManager entities, EventBus bus) {
-		this.entities = entities;
-		this.bus = bus;
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		notifier = new Notifier(entities, bus);
 	}
 	

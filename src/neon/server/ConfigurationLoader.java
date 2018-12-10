@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,14 +48,14 @@ import neon.server.entity.EntityManager;
  */
 public final class ConfigurationLoader implements ResourceLoader {
 	private static final String namespace = "config";
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	private final EntityManager entities;
 	
 	public ConfigurationLoader(NeonFileSystem files, EntityManager entities) {
-		this.files = files;
-		this.entities = entities;
+		this.files = Objects.requireNonNull(files, "file system");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
 	}
 	
 	@Override
@@ -88,7 +89,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 		}
 	}	
 
-	public CServer loadServer(Element root) {
+	CServer loadServer(Element root) {
 		// LinkedHashSet to preserve module load order and to prevent doubles
 		LinkedHashSet<String> modules = new LinkedHashSet<String>();
 		for (Element module : root.getChild("modules").getChildren()) {

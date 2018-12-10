@@ -18,6 +18,7 @@
 
 package neon.server.systems;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.eventbus.EventBus;
@@ -31,7 +32,7 @@ public final class ActionSystem implements NeonSystem {
 	private final EventBus bus;
 	
 	public ActionSystem(EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 
 	@Override

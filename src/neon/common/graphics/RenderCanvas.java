@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,35 +16,19 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.console;
+package neon.common.graphics;
 
-import java.util.Objects;
-
-import neon.common.event.NeonEvent;
+import javafx.scene.canvas.Canvas;
 
 /**
- * An event to signal that a message should be shown on the console.
+ * A resizable JavaFX {@code Canvas}.
  * 
  * @author mdriesen
  *
  */
-public final class ConsoleEvent extends NeonEvent{
-	private final String message;
-	
-	/**
-	 * Initialize this event with a message. The message must not be null.
-	 * 
-	 * @param message
-	 */
-	public ConsoleEvent(String message) {
-		this.message = Objects.requireNonNull(message, "message");
-	}
-	
-	/**
-	 * 
-	 * @return the message to be displayed
-	 */
-	public String getMessage() {
-		return message;
+public final class RenderCanvas extends Canvas {
+	@Override
+	public boolean isResizable() {
+	    return true;
 	}
 }

@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 import neon.common.entity.DoorState;
 
 public class DoorInfo implements Component {
@@ -34,8 +36,8 @@ public class DoorInfo implements Component {
 	
 	public DoorInfo(long uid, String destination, String text, int x, int y) {
 		this.uid = uid;
-		this.destination = destination;
-		this.text = text;
+		this.destination = Objects.requireNonNull(destination, "destination");
+		this.text = Objects.requireNonNull(text, "text");
 		this.x = x;
 		this.y = y;
 	}

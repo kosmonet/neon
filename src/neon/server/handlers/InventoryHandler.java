@@ -18,6 +18,8 @@
 
 package neon.server.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -51,9 +53,9 @@ public final class InventoryHandler {
 	private final Configuration config;
 	
 	public InventoryHandler(EntityManager entities, EventBus bus, Configuration config) {
-		this.bus = bus;
-		this.entities = entities;
-		this.config = config;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	/**

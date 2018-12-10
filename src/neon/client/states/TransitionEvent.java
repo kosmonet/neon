@@ -18,6 +18,8 @@
 
 package neon.client.states;
 
+import java.util.Objects;
+
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
 
@@ -42,7 +44,7 @@ public final class TransitionEvent extends ClientEvent {
 	 * @param parameters
 	 */
 	public TransitionEvent(String condition, Object... parameters) {
-		this.condition = condition;
+		this.condition = Objects.requireNonNull(condition, "condition");
 		for (Object parameter : parameters) {
 			this.parameters.put(parameter.getClass(), parameter);			
 		}

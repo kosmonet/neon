@@ -19,38 +19,33 @@
 package neon.client.handlers;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import com.google.common.eventbus.Subscribe;
 
-import javafx.animation.FadeTransition;
-import javafx.util.Duration;
 import neon.client.ComponentManager;
 import neon.client.Configuration;
 import neon.client.Map;
-import neon.client.ui.UserInterface;
 import neon.common.entity.components.Shape;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
-import neon.systems.time.RestEvent;
 
 public class GameHandler {
 	private static final long PLAYER_UID = 0;
 	
-	private final UserInterface ui;
 	private final ResourceManager resources;
 	private final ComponentManager components;
 	private final Configuration config;
 	private final NeonFileSystem files;
 	
-	public GameHandler(UserInterface ui, NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
-		this.ui = ui;
-		this.files = files;
-		this.components = components;
-		this.resources = resources;
-		this.config = config;
+	public GameHandler(NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
+		this.files = Objects.requireNonNull(files, "file system");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	@Subscribe
@@ -60,16 +55,5 @@ public class GameHandler {
 		Map map = new Map(resource, files);
 		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
 		config.setCurrentMap(map);
-	}
-	
-	@Subscribe
-	private void onSleep(RestEvent.Wake event) {
-		FadeTransition transition = new FadeTransition(Duration.millis(2000), ui.getCurrentScene().getRoot());
-		transition.setFromValue(1.0);
-	    transition.setToValue(0.0);
-	    transition.setAutoReverse(true);
-	    transition.setCycleCount(2);
-	    transition.setOnFinished(action -> ui.showOverlayMessage("You have slept.", 1500));
-	    transition.play();
 	}
 }

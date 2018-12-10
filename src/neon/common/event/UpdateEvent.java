@@ -18,6 +18,10 @@
 
 package neon.common.event;
 
+import java.util.Objects;
+
+import neon.common.entity.Skill;
+
 /**
  * An event containing updates for the client.
  * 
@@ -45,7 +49,7 @@ public abstract class UpdateEvent extends NeonEvent {
 		
 		public Map(int uid, String id) {
 			this.uid = uid;
-			this.id = id;
+			this.id = Objects.requireNonNull(id, "map id");
 		}
 	}
 	
@@ -73,14 +77,14 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
-	public static final class Skill extends UpdateEvent {
+	public static final class Skills extends UpdateEvent {
 		public final long uid;
-		public final String skill;
+		public final Skill skill;
 		public final int value;
 		
-		public Skill(long uid, String skill, int value) {
+		public Skills(long uid, Skill skill, int value) {
 			this.uid = uid;
-			this.skill = skill;
+			this.skill = Objects.requireNonNull(skill, "skill");
 			this.value = value;
 		}
 	}

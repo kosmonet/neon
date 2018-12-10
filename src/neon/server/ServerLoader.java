@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -72,7 +73,7 @@ final class ServerLoader {
 	 * @param bus
 	 */
 	ServerLoader(EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 
 	/**
@@ -171,7 +172,7 @@ final class ServerLoader {
 			for (String id : configuration.getModules()) {
 				modules.add(id);
 				RModule module = resources.getResource(id);				
-				entities.addModule(new Module(module, files));
+				entities.addModule(new Module(module));
 				for (String parent : module.getParentModules()) {
 					if (!modules.contains(parent)) {
 						logger.warning("module <" + id + "> is missing parent <" + parent + ">");

@@ -18,6 +18,8 @@
 
 package neon.common.event;
 
+import java.util.Objects;
+
 /**
  * An event to transmit a message that should be shown by the 
  * client in a dialog window.
@@ -30,7 +32,7 @@ public final class MessageEvent extends NeonEvent {
 	public final String header;
 	
 	public MessageEvent(String message, String header) {
-		this.message = message;
-		this.header = header;
+		this.message = Objects.requireNonNull(message, "message");
+		this.header = Objects.requireNonNull(header, "header");
 	}
 }

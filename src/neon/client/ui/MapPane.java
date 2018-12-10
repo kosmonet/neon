@@ -18,6 +18,7 @@
 
 package neon.client.ui;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
@@ -26,6 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import neon.client.Map;
 import neon.client.Map.Marker;
+import neon.common.graphics.RenderCanvas;
 import neon.common.resources.RTerrain;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
@@ -39,21 +41,21 @@ public final class MapPane extends Pane {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final ResourceManager resources;
-	private final Canvas canvas = new Canvas() {
-		@Override
-		public boolean isResizable() {
-		    return true;
-		}
-	};
-		
+	private final Canvas canvas = new RenderCanvas();
+	
 	public MapPane(ResourceManager resources) {
-		this.resources = resources;
+		this.resources = Objects.requireNonNull(resources, "resource manager");
 	    canvas.widthProperty().bind(widthProperty());
 	    canvas.heightProperty().bind(heightProperty());
 		canvas.getGraphicsContext2D().setFont(Font.font(18));
 	    getChildren().add(canvas);
 	}
 	
+	/**
+	 * Draws the given map.
+	 * 
+	 * @param map
+	 */
 	public void drawMap(Map map) {
 		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		double width = map.getTerrain().getWidth();

@@ -18,6 +18,8 @@
 
 package neon.common.resources;
 
+import java.util.Objects;
+
 /**
  * A class that represents a resource that is loaded from disk. Every resource
  * has at least an id and a resource type.
@@ -37,14 +39,15 @@ public abstract class Resource {
 	public final String namespace;
 	
 	/**
-	 * Creates a new resource with the given id and type.
+	 * Creates a new resource with the given id and type. Type and id must not
+	 * be null.
 	 * 
-	 * @param id
-	 * @param type
+	 * @param id	a {@code String}
+	 * @param type	a {@code String}
 	 */
 	protected Resource(String id, String namespace) {
-		this.id = id;
-		this.namespace = namespace;
+		this.id = Objects.requireNonNull(id, "id");
+		this.namespace = Objects.requireNonNull(namespace, "namespace");
 	}
 	
 	@Override

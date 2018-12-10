@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
@@ -76,9 +77,9 @@ public final class RModule extends Resource {
 	}
 	
 	/**
-	 * Returns a list of items the player starts the game with.
+	 * Returns the items the player starts the game with.
 	 * 
-	 * @return	an unmodifiable list of item id's
+	 * @return	an unmodifiable {@code Collection} of item id's
 	 */
 	public Collection<String> getStartItems() {
 		return items;
@@ -133,7 +134,7 @@ public final class RModule extends Resource {
 		private List<String> items = new ArrayList<>();
 		
 		public Builder(String id) {
-			this.id = id;
+			this.id = Objects.requireNonNull(id, "id");
 		}
 		
 		public RModule build() {
@@ -141,22 +142,22 @@ public final class RModule extends Resource {
 		}
 		
 		public Builder setTitle(String title) {
-			this.title = title;
+			this.title = Objects.requireNonNull(title, "title");
 			return this;
 		}
 		
 		public Builder setSubtitle(String subtitle) {
-			this.subtitle = subtitle;
+			this.subtitle = Objects.requireNonNull(subtitle, "subtitle");
 			return this;
 		}
 		
 		public Builder setIntro(String intro) {
-			this.intro = intro;
+			this.intro = Objects.requireNonNull(intro, "intro");
 			return this;
 		}
 		
 		public Builder setStartMap(String map) {
-			this.map = map;
+			this.map = Objects.requireNonNull(map, "map");
 			return this;
 		}
 		
@@ -172,22 +173,22 @@ public final class RModule extends Resource {
 		}
 		
 		public Builder addStartItem(String item) {
-			items.add(item);
+			items.add(Objects.requireNonNull(item, "item"));
 			return this;
 		}
 		
 		public Builder addStartSpell(String spell) {
-			spells.add(spell);
+			spells.add(Objects.requireNonNull(spell, "spell"));
 			return this;
 		}
 		
 		public Builder addPlayableSpecies(String species) {
-			creatures.add(species);
+			creatures.add(Objects.requireNonNull(species, "species"));
 			return this;
 		}
 		
 		public Builder addParentModule(String module) {
-			parents.add(module);
+			parents.add(Objects.requireNonNull(module, "module id"));
 			return this;
 		}
 	}

@@ -18,6 +18,8 @@
 
 package neon.systems.magic;
 
+import java.util.Objects;
+
 import neon.common.event.NeonEvent;
 
 public abstract class MagicEvent extends NeonEvent {
@@ -25,7 +27,7 @@ public abstract class MagicEvent extends NeonEvent {
 		public final String spell;
 		
 		public Equip(String spell) {
-			this.spell = spell;
+			this.spell = Objects.requireNonNull(spell, "spell");
 		}
 	}
 	
@@ -33,7 +35,7 @@ public abstract class MagicEvent extends NeonEvent {
 		public final String spell;
 		
 		public Unequip(String spell) {
-			this.spell = spell;
+			this.spell = Objects.requireNonNull(spell, "spell");
 		}
 	}
 	
@@ -43,7 +45,7 @@ public abstract class MagicEvent extends NeonEvent {
 		public final long caster;
 		
 		public Cast(long caster, String spell, long target) {
-			this.spell = spell;
+			this.spell = Objects.requireNonNull(spell, "spell");
 			this.target = target;
 			this.caster = caster;
 		}

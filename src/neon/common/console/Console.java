@@ -19,6 +19,7 @@
 package neon.common.console;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -39,9 +40,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-
-import neon.common.event.ScriptEvent;
 import neon.common.logging.NeonLogFormatter;
+import neon.systems.scripting.ScriptEvent;
 
 /**
  * A debug console for the neon engine. 
@@ -69,7 +69,7 @@ public final class Console {
 	 * @param bus
 	 */
 	public Console(EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		bus.register(this);
 		stage.setTitle("Console");
 		

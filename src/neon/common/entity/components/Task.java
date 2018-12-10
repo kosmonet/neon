@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 import neon.server.entity.Map;
 
 /**
@@ -62,7 +64,7 @@ public abstract class Task implements Component {
 			super(uid);
 			this.x = x;
 			this.y = y;
-			this.map = map;
+			this.map = Objects.requireNonNull(map, "map");
 		}
 		
 		public Map getMap() {

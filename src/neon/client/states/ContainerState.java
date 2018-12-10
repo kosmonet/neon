@@ -20,6 +20,7 @@ package neon.client.states;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -77,10 +78,10 @@ public final class ContainerState extends State {
 	private long container = DUMMY;
 	
 	public ContainerState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
-		this.ui = ui;
-		this.bus = bus;
-		this.components = components;
-		this.config = config;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Container.fxml"));
 		loader.setController(this);

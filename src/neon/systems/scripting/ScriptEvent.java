@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,35 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.console;
+package neon.systems.scripting;
 
 import java.util.Objects;
 
 import neon.common.event.NeonEvent;
 
 /**
- * An event to signal that a message should be shown on the console.
+ * An event containing a script that should be executed.
  * 
  * @author mdriesen
  *
  */
-public final class ConsoleEvent extends NeonEvent{
-	private final String message;
+public final class ScriptEvent extends NeonEvent {
+	public final String script;
 	
-	/**
-	 * Initialize this event with a message. The message must not be null.
-	 * 
-	 * @param message
-	 */
-	public ConsoleEvent(String message) {
-		this.message = Objects.requireNonNull(message, "message");
-	}
-	
-	/**
-	 * 
-	 * @return the message to be displayed
-	 */
-	public String getMessage() {
-		return message;
+	public ScriptEvent(String script) {
+		this.script = Objects.requireNonNull(script, "script");
 	}
 }

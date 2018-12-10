@@ -16,39 +16,32 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.systems.magic;
+package neon.common.files;
 
-import java.util.Objects;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
-import neon.common.entity.components.Component;
+import com.google.common.io.CharStreams;
 
-public final class Enchantment implements Component {
-	private final long uid;
-	private final Effect effect;
-	private final int magnitude;
+public class StringTranslator implements Translator<String> {
 
-	public Enchantment(long uid, Effect effect, int magnitude) {
-		this.effect = Objects.requireNonNull(effect, "effect");
-		this.uid = uid;
-		this.magnitude = magnitude;
-	}
-	
 	@Override
-	public String toString() {
-		// create a string in module:map:entity format
-		return "Enchantment:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
+	public String translate(InputStream input) throws IOException {
+		try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+			return CharStreams.toString(reader);
+		}	
 	}
-	
-	public Effect getEffect() {
-		return effect;
-	}
-	
-	public int getMagnitude() {
-		return magnitude;
-	}
-	
+
 	@Override
-	public long getEntity() {
-		return uid;
+	public void translate(String out, OutputStream output) throws IOException {
+		try (Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
+			writer.write(out);
+		}
 	}
 }

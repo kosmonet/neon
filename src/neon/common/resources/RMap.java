@@ -18,6 +18,8 @@
 
 package neon.common.resources;
 
+import java.util.Objects;
+
 /**
  * @author mdriesen
  */
@@ -45,10 +47,10 @@ public final class RMap extends Resource {
 	 */
 	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "maps");
-		this.name = name;
+		this.name = Objects.requireNonNull(name, "name");
+		this.module = Objects.requireNonNull(module, "module id");
 		this.width = width;
 		this.height = height;
 		this.uid = uid;
-		this.module = module;
 	}
 }

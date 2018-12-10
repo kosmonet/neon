@@ -18,6 +18,8 @@
 
 package neon.common.resources;
 
+import java.util.Objects;
+
 import javafx.scene.paint.Color;
 
 /**
@@ -65,7 +67,7 @@ public final class RCreature extends Resource {
 		private String description = "";
 		
 		public Builder(String id) {
-			this.id = id;
+			this.id = Objects.requireNonNull(id, "id");
 		}
 		
 		public RCreature build() {
@@ -73,13 +75,13 @@ public final class RCreature extends Resource {
 		}
 		
 		public Builder setName(String name) {
-			this.name = name;
+			this.name = Objects.requireNonNull(name, "name");
 			return this;
 		}
 		
 		public Builder setGraphics(char glyph, Color color) {
 			this.glyph = glyph;
-			this.color = color;
+			this.color = Objects.requireNonNull(color, "color");
 			return this;
 		}
 		

@@ -18,6 +18,12 @@
 
 package neon.systems.time;
 
+/**
+ * The names of the days used by the engine.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum Day {
 	ONE, TWO, THREE, FOUR, FIVE, SIX;
 }

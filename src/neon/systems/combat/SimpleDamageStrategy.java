@@ -18,6 +18,8 @@
 
 package neon.systems.combat;
 
+import java.util.Objects;
+
 import neon.common.entity.Entity;
 import neon.common.entity.components.Equipment;
 import neon.common.resources.Slot;
@@ -28,7 +30,7 @@ public class SimpleDamageStrategy implements DamageStrategy {
 	private final EntityManager entities;
 
 	public SimpleDamageStrategy(EntityManager entities) {
-		this.entities = entities;
+		this.entities = Objects.requireNonNull(entities, "entity manager");
 	}
 	
 	@Override

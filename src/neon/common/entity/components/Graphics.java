@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 import javafx.scene.paint.Color;
 
 /**
@@ -33,7 +35,7 @@ public final class Graphics implements Component {
 	public Graphics(long uid, char glyph, Color color) {
 		this.uid = uid;
 		this.glyph = glyph;
-		this.color = color;
+		this.color = Objects.requireNonNull(color, "color");
 	}
 	
 	@Override
@@ -47,10 +49,20 @@ public final class Graphics implements Component {
 		return uid;
 	}
 	
+	/**
+	 * Returns the color an entity should be rendered with.
+	 * 
+	 * @return	a {@code Color}
+	 */
 	public Color getColor() {
 		return color;
 	}
 
+	/**
+	 * Returns the glyph an entity should be rendered with.
+	 * 
+	 * @return
+	 */
 	public char getGlyph() {
 		return glyph;
 	}

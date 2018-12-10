@@ -18,6 +18,8 @@
 
 package neon.server.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Skill;
@@ -32,7 +34,7 @@ public final class SkillHandler {
 	private final EventBus bus;
 
 	public SkillHandler(EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 
 	public boolean checkSkill(Skills skills, Skill skill, Stats stats) {
@@ -56,7 +58,7 @@ public final class SkillHandler {
 			skills.setSkill(skill, skills.getSkill(skill) + 1);
 			skills.addSkillIncreases(1);
 			bus.post(new ComponentUpdateEvent(skills));
-			bus.post(new UpdateEvent.Skill(skills.getEntity(), Skill.SWIMMING.toString(), skills.getSkill(Skill.SWIMMING)));
+			bus.post(new UpdateEvent.Skills(skills.getEntity(), Skill.SWIMMING, skills.getSkill(Skill.SWIMMING)));
 		}
 		
 		// check for level up

@@ -18,6 +18,7 @@
 
 package neon.server;
 
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +79,7 @@ public final class Server implements Runnable {
 	 */
 	public Server(String version, ServerSocket socket) {
 		// initialize communication with the client
-		this.socket = socket;
+		this.socket = Objects.requireNonNull(socket, "server socket");
 		bus.register(socket);
 		bus.register(this);
 		

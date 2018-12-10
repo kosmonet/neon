@@ -18,19 +18,15 @@
 
 package neon.server.entity;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 
-import neon.common.files.NeonFileSystem;
+import neon.common.files.FileUtils;
 import neon.common.resources.RModule;
 
 public final class Module {
@@ -38,17 +34,9 @@ public final class Module {
 	
 	private final Set<String> maps;
 	
-	public Module(RModule module, NeonFileSystem files) {
+	public Module(RModule module) {
 		Path path = Paths.get("data", module.id, "maps");
-		Set<String> temp = Collections.emptySet();
-
-		try (Stream<Path> maps = java.nio.file.Files.list(path)){
-			temp = maps.map(Path::toString).map(Files::getNameWithoutExtension).collect(Collectors.toSet());
-		} catch (IOException e) {
-			logger.warning("error loading maps in module <" + module.id + ">");
-		}
-
-		maps = ImmutableSet.copyOf(temp);
+		maps = FileUtils.listFiles(path).stream().map(Files::getNameWithoutExtension).collect(ImmutableSet.toImmutableSet());
 		logger.info("module <" + module.id + "> contains " + maps.size() + " maps: " + maps);
 	}
 

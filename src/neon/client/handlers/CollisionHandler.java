@@ -18,6 +18,7 @@
 
 package neon.client.handlers;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.eventbus.EventBus;
@@ -54,10 +55,10 @@ public final class CollisionHandler {
 	private final Configuration config;
 	
 	public CollisionHandler(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
-		this.ui = ui;
-		this.bus = bus;
-		this.components = components;
-		this.config = config;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 
 	/**

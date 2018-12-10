@@ -19,6 +19,7 @@
 package neon.client.ui;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -191,6 +192,6 @@ public final class UserInterface {
 	 * @param scene	
 	 */
 	public void showScene(Scene scene) {
-		stage.setScene(scene);
+		stage.setScene(Objects.requireNonNull(scene, "scene"));
 	}
 }

@@ -18,6 +18,8 @@
 
 package neon.systems.magic;
 
+import java.util.Objects;
+
 import neon.common.resources.Resource;
 
 public final class RSpell extends Resource {
@@ -29,9 +31,9 @@ public final class RSpell extends Resource {
 	
 	RSpell(String id, String name, Effect effect, Target target, int duration, int magnitude) {
 		super(id, "spells");
-		this.name = name;
-		this.effect = effect;
-		this.target = target;
+		this.name = Objects.requireNonNull(name, "name");
+		this.effect = Objects.requireNonNull(effect, "effect");
+		this.target = Objects.requireNonNull(target, "target");
 		this.duration = duration;
 		this.magnitude = magnitude;
 	}

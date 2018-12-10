@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -40,8 +41,8 @@ public final class OptionState extends State {
 	private Scene scene;
 
 	public OptionState(UserInterface ui, EventBus bus) {
-		this.ui = ui;
-		this.bus = bus;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Options.fxml"));
 		loader.setController(this);

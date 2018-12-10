@@ -18,6 +18,8 @@
 
 package neon.systems.combat;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -42,8 +44,8 @@ public final class CombatSystem {
 	private final EventBus bus;
 	
 	public CombatSystem(EntityManager entities, EventBus bus) {
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		this.entities = entities;
-		this.bus = bus;
 		
 		entities.addBuilder(RItem.Armor.class, new ArmorBuilder());
 		entities.addBuilder(RItem.Weapon.class, new WeaponBuilder());

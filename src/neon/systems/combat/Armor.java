@@ -18,6 +18,8 @@
 
 package neon.systems.combat;
 
+import java.util.Objects;
+
 import neon.common.entity.ArmorType;
 import neon.common.entity.components.Component;
 
@@ -27,9 +29,9 @@ public final class Armor implements Component {
 	private final ArmorType type;
 	
 	Armor(long uid, int rating, ArmorType type) {
+		this.type = Objects.requireNonNull(type, "armor type");
 		this.uid = uid;
 		this.rating = rating;
-		this.type = type;;
 	}
 	
 	@Override

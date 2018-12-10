@@ -21,6 +21,7 @@ package neon.client.states;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,10 +60,10 @@ final class Accelerator {
 	private final Configuration config;
 	
 	Accelerator(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
-		this.bus = bus;
-		this.ui = ui;
-		this.components = components;
-		this.config = config;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	void act() {

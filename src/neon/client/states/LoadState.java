@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -60,8 +61,8 @@ public final class LoadState extends State {
 	 * @param bus	the client event bus
 	 */
 	public LoadState(UserInterface ui, EventBus bus) {
-		this.bus = bus;
-		this.ui = ui;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.ui = Objects.requireNonNull(ui, "user interface");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Load.fxml"));
 		loader.setController(this);

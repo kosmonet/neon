@@ -18,6 +18,8 @@
 
 package neon.server.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -34,8 +36,8 @@ public final class SleepHandler {
 	private final EntityManager entities;
 	
 	public SleepHandler(EntityManager entities, EventBus bus) {
-		this.entities = entities;
-		this.bus = bus;
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
 	@Subscribe

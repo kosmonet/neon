@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -16,18 +16,22 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.common.event;
+package neon.common.resources;
+
+import java.util.Objects;
 
 /**
- * An event containing a script that should be executed.
+ * A resource that represents an html file.
  * 
  * @author mdriesen
  *
  */
-public final class ScriptEvent extends NeonEvent {
-	public final String script;
+public class RText extends Resource {
+	/** The contents of the html file. */
+	public final String text;
 	
-	public ScriptEvent(String script) {
-		this.script = script;
+	public RText(String id, String text) {
+		super(id, "texts");
+		this.text = Objects.requireNonNull(text, "text");
 	}
 }

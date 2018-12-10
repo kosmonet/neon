@@ -19,6 +19,7 @@
 package neon.common.resources.loaders;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public final class MapLoader implements ResourceLoader {
 	private final NeonFileSystem files;
 	
 	public MapLoader(NeonFileSystem files) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override
@@ -62,66 +63,6 @@ public final class MapLoader implements ResourceLoader {
 	@Override
 	public void save(Resource resource) throws IOException {
 		throw new UnsupportedOperationException("Server doesn't support saving maps yet.");
-		
-//		RMap map = RMap.class.cast(resource);
-//		
-//		Element root = new Element("map");
-//		root.setAttribute("id", map.id);
-//		root.setAttribute("name", map.name);
-//		root.setAttribute("uid", Integer.toString(map.uid));
-//		root.setAttribute("module", map.module);
-//		
-//		Element size = new Element("size");
-//		size.setAttribute("width", Integer.toString(map.width));
-//		size.setAttribute("height", Integer.toString(map.height));
-//		root.addContent(size);
-//		
-//		Element entities = new Element("entities");
-//		root.addContent(entities);
-//		for (long uid : map.getEntities()) {
-//			String type = "entity";
-//			
-//			if (tracker.getEntity(uid).hasComponent(CreatureInfo.class)) {
-//				type = "creature";
-//			}
-//			
-//			Element entity = new Element(type);
-//			entity.setAttribute("uid", Long.toString(uid));
-//			// we don't need to set the position, this is saved by the entity itself
-//			entities.addContent(entity);
-//		}
-//		
-//		Element terrain = new Element("terrain");
-//		root.addContent(terrain);
-//		Map<Rectangle, String> terrainLeaves = map.getTerrain().getElements();
-//		for (Entry<Rectangle, String> entry : terrainLeaves.entrySet()) {
-//			if(entry.getValue() != null) {
-//				Element region = new Element("region");
-//				region.setAttribute("x", Integer.toString(entry.getKey().x));
-//				region.setAttribute("y", Integer.toString(entry.getKey().y));
-//				region.setAttribute("w", Integer.toString(entry.getKey().width));
-//				region.setAttribute("h", Integer.toString(entry.getKey().height));
-//				region.setAttribute("id", entry.getValue());
-//				terrain.addContent(region);
-//			}
-//		}
-//		
-//		Element elevation = new Element("elevation");
-//		root.addContent(elevation);
-//		Map<Rectangle, Integer> heightLeaves = map.getElevation().getElements();
-//		for (Entry<Rectangle, Integer> entry : heightLeaves.entrySet()) {
-//			if(entry.getValue() != null) {
-//				Element region = new Element("region");
-//				region.setAttribute("x", Integer.toString(entry.getKey().x));
-//				region.setAttribute("y", Integer.toString(entry.getKey().y));
-//				region.setAttribute("w", Integer.toString(entry.getKey().width));
-//				region.setAttribute("h", Integer.toString(entry.getKey().height));
-//				region.setAttribute("z", Integer.toString(entry.getValue()));
-//				terrain.addContent(region);
-//			}
-//		}
-//		
-//		files.saveFile(new Document(root), translator, namespace, resource.id + ".xml");
 	}
 
 	@Override

@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -62,8 +63,9 @@ public final class JournalState extends State {
 	private Scene scene;
 
 	public JournalState(UserInterface ui, EventBus bus, ComponentManager components) {
-		this.ui = ui;
-		this.components = components;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.components = Objects.requireNonNull(components, "component manager");
+		Objects.requireNonNull(bus, "event bus");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Journal.fxml"));
 		loader.setController(this);

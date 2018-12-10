@@ -18,9 +18,8 @@
 
 package neon.client.states;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -31,8 +30,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.web.WebView;
 import neon.client.ui.UserInterface;
-import neon.common.files.NeonFileSystem;
 import neon.common.resources.CClient;
+import neon.common.resources.RText;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
@@ -42,18 +41,16 @@ public final class CutSceneState extends State {
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ResourceManager resources;
-	private final NeonFileSystem files;
 
 	@FXML private Button continueButton;
 	@FXML private WebView view;
 
 	private Scene scene;
 
-	public CutSceneState(UserInterface ui, EventBus bus, NeonFileSystem files, ResourceManager resources) {
-		this.ui = ui;
-		this.bus = bus;
-		this.resources = resources;
-		this.files = files;
+	public CutSceneState(UserInterface ui, EventBus bus, ResourceManager resources) {
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Scene.fxml"));
 		loader.setController(this);
@@ -77,13 +74,14 @@ public final class CutSceneState extends State {
 			if(config.intro.isEmpty()) {
 				bus.post(new TransitionEvent("cancel"));
 			} else {
-				File file = files.loadFile("texts", config.intro);
-				view.getEngine().load(file.toURI().toString());
+				logger.info("loading cutscene text: " + config.intro);
+				RText text = resources.getResource("texts", config.intro);
+				view.getEngine().loadContent(text.text);
 				ui.showScene(scene);
 			}
-		} catch (ResourceException | FileNotFoundException e) {
+		} catch (ResourceException e) {
 			bus.post(new TransitionEvent("cancel"));
-			e.printStackTrace();
+			logger.severe("unable to load cutscene text");
 		}
 	}
 

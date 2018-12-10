@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 //import java.io.FileNotFoundException;
 //import java.io.FileReader;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javax.script.ScriptContext;
@@ -33,7 +34,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import neon.common.console.ConsoleEvent;
-import neon.common.event.ScriptEvent;
 
 public final class ScriptHandler {
 	private static final Logger logger = Logger.getGlobal();
@@ -42,7 +42,7 @@ public final class ScriptHandler {
 	private final EventBus bus;
 	
 	public ScriptHandler(EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		
 		try {
 			engine.eval(new InputStreamReader(getClass().getResourceAsStream("scripts.js")));
@@ -59,13 +59,14 @@ public final class ScriptHandler {
 	}
 	
 	/**
-	 * Registers an object with the scripting engine under the given name.
+	 * Registers an object with the scripting engine under the given name. The
+	 * name and the object must not be null.
 	 * 
 	 * @param name
 	 * @param object
 	 */
 	public void registerObject(String name, Object object) {
-		engine.put(name, object);
+		engine.put(name, Objects.requireNonNull(object, "object"));
 	}
 	
 	/**

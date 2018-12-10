@@ -20,6 +20,7 @@ package neon.common.resources.loaders;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public final class TerrainLoader implements ResourceLoader {
 	private final NeonFileSystem files;
 	
 	public TerrainLoader(NeonFileSystem files) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override

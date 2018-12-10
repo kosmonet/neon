@@ -73,7 +73,7 @@ public final class Map {
 		return elevation;
 	}
 	
-	public Collection<Long> getEntities(int x, int y) {
+	public Iterable<Long> getEntities(int x, int y) {
 		return entities.get(x, y);
 	}
 	

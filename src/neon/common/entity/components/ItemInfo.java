@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 public final class ItemInfo implements Component {
 	public final String id, name;
 	public final int price, weight;
@@ -26,9 +28,9 @@ public final class ItemInfo implements Component {
 	private long owner;
 	
 	public ItemInfo(long uid, String id, String name, int price, int weight) {
-		this.id = id;
+		this.id = Objects.requireNonNull(id, "id");
 		this.uid = uid;
-		this.name = name;
+		this.name = Objects.requireNonNull(name, "name");
 		this.price = price;
 		this.weight = weight;
 	}

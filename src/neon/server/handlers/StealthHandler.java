@@ -19,6 +19,7 @@
 package neon.server.handlers;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -49,9 +50,9 @@ public final class StealthHandler {
 	private final EventBus bus;
 	
 	public StealthHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.resources = resources;
-		this.entities = entities;
-		this.bus = bus;
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
 	@Subscribe

@@ -19,6 +19,7 @@
 package neon.server.entity;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import org.jdom2.Element;
@@ -48,9 +49,9 @@ public final class MapLoader {
 	private final ResourceManager resources;
 	
 	public MapLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
-		this.files = files;
-		this.resources = resources;
-		this.entities = entities;
+		this.files = Objects.requireNonNull(files, "file system");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
 	}
 	
 	/**

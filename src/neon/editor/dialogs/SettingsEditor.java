@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.eventbus.EventBus;
 
@@ -271,10 +273,9 @@ public class SettingsEditor {
 	 */
 	private void addParent(ActionEvent event) {
 		Path data = Paths.get("data");
-		Set<String> choices = new HashSet<>();		
-		try {
-			// Java 8 way of listing all available modules in the data folder
-			Files.list(data).filter(Files::isDirectory).forEach(path -> choices.add(path.getFileName().toString()));
+		Set<String> choices = Collections.emptySet();
+		try (Stream<Path> paths = Files.list(data)) {
+			choices = paths.filter(Files::isDirectory).map(Path::getFileName).map(Path::toString).collect(Collectors.toSet());
 		} catch (IOException e) {
 			logger.severe("could not list all modules");
 		}

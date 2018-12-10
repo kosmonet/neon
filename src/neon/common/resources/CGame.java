@@ -18,8 +18,7 @@
 
 package neon.common.resources;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
@@ -35,12 +34,12 @@ public final class CGame extends Resource {
 	/** The amount of money the player starts with. */
 	public final int startMoney;
 
-	private final List<String> items;
+	private final Iterable<String> items;
 	private final Set<String> spells;
 	
-	public CGame(String startMap, int startX, int startY, int startMoney, Collection<String> items, Collection<String> spells) {
+	public CGame(String startMap, int startX, int startY, int startMoney, Iterable<String> items, Iterable<String> spells) {
 		super("game", "config");
-		this.map = startMap;
+		this.map = Objects.requireNonNull(startMap, "start map");
 		this.startX = startX;
 		this.startY = startY;
 		this.startMoney = startMoney;
@@ -50,18 +49,18 @@ public final class CGame extends Resource {
 	}
 	
 	/**
-	 * A list of items the player start the game with.
+	 * Returns the items the player start the game with.
 	 * 
-	 * @return	an unmodifiable list of item id's
+	 * @return	an unmodifiable {@code Iterable} of item id's
 	 */
-	public List<String> getStartItems() {
+	public Iterable<String> getStartItems() {
 		return items;
 	}
 	
 	/**
 	 * A set of spells the player starts the game with.
 	 * 
-	 * @return	an unmodifiable set of spell id's
+	 * @return	an unmodifiable {@code Set} of spell id's
 	 */
 	public Set<String> getStartSpells() {
 		return spells;

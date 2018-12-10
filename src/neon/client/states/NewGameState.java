@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -77,9 +78,9 @@ public final class NewGameState extends State {
 	private int pointsLeft = points;
 
 	public NewGameState(UserInterface ui, EventBus bus, ResourceManager resources) {
-		this.ui = ui;
-		this.bus = bus;
-		this.resources = resources;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/NewGame.fxml"));
 		loader.setController(this);

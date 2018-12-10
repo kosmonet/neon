@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -61,10 +62,10 @@ public final class MagicState extends State {
 	private Scene scene;
 
 	public MagicState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources) {
-		this.ui = ui;
-		this.bus = bus;
-		this.components = components;
-		this.resources = resources;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Magic.fxml"));
 		loader.setController(this);

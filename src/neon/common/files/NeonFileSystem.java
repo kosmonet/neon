@@ -72,7 +72,7 @@ public final class NeonFileSystem {
 	 * @param permission
 	 */
 	public NeonFileSystem(Permission permission) {
-		this.writable = permission.equals(Permission.WRITABLE);
+		this.writable = Permission.WRITABLE.equals(permission);
 	}
 	
 	/**

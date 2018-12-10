@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -56,8 +57,9 @@ public final class MapState extends State {
 	private Scene scene;
 
 	public MapState(UserInterface ui, EventBus bus, ResourceManager resources, Configuration config) {
-		this.ui = ui;
-		this.config = config;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.config = Objects.requireNonNull(config, "configuration");
+		Objects.requireNonNull(bus, "event bus");
 		pane = new MapPane(resources);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Map.fxml"));

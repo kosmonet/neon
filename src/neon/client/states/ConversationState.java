@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -75,9 +76,9 @@ public final class ConversationState extends State {
 //			+ "within seconds.";
 	
 	public ConversationState(UserInterface ui, EventBus bus, ComponentManager components) {
-		this.bus = bus;
-		this.ui = ui;
-		this.components = components;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.components = Objects.requireNonNull(components, "component manager");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Conversation.fxml"));
 		loader.setController(this);
@@ -113,7 +114,7 @@ public final class ConversationState extends State {
 	}
 	
 	@Subscribe
-	public void onConverationUpdate(ConversationEvent.Update event) {
+	private void onConverationUpdate(ConversationEvent.Update event) {
 		flow.getChildren().add(new Text("\n"));
 		flow.getChildren().add(new Text(event.answer));
 //		flow.getChildren().add(new Text(test));

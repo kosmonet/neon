@@ -18,6 +18,8 @@
 
 package neon.common.event;
 
+import java.util.Objects;
+
 import neon.util.Direction;
 
 /**
@@ -39,8 +41,8 @@ public abstract class InputEvent extends NeonEvent {
 		public final String map;
 		
 		public Move(Direction direction, String map) {
-			this.direction = direction;
-			this.map = map;
+			this.direction = Objects.requireNonNull(direction, "direction");
+			this.map = Objects.requireNonNull(map, "map");
 		}
 	}
 	

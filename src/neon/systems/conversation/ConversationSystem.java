@@ -19,6 +19,7 @@
 package neon.systems.conversation;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -39,9 +40,9 @@ public final class ConversationSystem {
 	private Entity listener;
 	
 	public ConversationSystem(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
-		this.bus = bus;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.resources = resources;
-		this.entities = entities;
 		resources.addLoader(new DialogLoader(files));
 	}
 	

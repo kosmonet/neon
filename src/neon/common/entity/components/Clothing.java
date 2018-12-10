@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 import neon.common.resources.Slot;
 
 public final class Clothing implements Component {
@@ -26,7 +28,7 @@ public final class Clothing implements Component {
 	
 	public Clothing(long uid, Slot slot) {
 		this.uid = uid;
-		this.slot = slot;
+		this.slot = Objects.requireNonNull(slot, "slot");
 	}
 	
 	@Override

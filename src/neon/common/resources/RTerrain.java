@@ -18,7 +18,7 @@
 
 package neon.common.resources;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -54,11 +54,11 @@ public final class RTerrain extends Resource {
 	
 	private final Set<Modifier> modifiers;
 	
-	public RTerrain(String id, String name, char glyph, Color color, Collection<Modifier> modifiers) {
+	public RTerrain(String id, String name, char glyph, Color color, Iterable<Modifier> modifiers) {
 		super(id, "terrain");
-		this.color = color;
+		this.color = Objects.requireNonNull(color, "color");
+		this.name = Objects.requireNonNull(name, "name");
 		this.glyph = glyph;
-		this.name = name;
 		this.modifiers = ImmutableSet.copyOf(modifiers);
 	}
 	

@@ -19,6 +19,7 @@
 package neon.client.states;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -102,11 +103,11 @@ public final class GameState extends State {
 	 * @param resources
 	 */
 	public GameState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources, Configuration config) {
-		this.ui = ui;
-		this.bus = bus;
-		this.resources = resources;
-		this.components = components;
-		this.config = config;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 		
 		renderPane = new RenderPane<Long>(resources, new ClientRenderer(components));
 		accelerator = new Accelerator(ui, bus, components, config);

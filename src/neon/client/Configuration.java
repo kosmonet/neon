@@ -18,6 +18,8 @@
 
 package neon.client;
 
+import java.util.Objects;
+
 /**
  * Configuration for the client.
  * 
@@ -36,7 +38,7 @@ public class Configuration {
 	 * @param map
 	 */
 	public void setCurrentMap(Map map) {
-		this.map = map;
+		this.map = Objects.requireNonNull(map, "map");
 	}
 	
 	/**

@@ -22,6 +22,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.EventBus;
@@ -65,8 +66,8 @@ public final class MainMenuState extends State {
 	 * @param bus
 	 */
 	public MainMenuState(UserInterface ui, String version, EventBus bus) {
-		this.ui = ui;
-		this.bus = bus;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/MainMenu.fxml"));
 		loader.setController(this);

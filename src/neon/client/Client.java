@@ -21,6 +21,7 @@ package neon.client;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import com.google.common.eventbus.DeadEvent;
@@ -59,6 +60,7 @@ import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.CreatureLoader;
 import neon.common.resources.loaders.MapLoader;
 import neon.common.resources.loaders.TerrainLoader;
+import neon.common.resources.loaders.TextLoader;
 import neon.systems.magic.SpellLoader;
 
 /**
@@ -86,7 +88,7 @@ public final class Client implements Runnable {
 	 */
 	public Client(String version, ClientSocket socket, Stage stage) {
 		// add all required listeners to the event bus
-		this.socket = socket;
+		this.socket = Objects.requireNonNull(socket, "client socket");
 		bus.register(socket);
 		bus.register(this);
 		ui = new UserInterface(stage);
@@ -108,12 +110,13 @@ public final class Client implements Runnable {
 		resources.addLoader(new MapLoader(files));
 		resources.addLoader(new ConfigurationLoader(files));
 		resources.addLoader(new SpellLoader(files));
+		resources.addLoader(new TextLoader(files));
 		
 		// set up some event handlers
 		bus.register(new CollisionHandler(ui, bus, components, config));
 		bus.register(new EntityHandler(components, config));
 		bus.register(new MessageHandler(ui, components));
-		bus.register(new GameHandler(ui, files, components, resources, config));
+		bus.register(new GameHandler(files, components, resources, config));
 		
 		// initialize all states and enter the first one
 		initStates(version);
@@ -139,7 +142,7 @@ public final class Client implements Runnable {
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
 		NewGameState newGame = new NewGameState(ui, bus, resources);
 		LoadState loadGame = new LoadState(ui, bus);
-		CutSceneState cut = new CutSceneState(ui, bus, files, resources);
+		CutSceneState cut = new CutSceneState(ui, bus, resources);
 		GameState game = new GameState(ui, bus, components, resources, config);
 		bus.register(game);
 		InventoryState inventory = new InventoryState(ui, bus, components, config);

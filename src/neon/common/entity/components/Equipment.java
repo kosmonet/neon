@@ -18,17 +18,17 @@
 
 package neon.common.entity.components;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
 
 import neon.common.resources.Slot;
 
 /**
  * A component that keeps track of equipped items.
+ * 
  * @author mdriesen
- *
  */
 public class Equipment implements Component {
 	private final long uid;
@@ -100,11 +100,11 @@ public class Equipment implements Component {
 	}
 	
 	/**
-	 * Returns a collection of all the equipped items.
+	 * Returns all the equipped items.
 	 * 
 	 * @return
 	 */
-	public Collection<Long> getEquippedItems() {
-		return Collections.unmodifiableCollection(equipped.values());
+	public Iterable<Long> getEquippedItems() {
+		return ImmutableList.copyOf(equipped.values());
 	}
 }

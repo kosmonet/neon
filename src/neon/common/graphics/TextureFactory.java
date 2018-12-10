@@ -65,7 +65,8 @@ public final class TextureFactory {
 			} else {
 				gc.setFont(Font.font(size*6/7));				
 			}
-			// 0.25 en 0.85 to get the text in the middle of the image
+			
+			// 0.25 and 0.85 to get the text in the middle of the image
 			gc.fillText(Character.toString(glyph), size*0.25, size*0.85);
 
 			WritableImage image = new WritableImage(size, size);
@@ -74,15 +75,15 @@ public final class TextureFactory {
 		}
 	}
 		
-	private static class Type {
+	private static final class Type {
 		private final int size;
 		private final Paint paint;
 		private final char glyph;
 		private final int hash;
 		
 		private Type(int size, Paint paint, char glyph) {
+			this.paint = Objects.requireNonNull(paint, "paint");
 			this.size = size;
-			this.paint = paint;
 			this.glyph = glyph;
 			hash = Objects.hash(size, paint, glyph);
 		}

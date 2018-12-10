@@ -20,6 +20,8 @@ package neon.client.ui;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
@@ -35,12 +37,12 @@ import neon.common.graphics.TextureFactory;
 public final class ClientRenderer implements EntityRenderer<Long> {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final HashMap<Integer, Canvas> layers = new HashMap<>();
+	private final Map<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
 	private final ComponentManager components;
 	
 	public ClientRenderer(ComponentManager components) {
-		this.components = components;
+		this.components = Objects.requireNonNull(components, "component manager");
 	}
 	
 	@Override
@@ -58,7 +60,7 @@ public final class ClientRenderer implements EntityRenderer<Long> {
 	}
 
 	@Override
-	public void setLayers(HashMap<Integer, Canvas> layers) {
+	public void setLayers(Map<Integer, Canvas> layers) {
 		this.layers.clear();
 		this.layers.putAll(layers);
 	}

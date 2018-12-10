@@ -18,6 +18,12 @@
 
 package neon.systems.time;
 
+/**
+ * The names of the months used by the engine.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum Month {
 	EEN, TWEE, DRIE, VIER, VIJF, ZES, ZEVEN, ACHT, NEGEN, TIEN, ELF, TWAALF;
 }

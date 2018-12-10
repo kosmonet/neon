@@ -18,6 +18,8 @@
 
 package neon.server.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 
 import neon.common.entity.Entity;
@@ -50,8 +52,8 @@ final class Notifier {
 	private final EntityManager entities;
 
 	Notifier(EntityManager entities, EventBus bus) {
-		this.entities = entities;
-		this.bus = bus;
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
 	void notifyClient(Entity player) {

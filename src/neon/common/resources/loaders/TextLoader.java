@@ -16,64 +16,52 @@
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package neon.client;
+package neon.common.resources.loaders;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jdom2.Element;
-
 import com.google.common.io.Files;
 
 import neon.common.files.NeonFileSystem;
-import neon.common.files.XMLTranslator;
-import neon.common.resources.CClient;
+import neon.common.files.StringTranslator;
+import neon.common.resources.RText;
 import neon.common.resources.Resource;
-import neon.common.resources.loaders.ResourceLoader;
 
-public final class ConfigurationLoader implements ResourceLoader {
-	private static final String namespace = "config";
-	private static final XMLTranslator translator = new XMLTranslator();
-	
+public class TextLoader implements ResourceLoader {
+	private static final String namespace = "texts";
+
+	private final StringTranslator translator = new StringTranslator();
 	private final NeonFileSystem files;
 	
-	public ConfigurationLoader(NeonFileSystem files) {
+	public TextLoader(NeonFileSystem files) {
 		this.files = Objects.requireNonNull(files, "file system");
 	}
-
+	
 	@Override
 	public Resource load(String id) throws IOException {
-		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
-		String title = root.getAttributeValue("title");
-		String subtitle = root.getAttributeValue("subtitle");
-		String intro = root.getChildText("intro");
-		
-		Set<String> playable = new HashSet<>();
-		for (Element species : root.getChild("playable").getChildren()) {
-			playable.add(species.getAttributeValue("id"));
-		}
-		
-		return new CClient(title, subtitle, playable, intro);
+		String text = files.loadFile(translator, namespace, id + ".html");
+		return new RText(id, text);
 	}
 
 	@Override
-	public void save(Resource resource) {
-		throw new UnsupportedOperationException("Client is not allowed to save resources.");
+	public void save(Resource resource) throws IOException {
+		RText rt = RText.class.cast(resource);
+		files.saveFile(rt.text, translator, namespace, resource.id + ".html");
 	}
 
 	@Override
 	public Set<String> listResources() {
-		return files.listFiles(namespace).parallelStream()
+		return files.listFiles(namespace).stream()
 				.map(Files::getNameWithoutExtension)
 				.collect(Collectors.toSet());
 	}
 
 	@Override
-	public void removeResource(String id) {
-		throw new UnsupportedOperationException("Client is not allowed to remove resources.");		
+	public void removeResource(String id) throws IOException {
+		files.deleteFile(namespace, id + ".html");		
 	}
 
 	@Override

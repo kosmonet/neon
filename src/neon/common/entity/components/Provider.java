@@ -19,9 +19,15 @@
 package neon.common.entity.components;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Provider implements Component {
+	/**
+	 * All the possible services a creature can have.
+	 * 
+	 * @author mdriesen
+	 */
 	public enum Service {
 		HEALER, TRADE, SPELLS, ROOMS;
 	}
@@ -55,11 +61,11 @@ public class Provider implements Component {
 	}
 	
 	/**
-	 * Adds a service.
+	 * Adds a service. The service must not be null.
 	 * 
 	 * @param service
 	 */
 	public void addService(Service service) {
-		services.add(service);
+		services.add(Objects.requireNonNull(service, "service"));
 	}
 }

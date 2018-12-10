@@ -18,6 +18,8 @@
 
 package neon.common.event;
 
+import java.util.Objects;
+
 /**
  * Event to signal that a new game should be started.
  * 
@@ -30,9 +32,9 @@ public abstract class NewGameEvent extends NeonEvent {
 		public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
 
 		public Check(String name, String species, String gender, int strength, int constitution, int dexterity, int intelligence, int wisdom, int charisma) {
-			this.name = name;
-			this.species = species;
-			this.gender = gender;
+			this.name = Objects.requireNonNull(name, "name");
+			this.species = Objects.requireNonNull(species, "species");
+			this.gender = Objects.requireNonNull(gender, "gender");
 
 			this.strength =  strength;
 			this.constitution = constitution;

@@ -20,6 +20,7 @@ package neon.editor.ui;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,7 +32,7 @@ import neon.common.graphics.TextureFactory;
 import neon.editor.resource.ICreature;
 
 public class EditorRenderer implements EntityRenderer<Entity> {
-	private final HashMap<Integer, Canvas> layers = new HashMap<>();
+	private final Map<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
 
 	@Override
@@ -46,7 +47,7 @@ public class EditorRenderer implements EntityRenderer<Entity> {
 	}
 
 	@Override
-	public void setLayers(HashMap<Integer, Canvas> layers) {
+	public void setLayers(Map<Integer, Canvas> layers) {
 		this.layers.clear();
 		this.layers.putAll(layers);
 	}

@@ -18,6 +18,7 @@
 
 package neon.systems.ai;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -34,7 +35,7 @@ public final class AISystem implements NeonSystem {
 	private final Configuration config;
 	
 	public AISystem(Configuration config) {
-		this.config = config;
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	private void act(Entity creature) {

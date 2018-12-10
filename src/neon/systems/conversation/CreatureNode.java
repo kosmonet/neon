@@ -20,6 +20,7 @@ package neon.systems.conversation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 final class CreatureNode {
 	final String id;
@@ -27,8 +28,8 @@ final class CreatureNode {
 	final ArrayList<String> children = new ArrayList<>();
 	
 	CreatureNode(String id, String text, Collection<String> nodes) {
-		this.id = id;
-		this.text = text;
+		this.id = Objects.requireNonNull(id, "id");
+		this.text = Objects.requireNonNull(text, "text");
 		children.addAll(nodes);
 	}
 }

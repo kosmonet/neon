@@ -20,6 +20,7 @@ package neon.systems.conversation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 final class PlayerNode {
 	final String id;
@@ -28,9 +29,9 @@ final class PlayerNode {
 	final NodeType type;
 	
 	PlayerNode(String id, String text, Collection<String> nodes, NodeType type) {
-		this.id = id;
-		this.text = text;
+		this.id = Objects.requireNonNull(id, "id");
+		this.text = Objects.requireNonNull(text, "text");
+		this.type = Objects.requireNonNull(type, "node type");
 		children.addAll(nodes);
-		this.type = type;
 	}
 }

@@ -19,6 +19,7 @@
 package neon.common.entity.components;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,12 +28,12 @@ public final class CreatureInfo implements Component {
 	private final String id;
 	private final String name;
 	private final long uid;
-	private final HashSet<String> factions = new HashSet<>();
+	private final Set<String> factions = new HashSet<>();
 	
 	public CreatureInfo(long uid, String id, String name) {
-		this.id = id;
+		this.id = Objects.requireNonNull(id, "id");
+		this.name = Objects.requireNonNull(name, "name");
 		this.uid = uid;
-		this.name = name;
 	}
 	
 	@Override
@@ -59,7 +60,7 @@ public final class CreatureInfo implements Component {
 	}
 	
 	public void addFaction(String faction) {
-		factions.add(faction);
+		factions.add(Objects.requireNonNull(faction, "faction"));
 	}
 	
 	public boolean isMember(String faction) {

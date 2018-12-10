@@ -18,7 +18,7 @@
 
 package neon.common.event;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +46,7 @@ public abstract class LoadEvent extends NeonEvent {
 		public final String save;
 		
 		public Start(String save) {
-			this.save = save;
+			this.save = Objects.requireNonNull(save, "save");
 		}
 	}
 	
@@ -65,7 +65,7 @@ public abstract class LoadEvent extends NeonEvent {
 		 * 
 		 * @param saves
 		 */
-		public List(Collection<String> saves) {
+		public List(Iterable<String> saves) {
 			this.saves = ImmutableSet.copyOf(saves);
 		}
 

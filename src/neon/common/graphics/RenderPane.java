@@ -20,6 +20,7 @@ package neon.common.graphics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javafx.scene.canvas.Canvas;
@@ -48,8 +49,8 @@ public final class RenderPane<T> extends StackPane {
 	private RenderableMap<? extends T> map;
 	
 	public RenderPane(ResourceManager resources, EntityRenderer<T> renderer) {
-		this.resources = resources;
-		this.renderer = renderer;
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.renderer = Objects.requireNonNull(renderer, "renderer");
 		
 		for (int i = -5; i < 4; i++) {
 			Canvas canvas = new RenderCanvas();
@@ -63,7 +64,7 @@ public final class RenderPane<T> extends StackPane {
 	}
 	
 	public void setMap(RenderableMap<? extends T> map) {
-		this.map = map;
+		this.map = Objects.requireNonNull(map, "map");
 		logger.fine("setting new map on render pane");
 	}
 	
@@ -112,18 +113,5 @@ public final class RenderPane<T> extends StackPane {
 				}
 			}
 		}		
-	}
-	
-	/**
-	 * A resizable JavaFX {@code Canvas}.
-	 * 
-	 * @author mdriesen
-	 *
-	 */
-	private static final class RenderCanvas extends Canvas {
-		@Override
-		public boolean isResizable() {
-		    return true;
-		}
 	}
 }

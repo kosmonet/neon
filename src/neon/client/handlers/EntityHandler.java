@@ -18,6 +18,8 @@
 
 package neon.client.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.Subscribe;
 
 import neon.client.ComponentManager;
@@ -40,8 +42,8 @@ public class EntityHandler {
 	private final Configuration config;
 	
 	public EntityHandler(ComponentManager components, Configuration config) {
-		this.components = components;
-		this.config = config;
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	@Subscribe 

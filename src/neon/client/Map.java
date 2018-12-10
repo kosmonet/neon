@@ -22,6 +22,7 @@ import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.jdom2.Element;
 
@@ -36,7 +37,7 @@ import neon.util.spatial.PointSpatialIndex;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
-public class Map implements RenderableMap<Long> {
+public final class Map implements RenderableMap<Long> {
 	private static final XMLTranslator translator = new XMLTranslator();
 
 	private final RegionSpatialIndex<String> terrain;
@@ -179,9 +180,9 @@ public class Map implements RenderableMap<Long> {
 	
 	/**
 	 * 
-	 * @return	an unmodifiable {@code Collection} of {@code Marker}s
+	 * @return	an unmodifiable {@code Iterable} of {@code Marker}s
 	 */
-	public Collection<Marker> getMarkers() {
+	public Iterable<Marker> getMarkers() {
 		return ImmutableSet.copyOf(markers);
 	}
 	
@@ -191,9 +192,9 @@ public class Map implements RenderableMap<Long> {
 		public final String text;
 		
 		private Marker(int x, int y, String text) {
+			this.text = Objects.requireNonNull(text, "text");
 			this.x = x;
 			this.y = y;
-			this.text = text;
 		}
 	}
 }

@@ -18,6 +18,7 @@
 
 package neon.server.systems;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -61,10 +62,10 @@ public final class MovementSystem implements NeonSystem {
 	private final Configuration config;
 	
 	MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
-		this.resources = resources;
-		this.entities = entities;
-		this.bus = bus;
-		this.config = config;
+		this.resources = Objects.requireNonNull(resources, "resource manager");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.config = Objects.requireNonNull(config, "configuration");
 		skillHandler = new SkillHandler(bus);
 	}
 	

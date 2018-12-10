@@ -18,8 +18,12 @@
 
 package neon.client.handlers;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.Subscribe;
 
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 import neon.client.ComponentManager;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.Stats;
@@ -27,6 +31,7 @@ import neon.common.event.StealthEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceException;
 import neon.systems.combat.CombatEvent;
+import neon.systems.time.RestEvent;
 
 /**
  * Shows messages in response to certain events that are received from the 
@@ -42,8 +47,8 @@ public class MessageHandler {
 	private final ComponentManager components;
 	
 	public MessageHandler(UserInterface ui, ComponentManager components) {
-		this.ui = ui;
-		this.components = components;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.components = Objects.requireNonNull(components, "component manager");
 	}
 	
 	@Subscribe
@@ -81,7 +86,7 @@ public class MessageHandler {
 	}
 	
 	@Subscribe
-	private void onSkillIncrease(UpdateEvent.Skill event) throws ResourceException {
+	private void onSkillIncrease(UpdateEvent.Skills event) throws ResourceException {
 		if (event.uid == PLAYER_UID) {
 			ui.showOverlayMessage(event.skill + " skill increased to " + event.value + ".", 1000);
 		}
@@ -90,5 +95,16 @@ public class MessageHandler {
 	@Subscribe
 	private void onLevelIncrease(UpdateEvent.Level event) throws ResourceException {
 		ui.showOverlayMessage("Level up!", 1000);
+	}
+	
+	@Subscribe
+	private void onSleep(RestEvent.Wake event) {
+		FadeTransition transition = new FadeTransition(Duration.millis(2000), ui.getCurrentScene().getRoot());
+		transition.setFromValue(1.0);
+	    transition.setToValue(0.0);
+	    transition.setAutoReverse(true);
+	    transition.setCycleCount(2);
+	    transition.setOnFinished(action -> ui.showOverlayMessage("You have slept.", 1500));
+	    transition.play();
 	}
 }

@@ -20,6 +20,7 @@ package neon.client.states;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -81,10 +82,10 @@ public final class InventoryState extends State {
 	private Scene scene;
 	
 	public InventoryState(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
-		this.ui = ui;
-		this.bus = bus;
-		this.components = components;
-		this.config = config;
+		this.ui = Objects.requireNonNull(ui, "user interface");
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.components = Objects.requireNonNull(components, "component manager");
+		this.config = Objects.requireNonNull(config, "configuration");
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Inventory.fxml"));
 		loader.setController(this);

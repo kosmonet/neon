@@ -18,6 +18,8 @@
 
 package neon.server.systems;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -39,10 +41,10 @@ public final class InputSystem implements NeonSystem {
 	private final Configuration config;
 	
 	public InputSystem(EntityManager entities, EventBus bus, MovementSystem mover, Configuration config) {
-		this.bus = bus;
-		this.entities = entities;
-		this.mover = mover;
-		this.config = config;
+		this.bus = Objects.requireNonNull(bus, "event bus");
+		this.entities = Objects.requireNonNull(entities, "entity manager");
+		this.mover = Objects.requireNonNull(mover, "movement system");
+		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
 	/**

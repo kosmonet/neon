@@ -18,7 +18,7 @@
 
 package neon.common.resources;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,19 +40,20 @@ public final class CClient extends Resource {
 	
 	/**
 	 * Initializes the client configuration resource. Duplicates in the given
-	 * collection of species are ignored.
+	 * iterable of species are ignored. Title, subtitle and intro text must not
+	 * be null.
 	 * 
 	 * @param title
 	 * @param subtitle
 	 * @param species
 	 * @param intro
 	 */
-	public CClient(String title, String subtitle, Collection<String> species, String intro) {
+	public CClient(String title, String subtitle, Iterable<String> species, String intro) {
 		super("client", "config");
-		this.title = title;
-		this.subtitle = subtitle;
+		this.title = Objects.requireNonNull(title, "title");
+		this.subtitle = Objects.requireNonNull(subtitle, "subtitle");
+		this.intro = Objects.requireNonNull(intro, "intro");
 		this.species = ImmutableSet.copyOf(species);
-		this.intro = intro;
 	}
 
 	/**

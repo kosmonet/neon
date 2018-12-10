@@ -18,6 +18,7 @@
 
 package neon.common.event;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import neon.common.resources.Slot;
@@ -35,7 +36,7 @@ public abstract class InventoryEvent extends NeonEvent {
 		
 		public Drop(long item, String map) {
 			this.item = item;
-			this.map = map;
+			this.map = Objects.requireNonNull(map, "map");
 		}
 	}
 
@@ -67,7 +68,7 @@ public abstract class InventoryEvent extends NeonEvent {
 		
 		public Pick(long item, String map) {
 			this.item = item;
-			this.map = map;
+			this.map = Objects.requireNonNull(map, "map");
 		}
 	}
 

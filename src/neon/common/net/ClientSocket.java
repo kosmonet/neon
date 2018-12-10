@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 package neon.common.net;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
@@ -51,7 +52,7 @@ public final class ClientSocket {
 	 * @param name
 	 */
 	public ClientSocket(String name) {
-		this.name = name;
+		this.name = Objects.requireNonNull(name, "name");
 	}
 	
 	@Override

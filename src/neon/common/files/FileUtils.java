@@ -143,7 +143,7 @@ public final class FileUtils {
 	
 	/**
 	 * Lists all the files in the given folder. If the given folder does not
-	 * exist or is not actually a folder, an empty array is returned.
+	 * exist or is not actually a folder, an empty set is returned.
 	 * 
 	 * @param path
 	 * @return	an unmodifiable set

@@ -18,6 +18,8 @@
 
 package neon.common.entity.components;
 
+import java.util.Objects;
+
 import neon.common.entity.PlayerMode;
 
 /**
@@ -35,8 +37,8 @@ public final class PlayerInfo implements Component {
 	
 	public PlayerInfo(long uid, String name, String gender) {
 		this.uid = uid;
-		this.name = name;
-		this.gender = gender;
+		this.name = Objects.requireNonNull(name, "name");
+		this.gender = Objects.requireNonNull(gender, "gender");
 	}
 	
 	@Override
@@ -59,7 +61,7 @@ public final class PlayerInfo implements Component {
 	}
 	
 	public void setMode(PlayerMode mode) {
-		this.mode = mode;
+		this.mode = Objects.requireNonNull(mode, "player mode");
 	}
 	
 	public PlayerMode getMode() {

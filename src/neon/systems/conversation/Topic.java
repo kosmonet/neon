@@ -18,12 +18,14 @@
 
 package neon.systems.conversation;
 
+import java.util.Objects;
+
 public final class Topic {
 	public final String id;
 	public final String text;
 	
 	Topic(String id, String text) {
-		this.id = id;
-		this.text = text;
+		this.id = Objects.requireNonNull(id, "id");
+		this.text = Objects.requireNonNull(text, "text");
 	}
 }

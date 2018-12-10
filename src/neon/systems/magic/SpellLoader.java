@@ -19,6 +19,7 @@
 package neon.systems.magic;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,12 +35,12 @@ import neon.common.resources.loaders.ResourceLoader;
 
 public final class SpellLoader implements ResourceLoader {
 	private static final String namespace = "spells";
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
 	public SpellLoader(NeonFileSystem files) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override

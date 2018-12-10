@@ -20,8 +20,9 @@ package neon.common.entity.components;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * The inventory of an entity.
@@ -88,7 +89,7 @@ public final class Inventory implements Component {
 	 * @return
 	 */
 	public Collection<Long> getItems() {
-		return Collections.unmodifiableList(items);
+		return ImmutableList.copyOf(items);
 	}
 	
 	/**

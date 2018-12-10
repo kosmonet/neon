@@ -21,6 +21,7 @@ package neon.server.entity;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -63,7 +64,7 @@ public final class EntityManager {
 	private final MapLoader loader;
 	
 	public EntityManager(NeonFileSystem files, ResourceManager resources) {
-		this.files = files;
+		this.files = Objects.requireNonNull(files, "file system");
 		loader = new MapLoader(files, resources, this);
 	}
 	
@@ -113,7 +114,7 @@ public final class EntityManager {
 	 * @param builder
 	 */
 	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
-		builders.put(type, builder);
+		builders.put(Objects.requireNonNull(type, "type"), Objects.requireNonNull(builder, "builder"));
 	}
 	
 	/**
@@ -189,7 +190,7 @@ public final class EntityManager {
 	}
 	
 	public void addModule(Module module) {
-		modules.add(module);
+		modules.add(Objects.requireNonNull(module, "module"));
 	}
 	
 	/**
