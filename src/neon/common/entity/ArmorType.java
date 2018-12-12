@@ -18,6 +18,12 @@
 
 package neon.common.entity;
 
+/**
+ * The types of armor available in a game.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum ArmorType {
 	LIGHT, MEDIUM, HEAVY;
 }

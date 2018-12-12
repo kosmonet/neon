@@ -34,7 +34,9 @@ import neon.common.resources.CServer;
 public final class ConfigurationEvent extends NeonEvent {
 	private final Set<String> modules;
 	
+	/** The title of the game. */
 	public final String title;
+	/** The subtitle of the game. */
 	public final String subtitle;
 	
 	/**

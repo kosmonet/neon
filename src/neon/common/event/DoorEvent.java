@@ -18,6 +18,12 @@
 
 package neon.common.event;
 
+/**
+ * An event to signal an action on a door.
+ * 
+ * @author mdriesen
+ *
+ */
 public abstract class DoorEvent extends NeonEvent {
 	public static final class Open extends DoorEvent {
 		public final long door;

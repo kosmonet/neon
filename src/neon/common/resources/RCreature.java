@@ -37,9 +37,19 @@ public final class RCreature extends Resource {
 	public final Color color;
 	/** The speed stat. */
 	public final int speed;
-	
-	public final int strength, constitution, dexterity, intelligence, wisdom, charisma;
-	/** The descripion of the creature. */
+	/** The strength of the creature. */
+	public final int strength;
+	/** The constitution of the creature. */
+	public final int constitution;
+	/** The dexterity of the creature. */
+	public final int dexterity;
+	/** The intelligence of the creature. */
+	public final int intelligence;
+	/** The wisdom of the creature. */
+	public final int wisdom;
+	/** The charisma of the creature. */
+	public final int charisma;
+	/** A description of the creature. */
 	public final String description;
 	
 	private RCreature(Builder builder) {
@@ -57,6 +67,12 @@ public final class RCreature extends Resource {
 		description = builder.description;
 	}
 	
+	/**
+	 * A builder class for creature resources.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	public static final class Builder {
 		private String id;
 		private String name;
@@ -66,35 +82,85 @@ public final class RCreature extends Resource {
 		private int strength, constitution, dexterity, intelligence, wisdom, charisma;
 		private String description = "";
 		
+		/**
+		 * Initializes the builder with a resource id. The id must not be null.
+		 * 
+		 * @param id
+		 */
 		public Builder(String id) {
 			this.id = Objects.requireNonNull(id, "id");
 		}
 		
+		/**
+		 * Builds a new creature resource.
+		 * 
+		 * @return
+		 */
 		public RCreature build() {
 			return new RCreature(this);
 		}
 		
+		/**
+		 * Sets the name of the creature resource to be built. The name must 
+		 * not be null.
+		 * 
+		 * @param name
+		 * @return
+		 */
 		public Builder setName(String name) {
 			this.name = Objects.requireNonNull(name, "name");
 			return this;
 		}
 		
+		/**
+		 * Sets the look of the creature resource to be built. The color must 
+		 * not be null.
+		 * 
+		 * @param glyph
+		 * @param color
+		 * @return
+		 */
 		public Builder setGraphics(char glyph, Color color) {
 			this.glyph = glyph;
 			this.color = Objects.requireNonNull(color, "color");
 			return this;
 		}
 		
+		/**
+		 * Sets the speed of the creature resource to be built.
+		 * 
+		 * @param speed
+		 * @return
+		 */
 		public Builder setSpeed(int speed) {
 			this.speed = speed;
 			return this;
 		}
 		
+		/**
+		 * Sets a description for the creature resource to be built. The 
+		 * description must not be null.
+		 * 
+		 * @param description
+		 * @return
+		 */
 		public Builder setDescription(String description) {
-			this.description = description.trim().replaceAll(" +", " ");;
+			this.description = Objects.requireNonNull(description, "description");
 			return this;
 		}
 		
+		/**
+		 * Sets the main stats of the creature resource to be built.
+		 * 
+		 * 
+		 * @param strength
+		 * @param constitution
+		 * @param dexterity
+		 * @param intelligence
+		 * @param wisdom
+		 * @param charisma
+		 * @return
+		 */
 		public Builder setStats(int strength, int constitution, int dexterity, int intelligence, int wisdom, int charisma) {
 			this.strength = strength;
 			this.constitution = constitution;

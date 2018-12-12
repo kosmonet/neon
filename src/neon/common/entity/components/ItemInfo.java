@@ -27,6 +27,16 @@ public final class ItemInfo implements Component {
 	
 	private long owner;
 	
+	/**
+	 * Initializes an item information component. The id and name must not be 
+	 * null.
+	 * 
+	 * @param uid
+	 * @param id
+	 * @param name
+	 * @param price
+	 * @param weight
+	 */
 	public ItemInfo(long uid, String id, String name, int price, int weight) {
 		this.id = Objects.requireNonNull(id, "id");
 		this.uid = uid;
@@ -50,6 +60,11 @@ public final class ItemInfo implements Component {
 		return owner;
 	}
 	
+	/**
+	 * Sets the owner of an item.
+	 * 
+	 * @param owner	the uid of the owner
+	 */
 	public void setOwner(long owner) {
 		this.owner = owner;
 	}

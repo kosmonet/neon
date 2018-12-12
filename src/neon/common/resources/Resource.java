@@ -28,14 +28,9 @@ import java.util.Objects;
  *
  */
 public abstract class Resource {
-	/**
-	 * The resource id.
-	 */
+	/** The resource id. */
 	public final String id;
-	
-	/**
-	 * The namespace this resource belongs to.
-	 */
+	/** The namespace this resource belongs to. */
 	public final String namespace;
 	
 	/**

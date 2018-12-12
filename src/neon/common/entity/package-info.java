@@ -16,7 +16,7 @@
  * <p>Map uid 0 in every module is preserved for entities that do not strictly 
  * belong to a certain map. This leaves 65535 possible maps in every module.</p>
  * 
- * <p>Each map my contain up to 4294967296 separate entities.</p>
+ * <p>Each map may contain up to 4294967296 separate entities.</p>
  * 
  * @author mdriesen
  *

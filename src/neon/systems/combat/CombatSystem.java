@@ -25,7 +25,7 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.resources.RItem;
 import neon.server.entity.EntityManager;
 
@@ -70,7 +70,7 @@ public final class CombatSystem {
 			int damage = damageStrategy.getDamage(attacker, defender);
 			stats.addHealth(-damage);
 			
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(stats));
 			bus.post(new CombatEvent.Result(attacker.uid, defender.uid, damage));			
 		}
 	}

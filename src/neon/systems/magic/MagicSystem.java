@@ -27,7 +27,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.resources.RItem;
@@ -62,14 +62,14 @@ public final class MagicSystem {
 	private void onSpellEquip(MagicEvent.Equip event) {
 		Magic magic = entities.getEntity(PLAYER_UID).getComponent(Magic.class);
 		magic.equip(event.spell);
-		bus.post(new ComponentUpdateEvent(magic));
+		bus.post(new ComponentEvent(magic));
 	}
 
 	@Subscribe
 	private void onSpellUnequip(MagicEvent.Unequip event) {
 		Magic magic = entities.getEntity(PLAYER_UID).getComponent(Magic.class);
 		magic.unequip();
-		bus.post(new ComponentUpdateEvent(magic));
+		bus.post(new ComponentEvent(magic));
 	}
 
 	@Subscribe
@@ -85,7 +85,7 @@ public final class MagicSystem {
 		inventory.removeItem(potion.uid);
 		entities.removeEntity(potion.uid);
 		bus.post(new UpdateEvent.Destroy(potion.uid));
-		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentEvent(inventory));
 	}
 
 	/**
@@ -100,7 +100,7 @@ public final class MagicSystem {
 		cast(event.target, spell.effect, spell.magnitude);
 		Stats casterStats = entities.getEntity(event.caster).getComponent(Stats.class);
 		casterStats.addMana(-MagicUtils.getCost(spell));
-		bus.post(new ComponentUpdateEvent(casterStats));
+		bus.post(new ComponentEvent(casterStats));
 	}
 	
 	/**
@@ -120,15 +120,15 @@ public final class MagicSystem {
 		switch (effect) {
 		case HEAL:
 			stats.addHealth(magnitude);
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(stats));
 			break;
 		case FREEZE:
 			stats.addHealth(-magnitude);
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(stats));
 			break;
 		case BURN:
 			stats.addHealth(-magnitude);
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(stats));
 			break;
 		default:
 			logger.warning("unknown spell effect: " + effect);

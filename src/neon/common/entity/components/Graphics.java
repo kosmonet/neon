@@ -32,6 +32,13 @@ public final class Graphics implements Component {
 	private final char glyph;
 	private final Color color;
 	
+	/**
+	 * Initializes new graphics. Color must not be null.
+	 * 
+	 * @param uid
+	 * @param glyph
+	 * @param color
+	 */
 	public Graphics(long uid, char glyph, Color color) {
 		this.uid = uid;
 		this.glyph = glyph;

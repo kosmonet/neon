@@ -27,6 +27,11 @@ package neon.common.entity.components;
 public final class Trap implements Component {
 	private final long uid;
 	
+	/** 
+	 * Initializes a trap.
+	 * 
+	 * @param uid	the uid of the entity this trap belongs to
+	 */
 	public Trap(long uid) {
 		this.uid = uid;
 	}

@@ -42,10 +42,20 @@ public final class CreatureInfo implements Component {
 		return "Creature:" + (uid >>> 48) + ":" + ((uid & 0x0000FFFF00000000l) >>> 32) + ":" + (uid & 0x00000000FFFFFFFFl);
 	}
 	
+	/**
+	 * Returns the species a creature belongs to.
+	 * 
+	 * @return	the id of a creature resource
+	 */
 	public String getResource() {
 		return id;
 	}
 
+	/**
+	 * Returns the name of a creature.
+	 * 
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
@@ -55,10 +65,20 @@ public final class CreatureInfo implements Component {
 		return uid;
 	}
 	
+	/**
+	 * Returns all factions a creature belongs to.
+	 * 
+	 * @return	an unmodifiable {@code Set} of factions
+	 */
 	public Set<String> getFactions() {
 		return ImmutableSet.copyOf(factions);
 	}
 	
+	/**
+	 * Adds a creature to a faction.
+	 * 
+	 * @param faction
+	 */
 	public void addFaction(String faction) {
 		factions.add(Objects.requireNonNull(faction, "faction"));
 	}

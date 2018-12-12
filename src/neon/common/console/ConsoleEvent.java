@@ -34,15 +34,16 @@ public final class ConsoleEvent extends NeonEvent{
 	/**
 	 * Initialize this event with a message. The message must not be null.
 	 * 
-	 * @param message
+	 * @param message	a {@code String} with the message.
 	 */
 	public ConsoleEvent(String message) {
 		this.message = Objects.requireNonNull(message, "message");
 	}
 	
 	/**
+	 * Returns the message to be displayed.
 	 * 
-	 * @return the message to be displayed
+	 * @return	a {@code String} containing the message
 	 */
 	public String getMessage() {
 		return message;

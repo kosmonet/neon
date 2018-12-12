@@ -39,6 +39,12 @@ public final class Stats implements Component {
 	
 	private int str = 10, con = 10, dex = 10, wis = 10, іnt = 10, cha = 10;
 	
+	/**
+	 * Initializes a stats component.
+	 * 
+	 * @param uid	the uid of the creature with these stats
+	 * @param species	the species the creature with these stats belongs to
+	 */
 	public Stats(long uid, RCreature species) {
 		this.uid = uid;
 		this.speed = species.speed;
@@ -155,38 +161,83 @@ public final class Stats implements Component {
 		staminaMod += amount;
 	}
 	
+	/**
+	 * Returns the base health of a creature.
+	 * 
+	 * @return
+	 */
 	public int getBaseHealth() {
 		return 3*con + level*con/3;
 	}
 	
+	/**
+	 * Calculates the total health of a creature. 
+	 * 
+	 * @return
+	 */
 	public int getHealth() {
 		return getBaseHealth() + healthMod;
 	}
 	
+	/**
+	 * Add an amount of health.
+	 * 
+	 * @param amount
+	 */
 	public void addHealth(int amount) {
 		healthMod += amount;
 	}
 	
+	/**
+	 * Returns the base mana of a creature.
+	 * 
+	 * @return
+	 */
 	public int getBaseMana() {
 		return іnt*6;
 	}
 	
+	/**
+	 * Calculates the total mana of a creature.
+	 * 
+	 * @return
+	 */
 	public int getMana() {
 		return getBaseMana() + manaMod;
 	}
 	
+	/**
+	 * Add an amount of mana.
+	 * 
+	 * @param amount
+	 */
 	public void addMana(int amount) {
 		manaMod += amount;
 	}
 	
+	/**
+	 * Returns the level of a creature.
+	 * 
+	 * @return
+	 */
 	public int getLevel() {
 		return level;
 	}
 	
+	/**
+	 * Sets the level of the creature with these stats.
+	 * 
+	 * @param level
+	 */
 	public void setLevel(int level) {
 		this.level = level;
 	}
 	
+	/**
+	 * Returns the base speed.
+	 * 
+	 * @return
+	 */
 	public int getSpeed() {
 		return speed;
 	}

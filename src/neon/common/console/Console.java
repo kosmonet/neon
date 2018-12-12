@@ -112,7 +112,7 @@ public final class Console {
 	/**
 	 * Prints a message on the console.
 	 * 
-	 * @param event a {@code ConsoleEvent} with the message to be printed
+	 * @param event	a {@code ConsoleEvent} with the message
 	 */
 	@Subscribe
 	private void print(ConsoleEvent event) {
@@ -165,7 +165,19 @@ public final class Console {
 		}
 	}
 	
+	/**
+	 * A logging {@code Handler} to display all the logged information on the 
+	 * console.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	private final class ConsoleHandler extends Handler {
+		/**
+		 * Initializes a handler.
+		 * 
+		 * @param level	the logging {@code Level} to use
+		 */
 		private ConsoleHandler(Level level) {
 			setLevel(level);
 			setFormatter(new NeonLogFormatter());

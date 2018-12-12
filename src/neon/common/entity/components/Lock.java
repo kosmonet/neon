@@ -29,6 +29,11 @@ public final class Lock implements Component {
 	
 	private boolean locked = true;
 	
+	/**
+	 * Initializes a new lock.
+	 * 
+	 * @param uid	the uid of the entity this lock belongs to
+	 */
 	public Lock(long uid) {
 		this.uid = uid;
 	}
@@ -48,10 +53,16 @@ public final class Lock implements Component {
 		return locked;
 	}
 	
+	/**
+	 * Locks this lock.
+	 */
 	public void lock() {
 		locked = true;
 	}
 	
+	/**
+	 * Unlocks this lock.
+	 */
 	public void unlock() {
 		locked = false;
 	}

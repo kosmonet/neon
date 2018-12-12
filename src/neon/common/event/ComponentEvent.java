@@ -18,7 +18,6 @@
 
 package neon.common.event;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -26,7 +25,13 @@ import javafx.scene.paint.Color;
 import neon.common.entity.components.Component;
 import neon.common.net.ColorAdapter;
 
-public final class ComponentUpdateEvent extends NeonEvent {
+/**
+ * An event to signal a change in a component.
+ * 
+ * @author mdriesen
+ *
+ */
+public final class ComponentEvent extends NeonEvent {
 	private static final GsonBuilder builder = new GsonBuilder()
 			.registerTypeAdapter(Color.class, new ColorAdapter())
 			.enableComplexMapKeySerialization()
@@ -36,12 +41,18 @@ public final class ComponentUpdateEvent extends NeonEvent {
 	private final String component;
 	private final String type;
 	
-	public ComponentUpdateEvent(Component component) {
+	public ComponentEvent(Component component) {
 		this.component = gson.toJson(component);
 		type = component.getClass().getTypeName();
 		System.out.println(this.component);
 	}
 	
+	/**
+	 * Returns the component that was changed.
+	 * 
+	 * @return	a {@code Component}
+	 * @throws ClassNotFoundException
+	 */
 	public Component getComponent() throws ClassNotFoundException {
 		return Component.class.cast(gson.fromJson(component, Class.forName(type)));
 	}

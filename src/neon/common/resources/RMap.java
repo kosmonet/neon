@@ -36,7 +36,8 @@ public final class RMap extends Resource {
 	public final String module;
 	
 	/**
-	 * Initializes this map without terrain, elevation or entities.
+	 * Initializes this map without terrain, elevation or entities. The name 
+	 * and module id must not be null.
 	 * 
 	 * @param id
 	 * @param name

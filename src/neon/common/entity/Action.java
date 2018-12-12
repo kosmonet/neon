@@ -18,9 +18,26 @@
 
 package neon.common.entity;
 
+/**
+ * The different actions a creature can take. Each action has a number of 
+ * action points. If a creature takes an action, these points are deducted 
+ * from the creature's action points. Creature can only take an action if they
+ * have more than zero action points.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum Action {
-	MOVE_STRAIGHT(10), MOVE_DIAGONAL(14), ATTACK(10), PICKPOCKET(10);
+	/** Move in a straight line (up, down, left, right). */
+	MOVE_STRAIGHT(10), 
+	/** Move in a diagonal line. */
+	MOVE_DIAGONAL(14), 
+	/** Attack another creature. */
+	ATTACK(10), 
+	/** Pickpocket another creature. */
+	PICKPOCKET(10);
 	
+	/** The amount of action points it takes to perform an action. */
 	public final int points;
 	
 	private Action(int points) {

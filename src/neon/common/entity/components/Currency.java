@@ -18,6 +18,12 @@
 
 package neon.common.entity.components;
 
+/**
+ * A component to indicate that an item should be regarded as currency.
+ * 
+ * @author mdriesen
+ *
+ */
 public class Currency implements Component {
 	private final long uid;
 	

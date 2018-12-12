@@ -22,6 +22,12 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * A component that keeps track of all the services a creature is offering.
+ * 
+ * @author mdriesen
+ *
+ */
 public class Provider implements Component {
 	/**
 	 * All the possible services a creature can have.

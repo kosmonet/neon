@@ -102,7 +102,7 @@ public class Equipment implements Component {
 	/**
 	 * Returns all the equipped items.
 	 * 
-	 * @return
+	 * @return	an {@code Iterable} of item uid's
 	 */
 	public Iterable<Long> getEquippedItems() {
 		return ImmutableList.copyOf(equipped.values());

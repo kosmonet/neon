@@ -51,7 +51,7 @@ import neon.common.entity.components.Clothing;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.resources.Slot;
 import neon.systems.combat.Armor;
@@ -199,7 +199,7 @@ public final class InventoryState extends State {
 	}
 	
 	@Subscribe
-	private void onInventoryUpdate(ComponentUpdateEvent event) {
+	private void onInventoryUpdate(ComponentEvent event) {
 		Platform.runLater(this::refresh);
 	}
 	

@@ -18,6 +18,12 @@
 
 package neon.common.entity;
 
+/**
+ * All the different skills a creature can have.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum Skill {
 	// combat
 	BLADE(10, "Blade"), AXE(10, "Axe"), SPEAR(10, "Spear"),	BLUNT(10, "Blunt"), 
@@ -34,7 +40,9 @@ public enum Skill {
 	// other
 	SWIMMING(10, "Swimming");
 	
+	/** The number of uses a skill needs before increasing one point. */
 	public final int steps;
+	
 	private final String name;
 	
 	private Skill(int steps, String name) {

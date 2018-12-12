@@ -50,7 +50,7 @@ import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.graphics.RenderPane;
@@ -180,7 +180,7 @@ public final class GameState extends State {
 	}
 	
 	@Subscribe
-	private void onUpdate(ComponentUpdateEvent event) {
+	private void onUpdate(ComponentEvent event) {
 		scheduleRedraw();
 	}
 	

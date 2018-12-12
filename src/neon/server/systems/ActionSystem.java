@@ -26,7 +26,7 @@ import com.google.common.eventbus.EventBus;
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 
 public final class ActionSystem implements NeonSystem {
 	private final EventBus bus;
@@ -65,7 +65,7 @@ public final class ActionSystem implements NeonSystem {
 		stats.addMana(Math.min(stats.getBaseWis()/10, stats.getBaseMana() - stats.getMana())/fraction);
 		// send updated stats to client if necessary
 		if (health != stats.getHealth() || mana != stats.getMana()) {
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(stats));
 		}
 	}
 }

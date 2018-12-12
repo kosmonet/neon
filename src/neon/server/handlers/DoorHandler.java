@@ -27,7 +27,7 @@ import com.google.common.eventbus.Subscribe;
 import neon.common.entity.Entity;
 import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Shape;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.DoorEvent;
 import neon.common.resources.ResourceException;
 import neon.server.entity.EntityManager;
@@ -56,6 +56,6 @@ public class DoorHandler {
 
 		Shape player = entities.getEntity(PLAYER_UID).getComponent(Shape.class);
 		player.setPosition(info.getDestinationX(), info.getDestinationY(), 0);
-		bus.post(new ComponentUpdateEvent(player));
+		bus.post(new ComponentEvent(player));
 	}
 }

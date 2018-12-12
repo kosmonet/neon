@@ -41,7 +41,7 @@ public final class RTerrain extends Resource {
 	public enum Modifier {
 		/** Terrain type that can be passed by swimming. */
 		LIQUID, 
-		/**Terrain type that can't be passed */
+		/** Terrain type that can't be passed. */
 		WALL;
 	}
 	

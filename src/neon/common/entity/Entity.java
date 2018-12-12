@@ -54,8 +54,9 @@ public class Entity {
 	}
 	
 	/**
+	 * Returns a component.
 	 * 
-	 * @param component
+	 * @param type	a component type
 	 * @return	the component of the given type
 	 */
 	public <T extends Component> T getComponent(Class<T> type) {
@@ -63,8 +64,9 @@ public class Entity {
 	}
 	
 	/**
+	 * Checks whether an entity has a certain component.
 	 * 
-	 * @param component
+	 * @param type	a component type
 	 * @return	whether this entity has a component of the given type
 	 */
 	public boolean hasComponent(Class<? extends Component> type) {
@@ -74,7 +76,7 @@ public class Entity {
 	/**
 	 * Adds a component to this entity. The component must not be null.
 	 * 
-	 * @param component
+	 * @param component	the component to add
 	 */
 	public <T extends Component> void setComponent(T component) {
 		components.put(component.getClass(), component);
@@ -83,7 +85,7 @@ public class Entity {
 	/**
 	 * Removes a component.
 	 * 
-	 * @param type
+	 * @param type	the {@code Class} of the component to remove
 	 */
 	public void removeComponent(Class<? extends Component> type) {
 		components.remove(type);

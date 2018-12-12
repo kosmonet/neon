@@ -37,9 +37,9 @@ public final class Inventory implements Component {
 	private int money = 0;
 	
 	/**
-	 * Creates an inventory for the entity with the given uid.
+	 * Initializes an inventory.
 	 * 
-	 * @param uid
+	 * @param uid	the uid of the entity with this inventory
 	 */
 	public Inventory(long uid) {
 		this.uid = uid;
@@ -84,9 +84,9 @@ public final class Inventory implements Component {
 	}
 	
 	/**
-	 * Returns a collection of all items in an inventory.
+	 * Returns all items in this inventory.
 	 * 
-	 * @return
+	 * @return	an unmodifiable {@code Collection} of item uid's
 	 */
 	public Collection<Long> getItems() {
 		return ImmutableList.copyOf(items);

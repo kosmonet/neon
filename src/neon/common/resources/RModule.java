@@ -137,6 +137,11 @@ public final class RModule extends Resource {
 			this.id = Objects.requireNonNull(id, "id");
 		}
 		
+		/**
+		 * Builds a new module resource.
+		 * 
+		 * @return
+		 */
 		public RModule build() {
 			return new RModule(this);
 		}

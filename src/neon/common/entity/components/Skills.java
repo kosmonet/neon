@@ -36,6 +36,11 @@ public final class Skills implements Component {
 	
 	private int increases = 0;
 	
+	/**
+	 * Initializes this skill component.
+	 * 
+	 * @param uid	the uid of the creature these skills belong to
+	 */
 	public Skills(long uid) {
 		this.uid = uid;
 		for (Skill skill : Skill.values()) {
@@ -55,6 +60,12 @@ public final class Skills implements Component {
 		return uid;
 	}
 	
+	/**
+	 * Sets the value of a skill.
+	 * 
+	 * @param skill
+	 * @param value
+	 */
 	public void setSkill(Skill skill, int value) {
 		skills.put(skill, value);
 	}
@@ -71,6 +82,12 @@ public final class Skills implements Component {
 		return steps.get(skill);
 	}
 	
+	/**
+	 * Returns the amount of skill increases a creature has experienced since
+	 * the last reset.
+	 * 
+	 * @return
+	 */
 	public int getSkillIncreases() {
 		return increases;
 	}

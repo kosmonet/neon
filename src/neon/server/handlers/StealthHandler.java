@@ -33,7 +33,7 @@ import neon.common.entity.components.Graphics;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Lock;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.DoorEvent;
 import neon.common.event.StealthEvent;
 import neon.common.resources.RItem;
@@ -71,8 +71,8 @@ public final class StealthHandler {
 			victimInventory.removeItem(item);
 			Inventory playerInventory = entities.getEntity(PLAYER_UID).getComponent(Inventory.class);
 			playerInventory.addItem(item);
-			bus.post(new ComponentUpdateEvent(victimInventory));
-			bus.post(new ComponentUpdateEvent(playerInventory));
+			bus.post(new ComponentEvent(victimInventory));
+			bus.post(new ComponentEvent(playerInventory));
 			bus.post(new StealthEvent.Stolen());
 		}
 	}
@@ -81,7 +81,7 @@ public final class StealthHandler {
 	private void onLockpick(StealthEvent.Unlock event) {
 		Entity item = entities.getEntity(event.lock);
 		item.getComponent(Lock.class).unlock();
-		bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
+		bus.post(new ComponentEvent(item.getComponent(Lock.class)));
 		bus.post(new StealthEvent.Unlocked());		
 	}
 	
@@ -93,7 +93,7 @@ public final class StealthHandler {
 		RItem.Door resource = resources.getResource("items", door.getComponent(ItemInfo.class).id);
 		Graphics graphics = new Graphics(door.uid, resource.glyph, resource.color);
 		door.setComponent(graphics);
-		bus.post(new ComponentUpdateEvent(graphics));
-		bus.post(new ComponentUpdateEvent(info));
+		bus.post(new ComponentEvent(graphics));
+		bus.post(new ComponentEvent(info));
 	}
 }

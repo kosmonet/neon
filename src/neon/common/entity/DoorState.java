@@ -18,6 +18,12 @@
 
 package neon.common.entity;
 
+/**
+ * The different states a door can be in.
+ * 
+ * @author mdriesen
+ *
+ */
 public enum DoorState {
-		OPENED, CLOSED, LOCKED;
+	OPENED, CLOSED, LOCKED;
 }

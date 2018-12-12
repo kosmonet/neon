@@ -35,6 +35,14 @@ public final class PlayerInfo implements Component {
 	
 	private PlayerMode mode = PlayerMode.NONE;
 	
+	/**
+	 * Initializes a new player information component. The name and gender 
+	 * must not be null.
+	 * 
+	 * @param uid
+	 * @param name
+	 * @param gender
+	 */
 	public PlayerInfo(long uid, String name, String gender) {
 		this.uid = uid;
 		this.name = Objects.requireNonNull(name, "name");
@@ -52,10 +60,18 @@ public final class PlayerInfo implements Component {
 		return uid;
 	}
 	
+	/**
+	 * 
+	 * @return	the player's name
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * 
+	 * @return	the player's gender
+	 */
 	public String getGender() {
 		return gender;
 	}

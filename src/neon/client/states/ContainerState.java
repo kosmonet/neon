@@ -48,7 +48,7 @@ import neon.client.ui.ItemCell;
 import neon.client.ui.UserInterface;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Shape;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.InventoryEvent;
 
 /**
@@ -120,7 +120,7 @@ public final class ContainerState extends State {
 	}
 	
 	@Subscribe
-	private void onInventoryUpdate(ComponentUpdateEvent event) {
+	private void onInventoryUpdate(ComponentEvent event) {
 		Platform.runLater(this::refresh);
 	}
 	

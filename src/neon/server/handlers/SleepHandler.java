@@ -25,7 +25,7 @@ import com.google.common.eventbus.Subscribe;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.server.entity.EntityManager;
 import neon.systems.time.RestEvent;
 
@@ -47,6 +47,6 @@ public final class SleepHandler {
 		stats.addHealth(stats.getBaseHealth() - stats.getHealth());
 		stats.addMana(stats.getBaseMana() - stats.getMana());
 		bus.post(new RestEvent.Wake());
-		bus.post(new ComponentUpdateEvent(stats));
+		bus.post(new ComponentEvent(stats));
 	}
 }

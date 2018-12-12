@@ -195,6 +195,11 @@ public class RItem extends Resource {
 			this.name = Objects.requireNonNull(name, "name");
 		}
 		
+		/**
+		 * Builds a new item resource.
+		 * 
+		 * @return
+		 */
 		public RItem build() {
 			return new RItem(this);
 		}

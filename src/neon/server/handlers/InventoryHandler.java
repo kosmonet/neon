@@ -30,7 +30,7 @@ import neon.common.entity.components.Equipment;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceException;
@@ -79,9 +79,9 @@ public final class InventoryHandler {
 		contents.addItem(event.item);
 		
 		// let the client know
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(equipment));
-		bus.post(new ComponentUpdateEvent(contents));
+		bus.post(new ComponentEvent(inventory));
+		bus.post(new ComponentEvent(equipment));
+		bus.post(new ComponentEvent(contents));
 	}
 	
 	/**
@@ -107,8 +107,8 @@ public final class InventoryHandler {
 		item.getComponent(Shape.class).setPosition(shape.getX(), shape.getY(), shape.getZ());
 		
 		// let the client know
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(equipment));
+		bus.post(new ComponentEvent(inventory));
+		bus.post(new ComponentEvent(equipment));
 		bus.post(new UpdateEvent.Move(item.uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
 	}
 	
@@ -137,7 +137,7 @@ public final class InventoryHandler {
 			inventory.addItem(event.item);
 		}
 		
-		bus.post(new ComponentUpdateEvent(inventory));
+		bus.post(new ComponentEvent(inventory));
 	}
 	
 	/**
@@ -167,8 +167,8 @@ public final class InventoryHandler {
 		}
 		
 		// let the client know
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(contents));
+		bus.post(new ComponentEvent(inventory));
+		bus.post(new ComponentEvent(contents));
 
 	}
 	
@@ -182,7 +182,7 @@ public final class InventoryHandler {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Equipment equipment = player.getComponent(Equipment.class);
 		equipment.unequip(event.uid);
-		bus.post(new ComponentUpdateEvent(equipment));
+		bus.post(new ComponentEvent(equipment));
 	}
 	
 	/**
@@ -209,6 +209,6 @@ public final class InventoryHandler {
 			equipment.equip(event.slot.get(), event.uid);				
 		}
 		
-		bus.post(new ComponentUpdateEvent(equipment));
+		bus.post(new ComponentEvent(equipment));
 	}
 }

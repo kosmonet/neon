@@ -25,7 +25,7 @@ import com.google.common.eventbus.EventBus;
 import neon.common.entity.Skill;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
 
 public final class SkillHandler {
@@ -57,7 +57,7 @@ public final class SkillHandler {
 			skills.setSteps(skill, 0);
 			skills.setSkill(skill, skills.getSkill(skill) + 1);
 			skills.addSkillIncreases(1);
-			bus.post(new ComponentUpdateEvent(skills));
+			bus.post(new ComponentEvent(skills));
 			bus.post(new UpdateEvent.Skills(skills.getEntity(), Skill.SWIMMING, skills.getSkill(Skill.SWIMMING)));
 		}
 		
@@ -65,8 +65,8 @@ public final class SkillHandler {
 		if (skills.getEntity() == PLAYER_UID && skills.getSkillIncreases() >= 10) {
 			skills.resetSkillIncreases();
 			stats.setLevel(stats.getLevel() + 1);
-			bus.post(new ComponentUpdateEvent(skills));
-			bus.post(new ComponentUpdateEvent(stats));
+			bus.post(new ComponentEvent(skills));
+			bus.post(new ComponentEvent(stats));
 			bus.post(new UpdateEvent.Level(skills.getEntity(), stats.getLevel()));
 		}
 	}

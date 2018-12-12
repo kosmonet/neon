@@ -29,6 +29,11 @@ public final class Shape implements Component {
 	
 	private int x, y, z;
 	
+	/**
+	 * Initializes a shape component.
+	 * 
+	 * @param uid	the uid of the entity this component belongs to
+	 */
 	public Shape(long uid) {
 		this.uid = uid;
 	}

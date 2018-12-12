@@ -22,6 +22,12 @@ import java.util.Objects;
 
 import neon.common.resources.Slot;
 
+/**
+ * A component to indicate an item is a piece of clothing.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class Clothing implements Component {
 	private final long uid;
 	private final Slot slot;
@@ -45,6 +51,11 @@ public final class Clothing implements Component {
 		return uid;
 	}
 	
+	/**
+	 * Returns the body slot covered by a piece of clothing.
+	 * 
+	 * @return	a {@code Slot}
+	 */
 	public Slot getSlot() {
 		return slot;
 	}

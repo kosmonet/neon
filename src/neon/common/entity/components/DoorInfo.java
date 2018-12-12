@@ -22,6 +22,12 @@ import java.util.Objects;
 
 import neon.common.entity.DoorState;
 
+/**
+ * A component keeping track of all information of a door.
+ * 
+ * @author mdriesen
+ *
+ */
 public class DoorInfo implements Component {
 	private final long uid;
 	private final String destination;

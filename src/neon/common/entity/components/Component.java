@@ -26,9 +26,9 @@ package neon.common.entity.components;
  */
 public interface Component {
 	/**
-	 * Returns the uid of the entity this component belongs to.
+	 * Returns the entity this component belongs to.
 	 * 
-	 * @return	the uid of the entity the component belongs to
+	 * @return	the uid of the entity
 	 */
 	public long getEntity();
 }

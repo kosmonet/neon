@@ -39,7 +39,7 @@ import javafx.scene.input.KeyEvent;
 import neon.client.ComponentManager;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.systems.magic.Magic;
@@ -122,7 +122,7 @@ public final class MagicState extends State {
 	}
 	
 	@Subscribe
-	private void onSpellUpdate(ComponentUpdateEvent event) {
+	private void onSpellUpdate(ComponentEvent event) {
 		Platform.runLater(this::refresh);
 	}
 	

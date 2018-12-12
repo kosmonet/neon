@@ -18,8 +18,16 @@
 
 package neon.common.event;
 
+/**
+ * Event to signal a collision between two creatures.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class CollisionEvent extends NeonEvent {
+	/** The uid of the creature that was moving. */
 	public final long bumper;
+	/** The uid of the creature that was bumped into. */
 	public final long bumped;
 	
 	public CollisionEvent(long bumper, long bumped) {

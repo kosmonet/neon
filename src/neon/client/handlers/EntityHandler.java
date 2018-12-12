@@ -27,7 +27,7 @@ import neon.client.Configuration;
 import neon.client.Map;
 import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceException;
 
@@ -47,7 +47,7 @@ public class EntityHandler {
 	}
 	
 	@Subscribe 
-	private void onComponentUpdate(ComponentUpdateEvent event) throws ClassNotFoundException {
+	private void onComponentUpdate(ComponentEvent event) throws ClassNotFoundException {
 		Component component = event.getComponent();
 		components.putComponent(component);
 	}

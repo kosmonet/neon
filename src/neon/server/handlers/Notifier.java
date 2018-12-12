@@ -36,7 +36,7 @@ import neon.common.entity.components.Provider;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
-import neon.common.event.ComponentUpdateEvent;
+import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.resources.ResourceException;
 import neon.server.entity.EntityManager;
@@ -59,15 +59,15 @@ final class Notifier {
 	void notifyClient(Entity player) {
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
-		bus.post(new ComponentUpdateEvent(inventory));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Stats.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Skills.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Shape.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(PlayerInfo.class)));
-		bus.post(new ComponentUpdateEvent(player.getComponent(Equipment.class)));
+		bus.post(new ComponentEvent(inventory));
+		bus.post(new ComponentEvent(player.getComponent(Stats.class)));
+		bus.post(new ComponentEvent(player.getComponent(Skills.class)));
+		bus.post(new ComponentEvent(player.getComponent(Magic.class)));
+		bus.post(new ComponentEvent(player.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentEvent(player.getComponent(Graphics.class)));
+		bus.post(new ComponentEvent(player.getComponent(Shape.class)));
+		bus.post(new ComponentEvent(player.getComponent(PlayerInfo.class)));
+		bus.post(new ComponentEvent(player.getComponent(Equipment.class)));
 	}
 		
 	/**
@@ -101,13 +101,13 @@ final class Notifier {
 	private void notifyCreature(Entity creature) {
 		Inventory inventory = creature.getComponent(Inventory.class);
 		inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Behavior.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(CreatureInfo.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Graphics.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Magic.class)));
-		bus.post(new ComponentUpdateEvent(creature.getComponent(Equipment.class)));
+		bus.post(new ComponentEvent(creature.getComponent(Behavior.class)));
+		bus.post(new ComponentEvent(creature.getComponent(CreatureInfo.class)));
+		bus.post(new ComponentEvent(creature.getComponent(Graphics.class)));
+		bus.post(new ComponentEvent(creature.getComponent(Magic.class)));
+		bus.post(new ComponentEvent(creature.getComponent(Equipment.class)));
 		if (creature.hasComponent(Provider.class)) {
-			bus.post(new ComponentUpdateEvent(creature.getComponent(Provider.class)));			
+			bus.post(new ComponentEvent(creature.getComponent(Provider.class)));			
 		}
 	}
 	
@@ -117,38 +117,38 @@ final class Notifier {
 	 * @param item
 	 */
 	private void notifyItem(Entity item) {
-		bus.post(new ComponentUpdateEvent(item.getComponent(ItemInfo.class)));
-		bus.post(new ComponentUpdateEvent(item.getComponent(Graphics.class)));
+		bus.post(new ComponentEvent(item.getComponent(ItemInfo.class)));
+		bus.post(new ComponentEvent(item.getComponent(Graphics.class)));
 		
 		if (item.hasComponent(Clothing.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Clothing.class)));
+			bus.post(new ComponentEvent(item.getComponent(Clothing.class)));
 			if (item.hasComponent(Armor.class)) {
-				bus.post(new ComponentUpdateEvent(item.getComponent(Armor.class)));
+				bus.post(new ComponentEvent(item.getComponent(Armor.class)));
 			}
 		} else if (item.hasComponent(Weapon.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Weapon.class)));
+			bus.post(new ComponentEvent(item.getComponent(Weapon.class)));
 		}
 		
 		if (item.hasComponent(Enchantment.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Enchantment.class)));
+			bus.post(new ComponentEvent(item.getComponent(Enchantment.class)));
 		}
 
 		if (item.hasComponent(Lock.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(Lock.class)));
+			bus.post(new ComponentEvent(item.getComponent(Lock.class)));
 		}
 
 		if (item.hasComponent(DoorInfo.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
+			bus.post(new ComponentEvent(item.getComponent(DoorInfo.class)));
 		}
 
 		if (item.hasComponent(Inventory.class)) {
 			Inventory inventory = item.getComponent(Inventory.class);
 			inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);
-			bus.post(new ComponentUpdateEvent(item.getComponent(Inventory.class)));
+			bus.post(new ComponentEvent(item.getComponent(Inventory.class)));
 		}
 
 		if (item.hasComponent(DoorInfo.class)) {
-			bus.post(new ComponentUpdateEvent(item.getComponent(DoorInfo.class)));
+			bus.post(new ComponentEvent(item.getComponent(DoorInfo.class)));
 		}
 	}
 }
