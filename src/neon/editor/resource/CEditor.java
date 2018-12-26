@@ -21,7 +21,7 @@ package neon.editor.resource;
 import neon.common.resources.RModule;
 import neon.common.resources.Resource;
 
-public class CEditor extends Resource {
+public final class CEditor extends Resource {
 	private RModule active;
 	
 	public CEditor() {

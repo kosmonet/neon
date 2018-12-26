@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ import neon.editor.resource.CEditor;
  * @author mdriesen
  *
  */
-public class UserInterface {
+public final class UserInterface {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final CreatureHandler creatureHandler;
@@ -59,8 +59,10 @@ public class UserInterface {
 	/**
 	 * Initializes the {@code UserInterface}.
 	 * 
-	 * @param editor
+	 * @param files
+	 * @param resources
 	 * @param bus
+	 * @param config
 	 */
 	public UserInterface(NeonFileSystem files, ResourceManager resources, EventBus bus, CEditor config) {
 		// separate handlers for all the different ui elements
@@ -135,9 +137,14 @@ public class UserInterface {
 		stage.setOnCloseRequest(event -> System.exit(0));
 	}
 
+	/**
+	 * Sets the title of the main window.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void loadModule(LoadEvent event) {
-		stage.setTitle("The Neon Roguelike Editor - " + event.getModuleID());
+	private void onModuleLoad(LoadEvent event) {
+		stage.setTitle("The Neon Roguelike Editor - " + event.id);
 	}
 	
 	/**

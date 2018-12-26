@@ -35,7 +35,7 @@ public interface Translator<E> {
 	 * 
 	 * @param input
 	 * @return
-	 * @throws IOException
+	 * @throws IOException	if translating from the input stream fails
 	 */
 	public E translate(InputStream input) throws IOException;
 	
@@ -44,7 +44,7 @@ public interface Translator<E> {
 	 * 
 	 * @param output
 	 * @param out
-	 * @throws IOException
+	 * @throws IOException	if translating to the output stream fails
 	 */
 	public void translate(E out, OutputStream output) throws IOException;
 }

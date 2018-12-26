@@ -92,7 +92,7 @@ public final class MagicSystem {
 	 * Handles spellcasting events.
 	 * 
 	 * @param event
-	 * @throws ResourceException
+	 * @throws ResourceException	if the spell resource is missing
 	 */
 	@Subscribe
 	private void onCast(MagicEvent.Cast event) throws ResourceException {

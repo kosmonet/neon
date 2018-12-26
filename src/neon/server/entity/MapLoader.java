@@ -59,8 +59,8 @@ public final class MapLoader {
 	 * 
 	 * @param id	the id of an {@code RMap}
 	 * @return	a {@code Map}
-	 * @throws IOException
-	 * @throws ResourceException 
+	 * @throws IOException	if the map data is missing
+	 * @throws ResourceException	if the map resource is missing
 	 */
 	public Map loadMap(String id) throws IOException, ResourceException {
 		// load the map resource
@@ -162,7 +162,7 @@ public final class MapLoader {
 	 * @param entity
 	 * @param base
 	 * @return
-	 * @throws ResourceException
+	 * @throws ResourceException	if the creature resource is missing
 	 */
 	private Entity loadCreature(Element entity, long base) throws ResourceException {
 		// create a new creature
@@ -200,7 +200,7 @@ public final class MapLoader {
 	 * @param entity
 	 * @param base
 	 * @return
-	 * @throws ResourceException
+	 * @throws ResourceException	if the item resource is missing
 	 */
 	private Entity loadItem(Element entity, long base) throws ResourceException {
 		// create a new item

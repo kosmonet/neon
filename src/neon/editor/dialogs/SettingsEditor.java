@@ -70,7 +70,7 @@ import neon.editor.help.HelpWindow;
  * @author mdriesen
  *
  */
-public class SettingsEditor {
+public final class SettingsEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private Label instructionLabel;

@@ -51,7 +51,7 @@ public final class ComponentEvent extends NeonEvent {
 	 * Returns the component that was changed.
 	 * 
 	 * @return	a {@code Component}
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException	if the serialized class was not a component
 	 */
 	public Component getComponent() throws ClassNotFoundException {
 		return Component.class.cast(gson.fromJson(component, Class.forName(type)));

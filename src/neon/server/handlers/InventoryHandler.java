@@ -33,7 +33,6 @@ import neon.common.entity.components.Shape;
 import neon.common.event.ComponentEvent;
 import neon.common.event.InventoryEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.ResourceException;
 import neon.server.Configuration;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
@@ -88,10 +87,9 @@ public final class InventoryHandler {
 	 * Makes the player drop an item on the map.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
 	@Subscribe
-	private void onItemDrop(InventoryEvent.Drop event) throws ResourceException {
+	private void onItemDrop(InventoryEvent.Drop event) {
 		Entity player = entities.getEntity(PLAYER_UID);
 		// make sure the item is no longer equipped
 		Equipment equipment = player.getComponent(Equipment.class);
@@ -116,10 +114,9 @@ public final class InventoryHandler {
 	 * Makes the player pick up an item from the map.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
 	@Subscribe
-	private void onItemPick(InventoryEvent.Pick event) throws ResourceException {
+	private void onItemPick(InventoryEvent.Pick event) {
 		Map map = config.getCurrentMap();
 		map.removeEntity(event.item);
 		bus.post(new UpdateEvent.Remove(event.item, map.getUID()));
@@ -144,10 +141,9 @@ public final class InventoryHandler {
 	 * Makes the player pick up an item from the map.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
 	@Subscribe
-	private void onItemTake(InventoryEvent.Take event) throws ResourceException {
+	private void onItemTake(InventoryEvent.Take event) {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Entity container = entities.getEntity(event.container);
 		Entity item = entities.getEntity(event.item);
@@ -189,10 +185,9 @@ public final class InventoryHandler {
 	 * Equips an item on the player.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
 	@Subscribe
-	private void onItemEquip(InventoryEvent.Equip event) throws ResourceException {
+	private void onItemEquip(InventoryEvent.Equip event) {
 		Entity player = entities.getEntity(PLAYER_UID);
 		Entity item = entities.getEntity(event.uid);
 		Inventory inventory = player.getComponent(Inventory.class);

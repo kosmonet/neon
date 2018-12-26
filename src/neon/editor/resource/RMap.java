@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,18 +30,12 @@ import neon.common.resources.Resource;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
-public class RMap extends Resource implements RenderableMap<REntity> {
-	/**
-	 * The display name.
-	 */
+public final class RMap extends Resource implements RenderableMap<REntity> {
+	/** The display name. */
 	public final String name;
-	/**
-	 * The uid of this map.
-	 */
+	/** The uid of this map. */
 	public final short uid;
-	/**
-	 * The module this map belongs to.
-	 */
+	/** The module this map belongs to. */
 	public final String module;
 	
 	private final RegionSpatialIndex<String> terrain;

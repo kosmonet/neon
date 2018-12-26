@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ import neon.common.resources.ResourceManager;
  * @author mdriesen
  *
  */
-public class MapEditor {
+public final class MapEditor {
 	private static final ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
 	private static final ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
 	private static final Logger logger = Logger.getGlobal();
@@ -103,7 +103,7 @@ public class MapEditor {
 	 * @param card
 	 * @param resources
 	 * @param bus
-	 * @throws ResourceException
+	 * @throws ResourceException	if the map resource can't be loaded
 	 */
 	public MapEditor(Card card, ResourceManager resources, EventBus bus) throws ResourceException {
 		this.bus = bus;
@@ -249,7 +249,7 @@ public class MapEditor {
 	 * @param event
 	 */
 	@Subscribe
-	private void redraw(SaveEvent.Resources event) {
+	private void onResourceSave(SaveEvent.Resources event) {
 		redraw();
 	}
 	
@@ -265,8 +265,6 @@ public class MapEditor {
 	
 	/**
 	 * Checks for unsaved changes when the tab is closed.
-	 * 
-	 * @param event
 	 */
 	void close() {
 		if (!saved) {
@@ -348,8 +346,8 @@ public class MapEditor {
 	 * @param event
 	 */
 	@Subscribe
-	public void selectTerrain(SelectionEvent.Terrain event) {
-		terrain = event.getID();
+	public void onTerrainSelect(SelectionEvent.Terrain event) {
+		terrain = event.id;
 	}
 	
 	/**
@@ -415,7 +413,7 @@ public class MapEditor {
 	 * @author mdriesen
 	 *
 	 */
-	private class DeleteHandler implements EventHandler<ActionEvent> {
+	private final class DeleteHandler implements EventHandler<ActionEvent> {
 		private final REntity entity;
 		private final RMap map;
 		

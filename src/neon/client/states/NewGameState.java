@@ -203,7 +203,6 @@ public final class NewGameState extends State {
 	 * Configures the scene of this main menu module.
 	 * 
 	 * @param event
-	 * @throws ResourceException 
 	 */
 	private void configure() {
 		try {

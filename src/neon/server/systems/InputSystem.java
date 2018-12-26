@@ -29,7 +29,6 @@ import neon.common.entity.components.Stats;
 import neon.common.event.InputEvent;
 import neon.common.event.TurnEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.ResourceException;
 import neon.server.Configuration;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
@@ -51,10 +50,9 @@ public final class InputSystem implements NeonSystem {
 	 * Moves the player on the current map.
 	 * 
 	 * @param event
-	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void move(InputEvent.Move event) throws ResourceException {
+	private void move(InputEvent.Move event) {
 		Entity player = entities.getEntity(0);
 		Stats stats = player.getComponent(Stats.class);
 		

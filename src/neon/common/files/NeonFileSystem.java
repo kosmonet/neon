@@ -81,7 +81,7 @@ public final class NeonFileSystem {
 	 * dependent on it).
 	 * 
 	 * @param module
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException	if the module is missing
 	 */
 	public void addModule(String module) throws FileNotFoundException {
 		Path path = Paths.get("data", module);
@@ -98,7 +98,7 @@ public final class NeonFileSystem {
 	 * the folder will also be emptied.
 	 * 
 	 * @param path
-	 * @throws IOException 
+	 * @throws IOException	if the temporary folder can't be created
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
 		// delete contents of existing temp folder
@@ -116,7 +116,7 @@ public final class NeonFileSystem {
 	 * Sets the path to the folder of the current saved game.
 	 * 
 	 * @param path
-	 * @throws NotDirectoryException
+	 * @throws NotDirectoryException	if the given path doesn't point to a folder
 	 */
 	public void setSaveFolder(Path path) throws NotDirectoryException {
 		if (path.toFile().isDirectory()) {
@@ -128,10 +128,14 @@ public final class NeonFileSystem {
 	}
 	
 	/**
+	 * Returns a file. The temp folder is searched first. If the file is not
+	 * present, the save folder is searched. If the file is not present, all 
+	 * modules are searched in reverse order. If the file is still not found,
+	 * an exception is thrown.
 	 * 
 	 * @param path	the path of the requested file
 	 * @return the requested file
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException	if the file was not found
 	 */
 	public File loadFile(String... path) throws FileNotFoundException {
 		// check the temp folder first
@@ -176,7 +180,7 @@ public final class NeonFileSystem {
 	 * @param translator
 	 * @param path
 	 * @return the translated file
-	 * @throws IOException 
+	 * @throws IOException	if a file at the given path can't be loaded
 	 */
 	public <T> T loadFile(Translator<T> translator, String... path) throws IOException {
 		// we go through loadFile(String... path) to resolve the real path
@@ -192,7 +196,7 @@ public final class NeonFileSystem {
 	 * @param output
 	 * @param translator
 	 * @param path
-	 * @throws IOException
+	 * @throws IOException	if the file can't be saved
 	 */
 	public <T> void saveFile(T output, Translator<T> translator, String... path) throws IOException {
 		// check if the filesystem is writable
@@ -225,7 +229,6 @@ public final class NeonFileSystem {
 	 * 
 	 * @param folder
 	 * @return	a {@code Set} of filenames
-	 * @throws IOException
 	 */
 	public Set<String> listFiles(String... folder) {
 		HashSet<Path> files = new HashSet<>();
@@ -279,7 +282,7 @@ public final class NeonFileSystem {
 	 * temp folder.
 	 * 
 	 * @param path
-	 * @throws IOException
+	 * @throws IOException	if the file can't be deleted
 	 */
 	public void deleteFile(String... path) throws IOException {
 		// check if the temp folder exists

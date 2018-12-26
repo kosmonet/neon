@@ -21,7 +21,7 @@ package neon.editor.resource;
 import javafx.scene.paint.Color;
 import neon.common.entity.components.Graphics;
 
-public class ICreature extends REntity {
+public final class ICreature extends REntity {
 	public final Graphics graphics;
 	
 	public ICreature(int uid, String id, char glyph, Color color) {

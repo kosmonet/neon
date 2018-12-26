@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ public class Card {
 	 * @param namespace
 	 * @param id
 	 * @param resources
+	 * @param original
 	 */
 	public Card(String namespace, String id, ResourceManager resources, boolean original) {
 		this.namespace = namespace;
@@ -113,7 +114,7 @@ public class Card {
 	/**
 	 * 
 	 * @return the resource referred to by this index card
-	 * @throws ResourceException
+	 * @throws ResourceException	if the resource can't be loaded
 	 */
 	public <T extends Resource> T getResource() throws ResourceException {
 		return resources.getResource(namespace, id);
@@ -126,7 +127,7 @@ public class Card {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Type extends Card {
+	public static final class Type extends Card {
 		public Type(String type) {
 			super(null, type, null, false);
 		}

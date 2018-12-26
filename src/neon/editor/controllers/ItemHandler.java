@@ -48,7 +48,7 @@ import neon.editor.SaveEvent;
 import neon.editor.dialogs.ItemEditor;
 import neon.editor.ui.CardCellFactory;
 
-public class ItemHandler {
+public final class ItemHandler {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TreeView<Card> itemTree;
@@ -100,7 +100,7 @@ public class ItemHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void load(LoadEvent event) {
+	private void onLoad(LoadEvent event) {
 		// module is loading on this tick, load creatures on the next tick
 		Platform.runLater(() -> loadResources(event.getCards()));
 	}
@@ -111,7 +111,7 @@ public class ItemHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void save(SaveEvent event) {
+	private void onSave(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
 		Platform.runLater(itemTree::refresh);
 	}

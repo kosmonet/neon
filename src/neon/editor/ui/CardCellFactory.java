@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@ import neon.editor.Card;
  * @author mdriesen
  *
  */
-public class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>> {
+public final class CardCellFactory implements Callback<TreeView<Card>, TreeCell<Card>> {
 	@Override
 	public TreeCell<Card> call(TreeView<Card> tree) {
 	    return new CardTreeCell();
 	}
 	
-	private class CardTreeCell extends TreeCell<Card> {
+	private final class CardTreeCell extends TreeCell<Card> {
     	@Override
     	protected void updateItem(Card card, boolean empty) {
     		super.updateItem(card, empty);

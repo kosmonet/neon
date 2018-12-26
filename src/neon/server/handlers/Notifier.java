@@ -38,7 +38,6 @@ import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
 import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.ResourceException;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
 import neon.systems.ai.Behavior;
@@ -74,7 +73,6 @@ final class Notifier {
 	 * Notifies the client that a new map was loaded.
 	 * 
 	 * @param map
-	 * @throws ResourceException
 	 */
 	void notifyClient(Map map) {
 		// then send the map

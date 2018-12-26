@@ -97,8 +97,8 @@ public final class GameLoader {
 	 * Loads all data for a new game and sends this back to the client.
 	 * 
 	 * @param event
-	 * @throws ResourceException
-	 * @throws IOException 
+	 * @throws ResourceException	if game resources are missing
+	 * @throws IOException	if the game configuration can't be stored
 	 */
 	@Subscribe
 	private void startNewGame(NewGameEvent.Check event) throws ResourceException, IOException {
@@ -208,8 +208,8 @@ public final class GameLoader {
 	 * client.
 	 * 
 	 * @param event
-	 * @throws ResourceException
-	 * @throws IOException
+	 * @throws ResourceException	if game resources are missing
+	 * @throws IOException	if the save folder is missing
 	 */
 	@Subscribe
 	private void startOldGame(LoadEvent.Start event) throws ResourceException, IOException {
@@ -250,7 +250,7 @@ public final class GameLoader {
 	 * 
 	 * @param save
 	 * @return
-	 * @throws IOException
+	 * @throws IOException	if the configuration file can't be loaded
 	 */
 	private HashMap<String, Short> getConfiguration(String save) throws IOException {
 		// try to load the neon.ini file
@@ -283,11 +283,9 @@ public final class GameLoader {
 	 * Saves the currently running game.
 	 * 
 	 * @param event
-	 * @throws IOException
-	 * @throws ResourceException 
 	 */
 	@Subscribe
-	private void saveGame(InputEvent.Save event) throws IOException, ResourceException {
+	private void saveGame(InputEvent.Save event) {
 		logger.info("save game");
 		// TODO: config en maps opslaan
 		// store all cached entities

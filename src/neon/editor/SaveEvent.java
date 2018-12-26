@@ -27,15 +27,15 @@ import neon.common.resources.Resource;
  * @author mdriesen
  *
  */
-public class SaveEvent extends NeonEvent {
+public abstract class SaveEvent extends NeonEvent {
 	/**
 	 * An event to signal that a resource should be saved.
 	 * 
 	 * @author mdriesen
 	 *
 	 */
-	public static class Resources extends SaveEvent {
-		private final Resource resource;
+	public static final class Resources extends SaveEvent {
+		public final Resource resource;
 		
 		/**
 		 * Initializes this event with a resource and a namespace the resource
@@ -47,15 +47,6 @@ public class SaveEvent extends NeonEvent {
 		public Resources(Resource resource) {
 			this.resource = resource;
 		}
-		
-		/**
-		 * 
-		 * @return the resource that has to be saved
-		 */
-		@SuppressWarnings("unchecked")
-		public <T extends Resource> T getResource() {
-			return (T) resource;
-		}		
 	}
 	
 	/**
@@ -64,5 +55,5 @@ public class SaveEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static class Module extends SaveEvent {}
+	public static final class Module extends SaveEvent {}
 }

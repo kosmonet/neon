@@ -46,7 +46,7 @@ import neon.editor.SaveEvent;
  * @author mdriesen
  *
  */
-public class TerrainEditor {
+public final class TerrainEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TextField nameField, textField;
@@ -56,10 +56,17 @@ public class TerrainEditor {
 	private final Stage stage = new Stage();
 	private final EventBus bus;
 	private final Card card;
+	private final RTerrain terrain;
 	
+	/**
+	 * 
+	 * @param card
+	 * @param bus
+	 * @throws ResourceException	if the terrain resource can't be loaded
+	 */
 	public TerrainEditor(Card card, EventBus bus) throws ResourceException {
 		this.card = card;
-		RTerrain terrain = card.getResource();
+		terrain = card.getResource();
 		this.bus = bus;
 		
 		stage.setTitle("Terrain properties");
@@ -112,19 +119,17 @@ public class TerrainEditor {
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
-	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
+	@FXML private void applyPressed(ActionEvent event) {
 		String name = nameField.getText().isEmpty() ? card.toString() : nameField.getText();
 		char glyph = textField.getText().charAt(0);
 		Color color = colorBox.getValue();
-		RTerrain rt = card.getResource();
 		
 		// check if the resource was actually changed
-		if (!name.equals(rt.name) || glyph != rt.glyph || !color.equals(rt.color)) {
+		if (!name.equals(terrain.name) || glyph != terrain.glyph || !color.equals(terrain.color)) {
 			card.setRedefined(card.isOriginal() ? true : false);
-			RTerrain terrain = new RTerrain(card.toString(), name, glyph, color, Collections.emptySet());
-			bus.post(new SaveEvent.Resources(terrain));
+			RTerrain resource = new RTerrain(card.toString(), name, glyph, color, Collections.emptySet());
+			bus.post(new SaveEvent.Resources(resource));
 			card.setChanged(true);
 		}
 	}

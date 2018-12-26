@@ -51,7 +51,7 @@ public final class ConversationSystem {
 	 * creature is started.
 	 * 
 	 * @param event
-	 * @throws ResourceException
+	 * @throws ResourceException	if the conversation resource is missing
 	 */
 	@Subscribe
 	private void onConversationStart(ConversationEvent.Start event) throws ResourceException {

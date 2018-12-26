@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ import neon.editor.ui.CardCellFactory;
  * @author mdriesen
  *
  */
-public class CreatureHandler {
+public final class CreatureHandler {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> creatureTree;
@@ -116,7 +116,7 @@ public class CreatureHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void save(SaveEvent event) {
+	private void onSave(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
 		Platform.runLater(creatureTree::refresh);
 	}
@@ -127,7 +127,7 @@ public class CreatureHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void save(SaveEvent.Module event) {
+	private void onModuleSave(SaveEvent.Module event) {
 		creatureTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));		
 	}
 	
@@ -137,7 +137,7 @@ public class CreatureHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void load(LoadEvent event) {
+	private void onLoad(LoadEvent event) {
 		// module is loading on this tick, load creatures on the next tick
 		Platform.runLater(() -> loadResources(event.getCards()));
 	}

@@ -41,7 +41,7 @@ import neon.editor.dialogs.SettingsEditor;
 import neon.editor.help.HelpWindow;
 import neon.editor.ui.UserInterface;
 
-public class MenuHandler {
+public final class MenuHandler {
 	@FXML private MenuItem saveItem, settingsItem, openItem, newItem;
 	
 	private final EventBus bus;

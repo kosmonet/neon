@@ -31,7 +31,7 @@ import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 import neon.editor.resource.ICreature;
 
-public class EditorRenderer implements EntityRenderer<Entity> {
+public final class EditorRenderer implements EntityRenderer<Entity> {
 	private final Map<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
 
@@ -58,7 +58,7 @@ public class EditorRenderer implements EntityRenderer<Entity> {
 		return comparator;
 	}
 	
-	private class EntityComparator implements Comparator<Entity> {
+	private final class EntityComparator implements Comparator<Entity> {
 		@Override
 		public int compare(Entity one, Entity two) {
 			if (one.equals(two)) {

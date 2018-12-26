@@ -52,7 +52,7 @@ public final class ResourceManager {
 	 * 
 	 * @param namespace
 	 * @param resource
-	 * @throws IOException 
+	 * @throws IOException	if the resource can't be stored
 	 */
 	public void addResource(Resource resource) throws IOException {
 		String namespace = resource.namespace;
@@ -73,7 +73,7 @@ public final class ResourceManager {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws ResourceException
+	 * @throws ResourceException	if the resource can't be found
 	 */
 	public <T extends Resource> T getResource(String id) throws ResourceException {
 		return getResource("global", id);	
@@ -85,7 +85,7 @@ public final class ResourceManager {
 	 * @param namespace
 	 * @param id
 	 * @return the requested resource
-	 * @throws ResourceException 
+	 * @throws ResourceException	if the resource can't be found
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ import neon.editor.ui.CardCellFactory;
  * @author mdriesen
  *
  */
-public class MapHandler {
+public final class MapHandler {
 	private static final ButtonType yes = new ButtonType("Yes", ButtonData.OK_DONE);
 	private static final ButtonType no = new ButtonType("No", ButtonData.CANCEL_CLOSE);
 	private static final Logger logger = Logger.getGlobal();
@@ -154,7 +154,7 @@ public class MapHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void save(SaveEvent event) {
+	private void onSave(SaveEvent event) {
 		// stuff may still be going on, refresh the tree on the next tick
 		Platform.runLater(mapTree::refresh);
 	}
@@ -165,20 +165,20 @@ public class MapHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void save(SaveEvent.Module event) {
+	private void onModuleSave(SaveEvent.Module event) {
 		mapTree.getRoot().getChildren().forEach(item -> item.getValue().setChanged(false));		
 	}
 	
 	@Subscribe
-	private void load(LoadEvent event) {
+	private void onLoad(LoadEvent event) {
 		// module is loading on this tick, load maps on the next tick
 		Platform.runLater(() -> loadResources(event.getCards()));
 	}
 	
 	@Subscribe 
-	private void selectResource(SelectionEvent event) {
-		id = event.getID();
-		namespace = event.getNamespace();
+	private void onResourceSelect(SelectionEvent event) {
+		id = event.id;
+		namespace = event.namespace;
 	}
 	
 	/**
@@ -297,7 +297,7 @@ public class MapHandler {
 		editor.setMode(MapEditor.Mode.valueOf(modeGroup.getSelectedToggle().getUserData().toString()));
 		editor.setCursor(cursor);
 		if (namespace == "terrain") {
-			editor.selectTerrain(new SelectionEvent.Terrain(id));
+			editor.onTerrainSelect(new SelectionEvent.Terrain(id));
 		}
 		bus.register(editor);
 		Tab tab = new Tab(card.toString(), editor.getPane());

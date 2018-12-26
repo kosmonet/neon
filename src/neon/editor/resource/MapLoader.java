@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -46,13 +46,12 @@ import neon.common.resources.loaders.ResourceLoader;
  * @author mdriesen
  *
  */
-public class MapLoader implements ResourceLoader {
+public final class MapLoader implements ResourceLoader {
 	private static final Logger logger = Logger.getGlobal();
 	private static final String namespace = "maps";
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
-	
 	private final ResourceManager resources;
 	
 	public MapLoader(NeonFileSystem files, ResourceManager resources) {

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import javafx.stage.Stage;
  * @author mdriesen
  *
  */
-public class HelpWindow {
+public final class HelpWindow {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private WebView view;
@@ -43,10 +43,7 @@ public class HelpWindow {
 	private final Stage stage = new Stage();
 	
 	/**
-	 * Initialize a new {@code HelpWindow} with the given html content. This 
-	 * should be a local html file (e.g. ../help/about.html).
-	 * 
-	 * @param content the name of the html file
+	 * Initializes an empty {@code HelpWindow}.
 	 */
 	public HelpWindow() {
 		stage.setTitle("Help");
@@ -64,7 +61,8 @@ public class HelpWindow {
 	}
 	
 	/**
-	 * Shows the help window.
+	 * Shows the help windowwith the given html content. This 
+	 * should be a local html file (e.g. ../help/about.html).
 	 */
 	public void show(String content) {
         URL url = getClass().getResource(content);

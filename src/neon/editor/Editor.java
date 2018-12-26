@@ -59,7 +59,7 @@ import neon.editor.ui.UserInterface;
  * @author mdriesen
  *
  */
-public class Editor extends Application {
+public final class Editor extends Application {
 	private static final Logger logger = Logger.getGlobal();
 	
 	private final NeonFileSystem files = new NeonFileSystem();
@@ -98,12 +98,11 @@ public class Editor extends Application {
 	 * Creates a new module.
 	 * 
 	 * @param event
-	 * @throws IOException
-	 * @throws MissingLoaderException
+	 * @throws IOException	if the module folder can't be created
 	 */
 	@Subscribe
-	private void createModule(LoadEvent.Create event) throws IOException {
-		Path path = event.getPath();
+	private void onModuleCreate(LoadEvent.Create event) throws IOException {
+		Path path = event.path;
 		String id = path.getFileName().toString();
 
 		// create the new module
@@ -119,13 +118,13 @@ public class Editor extends Application {
 	 * Loads an existing module for editing.
 	 * 
 	 * @param event
-	 * @throws FileNotFoundException
-	 * @throws ResourceException 
+	 * @throws FileNotFoundException	if the module folder can't be found
+	 * @throws ResourceException 	if the module resources can't be loaded
 	 */
 	@Subscribe
-	private void loadModule(LoadEvent.Load event) throws FileNotFoundException, ResourceException {
+	private void onModuleLoad(LoadEvent.Load event) throws FileNotFoundException, ResourceException {
 		// set the active module id
-		File file = event.getFile();
+		File file = event.file;
 		String module = file.getName();
 		
 		// add the parent modules to the file system
@@ -209,7 +208,7 @@ public class Editor extends Application {
 	 * @param event
 	 */
 	@Subscribe
-	private void saveModule(SaveEvent.Module event) {
+	private void onModuleSave(SaveEvent.Module event) {
 		String id = config.getActiveModule().id;
 		FileUtils.clearFolder(Paths.get("data", id));
 		FileUtils.moveFolder(Paths.get("temp"), Paths.get("data", id));
@@ -222,12 +221,12 @@ public class Editor extends Application {
 	 * @param event
 	 */
 	@Subscribe
-	private void saveResource(SaveEvent.Resources event) {	
+	private void onResourceSave(SaveEvent.Resources event) {	
 		try {
-			resources.addResource(event.getResource());
-			logger.fine("saved resource " + event.getResource().id);
+			resources.addResource(event.resource);
+			logger.fine("saved resource " + event.resource.id);
 		} catch (IOException e) {
-			logger.severe("failed to save resource " + event.getResource().id);
+			logger.severe("failed to save resource " + event.resource.id);
 		}
 	}
 	

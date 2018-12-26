@@ -89,7 +89,6 @@ public final class FileUtils {
 	 * 
 	 * @param from
 	 * @param to
-	 * @throws IOException 
 	 */
 	public static void moveFolder(Path from, Path to) {
 		logger.info("moving files from " + from + " to " + to);

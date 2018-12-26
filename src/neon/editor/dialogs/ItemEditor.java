@@ -56,7 +56,7 @@ import neon.editor.help.HelpWindow;
  * @author mdriesen
  *
  */
-public class ItemEditor {
+public final class ItemEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TextField nameField, textField;
@@ -66,18 +66,18 @@ public class ItemEditor {
 	private final Stage stage = new Stage();
 	private final EventBus bus;
 	private final Card card;
+	private final RItem item;
 	
 	/**
 	 * Initializes this {@code ItemEditor}.
 	 * 
-	 * @param item	the item to edit
-	 * @param mainStage	the parent stage for the dialog window
+	 * @param card
 	 * @param bus		the {@code EventBus} used for messaging
-	 * @throws ResourceException 
+	 * @throws ResourceException	if the item resource can't be loaded
 	 */
 	public ItemEditor(Card card, EventBus bus) throws ResourceException {
 		this.card = card;
-		RItem item = card.getResource();
+		item = card.getResource();
 		this.bus = bus;
 		
 		stage.setTitle("Item properties");
@@ -130,20 +130,18 @@ public class ItemEditor {
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
-	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
-		RItem rc = card.getResource();
+	@FXML private void applyPressed(ActionEvent event) {
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
 		char glyph = textField.getText().charAt(0);
 		// check if anything was actually changed
-		if (!name.equals(rc.name) || glyph != rc.glyph || !color.equals(rc.color)) {
+		if (!name.equals(item.name) || glyph != item.glyph || !color.equals(item.color)) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
 			RItem.Builder builder = new RItem.Builder(card.toString(), name).setGraphics(glyph, color);
 			bus.post(new SaveEvent.Resources(builder.build()));
-			card.setChanged(true);				
+			card.setChanged(true);
 		}
 	}
 	

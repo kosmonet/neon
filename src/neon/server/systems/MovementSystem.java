@@ -75,9 +75,8 @@ public final class MovementSystem implements NeonSystem {
 	 * @param player
 	 * @param direction
 	 * @param map
-	 * @throws ResourceException 
 	 */
-	void move(Entity player, Direction direction, Map map) throws ResourceException {
+	void move(Entity player, Direction direction, Map map) {
 		Shape shape = player.getComponent(Shape.class);
 		int x = shape.getX();
 		int y = shape.getY();

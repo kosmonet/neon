@@ -107,8 +107,8 @@ final class ServerLoader {
 	 * @param files
 	 * @param entities
 	 * @return
-	 * @throws IOException
-	 * @throws JDOMException
+	 * @throws IOException	if the ini file is missing
+	 * @throws JDOMException	if the ini file is corrupt
 	 */
 	private CServer initConfiguration(NeonFileSystem files, EntityManager entities) throws IOException, JDOMException {
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {

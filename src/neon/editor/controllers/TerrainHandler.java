@@ -49,7 +49,7 @@ import neon.editor.SelectionEvent;
 import neon.editor.dialogs.TerrainEditor;
 import neon.editor.ui.CardCellFactory;
 
-public class TerrainHandler {
+public final class TerrainHandler {
 	private static final Logger logger = Logger.getGlobal();
 	
 	@FXML private TreeView<Card> terrainTree;
@@ -96,7 +96,7 @@ public class TerrainHandler {
 	 * @param event
 	 */
 	@Subscribe
-	private void load(LoadEvent event) {
+	private void onModuleLoad(LoadEvent event) {
 		// module is loading on this tick, load terrains on the next tick
 		Platform.runLater(() -> loadResources(event.getCards()));
 	}

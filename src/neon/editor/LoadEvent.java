@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2018 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@ import com.google.common.collect.Multimap;
 
 import neon.common.event.NeonEvent;
 
-public class LoadEvent extends NeonEvent {	
-	private final String id;
+public abstract class LoadEvent extends NeonEvent {	
+	/** The id of the module that needs to be loaded. */
+	public final String id;
+	
 	private final Multimap<String, Card> cards;
 	
 	/**
@@ -43,33 +45,21 @@ public class LoadEvent extends NeonEvent {
 		return cards;
 	}
 	
-	public String getModuleID() {
-		return id;
-	}
-	
-	public static class Load extends LoadEvent {
-		private final File file;
+	public static final class Load extends LoadEvent {
+		public final File file;
 
 		public Load(File file, Multimap<String, Card> cards) {
 			super(file.getName(), cards);
 			this.file = file;
 		}		
-		
-		public File getFile() {
-			return file;
-		}
 	}
 	
-	public static class Create extends LoadEvent {
-		private final Path path;
+	public static final class Create extends LoadEvent {
+		public final Path path;
 		
 		public Create(Path path, Multimap<String, Card> cards) {
 			super(path.toFile().getName(), cards);
 			this.path = path;
-		}
-		
-		public Path getPath() {
-			return path;
 		}
 	}
 }

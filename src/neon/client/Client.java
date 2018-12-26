@@ -219,7 +219,7 @@ public final class Client implements Runnable {
 	 * Configures the file system with the required modules.
 	 * 
 	 * @param event
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException	if a module is missing
 	 */
 	@Subscribe
 	private void configure(ConfigurationEvent event) throws FileNotFoundException {

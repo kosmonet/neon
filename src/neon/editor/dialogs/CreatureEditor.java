@@ -58,7 +58,7 @@ import neon.editor.help.HelpWindow;
  * @author mdriesen
  *
  */
-public class CreatureEditor {
+public final class CreatureEditor {
 	private static final Logger logger = Logger.getGlobal();
 
 	@FXML private TextField nameField, textField;
@@ -69,18 +69,18 @@ public class CreatureEditor {
 	private final Stage stage = new Stage();
 	private final EventBus bus;
 	private final Card card;
+	private final RCreature creature;
 	
 	/**
 	 * Initializes this {@code CreatureEditor}.
 	 * 
-	 * @param creature	the creature to edit
-	 * @param mainStage	the parent stage for the dialog window
+	 * @param card
 	 * @param bus		the {@code EventBus} used for messaging
-	 * @throws ResourceException 
+	 * @throws ResourceException	if the creature resource can't be loaded
 	 */
 	public CreatureEditor(Card card, EventBus bus) throws ResourceException {
 		this.card = card;
-		RCreature creature = card.getResource();
+		creature = card.getResource();
 		this.bus = bus;
 		
 		stage.setTitle("Creature properties");
@@ -135,10 +135,8 @@ public class CreatureEditor {
 	 * Saves changes to a new resource.
 	 * 
 	 * @param event
-	 * @throws ResourceException
 	 */
-	@FXML private void applyPressed(ActionEvent event) throws ResourceException {
-		RCreature rc = card.getResource();
+	@FXML private void applyPressed(ActionEvent event) {
 		String name = nameField.getText();
 		Color color = colorBox.getValue();
 		char glyph = textField.getText().charAt(0);
@@ -152,13 +150,13 @@ public class CreatureEditor {
 		int wis = 10;
 		int cha = 10;
 		// check if anything was actually changed
-		if (!name.equals(rc.name) || glyph != rc.glyph || !color.equals(rc.color) ||
-				speed != rc.speed) {
+		if (!name.equals(creature.name) || glyph != creature.glyph || !color.equals(creature.color) ||
+				speed != creature.speed) {
 			card.setRedefined(card.isOriginal() ? true : false);
 			name = name.isEmpty() ? card.toString() : name;
-			RCreature creature = new RCreature.Builder(card.toString()).setName(name).setGraphics(glyph, color).
+			RCreature resource = new RCreature.Builder(card.toString()).setName(name).setGraphics(glyph, color).
 					setSpeed(speed).setStats(str, con, dex, іnt, wis, cha).build();
-			bus.post(new SaveEvent.Resources(creature));
+			bus.post(new SaveEvent.Resources(resource));
 			card.setChanged(true);				
 		}
 	}
