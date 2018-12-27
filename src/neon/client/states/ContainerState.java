@@ -126,13 +126,14 @@ public final class ContainerState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		playerList.getItems().clear();
+		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
 		}
+
 		playerList.getSelectionModel().select(index);
 	}
 	
@@ -165,12 +166,12 @@ public final class ContainerState extends State {
 		logger.finest("entering container state");
 		bus.register(this);
 		
+		containerList.getItems().clear();
 		map = config.getCurrentMap();
 		container = DUMMY;
 		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
 				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());
-		containerList.getItems().clear();
 		
 		if (entities.size() == 1) {
 			long uid = entities.get(0);

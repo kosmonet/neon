@@ -89,7 +89,6 @@ public final class NewGameState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.severe("failed to load new game menu: " + e.getMessage());
 		}
 		
@@ -166,15 +165,6 @@ public final class NewGameState extends State {
 	@FXML private void startGame() {
 		// collect player character data
 		String name = nameField.getText();
-		String species = speciesList.getSelectionModel().getSelectedItem().id;
-		String gender = genderGroup.getSelectedToggle().getUserData().toString();
-		
-		int strength = strengthSpinner.getValue();
-		int constitution = constitutionSpinner.getValue();
-		int dexterity = dexteritySpinner.getValue();
-		int intelligence = intelligenceSpinner.getValue();
-		int wisdom = wisdomSpinner.getValue();
-		int charisma = charismaSpinner.getValue();
 		
 		if (name.isEmpty()) {
 			ui.showMessage("Enter a valid character name.", 1000);
@@ -184,6 +174,14 @@ public final class NewGameState extends State {
 			ui.showMessage("You have spent too many ability points.", 1000);			
 		} else {
 			// let the server know that the game module is waiting for game data
+			String species = speciesList.getSelectionModel().getSelectedItem().id;
+			String gender = genderGroup.getSelectedToggle().getUserData().toString();
+			int strength = strengthSpinner.getValue();
+			int constitution = constitutionSpinner.getValue();
+			int dexterity = dexteritySpinner.getValue();
+			int intelligence = intelligenceSpinner.getValue();
+			int wisdom = wisdomSpinner.getValue();
+			int charisma = charismaSpinner.getValue();
 			bus.post(new NewGameEvent.Check(name, species, gender, strength, constitution, dexterity, intelligence, wisdom, charisma));
 		}
 	}
@@ -327,7 +325,6 @@ public final class NewGameState extends State {
 			intelligenceSpinner.getValueFactory().setValue(newValue.intelligence + intMod);
 			wisdomSpinner.getValueFactory().setValue(newValue.wisdom + wisMod);
 			charismaSpinner.getValueFactory().setValue(newValue.charisma + chaMod);
-			
 			descriptionLabel.setText(newValue.description);
 		}
 	}

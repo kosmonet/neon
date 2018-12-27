@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 
 import com.google.common.io.Files;
@@ -49,11 +50,11 @@ public final class MapLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public RMap load(String id) throws IOException {
+	public RMap load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
-		int width = Integer.parseInt(root.getChild("size").getAttributeValue("width"));
-		int height = Integer.parseInt(root.getChild("size").getAttributeValue("height"));
+		int width = root.getChild("size").getAttribute("width").getIntValue();
+		int height = root.getChild("size").getAttribute("height").getIntValue();
 		String module = root.getAttributeValue("module");
 		short uid = Short.parseShort(root.getAttributeValue("uid"));
 		

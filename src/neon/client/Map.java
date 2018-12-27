@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.logging.Logger;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 
 import com.google.common.collect.ImmutableSet;
@@ -39,6 +41,7 @@ import neon.util.spatial.RegionSpatialIndex;
 
 public final class Map implements RenderableMap<Long> {
 	private static final XMLTranslator translator = new XMLTranslator();
+	private static final Logger logger = Logger.getGlobal();
 
 	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;
@@ -139,42 +142,54 @@ public final class Map implements RenderableMap<Long> {
 	
 	private void initTerrain(Element terrain) {
 		for (Element region : terrain.getChildren("region")) {
-			int width = Integer.parseInt(region.getAttributeValue("w"));
-			int height = Integer.parseInt(region.getAttributeValue("h"));
-			int x = Integer.parseInt(region.getAttributeValue("x"));
-			int y = Integer.parseInt(region.getAttributeValue("y"));
-			String id = region.getAttributeValue("id");
-			this.terrain.insert(id, x, y, width, height);
+			try {
+				int width = region.getAttribute("w").getIntValue();
+				int height = region.getAttribute("h").getIntValue();
+				int x = region.getAttribute("x").getIntValue();
+				int y = region.getAttribute("y").getIntValue();
+				String id = region.getAttributeValue("id");
+				this.terrain.insert(id, x, y, width, height);
+			} catch (DataConversionException e) {
+				logger.severe("failed to load terrain: " + e.getMessage());
+			}
 		}
 	}
-	
+
 	private void initElevation(Element elevation) {
 		for (Element region : elevation.getChildren("region")) {
-			int width = Integer.parseInt(region.getAttributeValue("w"));
-			int height = Integer.parseInt(region.getAttributeValue("h"));
-			int x = Integer.parseInt(region.getAttributeValue("x"));
-			int y = Integer.parseInt(region.getAttributeValue("y"));
-			int z = Integer.parseInt(region.getAttributeValue("z"));
-			this.elevation.insert(z, x, y, width, height);
+			try {
+				int width = region.getAttribute("w").getIntValue();
+				int height = region.getAttribute("h").getIntValue();
+				int x = region.getAttribute("x").getIntValue();
+				int y = region.getAttribute("y").getIntValue();
+				int z = region.getAttribute("z").getIntValue();
+				this.elevation.insert(z, x, y, width, height);
+			} catch (DataConversionException e) {
+				logger.severe("failed to load elevation: " + e.getMessage());
+			}
 		}
 	}
-	
+
 	@Override
 	public RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
-	
+
 	@Override
 	public RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}
-	
+
 	private void initMarkers(Element labels) {
 		for (Element label : labels.getChildren()) {
-			int x = Integer.parseInt(label.getAttributeValue("x"));
-			int y = Integer.parseInt(label.getAttributeValue("y"));
-			String text = label.getText();
-			markers.add(new Marker(x, y, text));
+			try {
+				int x = label.getAttribute("x").getIntValue();
+				int y = label.getAttribute("y").getIntValue();
+				String text = label.getText();
+				markers.add(new Marker(x, y, text));
+			} catch (DataConversionException e) {
+				logger.severe("failed to load marker '" + label.getText() + "': " + e.getMessage());
+			}
 		}
 	}
 	

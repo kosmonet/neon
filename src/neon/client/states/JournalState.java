@@ -83,15 +83,14 @@ public final class JournalState extends State {
 	@Override
 	public void enter(TransitionEvent event) {
 		logger.finest("entering journal state");
-		
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		PlayerInfo playerInfo = components.getComponent(PLAYER_UID, PlayerInfo.class);
-		CreatureInfo creatureInfo = components.getComponent(PLAYER_UID, CreatureInfo.class);
-		Skills skills = components.getComponent(PLAYER_UID, Skills.class);
 	
 		description.updateCreature(components.getComponents(PLAYER_UID));
+		PlayerInfo playerInfo = components.getComponent(PLAYER_UID, PlayerInfo.class);
+		CreatureInfo creatureInfo = components.getComponent(PLAYER_UID, CreatureInfo.class);
     	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
+    	Stats stats = components.getComponent(PLAYER_UID, Stats.class);
     	speedLabel.setText("Speed: " + stats.getSpeed());
+    	Skills skills = components.getComponent(PLAYER_UID, Skills.class);
     	levelLabel.setText("Level " + stats.getLevel() + " (" + skills.getSkillIncreases() + "/10)");
     	
     	strengthLabel.setText("Strength: " + stats.getBaseStr());

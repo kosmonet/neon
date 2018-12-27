@@ -21,6 +21,8 @@ package neon.common.resources.loaders;
 import java.io.IOException;
 import java.util.Set;
 
+import org.jdom2.DataConversionException;
+
 import neon.common.resources.Resource;
 
 /**
@@ -36,8 +38,9 @@ public interface ResourceLoader {
 	 * @param id	the id of a resource
 	 * @return
 	 * @throws IOException	if the resource can't be loaded
+	 * @throws DataConversionException	if the resource contains the wrong type of data
 	 */
-	public Resource load(String id) throws IOException;
+	public Resource load(String id) throws IOException, DataConversionException;
 	
 	/**
 	 * Saves a resource.

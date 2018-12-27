@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 
 import neon.common.entity.Entity;
@@ -42,8 +43,8 @@ import neon.util.spatial.RegionSpatialIndex;
 
 public final class MapLoader {
 	private static final Logger logger = Logger.getGlobal();
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final EntityManager entities;
 	private final NeonFileSystem files;
 	private final ResourceManager resources;
@@ -85,15 +86,19 @@ public final class MapLoader {
 	 */
 	private void initTerrain(Element terrain, RegionSpatialIndex<String> index) {
 		for (Element region : terrain.getChildren("region")) {
-			int width = Integer.parseInt(region.getAttributeValue("w"));
-			int height = Integer.parseInt(region.getAttributeValue("h"));
-			int x = Integer.parseInt(region.getAttributeValue("x"));
-			int y = Integer.parseInt(region.getAttributeValue("y"));
-			String id = region.getAttributeValue("id");
-			index.insert(id, x, y, width, height);
+			try {
+				int width = region.getAttribute("w").getIntValue();
+				int height = region.getAttribute("h").getIntValue();
+				int x = region.getAttribute("x").getIntValue();
+				int y = region.getAttribute("y").getIntValue();
+				String id = region.getAttributeValue("id");
+				index.insert(id, x, y, width, height);
+			} catch (DataConversionException e) {
+				logger.severe("failed to load terrain: " + e.getMessage());
+			}
 		}
 	}
-	
+
 	/**
 	 * Initializes the height map of a map.
 	 * 
@@ -102,12 +107,16 @@ public final class MapLoader {
 	 */
 	private void initElevation(Element elevation, RegionSpatialIndex<Integer> index) {
 		for (Element region : elevation.getChildren("region")) {
-			int width = Integer.parseInt(region.getAttributeValue("w"));
-			int height = Integer.parseInt(region.getAttributeValue("h"));
-			int x = Integer.parseInt(region.getAttributeValue("x"));
-			int y = Integer.parseInt(region.getAttributeValue("y"));
-			int z = Integer.parseInt(region.getAttributeValue("z"));
-			index.insert(z, x, y, width, height);
+			try {
+				int width = region.getAttribute("w").getIntValue();
+				int height = region.getAttribute("h").getIntValue();
+				int x = region.getAttribute("x").getIntValue();
+				int y = region.getAttribute("y").getIntValue();
+				int z = region.getAttribute("z").getIntValue();
+				index.insert(z, x, y, width, height);
+			} catch (DataConversionException e) {
+				logger.severe("failed to load elevation: " + e.getMessage());
+			}
 		}		
 	}
 	
@@ -127,6 +136,8 @@ public final class MapLoader {
 				registerEntity(entity, creature.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
 				logger.severe("unknown creature on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+			} catch (DataConversionException e) {
+				logger.severe("error loading creature on map " + map.getID() + ": " + e.getMessage());
 			}
 		}
 		
@@ -137,6 +148,8 @@ public final class MapLoader {
 				registerEntity(entity, item.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
 				logger.severe("unknown item on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+			} catch (DataConversionException e) {
+				logger.severe("error loading item on map " + map.getID() + ": " + e.getMessage());				
 			}
 		}
 	}
@@ -147,10 +160,11 @@ public final class MapLoader {
 	 * @param entity
 	 * @param shape
 	 * @param map
+	 * @throws DataConversionException	if the entity data is invalid
 	 */
-	private void registerEntity(Element entity, Shape shape, Map map) {
-		int x = Integer.parseInt(entity.getAttributeValue("x"));
-		int y = Integer.parseInt(entity.getAttributeValue("y"));
+	private void registerEntity(Element entity, Shape shape, Map map) throws DataConversionException {
+		int x = entity.getAttribute("x").getIntValue();
+		int y = entity.getAttribute("y").getIntValue();
 		map.addEntity(shape.getEntity(), x, y);		
 		shape.setX(x);
 		shape.setY(y);
@@ -163,10 +177,11 @@ public final class MapLoader {
 	 * @param base
 	 * @return
 	 * @throws ResourceException	if the creature resource is missing
+	 * @throws DataConversionException	if the creature data is invalid
 	 */
-	private Entity loadCreature(Element entity, long base) throws ResourceException {
+	private Entity loadCreature(Element entity, long base) throws ResourceException, DataConversionException {
 		// create a new creature
-		long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
+		long uid = base | entity.getAttribute("uid").getIntValue();
 		RCreature rc = resources.getResource("creatures", entity.getAttributeValue("id"));
 		Entity creature = entities.createEntity(uid, rc);
 		
@@ -201,10 +216,11 @@ public final class MapLoader {
 	 * @param base
 	 * @return
 	 * @throws ResourceException	if the item resource is missing
+	 * @throws DataConversionException	if the item data is invalid
 	 */
-	private Entity loadItem(Element entity, long base) throws ResourceException {
+	private Entity loadItem(Element entity, long base) throws ResourceException, DataConversionException {
 		// create a new item
-		long uid = base | Integer.parseInt(entity.getAttributeValue("uid"));
+		long uid = base | entity.getAttribute("uid").getIntValue();
 		RItem ri = resources.getResource("items", entity.getAttributeValue("id"));
 		Entity item = entities.createEntity(uid, ri);
 		
@@ -219,8 +235,8 @@ public final class MapLoader {
 		// check if item is a linked door
 		if (entity.getChild("link") != null) {
 			Element link = entity.getChild("link");
-			int x = Integer.parseInt(link.getAttributeValue("x"));
-			int y = Integer.parseInt(link.getAttributeValue("y"));
+			int x = link.getAttribute("x").getIntValue();
+			int y = link.getAttribute("y").getIntValue();
 			String id = link.getAttributeValue("map");
 			DoorInfo info = new DoorInfo(item.uid, id, link.getText(), x, y);
 			item.setComponent(info);

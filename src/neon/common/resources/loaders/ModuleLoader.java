@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -48,16 +49,16 @@ public final class ModuleLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public RModule load(String id) throws IOException {
+	public RModule load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(translator, id + ".xml").getRootElement();
 		String title = root.getChildText("title");
 		String subtitle = root.getChildText("subtitle");
 		String map = root.getChild("start").getAttributeValue("map");
 		String intro = root.getChildren("intro").isEmpty() ? "" : root.getChildText("intro");
 		Element start = root.getChild("start");
-		int x = Integer.parseInt(start.getAttributeValue("x"));
-		int y = Integer.parseInt(start.getAttributeValue("y"));		
-		int money = Integer.parseInt(start.getAttributeValue("money"));
+		int x = start.getAttribute("x").getIntValue();
+		int y = start.getAttribute("y").getIntValue();		
+		int money = start.getAttribute("money").getIntValue();
 		
 		RModule.Builder builder = new RModule.Builder(id).setTitle(title).setSubtitle(subtitle).setIntro(intro);
 		builder.setStartMap(map).setStartMoney(money).setStartPosition(x, y);

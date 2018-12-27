@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jdom2.DataConversionException;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -64,7 +66,7 @@ public final class ResourceManager {
 		if (loaders.containsKey(namespace)) {
 			loaders.get(namespace).save(resource);
 		} else {
-			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found.");
+			throw new IllegalStateException("Loader for namespace <" + resource.namespace + "> was not found");
 		}		
 	}
 	
@@ -105,10 +107,12 @@ public final class ResourceManager {
 				resources.put(namespace, id, new SoftReference<Resource>(resource));
 				return resource;
 			} catch (IOException e) {
-				throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found.", e);
+				throw new ResourceException("Resource <" + namespace + ":" + id + "> was not found", e);
+			} catch (DataConversionException e) {
+				throw new ResourceException("Error loading resource <" + namespace + ":" + id + ">", e);
 			}
 		} else {
-			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");			
+			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found");			
 		}
 	}
 
@@ -132,7 +136,7 @@ public final class ResourceManager {
 		if (loaders.containsKey(namespace)) {
 			return loaders.get(namespace).listResources();
 		} else {
-			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found.");			
+			throw new IllegalStateException("Loader for namespace <" + namespace + "> was not found");			
 		}
 	}
 	

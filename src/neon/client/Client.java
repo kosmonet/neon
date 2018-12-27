@@ -139,55 +139,57 @@ public final class Client implements Runnable {
 	 * @param version
 	 */
 	private void initStates(String version) {
+		// create all states and transitions
 		MainMenuState mainMenu = new MainMenuState(ui, version, bus);
-		NewGameState newGame = new NewGameState(ui, bus, resources);
-		LoadState loadGame = new LoadState(ui, bus);
-		CutSceneState cut = new CutSceneState(ui, bus, resources);
-		GameState game = new GameState(ui, bus, components, resources, config);
-		bus.register(game);
-		InventoryState inventory = new InventoryState(ui, bus, components, config);
-		MapState map = new MapState(ui, bus, resources, config);
-		ConversationState conversation = new ConversationState(ui, bus, components);
-		ContainerState container = new ContainerState(ui, bus, components, config);
-		JournalState journal = new JournalState(ui, bus, components);
+		
 		OptionState options = new OptionState(ui, bus);
-		MagicState magic = new MagicState(ui, bus, components, resources);
-		TradeState trade = new TradeState(ui, bus);
-		
-		// register all state transitions on the bus to listen for transition events
-		bus.register(new Transition(mainMenu, newGame, "new game"));
-		bus.register(new Transition(newGame, mainMenu, "cancel"));
-		bus.register(new Transition(newGame, cut, "start game"));
-		
-		bus.register(new Transition(cut, game, "cancel"));
-		
-		bus.register(new Transition(mainMenu, loadGame, "load game"));
-		bus.register(new Transition(loadGame, mainMenu, "cancel"));
-		bus.register(new Transition(loadGame, game, "start game"));
-		
 		bus.register(new Transition(mainMenu, options, "options"));
 		bus.register(new Transition(options, mainMenu, "cancel"));
+
+		NewGameState newGame = new NewGameState(ui, bus, resources);
+		bus.register(new Transition(mainMenu, newGame, "new game"));
+		bus.register(new Transition(newGame, mainMenu, "cancel"));
 		
+		LoadState loadGame = new LoadState(ui, bus);
+		bus.register(new Transition(mainMenu, loadGame, "load game"));
+		bus.register(new Transition(loadGame, mainMenu, "cancel"));
+		
+		CutSceneState cut = new CutSceneState(ui, bus, resources);
+		bus.register(new Transition(newGame, cut, "start game"));
+
+		GameState game = new GameState(ui, bus, components, resources, config);
+		bus.register(new Transition(cut, game, "cancel"));		
+		bus.register(new Transition(loadGame, game, "start game"));
+		bus.register(game);
+
+		InventoryState inventory = new InventoryState(ui, bus, components, config);
 		bus.register(new Transition(game, inventory, "inventory"));
 		bus.register(new Transition(inventory, game, "cancel"));
 
+		MapState map = new MapState(ui, bus, resources, config);
 		bus.register(new Transition(game, map, "map"));
 		bus.register(new Transition(map, game, "cancel"));
 		
-		bus.register(new Transition(game, conversation, "talk"));
-		bus.register(new Transition(conversation, game, "cancel"));
-		bus.register(new Transition(conversation, trade, "trade"));
-		bus.register(new Transition(trade, game, "cancel"));		
-
+		ContainerState container = new ContainerState(ui, bus, components, config);
 		bus.register(new Transition(game, container, "pick"));
 		bus.register(new Transition(container, game, "cancel"));
 		
+		JournalState journal = new JournalState(ui, bus, components);
 		bus.register(new Transition(game, journal, "journal"));
 		bus.register(new Transition(journal, game, "cancel"));
 		
+		ConversationState conversation = new ConversationState(ui, bus, components);
+		bus.register(new Transition(game, conversation, "talk"));
+		bus.register(new Transition(conversation, game, "cancel"));
+
+		MagicState magic = new MagicState(ui, bus, components, resources);
 		bus.register(new Transition(game, magic, "magic"));
 		bus.register(new Transition(magic, game, "cancel"));		
 		
+		TradeState trade = new TradeState(ui, bus);
+		bus.register(new Transition(conversation, trade, "trade"));
+		bus.register(new Transition(trade, game, "cancel"));		
+
 		// enter the first state
 		mainMenu.setActive(true);
 		mainMenu.enter(new TransitionEvent("start"));

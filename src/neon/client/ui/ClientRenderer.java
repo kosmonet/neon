@@ -48,11 +48,14 @@ public final class ClientRenderer implements EntityRenderer<Long> {
 	@Override
 	public void drawEntity(Long uid, int xmin, int ymin, int scale) {
 		try {
+			// clear the shape of the entity
 			Shape shape = components.getComponent(uid, Shape.class);
-			Graphics graphics = components.getComponent(uid, Graphics.class);
 			GraphicsContext gc = layers.get(shape.getZ()).getGraphicsContext2D();
-			Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());
 			gc.clearRect(scale*(shape.getX() - xmin) + 1, scale*(shape.getY() - ymin) + 1, scale - 1, scale - 1);
+			
+			// draw the entity
+			Graphics graphics = components.getComponent(uid, Graphics.class);
+			Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());
 			gc.drawImage(image, scale*(shape.getX() - xmin), scale*(shape.getY() - ymin));
 		} catch (NullPointerException e) {
 			logger.severe("could not render entity " + uid);

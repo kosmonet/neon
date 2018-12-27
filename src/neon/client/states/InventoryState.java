@@ -150,8 +150,8 @@ public final class InventoryState extends State {
 		HashMap<ButtonType, Slot> mapping = new HashMap<>();
 
 		ButtonType left = new ButtonType("left hand");
-		ButtonType right = new ButtonType("right hand");
 		mapping.put(left, Slot.HAND_LEFT);
+		ButtonType right = new ButtonType("right hand");
 		mapping.put(right, Slot.HAND_RIGHT);
 
 		Optional<ButtonType> result = ui.showQuestion("Equip in which hand?", left, right);
@@ -176,15 +176,17 @@ public final class InventoryState extends State {
 	
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
-		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
-		int weight = ClientUtils.getWeight(inventory, components);
-		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
-		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces");
 		playerList.getItems().clear();
 
+		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces");
+		
+		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		int weight = ClientUtils.getWeight(inventory, components);
+		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
+
 		int rating = 0;
+		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
 			if (equipment.hasEquipped(uid) && components.hasComponent(uid, Armor.class)) {

@@ -20,7 +20,7 @@ package neon.systems.ai;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import neon.common.entity.Entity;
 import neon.common.entity.components.Shape;
@@ -31,7 +31,6 @@ import neon.server.entity.Map;
 import neon.server.systems.NeonSystem;
 
 public final class AISystem implements NeonSystem {
-	private final Random random = new Random();
 	private final Configuration config;
 	
 	public AISystem(Configuration config) {
@@ -43,8 +42,8 @@ public final class AISystem implements NeonSystem {
 		Shape shape = creature.getComponent(Shape.class);
 
 		// move the creature
-		int x = shape.getX() + random.nextInt(3) - 1;
-		int y = shape.getY() + random.nextInt(3) - 1;
+		int x = shape.getX() + ThreadLocalRandom.current().nextInt(3) - 1;
+		int y = shape.getY() + ThreadLocalRandom.current().nextInt(3) - 1;
 		creature.setComponent(new Task.Move(creature.uid, x, y, map));
 	}
 

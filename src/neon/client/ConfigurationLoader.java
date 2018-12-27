@@ -66,7 +66,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 
 	@Override
 	public Set<String> listResources() {
-		return files.listFiles(namespace).parallelStream()
+		return files.listFiles(namespace).stream()
 				.map(Files::getNameWithoutExtension)
 				.collect(Collectors.toSet());
 	}

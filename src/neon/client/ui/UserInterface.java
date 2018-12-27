@@ -153,8 +153,6 @@ public final class UserInterface {
 	 * @return
 	 */
 	public Optional<ButtonType> showQuestion(String message, ButtonType... buttons) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		
 		// change the button order in the alert to center align the buttons
         DialogPane dialogPane = new DialogPane() {
             @Override
@@ -165,6 +163,7 @@ public final class UserInterface {
             }
         };
         
+		Alert alert = new Alert(AlertType.CONFIRMATION);		
         alert.setDialogPane(dialogPane);
 		alert.initOwner(stage);
 		alert.setHeaderText(null);

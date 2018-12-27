@@ -18,7 +18,7 @@
 
 package neon.util;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Polyhedral dice roller.
@@ -26,8 +26,6 @@ import java.util.Random;
  * @author mdriesen
  */
 public class Dice {
-	private static final Random random = new Random();
-	
 	// suppress default constructor for noninstantiability
 	private Dice() {
 		throw new AssertionError();
@@ -45,7 +43,7 @@ public class Dice {
 		int result = 0;
 		
 		for (int i = 0; i < x; i++) {
-			result += random.nextInt(y) + 1;
+			result += ThreadLocalRandom.current().nextInt(y) + 1;
 		}
 		
 		return result + z;

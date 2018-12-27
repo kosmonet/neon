@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -43,8 +44,8 @@ import neon.util.GraphicsUtils;
  */
 public final class CreatureLoader implements ResourceLoader {
 	private static final String namespace = "creatures";
+	private static final XMLTranslator translator = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
 	public CreatureLoader(NeonFileSystem files) {
@@ -52,24 +53,30 @@ public final class CreatureLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public RCreature load(String id) throws IOException {
+	public RCreature load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
-		String name = root.getAttributeValue("name");
+		RCreature.Builder builder = new RCreature.Builder(id);
+		builder.setName(root.getAttributeValue("name"));
+
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
 		Color color = Color.web(root.getChild("graphics").getAttributeValue("color"));
-		int speed = Integer.parseInt(root.getAttributeValue("speed"));
+		builder.setGraphics(glyph, color);
+
 //		String description = root.getChildText("description").replaceAll("\t", "");
 		String description = root.getChildTextNormalize("description");
+		builder.setDescription(description);
 		
 		Element stats = root.getChild("stats");
-		int str = Integer.parseInt(stats.getAttributeValue("str"));
-		int con = Integer.parseInt(stats.getAttributeValue("con"));
-		int dex = Integer.parseInt(stats.getAttributeValue("dex"));
-		int іnt = Integer.parseInt(stats.getAttributeValue("int"));
-		int wis = Integer.parseInt(stats.getAttributeValue("wis"));
-		int cha = Integer.parseInt(stats.getAttributeValue("cha"));
-		return new RCreature.Builder(id).setName(name).setGraphics(glyph, color).setSpeed(speed).
-				setStats(str, con, dex, іnt, wis, cha).setDescription(description).build();
+		int str = stats.getAttribute("str").getIntValue();
+		int con = stats.getAttribute("con").getIntValue();
+		int dex = stats.getAttribute("dex").getIntValue();
+		int іnt = stats.getAttribute("int").getIntValue();
+		int wis = stats.getAttribute("wis").getIntValue();
+		int cha = stats.getAttribute("cha").getIntValue();
+		builder.setStats(str, con, dex, іnt, wis, cha);
+		builder.setSpeed(root.getAttribute("speed").getIntValue());
+
+		return builder.build();
 	}
 	
 	@Override

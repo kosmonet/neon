@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -44,13 +45,13 @@ public final class SpellLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public RSpell load(String id) throws IOException {
+	public RSpell load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		Effect effect = Effect.valueOf(root.getAttributeValue("effect").toUpperCase());
 		Target target = Target.valueOf(root.getAttributeValue("target").toUpperCase());
-		int duration = Integer.parseInt(root.getAttributeValue("duration"));
-		int magnitude = Integer.parseInt(root.getAttributeValue("magnitude"));
+		int duration = root.getAttribute("duration").getIntValue();
+		int magnitude = root.getAttribute("magnitude").getIntValue();
 		
 		RSpell spell = new RSpell(id, name, effect, target, duration, magnitude);
 		return spell;

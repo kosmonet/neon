@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -54,7 +55,7 @@ public final class ItemLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public RItem load(String id) throws IOException {
+	public RItem load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		char glyph = root.getChild("graphics").getAttributeValue("char").charAt(0);
@@ -63,17 +64,17 @@ public final class ItemLoader implements ResourceLoader {
 		RItem.Builder builder = new RItem.Builder(id, name).setGraphics(glyph, color);
 		
 		if (root.getAttribute("price") != null) {
-			builder.setPrice(Integer.parseInt(root.getAttributeValue("price")));
+			builder.setPrice(root.getAttribute("price").getIntValue());
 		}
 		
 		if (root.getAttribute("weight") != null) {
-			builder.setWeight(Integer.parseInt(root.getAttributeValue("weight")));
+			builder.setWeight(root.getAttribute("weight").getIntValue());
 		}
 		
 		Element magic = root.getChild("magic");
 		if (magic != null) {
 			Effect effect = Effect.valueOf(magic.getAttributeValue("effect").toUpperCase());
-			int magnitude = Integer.parseInt(magic.getAttributeValue("magnitude"));
+			int magnitude = magic.getAttribute("magnitude").getIntValue();
 			builder.setMagic(effect, magnitude);
 		}
 		
@@ -113,11 +114,11 @@ public final class ItemLoader implements ResourceLoader {
 		return new RItem.Clothing(builder);		
 	}
 	
-	private RItem.Armor createArmor(Element root, RItem.Builder builder) {
+	private RItem.Armor createArmor(Element root, RItem.Builder builder) throws DataConversionException {
 		Element clothing = root.getChild("clothing");
 		Slot slot = Slot.valueOf(clothing.getAttributeValue("slot").toUpperCase());
 		Element armor = root.getChild("armor");
-		int rating = Integer.parseInt(armor.getAttributeValue("rating"));
+		int rating = armor.getAttribute("rating").getIntValue();
 		ArmorType type = ArmorType.valueOf(armor.getAttributeValue("type").toUpperCase());
 		return new RItem.Armor(builder.setSlot(slot).setRating(rating).setArmorType(type));		
 	}

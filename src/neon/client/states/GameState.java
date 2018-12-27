@@ -81,7 +81,6 @@ public final class GameState extends State {
 	private final ResourceManager resources;
 	private final ComponentManager components;
 	private final Pointer pointer = new Pointer(POINTER_UID);
-	private final Accelerator accelerator;
 	private final Configuration config;
 	
 	@FXML private StackPane stack;
@@ -110,7 +109,6 @@ public final class GameState extends State {
 		this.config = Objects.requireNonNull(config, "configuration");
 		
 		renderPane = new RenderPane<Long>(resources, new ClientRenderer(components));
-		accelerator = new Accelerator(ui, bus, components, config);
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/neon/client/scenes/Game.fxml"));
 		loader.setController(this);
@@ -129,6 +127,7 @@ public final class GameState extends State {
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DOWN), () -> move(Direction.DOWN));
 
 		// TODO: hotkeys voorzien voor spells of items
+		Accelerator accelerator = new Accelerator(ui, bus, components, config);
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.I), () -> bus.post(new TransitionEvent("inventory")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.J), () -> bus.post(new TransitionEvent("journal")));
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("map")));

@@ -18,9 +18,9 @@
 
 package neon.server.handlers;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import com.google.common.eventbus.EventBus;
@@ -42,7 +42,6 @@ import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
 public final class StealthHandler {
-	private static final Random random = new Random();
 	private static final long PLAYER_UID = 0;
 	
 	private final EntityManager entities;
@@ -61,13 +60,13 @@ public final class StealthHandler {
 		Inventory victimInventory = victim.getComponent(Inventory.class);
 		Equipment victimEquipment = victim.getComponent(Equipment.class);
 		// filter the items so no equipped item can be stolen
-		Collection<Long> items = victimInventory.getItems().stream()
+		List<Long> items = victimInventory.getItems().stream()
 				.filter(uid -> !victimEquipment.hasEquipped(uid)).collect(Collectors.toList());
 
 		if (items.isEmpty()) {
 			bus.post(new StealthEvent.Empty());
 		} else {
-			long item = items.stream().skip(random.nextInt(items.size())).findFirst().get();
+			long item = items.get(ThreadLocalRandom.current().nextInt(items.size()));
 			victimInventory.removeItem(item);
 			Inventory playerInventory = entities.getEntity(PLAYER_UID).getComponent(Inventory.class);
 			playerInventory.addItem(item);
