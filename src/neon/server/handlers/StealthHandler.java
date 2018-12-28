@@ -41,6 +41,12 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 
+/**
+ * A handler for all stealth-related events.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class StealthHandler {
 	private static final long PLAYER_UID = 0;
 	
@@ -48,12 +54,23 @@ public final class StealthHandler {
 	private final ResourceManager resources;
 	private final EventBus bus;
 	
+	/**
+	 * 
+	 * @param resources
+	 * @param entities
+	 * @param bus
+	 */
 	public StealthHandler(ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.resources = Objects.requireNonNull(resources, "resource manager");
 		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
+	/**
+	 * Handles pickpocketing events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onPickPocket(StealthEvent.Pick event) {
 		Entity victim = entities.getEntity(event.victim);
@@ -76,6 +93,11 @@ public final class StealthHandler {
 		}
 	}
 	
+	/**
+	 * Handles lockpicking events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onLockpick(StealthEvent.Unlock event) {
 		Entity item = entities.getEntity(event.lock);
@@ -84,6 +106,12 @@ public final class StealthHandler {
 		bus.post(new StealthEvent.Unlocked());		
 	}
 	
+	/**
+	 * Handles door opening events.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 */
 	@Subscribe
 	private void onDoorOpen(DoorEvent.Open event) throws ResourceException {
 		Entity door = entities.getEntity(event.door);

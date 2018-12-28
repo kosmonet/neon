@@ -22,6 +22,12 @@ import neon.common.entity.Entity;
 import neon.common.entity.components.Currency;
 import neon.common.resources.RItem;
 
+/**
+ * An entity builder for currency.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class CoinBuilder implements EntityBuilder<RItem.Coin> {
 	private final ItemBuilder builder = new ItemBuilder();
 	

@@ -46,15 +46,33 @@ import neon.systems.combat.Weapon;
 import neon.systems.magic.Enchantment;
 import neon.systems.magic.Magic;
 
+/**
+ * A helper class for sending entity updates to the server via the event bus.
+ * 
+ * @author mdriesen
+ *
+ */
 final class Notifier {
 	private final EventBus bus;
 	private final EntityManager entities;
 
+	/**
+	 * Initialize a new notifier. The entity manager and event bus must not be
+	 * null.
+	 * 
+	 * @param entities
+	 * @param bus
+	 */
 	Notifier(EntityManager entities, EventBus bus) {
 		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
+	/**
+	 * Notifies the client that the player entity was updated.
+	 * 
+	 * @param player
+	 */
 	void notifyClient(Entity player) {
 		Inventory inventory = player.getComponent(Inventory.class);
 		inventory.getItems().parallelStream().map(entities::getEntity).forEach(this::notifyItem);

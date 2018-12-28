@@ -23,6 +23,12 @@ import neon.common.entity.components.Clothing;
 import neon.common.resources.RItem;
 import neon.systems.magic.Enchantment;
 
+/**
+ * An entity builder for clothing.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ClothingBuilder implements EntityBuilder<RItem.Clothing> {
 	private final ItemBuilder builder = new ItemBuilder();
 

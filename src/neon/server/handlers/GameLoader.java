@@ -71,7 +71,7 @@ import neon.systems.magic.Magic;
  * 
  */
 public final class GameLoader {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -81,11 +81,13 @@ public final class GameLoader {
 	private final Notifier notifier;
 	
 	/**
-	 * Initializes this game loader.
+	 * Initializes this game loader. The file system, resource manager, entity 
+	 * manager and event bus must not be null.
 	 * 
-	 * @param bus
+	 * @param files
 	 * @param resources
 	 * @param entities
+	 * @param bus
 	 */
 	public GameLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities, EventBus bus) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
@@ -104,7 +106,7 @@ public final class GameLoader {
 	 */
 	@Subscribe
 	private void onNewGame(NewGameEvent.Check event) throws ResourceException, IOException {
-		logger.info("starting a new game");
+		LOGGER.info("starting a new game");
 
 		if (isValidCharacter(event)) {
 			// get the start map
@@ -157,14 +159,14 @@ public final class GameLoader {
 	 * according to the game rules.
 	 * 
 	 * @param event
-	 * @return
+	 * @return	{@code true} if the list of playable species contains the character species, {@code false} otherwise
 	 */
 	private boolean isValidCharacter(NewGameEvent.Check event) {
 		try {
 			CClient config = resources.getResource("config", "client");			
 			return config.getPlayableSpecies().contains(event.species);
 		} catch (ResourceException e) {
-			logger.severe("client configuration not found");
+			LOGGER.severe("client configuration not found");
 			return false;
 		}
 	}
@@ -197,7 +199,7 @@ public final class GameLoader {
 				spells.addAll(module.getStartSpells());
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
-				logger.warning("problem loading module " + id);
+				LOGGER.warning("problem loading module " + id);
 			}
 		}
 		
@@ -215,13 +217,13 @@ public final class GameLoader {
 	 */
 	@Subscribe
 	private void onLoadGame(LoadEvent.Start event) throws ResourceException, IOException {
-		logger.info("loading save character <" + event.save + ">");
+		LOGGER.info("loading save character <" + event.save + ">");
 		
 		// set the save folder in the file system
 		try {
 			files.setSaveFolder(Paths.get("saves", event.save));
 		} catch (NotDirectoryException e) {
-			logger.warning("<" + event.save + "> is not a valid saved game");
+			LOGGER.warning("<" + event.save + "> is not a valid saved game");
 		}
 
 		// load the server configuration file from the save folder and check each module uid
@@ -232,7 +234,7 @@ public final class GameLoader {
 				entities.setModuleUID(entry.getKey(), entry.getValue());
 			} else {
 				// give a warning when a module was removed from the load order
-				logger.warning("missing module <" + entry.getKey() + "> in saved game");
+				LOGGER.warning("missing module <" + entry.getKey() + "> in saved game");
 				bus.post(new MessageEvent("Module <" + entry.getKey() + "> is missing from the load order. "
 						+ "This module was present when the game was originally saved. The game may "
 						+ "behave in unexpected ways.", "Module warning"));
@@ -250,8 +252,8 @@ public final class GameLoader {
 	/**
 	 * Loads the server configuration file from a previously saved game.
 	 * 
-	 * @param save
-	 * @return
+	 * @param save	the name of the saved character
+	 * @return	a {@code Map<String, Short>} with all the module id's and uid's
 	 * @throws IOException	if the configuration file can't be loaded
 	 */
 	private Map<String, Short> getConfiguration(String save) throws IOException {
@@ -277,21 +279,26 @@ public final class GameLoader {
 	@Subscribe
 	private void listSavedGames(LoadEvent.Load event) {
 		Set<String> saves = FileUtils.listFiles(Paths.get("saves"));
-		logger.info("saved characters: " + saves);
+		LOGGER.info("saved characters: " + saves);
 		bus.post(new LoadEvent.List(saves));
 	}
 	
 	/**
-	 * Saves the currently running game.
+	 * Saves the currently running game when a save event is received.
 	 * 
 	 * @param event
 	 */
 	@Subscribe
 	private void onSaveGame(InputEvent.Save event) {
-		logger.info("save game");
-		// TODO: config en maps opslaan
+		LOGGER.info("saving game");
+		
 		// store all cached entities
-		entities.flush();
+		entities.flushEntities();
+		// store all cached maps
+		entities.flushMaps();		
+		// TODO: save configuration (current map, calendar)
+		
+		
 		// move the temp folder to the saves folder
 		Entity player = entities.getEntity(PLAYER_UID);
 		PlayerInfo info = player.getComponent(PlayerInfo.class);

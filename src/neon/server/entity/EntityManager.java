@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -29,6 +30,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -49,20 +51,26 @@ import neon.common.resources.ResourceManager;
  *
  */
 public final class EntityManager {
-	private static final Logger logger = Logger.getGlobal();
-	private static final GsonBuilder builder = new GsonBuilder()
+	private static final Logger LOGGER = Logger.getGlobal();
+	private static final GsonBuilder BUILDER = new GsonBuilder()
 			.registerTypeAdapter(Entity.class, new EntityAdapter());
-	private static final Gson gson = builder.create();
-	private static final JsonTranslator translator = new JsonTranslator();
+	private static final Gson GSON = BUILDER.create();
+	private static final JsonTranslator TRANSLATOR = new JsonTranslator();
 
 	private final Cache<Long, Entity> entities = CacheBuilder.newBuilder().removalListener(new EntityListener()).softValues().build();
 	private final HashMap<Class<?>, EntityBuilder> builders = new HashMap<>();
 	private final NeonFileSystem files;
 	private final Cache<String, Map> maps = CacheBuilder.newBuilder().removalListener(new MapListener()).softValues().build();
-	private final HashBiMap<String, Short> uids = HashBiMap.create();
-	private final HashSet<Module> modules = new HashSet<>();
+	private final BiMap<String, Short> uids = HashBiMap.create();
+	private final Set<Module> modules = new HashSet<>();
 	private final MapLoader loader;
 	
+	/**
+	 * Initializes a new entity manager. The file system must not be null.
+	 * 
+	 * @param files
+	 * @param resources
+	 */
 	public EntityManager(NeonFileSystem files, ResourceManager resources) {
 		this.files = Objects.requireNonNull(files, "file system");
 		loader = new MapLoader(files, resources, this);
@@ -108,7 +116,7 @@ public final class EntityManager {
 	}
 	
 	/**
-	 * Adds an entity builder.
+	 * Adds an entity builder. The type and the builder itself must not be null.
 	 * 
 	 * @param type
 	 * @param builder
@@ -129,6 +137,14 @@ public final class EntityManager {
 		return ((int) getModuleUID(module) << 16) | base;
 	}
 	
+	/**
+	 * Returns the map with the given id.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws IOException	if the map is missing
+	 * @throws ResourceException	if the map can't be loaded
+	 */
 	public Map getMap(String id) throws IOException, ResourceException {
 		// load the map if it didn't exist yet
 		if (!maps.asMap().containsKey(id)) {
@@ -139,6 +155,7 @@ public final class EntityManager {
 	}
 	
 	/**
+	 * Return the 16-bit uid of the module the given entity belongs to.
 	 * 
 	 * @param entity
 	 * @return	the uid of the module an entity belongs to
@@ -148,6 +165,7 @@ public final class EntityManager {
 	}
 
 	/**
+	 * Returns the 16-bit uid of the module the given map belongs to.
 	 * 
 	 * @param map
 	 * @return	the uid of the module a map belongs to
@@ -156,6 +174,11 @@ public final class EntityManager {
 		return (short) (map >>> 16);		
 	}
 
+	/**
+	 * Returns a 64-bit uid that is still unused.
+	 * 
+	 * @return
+	 */
 	public long getFreeUID() {
 		long uid = 256;
 		while (entities.asMap().containsKey(uid)) {
@@ -165,10 +188,18 @@ public final class EntityManager {
 	}
 	
 	/**
-	 * Stores all remaining entities in the cache in the temp folder on disk.
+	 * Saves all remaining entities in the entity cache to the temp folder 
+	 * on disk.
 	 */
-	public void flush() {
+	public void flushEntities() {
 		entities.asMap().values().forEach(this::saveEntity);
+	}
+	
+	/**
+	 * Saves all remaining maps in the map cache to the temp folder on disk.
+	 */
+	public void flushMaps() {
+		maps.asMap().values().forEach(this::saveMap);
 	}
 	
 	/**
@@ -178,24 +209,42 @@ public final class EntityManager {
 	 */
 	private void saveEntity(Entity entity) {
 		try {
-			files.saveFile(gson.toJsonTree(entity), translator, "entities", entity.uid + ".json");
+			files.saveFile(GSON.toJsonTree(entity), TRANSLATOR, "entities", entity.uid + ".json");
 		} catch (IOException e) {
-			logger.severe("could not save " + entity);
+			LOGGER.severe("could not save " + entity);
 		}
 	}
-
-	private Entity loadEntity(long uid) throws IOException {
-		JsonElement element = files.loadFile(translator, "entities", uid + ".json");
-		return gson.fromJson(element, Entity.class);
+	
+	private void saveMap(Map map) {
+		// TODO: maps opslaan
+		System.out.println("saving map " + map.getID());
 	}
 	
+	/**
+	 * Loads an entity from a json file.
+	 * 
+	 * @param uid
+	 * @return
+	 * @throws IOException	if the entity is missing
+	 */
+	private Entity loadEntity(long uid) throws IOException {
+		JsonElement element = files.loadFile(TRANSLATOR, "entities", uid + ".json");
+		return GSON.fromJson(element, Entity.class);
+	}
+	
+	/**
+	 * Adds a module to the game.
+	 * 
+	 * @param module
+	 */
 	public void addModule(Module module) {
 		modules.add(Objects.requireNonNull(module, "module"));
 	}
 	
 	/**
+	 * returns the 16-bit uid of the module with the given name.
 	 * 
-	 * @param module
+	 * @param module	the name of the module
 	 * @return	the uid of the module
 	 */
 	public short getModuleUID(String module) {
@@ -220,18 +269,31 @@ public final class EntityManager {
 		uids.put(module, uid);
 	}	
 	
+	/**
+	 * A removal listener that handles the removal of entities from the entity
+	 * cache.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	private final class EntityListener implements RemovalListener<Long, Entity> {
 		@Override
 		public void onRemoval(RemovalNotification<Long, Entity> notification) {
-			logger.finest(notification.getValue() + " removed from manager");
+			LOGGER.finest(notification.getValue() + " removed from manager");
 			saveEntity(notification.getValue());
 		}		
 	}
 	
+	/**
+	 * A removal listener that handles the removal of maps from the map cache.
+	 * 
+	 * @author mdriesen
+	 *
+	 */
 	private final class MapListener implements RemovalListener<String, Map> {
 		@Override
 		public void onRemoval(RemovalNotification<String, Map> notification) {
-			logger.finest(notification.getValue() + " removed from manager");
+			LOGGER.finest(notification.getValue() + " removed from manager");
 		}		
 	}
 }

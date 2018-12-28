@@ -21,6 +21,7 @@ package neon.server.systems;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -58,6 +59,15 @@ public final class SystemManager {
 	private final CombatSystem combatSystem;
 	private final Configuration config;
 	
+	/**
+	 * Initializes the system manager. The entity manager and configuration 
+	 * must not be null.
+	 * 
+	 * @param resources
+	 * @param entities
+	 * @param bus
+	 * @param config
+	 */
 	public SystemManager(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
 		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.config = Objects.requireNonNull(config, "configuration");
@@ -75,26 +85,53 @@ public final class SystemManager {
 		bus.register(aiSystem);
 	}
 	
+	/**
+	 * Handles a change of maps.
+	 * 
+	 * @param event
+	 * @throws ResourceException
+	 * @throws IOException
+	 */
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
 		config.setCurrentMap(entities.getMap(event.id));
 	}
 	
+	/**
+	 * Handles the start of a game.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onGameStart(UpdateEvent.Start event) {
 		config.setRunning(true);
 	}
 	
+	/**
+	 * Handles pausing of a game.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onPause(InputEvent.Pause event) {
 		config.setMode(GameMode.TURN_BASED);
 	}
 	
+	/**
+	 * Handles unpausing of a game.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onUnpause(InputEvent.Unpause event) {
 		config.setMode(GameMode.REAL_TIME);
 	}
 	
+	/**
+	 * Handles the game loop timer ticks.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onTimerTick(TimerEvent event) {
 		if (config.isRunning() && config.getMode().equals(GameMode.REAL_TIME)) {
@@ -102,6 +139,11 @@ public final class SystemManager {
 		}
 	}
 
+	/**
+	 * Handles the next turn.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onNextTurn(TurnEvent event) {
 		if (config.isRunning() && config.getMode().equals(GameMode.TURN_BASED)) {
@@ -109,6 +151,11 @@ public final class SystemManager {
 		}
 	}
 
+	/**
+	 * Returns all entities that are currently active.
+	 * 
+	 * @return
+	 */
 	private Collection<Long> getActiveEntities() {
 		return config.getCurrentMap().getEntities();
 	}
@@ -123,7 +170,7 @@ public final class SystemManager {
 		actionSystem.update(player);
 		
 		// collect all active creatures on the current map and mark them for updates
-		ArrayDeque<Entity> creatures = getActiveEntities().parallelStream()
+		Deque<Entity> creatures = getActiveEntities().stream()
 				.map(entities::getEntity).filter(entity -> entity.hasComponent(CreatureInfo.class))
 				.peek(entity -> entity.setComponent(new Task.Action(entity.uid, fraction)))
 				.collect(Collectors.toCollection(ArrayDeque::new));

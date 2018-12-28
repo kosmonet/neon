@@ -24,7 +24,7 @@ import neon.server.entity.Map;
 import neon.systems.time.Calendar;
 
 /**
- * The server configuration.
+ * The mutable server configuration.
  * 
  * @author mdriesen
  *
@@ -43,6 +43,11 @@ public final class Configuration {
 	private GameMode mode = GameMode.TURN_BASED;
 	private boolean running = false;
 	
+	/**
+	 * Returns the game calendar.
+	 * 
+	 * @return
+	 */
 	public Calendar getCalendar() {
 		return calendar;
 	}

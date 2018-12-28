@@ -30,6 +30,12 @@ import neon.common.resources.RCreature;
 import neon.systems.ai.Behavior;
 import neon.systems.magic.Magic;
 
+/**
+ * An entity builder for creatures.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class CreatureBuilder implements EntityBuilder<RCreature> {
 	@Override
 	public Entity build(long uid, RCreature species) {

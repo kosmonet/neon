@@ -33,12 +33,27 @@ import neon.server.Configuration;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
 
+/**
+ * The system that handles input from the client.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class InputSystem implements NeonSystem {
 	private final EntityManager entities;
 	private final EventBus bus;
 	private final MovementSystem mover;
 	private final Configuration config;
 	
+	/**
+	 * The entity manager, event bus, movement system and configuration must
+	 * not be null.
+	 * 
+	 * @param entities
+	 * @param bus
+	 * @param mover
+	 * @param config
+	 */
 	public InputSystem(EntityManager entities, EventBus bus, MovementSystem mover, Configuration config) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
 		this.entities = Objects.requireNonNull(entities, "entity manager");
@@ -56,7 +71,7 @@ public final class InputSystem implements NeonSystem {
 		Entity player = entities.getEntity(0);
 		Stats stats = player.getComponent(Stats.class);
 		
-		if(stats.isActive()) {
+		if (stats.isActive()) {
 			Map map = config.getCurrentMap();
 			mover.move(player, event.direction, map);
 
@@ -66,7 +81,7 @@ public final class InputSystem implements NeonSystem {
 		}
 
 		// check if the player still has action points left after moving
-		if(!stats.isActive()) {
+		if (!stats.isActive()) {
 			// if not, go to the next turn
 			bus.post(new TurnEvent());
 		}

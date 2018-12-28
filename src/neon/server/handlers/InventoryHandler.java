@@ -51,6 +51,14 @@ public final class InventoryHandler {
 	private final EntityManager entities;
 	private final Configuration config;
 	
+	/**
+	 * Initialize a new inventory handler. The entity manager, event bus and 
+	 * configuration must not be null.
+	 * 
+	 * @param entities
+	 * @param bus
+	 * @param config
+	 */
 	public InventoryHandler(EntityManager entities, EventBus bus, Configuration config) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
 		this.entities = Objects.requireNonNull(entities, "entity manager");

@@ -29,17 +29,33 @@ import neon.common.event.ComponentEvent;
 import neon.server.entity.EntityManager;
 import neon.systems.time.RestEvent;
 
+/**
+ * A handler for sleeping and resting.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class SleepHandler {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final EntityManager entities;
 	
+	/**
+	 * 
+	 * @param entities
+	 * @param bus
+	 */
 	public SleepHandler(EntityManager entities, EventBus bus) {
 		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 	
+	/**
+	 * Handles sleep events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onSleep(RestEvent.Sleep event) {
 		Entity player = entities.getEntity(PLAYER_UID);

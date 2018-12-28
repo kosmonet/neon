@@ -23,6 +23,12 @@ import neon.common.entity.components.Inventory;
 import neon.common.entity.components.Lock;
 import neon.common.resources.RItem;
 
+/**
+ * An entity builder for containers.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ContainerBuilder implements EntityBuilder<RItem.Container> {
 	private final ItemBuilder builder = new ItemBuilder();
 

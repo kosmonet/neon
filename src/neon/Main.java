@@ -40,8 +40,8 @@ import neon.server.Server;
  *
  */
 public class Main extends Application {
-	private static final String version = "0.5.0";	// current version
-	private static final Logger logger = Logger.getGlobal();
+	private static final String VERSION = "0.5.0";	// current version
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -51,14 +51,14 @@ public class Main extends Application {
 		ss.connect(cs);
 		
 		// server runs on its own thread
-		Server server = new Server(version, ss);
+		Server server = new Server(VERSION, ss);
 		Thread serverThread = new Thread(server, "Server Thread");
 		// make sure the server thread doesn't prevent the engine from shutting down
 		serverThread.setDaemon(true);
 		serverThread.start();
 
 		// client uses a separate thread for messaging with the server 
-		Client client = new Client(version, cs, primaryStage);
+		Client client = new Client(VERSION, cs, primaryStage);
 		Thread clientThread = new Thread(client, "Client Thread");
 		// make sure the client thread doesn't prevent the engine from shutting down
 		clientThread.setDaemon(true);
@@ -67,12 +67,12 @@ public class Main extends Application {
 
 	public static void main(String[] args) {
 		// set up the logger
-		logger.setLevel(Level.ALL);
-		logger.setUseParentHandlers(false);
+		LOGGER.setLevel(Level.ALL);
+		LOGGER.setUseParentHandlers(false);
 		Handler handler = new ConsoleHandler();
 		handler.setLevel(Level.ALL);
 		handler.setFormatter(new NeonLogFormatter());
-		logger.addHandler(handler);
+		LOGGER.addHandler(handler);
 
 		launch(args);
 	}

@@ -28,9 +28,20 @@ import neon.common.entity.components.Stats;
 import neon.common.entity.components.Task;
 import neon.common.event.ComponentEvent;
 
+/**
+ * The system that handles action points.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ActionSystem implements NeonSystem {
 	private final EventBus bus;
 	
+	/**
+	 * The event bus must not be null.
+	 * 
+	 * @param bus
+	 */
 	public ActionSystem(EventBus bus) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
@@ -56,6 +67,12 @@ public final class ActionSystem implements NeonSystem {
 		}
 	}
 	
+	/**
+	 * Restores an entity's action points.
+	 * 
+	 * @param entity
+	 * @param fraction
+	 */
 	private void restore(Entity entity, int fraction) {
 		Stats stats = entity.getComponent(Stats.class);
 		stats.restoreAP(fraction);

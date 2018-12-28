@@ -41,14 +41,28 @@ import neon.common.resources.ResourceManager;
 import neon.systems.conversation.Dialog;
 import neon.util.spatial.RegionSpatialIndex;
 
+/**
+ * A class to load maps.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class MapLoader {
-	private static final Logger logger = Logger.getGlobal();
-	private static final XMLTranslator translator = new XMLTranslator();
+	private static final Logger LOGGER = Logger.getGlobal();
+	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
 	private final EntityManager entities;
 	private final NeonFileSystem files;
 	private final ResourceManager resources;
 	
+	/**
+	 * Initializes a new map loader. The file system, resource manager and 
+	 * entity manager must not be null.
+	 * 
+	 * @param files
+	 * @param resources
+	 * @param entities
+	 */
 	public MapLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		this.files = Objects.requireNonNull(files, "file system");
 		this.resources = Objects.requireNonNull(resources, "resource manager");
@@ -68,7 +82,7 @@ public final class MapLoader {
 		RMap resource = resources.getResource("maps", id);
 		
 		// load the map
-		Element root = files.loadFile(translator, "maps", id + ".xml").getRootElement();
+		Element root = files.loadFile(TRANSLATOR, "maps", id + ".xml").getRootElement();
 		Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module));
 		initTerrain(root.getChild("terrain"), map.getTerrain());
 		initElevation(root.getChild("elevation"), map.getElevation());
@@ -94,7 +108,7 @@ public final class MapLoader {
 				String id = region.getAttributeValue("id");
 				index.insert(id, x, y, width, height);
 			} catch (DataConversionException e) {
-				logger.severe("failed to load terrain: " + e.getMessage());
+				LOGGER.severe("failed to load terrain: " + e.getMessage());
 			}
 		}
 	}
@@ -115,7 +129,7 @@ public final class MapLoader {
 				int z = region.getAttribute("z").getIntValue();
 				index.insert(z, x, y, width, height);
 			} catch (DataConversionException e) {
-				logger.severe("failed to load elevation: " + e.getMessage());
+				LOGGER.severe("failed to load elevation: " + e.getMessage());
 			}
 		}		
 	}
@@ -135,9 +149,9 @@ public final class MapLoader {
 				Entity creature = loadCreature(entity, base);
 				registerEntity(entity, creature.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
-				logger.severe("unknown creature on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+				LOGGER.severe("unknown creature on map " + map.getID() + ": " + entity.getAttributeValue("id"));
 			} catch (DataConversionException e) {
-				logger.severe("error loading creature on map " + map.getID() + ": " + e.getMessage());
+				LOGGER.severe("error loading creature on map " + map.getID() + ": " + e.getMessage());
 			}
 		}
 		
@@ -147,9 +161,9 @@ public final class MapLoader {
 				Entity item = loadItem(entity, base);
 				registerEntity(entity, item.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
-				logger.severe("unknown item on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+				LOGGER.severe("unknown item on map " + map.getID() + ": " + entity.getAttributeValue("id"));
 			} catch (DataConversionException e) {
-				logger.severe("error loading item on map " + map.getID() + ": " + e.getMessage());				
+				LOGGER.severe("error loading item on map " + map.getID() + ": " + e.getMessage());				
 			}
 		}
 	}

@@ -60,7 +60,7 @@ import neon.systems.time.TimeSystem;
  *
  */
 public final class Server implements Runnable {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final EventBus bus = new EventBus("Server Bus");
 	private final NeonFileSystem files = new NeonFileSystem();
@@ -72,7 +72,7 @@ public final class Server implements Runnable {
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
 	/**
-	 * Initializes the server.
+	 * Initializes the server. The socket must not be null.
 	 * 
 	 * @param version	the current version of the engine
 	 * @param socket	the socket used to communicate with a client
@@ -131,7 +131,7 @@ public final class Server implements Runnable {
 	 */
 	@Subscribe
 	private void monitor(DeadEvent event) {
-		logger.warning("server received a dead event: " + event.getEvent());
+		LOGGER.warning("server received a dead event: " + event.getEvent());
 	}
 	
 	/**
@@ -151,8 +151,8 @@ public final class Server implements Runnable {
 	 * @param event
 	 */
 	@Subscribe
-	private void quitGame(InputEvent.Quit event) {
-		logger.info("quit game");
+	private void onQuitGame(InputEvent.Quit event) {
+		LOGGER.info("quit game");
 		executor.shutdown();
 		Platform.exit();
 	}

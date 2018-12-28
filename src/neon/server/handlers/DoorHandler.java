@@ -33,6 +33,12 @@ import neon.common.resources.ResourceException;
 import neon.server.entity.EntityManager;
 import neon.server.entity.Map;
 
+/**
+ * A class to handle doors.
+ * 
+ * @author mdriesen
+ *
+ */
 public class DoorHandler {
 	private static final long PLAYER_UID = 0;
 	
@@ -40,12 +46,26 @@ public class DoorHandler {
 	private final EventBus bus;
 	private final Notifier notifier;
 	
+	/**
+	 * Initializes a new door handler. The entity manager and event bus must 
+	 * not be null.
+	 * 
+	 * @param entities
+	 * @param bus
+	 */
 	public DoorHandler(EntityManager entities, EventBus bus) {
 		this.entities = Objects.requireNonNull(entities, "entity manager");
 		this.bus = Objects.requireNonNull(bus, "event bus");
 		notifier = new Notifier(entities, bus);
 	}
 	
+	/**
+	 * Moves the player to another location when a transport event is received.
+	 * 
+	 * @param event
+	 * @throws IOException	if the destination map is missing
+	 * @throws ResourceException	if the destination map can't be loaded
+	 */
 	@Subscribe
 	private void onTransport(DoorEvent.Transport event) throws IOException, ResourceException {
 		Entity door = entities.getEntity(event.door);

@@ -23,6 +23,12 @@ import neon.common.entity.components.DoorInfo;
 import neon.common.entity.components.Graphics;
 import neon.common.resources.RItem.Door;
 
+/**
+ * An entity builder for doors.
+ * 
+ * @author mdriesen
+ *
+ */
 public class DoorBuilder implements EntityBuilder<Door> {
 	private final ItemBuilder builder = new ItemBuilder();
 

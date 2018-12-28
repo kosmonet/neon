@@ -29,15 +29,26 @@ import com.google.common.io.Files;
 import neon.common.files.FileUtils;
 import neon.common.resources.RModule;
 
+/**
+ * A class to represent a module.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class Module {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final Set<String> maps;
 	
+	/**
+	 * Initializes a new module.
+	 * 
+	 * @param module	the module resource
+	 */
 	public Module(RModule module) {
 		Path path = Paths.get("data", module.id, "maps");
 		maps = FileUtils.listFiles(path).stream().map(Files::getNameWithoutExtension).collect(ImmutableSet.toImmutableSet());
-		logger.info("module <" + module.id + "> contains " + maps.size() + " maps: " + maps);
+		LOGGER.info("module <" + module.id + "> contains " + maps.size() + " maps: " + maps);
 	}
 
 	/**

@@ -22,6 +22,12 @@ import java.util.Optional;
 
 import neon.common.entity.Entity;
 
+/**
+ * A system that can be added to the system manager.
+ * 
+ * @author mdriesen
+ *
+ */
 public interface NeonSystem extends Runnable {
 	/**
 	 * Updates an entity. If no further updates are necessary on this or any other 

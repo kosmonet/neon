@@ -63,12 +63,13 @@ import neon.server.entity.Module;
  *
  */
 final class ServerLoader {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final EventBus bus;
 	
 	/**
-	 * Initializes this loader with an {@code EventBus}.
+	 * Initializes this loader with an {@code EventBus}. The event bus must
+	 * not be null.
 	 * 
 	 * @param bus
 	 */
@@ -88,16 +89,16 @@ final class ServerLoader {
 	void configure(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		try {
 			CServer configuration = initConfiguration(files, entities);
-			logger.setLevel(configuration.getLogLevel());
+			LOGGER.setLevel(configuration.getLogLevel());
 			initEntities(entities);
 			initFileSystem(files, configuration.getModules());
 			initResources(files, resources, configuration, entities);
 			initClient(resources, configuration.getModules());
-			logger.info("server succesfully configured");
+			LOGGER.info("server succesfully configured");
 		} catch (JDOMException e) {
-			logger.severe("JDOMException in server configuration");
+			LOGGER.severe("JDOMException in server configuration");
 		} catch (IOException e) {
-			logger.severe("could not load configuration file");
+			LOGGER.severe("could not load configuration file");
 		}
 	}
 
@@ -145,7 +146,7 @@ final class ServerLoader {
 			}
 			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
-			logger.severe("could not initialize file system");
+			LOGGER.severe("could not initialize file system");
 		}
 	}
 	
@@ -168,14 +169,14 @@ final class ServerLoader {
 		
 		// check if all required parent modules are present
 		try {
-			HashSet<String> modules = new HashSet<>();
+			Set<String> modules = new HashSet<>();
 			for (String id : configuration.getModules()) {
 				modules.add(id);
 				RModule module = resources.getResource(id);				
 				entities.addModule(new Module(module));
 				for (String parent : module.getParentModules()) {
 					if (!modules.contains(parent)) {
-						logger.warning("module <" + id + "> is missing parent <" + parent + ">");
+						LOGGER.warning("module <" + id + "> is missing parent <" + parent + ">");
 						bus.post(new MessageEvent("Module <" + id + "> is missing parent <" + 
 								parent + ">. Check if all necessary modules are present in "
 								+ "the correct load order.", "Server configuration error"));
@@ -183,20 +184,26 @@ final class ServerLoader {
 				}
 			}
 		} catch (ResourceException e) {
-			logger.severe(e.getMessage());
+			LOGGER.severe(e.getMessage());
 		}
 		
 		// add server configuration resource to the manager
 		try {
 			resources.addResource(configuration);
 		} catch (IOException e) {
-			logger.severe(e.getMessage());
+			LOGGER.severe(e.getMessage());
 		}
 	}
 	
+	/**
+	 * Creates the client configuration resource.
+	 * 
+	 * @param resources
+	 * @param modules
+	 */
 	private void initClient(ResourceManager resources, Set<String> modules) {
 		// use a set to prevent doubles
-		HashSet<String> species = new HashSet<>();
+		Set<String> species = new HashSet<>();
 		// default game title
 		String title = "neon";
 		String subtitle = "";
@@ -212,7 +219,7 @@ final class ServerLoader {
 				intro = module.intro.isEmpty() ? intro : module.intro;
 			} catch (ResourceException e) {
 				// something went wrong loading the module, try to continue anyway
-				logger.warning("problem loading module " + id);
+				LOGGER.warning("problem loading module " + id);
 			}
 		}
 
@@ -221,7 +228,7 @@ final class ServerLoader {
 			CClient client = new CClient(title, subtitle, species, intro);			
 			resources.addResource(client);
 		} catch (IOException e) {
-			logger.severe(e.getMessage());
+			LOGGER.severe(e.getMessage());
 		}
 	}
 }

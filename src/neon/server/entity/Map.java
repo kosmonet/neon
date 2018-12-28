@@ -20,7 +20,7 @@ package neon.server.entity;
 
 import java.awt.Point;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Set;
 
 import neon.common.resources.RMap;
 import neon.util.spatial.PointQuadTree;
@@ -28,6 +28,12 @@ import neon.util.spatial.PointSpatialIndex;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
+/**
+ * A class that represents a map in the game.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class Map {
 	private final RMap map;
 	private final RegionSpatialIndex<String> terrain;
@@ -35,6 +41,13 @@ public final class Map {
 	private final PointSpatialIndex<Long> entities;
 	private final int uid;
 
+	/**
+	 * Initializes a new map.
+	 * 
+	 * @param map
+	 * @param uid
+	 * @throws IOException
+	 */
 	public Map(RMap map, int uid) throws IOException {
 		this.map = map;
 		this.uid = uid;
@@ -45,39 +58,88 @@ public final class Map {
 		entities = new PointQuadTree<>(0, 0, map.width, map.height, 100);
 	}
 	
+	/**
+	 * Returns the full 32-bit uid of the map.
+	 * 
+	 * @return
+	 */
 	public int getUID() {
 		return uid;
 	}
 	
+	/**
+	 * Returns the id of the map resource.
+	 * 
+	 * @return
+	 */
 	public String getID() {
 		return map.id;
 	}
 	
+	/**
+	 * Returns the width of the map.
+	 * 
+	 * @return
+	 */
 	public int getWidth() {
 		return map.width;
 	}
 	
+	/**
+	 * Returns the height of the map.
+	 * 
+	 * @return
+	 */
 	public int getHeight() {
 		return map.height;
 	}
 	
+	/**
+	 * Returns the terrain type at the given position.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public String getTerrain(int x, int y) {
 		return terrain.get(x, y);
 	}
 	
+	/**
+	 * Returns the terrain spatial index.
+	 * 
+	 * @return
+	 */
 	RegionSpatialIndex<String> getTerrain() {
 		return terrain;
 	}
 	
+	/**
+	 * Returns the height map.
+	 * 
+	 * @return
+	 */
 	RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
 	}
 	
-	public Iterable<Long> getEntities(int x, int y) {
+	/**
+	 * Returns all entities at the given position.
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Set<Long> getEntities(int x, int y) {
 		return entities.get(x, y);
 	}
 	
-	public Collection<Long> getEntities() {
+	/**
+	 * Returns all entities on this map.
+	 * 
+	 * @return
+	 */
+	public Set<Long> getEntities() {
 		return entities.getElements();
 	}
 	

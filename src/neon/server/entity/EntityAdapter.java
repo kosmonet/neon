@@ -36,11 +36,17 @@ import neon.common.entity.Entity;
 import neon.common.entity.components.Component;
 import neon.common.net.ColorAdapter;
 
+/**
+ * A json (de)serializer that is used to save/load entities on/from disk.
+ * 
+ * @author mdriesen
+ *
+ */
 public class EntityAdapter implements JsonSerializer<Entity>, JsonDeserializer<Entity> {
-	private static final GsonBuilder builder = new GsonBuilder()
+	private static final GsonBuilder BUILDER = new GsonBuilder()
 			.registerTypeAdapter(Color.class, new ColorAdapter())
 			.enableComplexMapKeySerialization();
-	private static final Gson gson = builder.create();
+	private static final Gson GSON = BUILDER.create();
 	
 	@Override
 	public Entity deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
@@ -50,7 +56,7 @@ public class EntityAdapter implements JsonSerializer<Entity>, JsonDeserializer<E
 		
 		for (Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
 			try {
-				Component component = Component.class.cast(gson.fromJson(entry.getValue(), Class.forName(entry.getKey())));
+				Component component = Component.class.cast(GSON.fromJson(entry.getValue(), Class.forName(entry.getKey())));
 				entity.setComponent(component);
 			} catch (ClassNotFoundException e) {
 				throw new AssertionError("Unknown class in entity " + entity.uid + ": " + entry.getKey());
@@ -67,7 +73,7 @@ public class EntityAdapter implements JsonSerializer<Entity>, JsonDeserializer<E
 		
 		for (Component component: entity.getComponents()) {
 			String cType = component.getClass().getTypeName();
-			object.add(cType, gson.toJsonTree(component));
+			object.add(cType, GSON.toJsonTree(component));
 		}
 		
 		return object;

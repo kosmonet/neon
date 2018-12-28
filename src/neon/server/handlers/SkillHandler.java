@@ -28,18 +28,36 @@ import neon.common.entity.components.Stats;
 import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
 
+/**
+ * A handler for all skill-related actions.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class SkillHandler {
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 
+	/**
+	 * 
+	 * @param bus
+	 */
 	public SkillHandler(EventBus bus) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
 	}
 
+	/**
+	 * Checks if a skill is high enough to succesfully perform an action.
+	 * 
+	 * @param skills
+	 * @param skill
+	 * @param stats
+	 * @return
+	 */
 	public boolean checkSkill(Skills skills, Skill skill, Stats stats) {
 		useSkill(skills, skill, stats);
-		return skills.getSkill(Skill.SWIMMING) > 10;
+		return skills.getSkill(skill) > 10;
 	}
 	
 	

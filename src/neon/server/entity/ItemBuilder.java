@@ -24,6 +24,12 @@ import neon.common.entity.components.ItemInfo;
 import neon.common.entity.components.Shape;
 import neon.common.resources.RItem;
 
+/**
+ * A builder for general items.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ItemBuilder implements EntityBuilder<RItem> {
 	@Override
 	public Entity build(long uid, RItem resource) {

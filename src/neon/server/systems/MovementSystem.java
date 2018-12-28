@@ -52,7 +52,7 @@ import neon.util.Direction;
  *
  */
 public final class MovementSystem implements NeonSystem {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
@@ -61,6 +61,15 @@ public final class MovementSystem implements NeonSystem {
 	private final SkillHandler skillHandler;
 	private final Configuration config;
 	
+	/**
+	 * The resource manager, entity manager, event bus and configuration must
+	 * not be null.
+	 * 
+	 * @param resources
+	 * @param entities
+	 * @param bus
+	 * @param config
+	 */
 	MovementSystem(ResourceManager resources, EntityManager entities, EventBus bus, Configuration config) {
 		this.resources = Objects.requireNonNull(resources, "resource manager");
 		this.entities = Objects.requireNonNull(entities, "entity manager");
@@ -158,6 +167,15 @@ public final class MovementSystem implements NeonSystem {
 		}
 	}
 
+	/**
+	 * Moves a creature to the given position on a map.
+	 * 
+	 * @param creature
+	 * @param map
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	private void move(Entity creature, Map map, int x, int y, int z) {
 		Shape shape = creature.getComponent(Shape.class);
 		Stats stats = creature.getComponent(Stats.class);
@@ -179,10 +197,10 @@ public final class MovementSystem implements NeonSystem {
 				canMove = false;
 			}
 		} catch (ResourceException e) {
-			logger.severe("unknown terrain type: " + map.getTerrain(x, y));
+			LOGGER.severe("unknown terrain type: " + map.getTerrain(x, y));
 		} catch (IndexOutOfBoundsException e) {
 			canMove = false;
-			logger.info(creature + " trying to move out of map bounds");
+			LOGGER.info(creature + " trying to move out of map bounds");
 		}
 
 		if (canMove) {

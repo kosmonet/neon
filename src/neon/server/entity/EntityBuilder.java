@@ -21,6 +21,19 @@ package neon.server.entity;
 import neon.common.entity.Entity;
 import neon.common.resources.Resource;
 
+/**
+ * A class that builds entities, using a resource as template.
+ * 
+ * @author mdriesen
+ * @param <T>	the type of resource to use as template
+ */
 public interface EntityBuilder<T extends Resource> {
+	/**
+	 * Builds an entity from a resource.
+	 * 
+	 * @param uid
+	 * @param resource
+	 * @return
+	 */
 	public Entity build(long uid, T resource);
 }
