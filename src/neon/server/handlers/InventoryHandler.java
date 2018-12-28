@@ -194,13 +194,13 @@ public final class InventoryHandler {
 		Equipment equipment = player.getComponent(Equipment.class);
 		
 		// clothing (and armor) keeps track of what slot they cover
-		if (inventory.getItems().contains(event.uid) && item.hasComponent(Clothing.class)) {
+		if (inventory.containsItem(event.uid) && item.hasComponent(Clothing.class)) {
 			Clothing cloth = item.getComponent(Clothing.class);
 			equipment.equip(cloth.getSlot(), event.uid);				
 		}
 		
 		// weapons can be equipped in the hand of choice
-		if (inventory.getItems().contains(event.uid) && item.hasComponent(Weapon.class)) {
+		if (inventory.containsItem(event.uid) && item.hasComponent(Weapon.class)) {
 			equipment.equip(event.slot.get(), event.uid);				
 		}
 		

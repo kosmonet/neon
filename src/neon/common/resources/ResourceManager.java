@@ -77,7 +77,7 @@ public final class ResourceManager {
 	 * @return
 	 * @throws ResourceException	if the resource can't be found
 	 */
-	public <T extends Resource> T getResource(String id) throws ResourceException {
+	public <R extends Resource> R getResource(String id) throws ResourceException {
 		return getResource("global", id);	
 	}
 	
@@ -90,11 +90,11 @@ public final class ResourceManager {
 	 * @throws ResourceException	if the resource can't be found
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Resource> T getResource(String namespace, String id) throws ResourceException {
+	public <R extends Resource> R getResource(String namespace, String id) throws ResourceException {
 		// check if resource was already loaded
 		if (resources.contains(namespace, id)) {
 			if (resources.get(namespace, id).get() != null) {
-				return (T) resources.get(namespace, id).get();
+				return (R) resources.get(namespace, id).get();
 			} else {
 				logger.finest("resource <" + namespace + ":" + id + "> was evicted from cache, reloading");
 			}
@@ -103,7 +103,7 @@ public final class ResourceManager {
 		// resource was not loaded, do it now
 		if (loaders.containsKey(namespace)) {
 			try {
-				T resource = (T) loaders.get(namespace).load(id);
+				R resource = (R) loaders.get(namespace).load(id);
 				resources.put(namespace, id, new SoftReference<Resource>(resource));
 				return resource;
 			} catch (IOException e) {

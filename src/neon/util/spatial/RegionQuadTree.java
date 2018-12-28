@@ -22,8 +22,8 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
-	private final RegionNode<T> root;
+public class RegionQuadTree<E> implements RegionSpatialIndex<E> {
+	private final RegionNode<E> root;
 	
 	public RegionQuadTree(int width, int height) {
 		if (width < 1 || height < 1) {
@@ -33,7 +33,7 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 		}
 	}
 	
-	public RegionQuadTree(int width, int height, T initialValue) {
+	public RegionQuadTree(int width, int height, E initialValue) {
 		if (width < 1 || height < 1) {
 			throw new IllegalArgumentException("Width and height should be larger than 0.");
 		} else {
@@ -42,7 +42,7 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 	}
 	
 	@Override
-	public void insert(T value, int x, int y, int width, int height) {
+	public void insert(E value, int x, int y, int width, int height) {
 		if (contains(x, y, width, height)) {
 			root.insert(value, x, y, width, height);
 		} else {
@@ -51,7 +51,7 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 	}
 	
 	@Override
-	public T get(int x, int y) {
+	public E get(int x, int y) {
 		if (contains(x, y, 1, 1)) {
 			return root.get(x, y);
 		} else {
@@ -74,9 +74,9 @@ public class RegionQuadTree<T> implements RegionSpatialIndex<T> {
 	}
 
 	@Override
-	public Map<Rectangle, T> getElements() {
-		Map<Rectangle, T> leaves = new HashMap<>();
-		for (RegionNode<T> node : root.getLeaves()) {
+	public Map<Rectangle, E> getElements() {
+		Map<Rectangle, E> leaves = new HashMap<>();
+		for (RegionNode<E> node : root.getLeaves()) {
 			if (node.getValue() != null) {
 				leaves.put(new Rectangle(node.nx, node.ny, node.nWidth, node.nHeight), node.getValue());
 			}

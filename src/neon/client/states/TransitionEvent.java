@@ -56,7 +56,7 @@ public final class TransitionEvent extends ClientEvent {
 	 * @param type
 	 * @return
 	 */
-	<T extends Object> T getParameter(Class<T> type) {
+	<R extends Object> R getParameter(Class<R> type) {
 		return parameters.getInstance(type);
 	}
 	

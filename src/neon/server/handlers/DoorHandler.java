@@ -50,7 +50,6 @@ public class DoorHandler {
 	private void onTransport(DoorEvent.Transport event) throws IOException, ResourceException {
 		Entity door = entities.getEntity(event.door);
 		DoorInfo info = door.getComponent(DoorInfo.class);
-		
 		Map map = entities.getMap(info.getDestination());
 		notifier.notifyClient(map);
 

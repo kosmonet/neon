@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -101,7 +103,7 @@ public final class GameLoader {
 	 * @throws IOException	if the game configuration can't be stored
 	 */
 	@Subscribe
-	private void startNewGame(NewGameEvent.Check event) throws ResourceException, IOException {
+	private void onNewGame(NewGameEvent.Check event) throws ResourceException, IOException {
 		logger.info("starting a new game");
 
 		if (isValidCharacter(event)) {
@@ -180,8 +182,8 @@ public final class GameLoader {
 		int x = 0;
 		int y = 0;
 		int money = 0;
-		ArrayList<String> items = new ArrayList<>();
-		HashSet<String> spells = new HashSet<>();
+		List<String> items = new ArrayList<>();
+		Set<String> spells = new HashSet<>();
 		
 		// go through the loaded modules to check if any redefined anything
 		for (String id : modules) {
@@ -212,7 +214,7 @@ public final class GameLoader {
 	 * @throws IOException	if the save folder is missing
 	 */
 	@Subscribe
-	private void startOldGame(LoadEvent.Start event) throws ResourceException, IOException {
+	private void onLoadGame(LoadEvent.Start event) throws ResourceException, IOException {
 		logger.info("loading save character <" + event.save + ">");
 		
 		// set the save folder in the file system
@@ -252,10 +254,10 @@ public final class GameLoader {
 	 * @return
 	 * @throws IOException	if the configuration file can't be loaded
 	 */
-	private HashMap<String, Short> getConfiguration(String save) throws IOException {
+	private Map<String, Short> getConfiguration(String save) throws IOException {
 		// try to load the neon.ini file
 		try (InputStream in = Files.newInputStream(Paths.get("saves", save, "config", "server.xml"))) {
-			HashMap<String, Short> modules = new HashMap<>();
+			Map<String, Short> modules = new HashMap<>();
 			Document doc = new SAXBuilder().build(in);
 			for (Element module : doc.getRootElement().getChild("modules").getChildren()) {
 				modules.put(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
@@ -268,7 +270,7 @@ public final class GameLoader {
 	}
 
 	/**
-	 * Sends a list of all saved characters to the client.
+	 * Posts a list of all saved characters on the event bus.
 	 * 
 	 * @param event
 	 */
@@ -285,7 +287,7 @@ public final class GameLoader {
 	 * @param event
 	 */
 	@Subscribe
-	private void saveGame(InputEvent.Save event) {
+	private void onSaveGame(InputEvent.Save event) {
 		logger.info("save game");
 		// TODO: config en maps opslaan
 		// store all cached entities

@@ -18,11 +18,11 @@
 
 package neon.common.entity.components;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * The inventory of an entity.
@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableList;
  */
 public final class Inventory implements Component {
 	private final long uid;
-	private final List<Long> items = new ArrayList<Long>();
+	private final Set<Long> items = new HashSet<Long>();
 	
 	private int money = 0;
 	
@@ -86,10 +86,10 @@ public final class Inventory implements Component {
 	/**
 	 * Returns all items in this inventory.
 	 * 
-	 * @return	an unmodifiable {@code Collection} of item uid's
+	 * @return	an unmodifiable {@code Set} of item uid's
 	 */
-	public Collection<Long> getItems() {
-		return ImmutableList.copyOf(items);
+	public Set<Long> getItems() {
+		return ImmutableSet.copyOf(items);
 	}
 	
 	/**
@@ -108,5 +108,9 @@ public final class Inventory implements Component {
 	 */
 	public int getMoney() {
 		return money;
+	}
+	
+	public boolean containsItem(long item) {
+		return items.contains(item);
 	}
 }

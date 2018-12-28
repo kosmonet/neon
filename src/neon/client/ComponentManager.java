@@ -58,7 +58,7 @@ public final class ComponentManager {
 	 * @param type	the type of a component
 	 * @return	a component of the given type for the given entity
 	 */
-	public <T extends Component> T getComponent(long uid, Class<T> type) {
+	public <R extends Component> R getComponent(long uid, Class<R> type) {
 		return type.cast(components.get(uid, type));
 	}
 	

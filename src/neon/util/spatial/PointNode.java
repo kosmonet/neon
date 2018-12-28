@@ -28,17 +28,17 @@ import java.util.Set;
  * A node in the quadtree.
  * 
  * @author mdriesen
- * @param <T>
+ * @param <E>
  */
-class PointNode<T> {
-	private final Map<T, Point> elements;
+class PointNode<E> {
+	private final Map<E, Point> elements;
 	private final int fill;
 	private final int x, y, size;
-	private final Set<T> contents;
+	private final Set<E> contents;
 	
-	private PointNode<T> NW, NE, SE, SW;
+	private PointNode<E> NW, NE, SE, SW;
 	
-	PointNode(int x, int y, int size, int fill, Map<T, Point> elements) {
+	PointNode(int x, int y, int size, int fill, Map<E, Point> elements) {
 		this.fill = fill;
 		this.x = x;
 		this.y = y;
@@ -55,7 +55,7 @@ class PointNode<T> {
 	 * @param element
 	 * @param position
 	 */
-	void insert(T element, Point position) {
+	void insert(E element, Point position) {
 		// check if this node is full
 		if (contents.size() < fill) {
 			// if not, add element to this node
@@ -65,13 +65,13 @@ class PointNode<T> {
 			contents.add(element);			
 		} else {
 			// if full, split node
-			NW = new PointNode<T>(x, y, size/2, fill, elements); 
-			NE = new PointNode<T>(x + size/2, y, size/2, fill, elements);
-			SW = new PointNode<T>(x, y + size/2, size/2, fill, elements);
-			SE = new PointNode<T>(x + size/2, y + size/2, size/2, fill, elements);
+			NW = new PointNode<E>(x, y, size/2, fill, elements); 
+			NE = new PointNode<E>(x + size/2, y, size/2, fill, elements);
+			SW = new PointNode<E>(x, y + size/2, size/2, fill, elements);
+			SE = new PointNode<E>(x + size/2, y + size/2, size/2, fill, elements);
 			
 			// and add elements to the child nodes
-			for (T el : contents) {
+			for (E el : contents) {
 				if (NW.contains(elements.get(el))) {
 					NW.insert(el, elements.get(el));
 				} else if (NE.contains(elements.get(el))) {
@@ -93,12 +93,12 @@ class PointNode<T> {
 	 * @param bounds
 	 * @return	all elements within the given bounds
 	 */
-	Set<T> get(Rectangle bounds) {
-		Set<T> set = new HashSet<T>();
+	Set<E> get(Rectangle bounds) {
+		Set<E> set = new HashSet<E>();
 
 		if(bounds.intersects(x, y, size, size)) {
 			if (isLeaf())  {
-				for (T element : contents) {
+				for (E element : contents) {
 					if (bounds.contains(elements.get(element))) {
 						set.add(element);
 					}
@@ -119,12 +119,12 @@ class PointNode<T> {
 	 * @param position
 	 * @return	all elements at the given position
 	 */
-	Set<T> get(Point position) {
+	Set<E> get(Point position) {
 		if(!contains(position)) {
-			return new HashSet<T>();
+			return new HashSet<E>();
 		} else if (isLeaf()) {
-			Set<T> set = new HashSet<T>();
-			for (T element : contents) {
+			Set<E> set = new HashSet<E>();
+			for (E element : contents) {
 				if (elements.get(element).equals(position)) {
 					set.add(element);
 				}
@@ -161,7 +161,7 @@ class PointNode<T> {
 	 * @param element
 	 * @param position
 	 */
-	void remove(T element, Point position) {
+	void remove(E element, Point position) {
 		// check if this node contained the old position
 		if (contains(position)) {
 			// check if this is a leaf
@@ -194,7 +194,7 @@ class PointNode<T> {
 	 * 			move, {@code false} if the parent should try to re-insert the element 
 	 * 			at a higher level in the tree
 	 */
-	boolean move(T element, Point newPos, Point oldPos) {
+	boolean move(E element, Point newPos, Point oldPos) {
 		// check if this node contained the old position
 		if (contains(oldPos)) {
 			// check if this is a leaf
@@ -226,7 +226,7 @@ class PointNode<T> {
 		}
 	}
 
-	private boolean stuff(PointNode<T> node, T element, Point oldPos, Point newPos) {
+	private boolean stuff(PointNode<E> node, E element, Point oldPos, Point newPos) {
 		if (node.move(element, newPos, oldPos)) {
 			return true;
 		} else {

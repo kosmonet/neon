@@ -28,10 +28,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-class RegionNode<T> {
+class RegionNode<E> {
 	final int nx, ny, nWidth, nHeight;
-	private T value;
-	private RegionNode<T> NW, NE, SW, SE;
+	private E value;
+	private RegionNode<E> NW, NE, SW, SE;
 	
 	RegionNode(int x, int y, int width, int height) {
 		nx = x;
@@ -40,7 +40,7 @@ class RegionNode<T> {
 		nHeight = height;
 	}
 
-	RegionNode(int x, int y, int width, int height, T value) {
+	RegionNode(int x, int y, int width, int height, E value) {
 		this(x, y, width, height);
 		this.value = value;
 	}
@@ -54,7 +54,7 @@ class RegionNode<T> {
 	 * @param width
 	 * @param height
 	 */
-	void insert(T value, int x, int y, int width, int height) {
+	void insert(E value, int x, int y, int width, int height) {
 		// make sure this node overlaps with the given bounds
 		if (!overlaps(x, y, width, height)) {
 			return;
@@ -126,7 +126,7 @@ class RegionNode<T> {
 	 * @param width
 	 * @param height
 	 */
-	private void store(T value, int x, int y, int width, int height) {
+	private void store(E value, int x, int y, int width, int height) {
 		if (NW != null) {
 			NW.insert(value, x, y, width, height);
 		}
@@ -149,7 +149,7 @@ class RegionNode<T> {
 	 * 
 	 * @param value
 	 */
-	private void merge(T value) {
+	private void merge(E value) {
 		this.value = value;
 		NW = null;
 		NE = null;
@@ -161,7 +161,7 @@ class RegionNode<T> {
 	 * Sets the value of a node to the most common value of its child nodes.
 	 */
 	private void prune() {
-		ArrayList<T> values = new ArrayList<>(4);
+		ArrayList<E> values = new ArrayList<>(4);
 		if (NW != null && NW.value != null) { values.add(NW.value); }
 		if (NE != null && NE.value != null) { values.add(NE.value);	}
 		if (SW != null && SW.value != null) { values.add(SW.value);	}
@@ -196,7 +196,7 @@ class RegionNode<T> {
 		return !(x > nx + nWidth - 1 || y > ny + nHeight - 1 || x + width - 1 < nx || y + height - 1 < ny);
 	}
 	
-	T get(int x, int y) {
+	E get(int x, int y) {
 		if (!isLeaf()) {
 			if (NW != null && NW.contains(x, y)) { 
 				return NW.get(x, y); 
@@ -219,7 +219,7 @@ class RegionNode<T> {
 	 * 
 	 * @return
 	 */
-	T getValue() {
+	E getValue() {
 		return value;
 	}
 	
@@ -227,13 +227,13 @@ class RegionNode<T> {
 		return NW == null && NE == null && SW == null && SE == null;
 	}
 	
-	Collection<RegionNode<T>> getLeaves() {
+	Collection<RegionNode<E>> getLeaves() {
 		if (nWidth == 0 || nHeight == 0) {
 			throw new AssertionError("Empty leaves should not exist!");
 		} else if (isLeaf()) {
 			return Arrays.asList(this);
 		} else {
-			Collection<RegionNode<T>> list = new ArrayList<>();
+			Collection<RegionNode<E>> list = new ArrayList<>();
 			list.addAll(NW != null ? NW.getLeaves() : Collections.emptyList());
 			list.addAll(NE != null ? NE.getLeaves() : Collections.emptyList());
 			list.addAll(SW != null ? SW.getLeaves() : Collections.emptyList());

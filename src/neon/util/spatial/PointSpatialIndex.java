@@ -22,27 +22,27 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Set;
 
-public interface PointSpatialIndex<T> {
+public interface PointSpatialIndex<E> {
 	/** 
 	 * 
 	 * @param x
 	 * @param y
 	 * @return	all elements at the given position
 	 */
-	public Set<T> get(int x, int y);
+	public Set<E> get(int x, int y);
 
 	/**
 	 * 
 	 * @param bounds
 	 * @return	all elements contained in the given bounds
 	 */
-	public Set<T> get(Rectangle bounds);
+	public Set<E> get(Rectangle bounds);
 	
 	/**
 	 * 
 	 * @return	all elements in the index
 	 */
-	public Set<T> getElements();
+	public Set<E> getElements();
 	
 	/**
 	 * Inserts an element at the given position.
@@ -51,14 +51,14 @@ public interface PointSpatialIndex<T> {
 	 * @param x
 	 * @param y
 	 */
-	public void insert(T element, int x, int y);
+	public void insert(E element, int x, int y);
 	
 	/**
 	 * Removes an element.
 	 * 
 	 * @param element
 	 */
-	public void remove(T element);
+	public void remove(E element);
 	
 	/**
 	 * Moves an element to a new position.
@@ -66,5 +66,5 @@ public interface PointSpatialIndex<T> {
 	 * @param element
 	 * @param position
 	 */
-	public void move(T element, Point position);
+	public void move(E element, Point position);
 }

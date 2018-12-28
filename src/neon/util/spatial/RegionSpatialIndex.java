@@ -21,12 +21,12 @@ package neon.util.spatial;
 import java.awt.Rectangle;
 import java.util.Map;
 
-public interface RegionSpatialIndex<T> {
+public interface RegionSpatialIndex<E> {
 	/**
 	 * 
 	 * @return	all contiguous regions in the index
 	 */
-	public Map<Rectangle, T> getElements();
+	public Map<Rectangle, E> getElements();
 	
 	/**
 	 * Inserts a value.
@@ -34,7 +34,7 @@ public interface RegionSpatialIndex<T> {
 	 * @param bounds
 	 * @param value
 	 */
-	public void insert(T value, int x, int y, int width, int height);
+	public void insert(E value, int x, int y, int width, int height);
 	
 	/**
 	 * 
@@ -42,7 +42,7 @@ public interface RegionSpatialIndex<T> {
 	 * @param y
 	 * @return	the value at the given position
 	 */
-	public T get(int x, int y);
+	public E get(int x, int y);
 	
 	/**
 	 * 

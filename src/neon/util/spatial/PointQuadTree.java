@@ -29,13 +29,13 @@ import java.util.Set;
  * A PR quadtree.
  * 
  * @author mdriesen
- * @param <T>
+ * @param <E>
  */
-public class PointQuadTree<T> implements PointSpatialIndex<T> {
-	private final Map<T, Point> elements = new HashMap<>();
+public class PointQuadTree<E> implements PointSpatialIndex<E> {
+	private final Map<E, Point> elements = new HashMap<>();
 	private final int fill;
 	
-	private PointNode<T> root;
+	private PointNode<E> root;
 	
 	/**
 	 * 
@@ -47,7 +47,7 @@ public class PointQuadTree<T> implements PointSpatialIndex<T> {
 		int dx = (size - width)/2;
 		int dy = (size - height)/2;
 		// shift the root node a bit so we have some margin around the needed area for adding other elements
-		root = new PointNode<T>(x - dx, y - dy, size, fill, elements);
+		root = new PointNode<E>(x - dx, y - dy, size, fill, elements);
 		
 		this.fill = fill;
 	}
@@ -61,12 +61,12 @@ public class PointQuadTree<T> implements PointSpatialIndex<T> {
 	}
 	
 	@Override
-	public void insert(T element, int x, int y) {
+	public void insert(E element, int x, int y) {
 		Point position = new Point(x, y);
 		
 		if (root == null) {
 			// root is null if this is the first element to be inserted
-			root = new PointNode<T>(x, y, 1, fill, elements);
+			root = new PointNode<E>(x, y, 1, fill, elements);
 		} else if(!root.contains(position)) {
 			// if root isn't big enough to contain the new element, we have to enlarge the tree
 			enlargeTree(x, y);
@@ -90,31 +90,31 @@ public class PointQuadTree<T> implements PointSpatialIndex<T> {
 		int dx = (size - bounds.width)/2;
 		int dy = (size - bounds.height)/2;
 		// shift the root node a bit so we have some margin around the needed area for adding other elements
-		root = new PointNode<T>(bounds.x - dx, bounds.y - dy, size, fill, elements);
+		root = new PointNode<E>(bounds.x - dx, bounds.y - dy, size, fill, elements);
 
 		// add all elements to the new tree again
-		for(Entry<T, Point> entry : elements.entrySet()) {
+		for(Entry<E, Point> entry : elements.entrySet()) {
 			root.insert(entry.getKey(), entry.getValue());
 		}
 	}
 	
 	@Override
-	public Set<T> get(int x , int y) {
+	public Set<E> get(int x , int y) {
 		return root.get(new Point(x, y));
 	}
 	
 	@Override
-	public Set<T> get(Rectangle bounds) {
+	public Set<E> get(Rectangle bounds) {
 		return root.get(bounds);
 	}
 	
 	@Override
-	public Set<T> getElements() {
+	public Set<E> getElements() {
 		return elements.keySet();
 	}
 
 	@Override
-	public void move(T element, Point position) {
+	public void move(E element, Point position) {
 		if(!root.contains(position)) {
 			enlargeTree(position.x, position.y);
 		}
@@ -125,7 +125,7 @@ public class PointQuadTree<T> implements PointSpatialIndex<T> {
 	}
 
 	@Override
-	public void remove(T element) {
+	public void remove(E element) {
 		root.remove(element, elements.get(element));
 		elements.remove(element);
 	}
