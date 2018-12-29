@@ -30,8 +30,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import neon.client.ui.UserInterface;
 
+/**
+ * The state that controls the options menu.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class OptionState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	@FXML private Button cancelButton;
 	@FXML private Button saveButton;
@@ -51,7 +57,7 @@ public final class OptionState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load options menu: " + e.getMessage());
+			LOGGER.severe("failed to load options menu: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -63,12 +69,12 @@ public final class OptionState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering options state");		
+		LOGGER.finest("entering options state");		
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting options state");
+		LOGGER.finest("exiting options state");
 	}
 }

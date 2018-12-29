@@ -27,13 +27,14 @@ import java.util.Objects;
  *
  */
 public class Configuration {
+	/** The uid of the player. */
 	public static final long PLAYER_UID = 0;
 	
 	private boolean paused = true;
 	private Map map;
 	
 	/**
-	 * Sets the map to be displayed.
+	 * Sets the map to be displayed. The map must not be null.
 	 * 
 	 * @param map
 	 */
@@ -50,10 +51,25 @@ public class Configuration {
 		return map;
 	}
 	
-	public void setPaused(boolean paused) {
-		this.paused = paused;
+	/**
+	 * Pauses the game.
+	 */
+	public void pause() {
+		paused = true;
 	}
 	
+	/**
+	 * Unpauses the game.
+	 */
+	public void unpause() {
+		paused = false;
+	}
+	
+	/**
+	 * Checks whether the game is paused or not.
+	 * 
+	 * @return
+	 */
 	public boolean isPaused() {
 		return paused;
 	}

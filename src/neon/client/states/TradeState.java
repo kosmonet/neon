@@ -33,8 +33,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.ui.UserInterface;
 
+/**
+ * A state for trading.
+ * 
+ * @author mdriesen
+ *
+ */
 public class TradeState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	@FXML private Button cancelButton;
 	@FXML private ListView<Long> playerList, containerList;
@@ -43,6 +49,12 @@ public class TradeState extends State {
 	private final EventBus bus;
 	private Scene scene;
 
+	/**
+	 * The user interface and event bus must not be null.
+	 * 
+	 * @param ui
+	 * @param bus
+	 */
 	public TradeState(UserInterface ui, EventBus bus) {
 		this.ui = Objects.requireNonNull(ui, "user interface");
 		this.bus = Objects.requireNonNull(bus, "event bus");
@@ -54,7 +66,7 @@ public class TradeState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load trade state: " + e.getMessage());
+			LOGGER.severe("failed to load trade state: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -64,6 +76,11 @@ public class TradeState extends State {
 		containerList.setOnKeyPressed(this::keyPressed);
 	}
 	
+	/**
+	 * Handles key presses.
+	 * 
+	 * @param event
+	 */
 	private void keyPressed(KeyEvent event) {
 		if (event.getCode().equals(KeyCode.ESCAPE)) {
 			bus.post(new TransitionEvent("cancel"));
@@ -72,22 +89,28 @@ public class TradeState extends State {
 		}
 	}
 	
+	/**
+	 * Trades an item.
+	 */
 	@FXML private void buy() {
 		
 	}
 	
+	/**
+	 * Shows the help window.
+	 */
 	@FXML private void showHelp() {
 		
 	}
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering trade state");		
+		LOGGER.finest("entering trade state");		
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting trade state");
+		LOGGER.finest("exiting trade state");
 	}
 }

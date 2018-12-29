@@ -43,6 +43,7 @@ import neon.common.resources.ResourceManager;
 import neon.server.entity.EntityManager;
 import neon.server.handlers.DoorHandler;
 import neon.server.handlers.GameLoader;
+import neon.server.handlers.GameSaver;
 import neon.server.handlers.InventoryHandler;
 import neon.server.handlers.SleepHandler;
 import neon.server.handlers.StealthHandler;
@@ -94,6 +95,7 @@ public final class Server implements Runnable {
 		bus.register(new StealthHandler(resources, entities, bus));
 		bus.register(new SleepHandler(entities, bus));
 		bus.register(new GameLoader(files, resources, entities, bus));
+		bus.register(new GameSaver(resources, entities, config));
 		bus.register(new DoorHandler(entities, bus));
 		bus.register(new MagicSystem(files, resources, entities, bus));
 		bus.register(new TimeSystem(config, scripting));

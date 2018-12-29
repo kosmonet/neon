@@ -66,8 +66,7 @@ import neon.systems.magic.MagicEvent;
  *
  */
 public final class InventoryState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -94,7 +93,7 @@ public final class InventoryState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load inventory interface: " + e.getMessage());
+			LOGGER.severe("failed to load inventory interface: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -130,7 +129,7 @@ public final class InventoryState extends State {
 	
 	@FXML private void equipItem() {
 		long uid = playerList.getSelectionModel().getSelectedItem();
-		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
+		Equipment equipment = components.getComponent(Configuration.PLAYER_UID, Equipment.class);
 		
 		if (equipment.hasEquipped(uid)) {
 			bus.post(new InventoryEvent.Unequip(uid));
@@ -141,7 +140,7 @@ public final class InventoryState extends State {
 				bus.post(new InventoryEvent.Equip(uid));
 			} else if (components.hasComponent(uid, Enchantment.class)) {
 				// if it's no weapon or clothing, but has an enchantment, it must be a potion
-				bus.post(new MagicEvent.Drink(uid, PLAYER_UID));
+				bus.post(new MagicEvent.Drink(uid, Configuration.PLAYER_UID));
 			}
 		}
 	}
@@ -160,7 +159,7 @@ public final class InventoryState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering inventory module");
+		LOGGER.finest("entering inventory module");
 		bus.register(this);
 		config.getCurrentMap();
 		refresh();		
@@ -170,7 +169,7 @@ public final class InventoryState extends State {
 	
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting inventory module");
+		LOGGER.finest("exiting inventory module");
 		bus.unregister(this);
 	}
 	
@@ -178,15 +177,15 @@ public final class InventoryState extends State {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		playerList.getItems().clear();
 
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Inventory inventory = components.getComponent(Configuration.PLAYER_UID, Inventory.class);
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces");
 		
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		Stats stats = components.getComponent(Configuration.PLAYER_UID, Stats.class);
 		int weight = ClientUtils.getWeight(inventory, components);
 		weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
 
 		int rating = 0;
-		Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
+		Equipment equipment = components.getComponent(Configuration.PLAYER_UID, Equipment.class);
 		for (long uid : inventory.getItems()) {
 			playerList.getItems().add(uid);
 			if (equipment.hasEquipped(uid) && components.hasComponent(uid, Armor.class)) {

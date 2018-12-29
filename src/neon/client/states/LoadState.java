@@ -44,7 +44,7 @@ import neon.common.event.LoadEvent;
  *
  */
 public final class LoadState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	private final EventBus bus;
 	private final UserInterface ui;
@@ -72,7 +72,7 @@ public final class LoadState extends State {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.severe("failed to load load game menu: " + e.getMessage());
+			LOGGER.severe("failed to load load game menu: " + e.getMessage());
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -117,7 +117,7 @@ public final class LoadState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering load game state");
+		LOGGER.finest("entering load game state");
 		bus.register(this);
 		ui.showScene(scene);
 		bus.post(new LoadEvent.Load());
@@ -125,7 +125,7 @@ public final class LoadState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting load game state");
+		LOGGER.finest("exiting load game state");
 		bus.unregister(this);
 	}
 }

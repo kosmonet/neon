@@ -48,7 +48,6 @@ import neon.common.entity.components.Inventory;
 import neon.common.entity.components.PlayerInfo;
 import neon.common.entity.components.Shape;
 import neon.common.entity.components.Stats;
-import neon.common.event.InputEvent;
 import neon.common.event.MessageEvent;
 import neon.common.event.NewGameEvent;
 import neon.common.files.FileUtils;
@@ -64,11 +63,9 @@ import neon.server.entity.EntityManager;
 import neon.systems.magic.Magic;
 
 /**
- * This class takes care of starting new games, loading old games and saving
- * games. 
+ * This class takes care of starting new games and loading old games. 
  * 
  * @author mdriesen
- * 
  */
 public final class GameLoader {
 	private static final Logger LOGGER = Logger.getGlobal();
@@ -241,12 +238,13 @@ public final class GameLoader {
 			}
 		}
 		
+		// send the player to the client
+		notifier.notifyClient(entities.getEntity(PLAYER_UID));
 		// get the start map
 		CGame game = resources.getResource("config", "game");
 		notifier.notifyClient(entities.getMap(game.map));
-
-		// tell the client everything is ready
-		notifier.notifyClient(entities.getEntity(PLAYER_UID));
+		// tell the client everything is ready to start
+		bus.post(new UpdateEvent.Start());
 	}
 	
 	/**
@@ -281,27 +279,5 @@ public final class GameLoader {
 		Set<String> saves = FileUtils.listFiles(Paths.get("saves"));
 		LOGGER.info("saved characters: " + saves);
 		bus.post(new LoadEvent.List(saves));
-	}
-	
-	/**
-	 * Saves the currently running game when a save event is received.
-	 * 
-	 * @param event
-	 */
-	@Subscribe
-	private void onSaveGame(InputEvent.Save event) {
-		LOGGER.info("saving game");
-		
-		// store all cached entities
-		entities.flushEntities();
-		// store all cached maps
-		entities.flushMaps();		
-		// TODO: save configuration (current map, calendar)
-		
-		
-		// move the temp folder to the saves folder
-		Entity player = entities.getEntity(PLAYER_UID);
-		PlayerInfo info = player.getComponent(PlayerInfo.class);
-		FileUtils.moveFolder(Paths.get("temp"), Paths.get("saves", info.getName()));
 	}
 }

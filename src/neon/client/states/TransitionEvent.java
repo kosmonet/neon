@@ -38,7 +38,8 @@ public final class TransitionEvent extends ClientEvent {
 	private boolean consumed = false;
 	
 	/**
-	 * Initializes a new transition event with parameters.
+	 * Initializes a new transition event with parameters. The condition must
+	 * not be null.
 	 * 
 	 * @param condition
 	 * @param parameters

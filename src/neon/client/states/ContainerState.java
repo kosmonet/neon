@@ -59,8 +59,7 @@ import neon.common.event.InventoryEvent;
  *
  */
 public final class ContainerState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 	private static final long DUMMY = 1;
 	
 	private final UserInterface ui;
@@ -91,7 +90,7 @@ public final class ContainerState extends State {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
 		} catch (IOException e) {
-			logger.severe("failed to load container interface: " + e.getMessage());
+			LOGGER.severe("failed to load container interface: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -127,7 +126,7 @@ public final class ContainerState extends State {
 	private void refresh() {
 		int index = playerList.getSelectionModel().getSelectedIndex();
 		playerList.getItems().clear();
-		Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+		Inventory inventory = components.getComponent(Configuration.PLAYER_UID, Inventory.class);
 		moneyLabel.setText("Money: " + inventory.getMoney() + " copper pieces.");
 		
 		for (long uid : inventory.getItems()) {
@@ -163,15 +162,15 @@ public final class ContainerState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering container state");
+		LOGGER.finest("entering container state");
 		bus.register(this);
 		
 		containerList.getItems().clear();
 		map = config.getCurrentMap();
 		container = DUMMY;
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
 		List<Long> entities = map.getEntities(shape.getX(), shape.getY()).stream()
-				.filter(uid -> uid != PLAYER_UID).collect(Collectors.toList());
+				.filter(uid -> uid != Configuration.PLAYER_UID).collect(Collectors.toList());
 		
 		if (entities.size() == 1) {
 			long uid = entities.get(0);
@@ -193,7 +192,7 @@ public final class ContainerState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting container state");
+		LOGGER.finest("exiting container state");
 		bus.unregister(this);
 	}
 	

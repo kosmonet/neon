@@ -29,7 +29,6 @@ import neon.common.entity.components.Component;
 import neon.common.entity.components.Shape;
 import neon.common.event.ComponentEvent;
 import neon.common.event.UpdateEvent;
-import neon.common.resources.ResourceException;
 
 /**
  * A class to handle all entity-related events.
@@ -41,19 +40,36 @@ public class EntityHandler {
 	private final ComponentManager components;
 	private final Configuration config;
 	
+	/**
+	 * The component manager and configuration must not be null.
+	 * 
+	 * @param components
+	 * @param config
+	 */
 	public EntityHandler(ComponentManager components, Configuration config) {
 		this.components = Objects.requireNonNull(components, "component manager");
 		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
+	/**
+	 * Handles a component update.
+	 * 
+	 * @param event
+	 * @throws ClassNotFoundException	if the event doesn't contain a valid component
+	 */
 	@Subscribe 
 	private void onComponentUpdate(ComponentEvent event) throws ClassNotFoundException {
 		Component component = event.getComponent();
 		components.putComponent(component);
 	}
 	
+	/**
+	 * Moves an entity on a map.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void onEntityMove(UpdateEvent.Move event) throws ResourceException {
+	private void onEntityMove(UpdateEvent.Move event) {
 		if (components.hasComponent(event.uid, Shape.class)) {
 			Shape shape = components.getComponent(event.uid, Shape.class);
 			shape.setPosition(event.x, event.y, event.z);			
@@ -70,14 +86,24 @@ public class EntityHandler {
 		}
 	}
 	
+	/**
+	 * Removes an entity from a map.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void onEntityRemove(UpdateEvent.Remove event) throws ResourceException {
+	private void onEntityRemove(UpdateEvent.Remove event) {
 		Map map = config.getCurrentMap();
 		map.removeEntity(event.uid);
 	}
 	
+	/**
+	 * Removes an entity from the game.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void onEntityDestroy(UpdateEvent.Destroy event) throws ResourceException {
+	private void onEntityDestroy(UpdateEvent.Destroy event) {
 		components.removeEntity(event.uid);
 	}
 }

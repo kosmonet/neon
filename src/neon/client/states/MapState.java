@@ -45,7 +45,7 @@ import neon.common.resources.ResourceManager;
  *
  */
 public final class MapState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final UserInterface ui;
 	private final MapPane pane;
@@ -69,7 +69,7 @@ public final class MapState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load map viewer: " + e.getMessage());
+			LOGGER.severe("failed to load map viewer: " + e.getMessage());
 		}
 		
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.M), () -> bus.post(new TransitionEvent("cancel")));
@@ -84,7 +84,7 @@ public final class MapState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering map state");
+		LOGGER.finest("entering map state");
 	    root.setCenter(pane);
 	    Map map = config.getCurrentMap();
 	    pane.widthProperty().addListener(observable -> pane.drawMap(map));
@@ -94,6 +94,6 @@ public final class MapState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting map state");
+		LOGGER.finest("exiting map state");
 	}
 }

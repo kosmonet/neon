@@ -34,13 +34,24 @@ import neon.common.entity.components.Shape;
 import neon.common.graphics.EntityRenderer;
 import neon.common.graphics.TextureFactory;
 
+/**
+ * An {@code EntityRenderer<Long>} for the client.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ClientRenderer implements EntityRenderer<Long> {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final Map<Integer, Canvas> layers = new HashMap<>();
 	private final EntityComparator comparator = new EntityComparator();
 	private final ComponentManager components;
 	
+	/**
+	 * The component manager must not be null.
+	 * 
+	 * @param components
+	 */
 	public ClientRenderer(ComponentManager components) {
 		this.components = Objects.requireNonNull(components, "component manager");
 	}
@@ -58,7 +69,7 @@ public final class ClientRenderer implements EntityRenderer<Long> {
 			Image image = TextureFactory.getImage(scale, graphics.getColor(), graphics.getGlyph());
 			gc.drawImage(image, scale*(shape.getX() - xmin), scale*(shape.getY() - ymin));
 		} catch (NullPointerException e) {
-			logger.severe("could not render entity " + uid);
+			LOGGER.severe("could not render entity " + uid);
 		}
 	}
 

@@ -64,12 +64,12 @@ import neon.common.resources.loaders.TextLoader;
 import neon.systems.magic.SpellLoader;
 
 /**
+ * The neon client.
  * 
  * @author mdriesen
- *
  */
 public final class Client implements Runnable {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	private final EventBus bus = new EventBus("Client Bus");
 	private final ClientSocket socket;
@@ -80,7 +80,7 @@ public final class Client implements Runnable {
 	private final Configuration config = new Configuration();
 
 	/**
-	 * Initializes the client.
+	 * Initializes the client. The socket must not be null.
 	 * 
 	 * @param version	the current version of the client
 	 * @param socket	the socket used for communication with the server
@@ -101,7 +101,7 @@ public final class Client implements Runnable {
 		try {
 			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
-			logger.severe("could not initialize temporary folder in file system");			
+			LOGGER.severe("could not initialize temporary folder in file system");			
 		}
 		
 		// add all loaders to the resource manager
@@ -203,7 +203,7 @@ public final class Client implements Runnable {
 	 */
 	@Subscribe
 	private void monitor(DeadEvent event) {
-		logger.warning("client received a dead event: " + event.getEvent());
+		LOGGER.warning("client received a dead event: " + event.getEvent());
 	}
 
 	/**

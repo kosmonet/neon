@@ -46,14 +46,21 @@ import neon.systems.combat.CombatEvent;
  * @author mdriesen
  *
  */
-public final class CollisionHandler {
-	private static final long PLAYER_UID = 0;
-	
+public final class CollisionHandler {	
 	private final EventBus bus;
 	private final UserInterface ui;
 	private final ComponentManager components;
 	private final Configuration config;
 	
+	/**
+	 * The user interface, event bus, component manager and configuration must
+	 * not be null.
+	 * 
+	 * @param ui
+	 * @param bus
+	 * @param components
+	 * @param config
+	 */
 	public CollisionHandler(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = Objects.requireNonNull(ui, "user interface");
 		this.bus = Objects.requireNonNull(bus, "event bus");
@@ -71,7 +78,7 @@ public final class CollisionHandler {
 		long bumper = event.bumper;
 		long bumped = event.bumped;
 
-		if (bumper == PLAYER_UID) {
+		if (bumper == Configuration.PLAYER_UID) {
 			if (components.hasComponent(bumped, DoorInfo.class)) {
 				handleDoor(bumper, bumped);
 			} else if (components.hasComponent(bumped, CreatureInfo.class)){

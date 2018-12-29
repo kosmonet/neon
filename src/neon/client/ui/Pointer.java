@@ -28,40 +28,37 @@ import neon.util.Direction;
  * A pointer that can be moved on the game screen.
  * 
  * @author mdriesen
- *
  */
 public class Pointer {
 	private final Shape shape;
 	private final Graphics graphics;
 
+	/**
+	 * Initializes an new pointer.
+	 * 
+	 * @param uid
+	 */
 	public Pointer(long uid) {
 		graphics = new Graphics(uid, '◎', Color.WHITE);
 		shape = new Shape(uid);
 	}
 	
+	/**
+	 * Returns the shape (size and position) of the pointer.
+	 * 
+	 * @return	a {@code Shape}
+	 */
 	public Shape getShape() {
 		return shape;
 	}
 	
+	/**
+	 * Returns the rendering data of the pointer.
+	 * 
+	 * @return
+	 */
 	public Graphics getGraphics() {
 		return graphics;
-	}
-	
-	public int getX() {
-		return shape.getX();
-	}
-	
-	public int getY() {
-		return shape.getY();
-	}
-	
-	/**
-	 * Sets the position of the pointer.
-	 * 
-	 * @param position
-	 */
-	public void setPosition(Shape position) {
-		shape.setPosition(position.getX(), position.getY(), position.getZ());
 	}
 	
 	/**

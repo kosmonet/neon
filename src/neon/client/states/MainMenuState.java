@@ -49,7 +49,7 @@ import neon.common.event.InputEvent;
  *
  */
 public final class MainMenuState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	@FXML private Hyperlink newLink, loadLink, optionLink, quitLink;
 	@FXML private Label versionLabel, titleLabel, subtitleLabel;
@@ -76,7 +76,7 @@ public final class MainMenuState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load main menu " + e.getMessage());
+			LOGGER.severe("failed to load main menu " + e.getMessage());
 		}
 		
 		newLink.setOnMouseEntered(event -> newLink.requestFocus());
@@ -102,14 +102,14 @@ public final class MainMenuState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering main menu module");
+		LOGGER.finest("entering main menu module");
 		bus.register(this);
 		ui.showScene(scene);
 	}
 
 	@Override
 	public void exit(TransitionEvent event) { 
-		logger.finest("exiting main menu module");
+		LOGGER.finest("exiting main menu module");
 		bus.unregister(this);
 	}
 	

@@ -34,19 +34,30 @@ import neon.common.resources.CClient;
 import neon.common.resources.Resource;
 import neon.common.resources.loaders.ResourceLoader;
 
+/**
+ * A loader for the client configuration.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class ConfigurationLoader implements ResourceLoader {
-	private static final String namespace = "config";
-	private static final XMLTranslator translator = new XMLTranslator();
+	private static final String NAMESPACE = "config";
+	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
 	private final NeonFileSystem files;
 	
+	/**
+	 * The file system must not be null.
+	 * 
+	 * @param files
+	 */
 	public ConfigurationLoader(NeonFileSystem files) {
 		this.files = Objects.requireNonNull(files, "file system");
 	}
 
 	@Override
 	public Resource load(String id) throws IOException {
-		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
+		Element root = files.loadFile(TRANSLATOR, NAMESPACE, id + ".xml").getRootElement();
 		String title = root.getAttributeValue("title");
 		String subtitle = root.getAttributeValue("subtitle");
 		String intro = root.getChildText("intro");
@@ -66,7 +77,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 
 	@Override
 	public Set<String> listResources() {
-		return files.listFiles(namespace).stream()
+		return files.listFiles(NAMESPACE).stream()
 				.map(Files::getNameWithoutExtension)
 				.collect(Collectors.toSet());
 	}
@@ -78,6 +89,6 @@ public final class ConfigurationLoader implements ResourceLoader {
 
 	@Override
 	public String getNamespace() {
-		return namespace;
+		return NAMESPACE;
 	}
 }

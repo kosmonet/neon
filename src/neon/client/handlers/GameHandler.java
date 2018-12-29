@@ -20,6 +20,9 @@ package neon.client.handlers;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.logging.Logger;
+
+import org.jdom2.Element;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -29,18 +32,34 @@ import neon.client.Map;
 import neon.common.entity.components.Shape;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
+import neon.common.files.XMLTranslator;
 import neon.common.resources.RMap;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
+/**
+ * Handler for map events.
+ * 
+ * @author mdriesen
+ */
 public class GameHandler {
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
+	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
 	private final ResourceManager resources;
 	private final ComponentManager components;
 	private final Configuration config;
 	private final NeonFileSystem files;
 	
+	/**
+	 * The file system, component manager, resource manager and configuration 
+	 * must not be null.
+	 * 
+	 * @param files
+	 * @param components
+	 * @param resources
+	 * @param config
+	 */
 	public GameHandler(NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.files = Objects.requireNonNull(files, "file system");
 		this.components = Objects.requireNonNull(components, "component manager");
@@ -48,12 +67,22 @@ public class GameHandler {
 		this.config = Objects.requireNonNull(config, "configuration");
 	}
 	
+	/**
+	 * Handles a change of maps.
+	 * 
+	 * @param event
+	 * @throws ResourceException	if the map resource can't be loaded
+	 * @throws IOException	if the map is missing
+	 */
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
 		RMap resource = resources.getResource("maps", event.id);
-		Map map = new Map(resource, files);
-		map.addEntity(PLAYER_UID, shape.getX(), shape.getY());
+		Element root = files.loadFile(TRANSLATOR, "maps", event.id + ".xml").getRootElement();
+		Map map = new Map(resource, root);
+		LOGGER.finest("moving player to map " + map.getID());
+		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
+		LOGGER.finest("moving player to position (" + shape.getX() + ", " + shape.getY() + ")");
+		map.addEntity(Configuration.PLAYER_UID, shape.getX(), shape.getY());
 		config.setCurrentMap(map);
 	}
 }

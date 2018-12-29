@@ -30,11 +30,21 @@ import neon.systems.time.Calendar;
  *
  */
 public final class Configuration {
+	/**
+	 * The different game modes.
+	 * 
+	 * @author mdriesen
+	 */
 	public enum GameMode {
-		TURN_BASED, REAL_TIME;
+		/** In turn-based mode, every character waits for its turn. */
+		TURN_BASED, 
+		/** In real-time mode, every character moves when they have enough action points. */
+		REAL_TIME;
 	}
 
+	/** The amount of clock ticks per turn in real-time mode. */
 	public static final int TICKS_PER_TURN = 5;
+	/** The uid of the player character. */
 	public static final long PLAYER_UID = 0;
 	
 	private final Calendar calendar = new Calendar(0, TICKS_PER_TURN);

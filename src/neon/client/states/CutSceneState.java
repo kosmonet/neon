@@ -36,7 +36,7 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
 public final class CutSceneState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final EventBus bus;
 	private final UserInterface ui;
@@ -59,7 +59,7 @@ public final class CutSceneState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load inventory interface: " + e.getMessage());
+			LOGGER.severe("failed to load inventory interface: " + e.getMessage());
 		}
 
 		continueButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -68,25 +68,25 @@ public final class CutSceneState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering cutscene state");
+		LOGGER.finest("entering cutscene state");
 		try {
 			CClient config = resources.getResource("config", "client");
 			if(config.intro.isEmpty()) {
 				bus.post(new TransitionEvent("cancel"));
 			} else {
-				logger.info("loading cutscene text: " + config.intro);
+				LOGGER.info("loading cutscene text: " + config.intro);
 				RText text = resources.getResource("texts", config.intro);
 				view.getEngine().loadContent(text.text);
 				ui.showScene(scene);
 			}
 		} catch (ResourceException e) {
 			bus.post(new TransitionEvent("cancel"));
-			logger.severe("unable to load cutscene text");
+			LOGGER.severe("unable to load cutscene text");
 		}
 	}
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting cutscene state");
+		LOGGER.finest("exiting cutscene state");
 	}
 }

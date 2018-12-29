@@ -21,12 +21,24 @@ package neon.client;
 import neon.common.entity.components.Inventory;
 import neon.common.entity.components.ItemInfo;
 
+/**
+ * Utility methods for the client.
+ * 
+ * @author mdriesen
+ */
 public final class ClientUtils {
 	// suppress default constructor for noninstantiability
 	private ClientUtils() {
 		throw new AssertionError();
 	}
 	
+	/**
+	 * Calculates the total weight of all items in an inventory.
+	 * 
+	 * @param inventory
+	 * @param components
+	 * @return
+	 */
 	public static int getWeight(Inventory inventory, ComponentManager components) {
 		int weight = 0;
 		for (long uid : inventory.getItems()) {

@@ -35,14 +35,14 @@ import javafx.stage.Stage;
  *
  */
 public final class HelpWindow {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	@FXML private WebView view;
 	
 	private final Stage stage = new Stage();
 	
 	/**
-	 * Initialize a new {@code HelpWindow} without content.
+	 * Initialize a new help window without content.
 	 */
 	public HelpWindow() {
 		stage.setTitle("Help");
@@ -55,7 +55,7 @@ public final class HelpWindow {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load help window: " + e.getMessage());
+			LOGGER.severe("failed to load help window: " + e.getMessage());
 		}
 	}
 	
@@ -70,6 +70,9 @@ public final class HelpWindow {
 		stage.show();
 	}
 	
+	/**
+	 * Closes the help window.
+	 */
 	@FXML private void close() {
 		stage.close();
 	}

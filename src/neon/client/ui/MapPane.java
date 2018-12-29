@@ -38,11 +38,16 @@ import neon.common.resources.ResourceManager;
  * @author mdriesen
  */
 public final class MapPane extends Pane {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final ResourceManager resources;
 	private final Canvas canvas = new RenderCanvas();
 	
+	/**
+	 * The resource manager must not be null.
+	 * 
+	 * @param resources
+	 */
 	public MapPane(ResourceManager resources) {
 		this.resources = Objects.requireNonNull(resources, "resource manager");
 	    canvas.widthProperty().bind(widthProperty());
@@ -52,9 +57,9 @@ public final class MapPane extends Pane {
 	}
 	
 	/**
-	 * Draws the given map.
+	 * Draws a map.
 	 * 
-	 * @param map
+	 * @param map	the {@code Map} to draw
 	 */
 	public void drawMap(Map map) {
 		canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -76,7 +81,7 @@ public final class MapPane extends Pane {
 						canvas.getGraphicsContext2D().setFill(terrain.color);
 						canvas.getGraphicsContext2D().fillRect(x + xOffset, y + yOffset, 1, 1);
 					} catch (ResourceException e) {
-						logger.warning("unknown terrain type: " + id);
+						LOGGER.warning("unknown terrain type: " + id);
 					}
 				}
 			}

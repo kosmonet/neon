@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import javafx.scene.control.ListCell;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.common.entity.components.Equipment;
 import neon.common.entity.components.ItemInfo;
 import neon.systems.combat.Weapon;
@@ -34,10 +35,13 @@ import neon.systems.magic.Enchantment;
  *
  */
 public final class ItemCell extends ListCell<Long> {
-	private static final long PLAYER_UID = 0;
-	
 	private final ComponentManager components;
 	
+	/**
+	 * The component manager must not be null.
+	 * 
+	 * @param components
+	 */
 	public ItemCell(ComponentManager components) {
 		this.components = Objects.requireNonNull(components, "component manager");
 	}
@@ -58,7 +62,7 @@ public final class ItemCell extends ListCell<Long> {
 				style.append(isSelected() ? "-fx-text-fill: white;" : "-fx-text-fill: silver;");
 			}
 			
-			Equipment equipment = components.getComponent(PLAYER_UID, Equipment.class);
+			Equipment equipment = components.getComponent(Configuration.PLAYER_UID, Equipment.class);
 			if (equipment.hasEquipped(uid)) {
 				style.append("-fx-font-weight: bold;");    				
 			} else {

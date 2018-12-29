@@ -34,7 +34,7 @@ public final class Transition {
 	
 	/**
 	 * Creates a transition between the from and to {@code State}s, under the given
-	 * condition.
+	 * condition. The condition and from and to states must not be null.
 	 * 
 	 * @param from
 	 * @param to

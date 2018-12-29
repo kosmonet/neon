@@ -52,7 +52,7 @@ import neon.common.event.MessageEvent;
  *
  */
 public final class UserInterface {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final Stage stage;
 	private final Tooltip tip = new Tooltip();
@@ -79,7 +79,7 @@ public final class UserInterface {
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 			stage.setScene(scene);
 		} catch (IOException e) {
-			logger.severe("failed to load the loading screen :-/ " + e.getMessage());
+			LOGGER.severe("failed to load the loading screen :-/ " + e.getMessage());
 		}
 		
 		stage.show();
@@ -186,7 +186,8 @@ public final class UserInterface {
 	}
 	
 	/**
-	 * Sets the {@code Scene} to show on the JavaFX primary {@code Stage}.
+	 * Sets the {@code Scene} to show on the JavaFX primary {@code Stage}. The
+	 * scene must not be null.
 	 * 
 	 * @param scene	
 	 */

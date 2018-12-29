@@ -37,7 +37,7 @@ public final class ComponentManager {
 	/**
 	 * Puts a component in the table.
 	 * 
-	 * @param component	the component to add
+	 * @param component	the {@code Component} to add
 	 */
 	public void putComponent(Component component) {
 		components.put(component.getEntity(), component.getClass(), component);
@@ -74,9 +74,10 @@ public final class ComponentManager {
 	}
 	
 	/**
+	 * Returns all components of an entity.
 	 * 
 	 * @param uid
-	 * @return	all components of the given entity
+	 * @return	an immutable {@code ClassToInstanceMap} of {@code Component}s
 	 */
 	public ClassToInstanceMap<Component> getComponents(long uid) {
 		return ImmutableClassToInstanceMap.copyOf(components.rowMap().get(uid));

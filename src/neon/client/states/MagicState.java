@@ -37,6 +37,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.event.ComponentEvent;
@@ -47,8 +48,7 @@ import neon.systems.magic.MagicEvent;
 import neon.systems.magic.RSpell;
 
 public final class MagicState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 
 	private final UserInterface ui;
 	private final EventBus bus;
@@ -74,7 +74,7 @@ public final class MagicState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load magic interface: " + e.getMessage());
+			LOGGER.severe("failed to load magic interface: " + e.getMessage());
 		}
 
 		spellList.setOnKeyPressed(this::keyPressed);
@@ -85,7 +85,7 @@ public final class MagicState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering magic state");
+		LOGGER.finest("entering magic state");
 		bus.register(this);
 		refresh();
 		spellList.getSelectionModel().selectFirst();
@@ -104,7 +104,7 @@ public final class MagicState extends State {
 	
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting magic state");
+		LOGGER.finest("exiting magic state");
 		bus.unregister(this);
 	}
 	
@@ -112,7 +112,7 @@ public final class MagicState extends State {
 	
 	@FXML private void equipSpell() {
 		String id = spellList.getSelectionModel().getSelectedItem().id;
-		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+		Magic magic = components.getComponent(Configuration.PLAYER_UID, Magic.class);
 		
 		if (magic.hasEquipped(id)) {
 			bus.post(new MagicEvent.Unequip(id));
@@ -130,11 +130,11 @@ public final class MagicState extends State {
 		int index = spellList.getSelectionModel().getSelectedIndex();
 		spellList.getItems().clear();
 		
-		for (String id : components.getComponent(PLAYER_UID, Magic.class).getSpells()) {
+		for (String id : components.getComponent(Configuration.PLAYER_UID, Magic.class).getSpells()) {
 			try {
 				spellList.getItems().add(resources.getResource("spells", id));
 			} catch (ResourceException e) {
-				logger.warning("could not find spell <" + id + ">");
+				LOGGER.warning("could not find spell <" + id + ">");
 			}
 		}
 		
@@ -158,7 +158,7 @@ public final class MagicState extends State {
 				setText(null);
 			} else {
 				setText(spell.name);
-				Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+				Magic magic = components.getComponent(Configuration.PLAYER_UID, Magic.class);
 				if (magic.hasEquipped(spell.id)) {
 					setStyle("-fx-font-weight: bold");
 				} else {

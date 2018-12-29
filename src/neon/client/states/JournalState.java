@@ -33,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import neon.client.ClientUtils;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
 import neon.common.entity.Skill;
@@ -43,13 +44,13 @@ import neon.common.entity.components.Skills;
 import neon.common.entity.components.Stats;
 
 /**
+ * The state that provides the journal interface.
  * 
  * @author mdriesen
  *
  */
 public final class JournalState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	@FXML private Button cancelButton;
 	@FXML private DescriptionLabel description;
@@ -74,7 +75,7 @@ public final class JournalState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load journal: " + e.getMessage());
+			LOGGER.severe("failed to load journal: " + e.getMessage());
 		}
 
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -82,15 +83,15 @@ public final class JournalState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering journal state");
+		LOGGER.finest("entering journal state");
 	
-		description.updateCreature(components.getComponents(PLAYER_UID));
-		PlayerInfo playerInfo = components.getComponent(PLAYER_UID, PlayerInfo.class);
-		CreatureInfo creatureInfo = components.getComponent(PLAYER_UID, CreatureInfo.class);
+		description.updateCreature(components.getComponents(Configuration.PLAYER_UID));
+		PlayerInfo playerInfo = components.getComponent(Configuration.PLAYER_UID, PlayerInfo.class);
+		CreatureInfo creatureInfo = components.getComponent(Configuration.PLAYER_UID, CreatureInfo.class);
     	infoLabel.setText(playerInfo.getName() + ", " + playerInfo.getGender() + " " + creatureInfo.getName());
-    	Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+    	Stats stats = components.getComponent(Configuration.PLAYER_UID, Stats.class);
     	speedLabel.setText("Speed: " + stats.getSpeed());
-    	Skills skills = components.getComponent(PLAYER_UID, Skills.class);
+    	Skills skills = components.getComponent(Configuration.PLAYER_UID, Skills.class);
     	levelLabel.setText("Level " + stats.getLevel() + " (" + skills.getSkillIncreases() + "/10)");
     	
     	strengthLabel.setText("Strength: " + stats.getBaseStr());
@@ -100,7 +101,7 @@ public final class JournalState extends State {
     	wisdomLabel.setText("Wisdom: " + stats.getBaseWis());
     	charismaLabel.setText("Charisma: " + stats.getBaseCha());
     	
-    	Inventory inventory = components.getComponent(PLAYER_UID, Inventory.class);
+    	Inventory inventory = components.getComponent(Configuration.PLAYER_UID, Inventory.class);
     	int weight = ClientUtils.getWeight(inventory, components);
     	weightLabel.setText("Encumbrance: " + weight + " of " + 6*stats.getBaseStr()+ "/" + 9*stats.getBaseStr() + " stone");
 
@@ -135,6 +136,6 @@ public final class JournalState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting journal state");
+		LOGGER.finest("exiting journal state");
 	}
 }

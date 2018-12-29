@@ -68,11 +68,9 @@ import neon.util.Direction;
  * A module that implements the main game screen.
  * 
  * @author mdriesen
- *
  */
 public final class GameState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 	private static final long POINTER_UID = 1;
 	
 	private final UserInterface ui;
@@ -94,12 +92,14 @@ public final class GameState extends State {
 	private boolean redraw = true;
 	
 	/**
-	 * Initializes a new game module.
+	 * Initializes a new game module. The user interface, event bus, component 
+	 * manager, resource manager and configuration must not be null.
 	 * 
 	 * @param ui
 	 * @param bus
-	 * @param provider
+	 * @param components
 	 * @param resources
+	 * @param config
 	 */
 	public GameState(UserInterface ui, EventBus bus, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.ui = Objects.requireNonNull(ui, "user interface");
@@ -118,7 +118,7 @@ public final class GameState extends State {
 			scene.setFill(Color.BLACK);
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load new game: " + e.getMessage());
+			LOGGER.severe("failed to load new game: " + e.getMessage());
 		}
 		
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.LEFT), () -> move(Direction.LEFT));
@@ -148,8 +148,13 @@ public final class GameState extends State {
 		components.putComponent(pointer.getGraphics());
 	}
 	
+	/**
+	 * Handles mouse events.
+	 * 
+	 * @param event
+	 */
 	private void click(MouseEvent event) {
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		int x = xpos + (int)(event.getSceneX()/scale);
@@ -159,12 +164,17 @@ public final class GameState extends State {
 			RTerrain terrain = resources.getResource("terrain", config.getCurrentMap().getTerrain().get(x, y));
 			ui.showOverlayMessage(x + "," + y + ": " + terrain.id, 1500);
 		} catch (ResourceException e) {
-			logger.warning("unknown terrain type: " + config.getCurrentMap().getTerrain().get(x, y));
+			LOGGER.warning("unknown terrain type: " + config.getCurrentMap().getTerrain().get(x, y));
 		}
 	}
 	
+	/**
+	 * Handles start events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void onGameStart(UpdateEvent.Start event) throws ResourceException {
+	private void onGameStart(UpdateEvent.Start event) {
 		// prepare the scene
 		stack.getChildren().clear();
 		renderPane.widthProperty().addListener((observable, oldWidth, newWidth) -> redraw());
@@ -173,21 +183,39 @@ public final class GameState extends State {
 		stack.getChildren().add(infoPane);
 	}
 	
+	/**
+	 * Handles map changes.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
-	private void onMapChange(UpdateEvent.Map event) throws ResourceException {
+	private void onMapChange(UpdateEvent.Map event) {
 		renderPane.setMap(config.getCurrentMap());
 	}
 	
+	/**
+	 * Handles component updates.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onUpdate(ComponentEvent event) {
 		scheduleRedraw();
 	}
 	
+	/**
+	 * Handles update events.
+	 * 
+	 * @param event
+	 */
 	@Subscribe
 	private void onUpdate(UpdateEvent event) {
 		scheduleRedraw();
 	}
 	
+	/**
+	 * Schedules a redraw of the map.
+	 */
 	private void scheduleRedraw() {
 		if (!redraw) {
 			Platform.runLater(this::redraw);
@@ -195,6 +223,11 @@ public final class GameState extends State {
 		}		
 	}
 
+	/**
+	 * Moves the player in the given direction.
+	 * 
+	 * @param direction
+	 */
 	private void move(Direction direction) {
 		Map map = config.getCurrentMap();
 		
@@ -203,15 +236,16 @@ public final class GameState extends State {
 		} else {
 			pointer.move(direction, map);
 			StringBuilder builder = new StringBuilder();
+			Shape position = pointer.getShape();
 			
 			try {
-				RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(pointer.getX(), pointer.getY()));
+				RTerrain terrain = resources.getResource("terrain", map.getTerrain().get(position.getX(), position.getY()));
 				builder.append(terrain.id);
 			} catch (ResourceException e) {
-				logger.warning("unknown terrain type: " + map.getTerrain().get(pointer.getX(), pointer.getY()));
+				LOGGER.warning("unknown terrain type: " + map.getTerrain().get(position.getX(), position.getY()));
 			}
 
-			for (Long uid : map.getEntities(pointer.getX(), pointer.getY())) {
+			for (Long uid : map.getEntities(position.getX(), position.getY())) {
 				builder.append(" - ");
 				if (components.hasComponent(uid, PlayerInfo.class)) {
 					builder.append(components.getComponent(uid, PlayerInfo.class).getName());
@@ -237,7 +271,7 @@ public final class GameState extends State {
 	 * Lets the player cast a spell.
 	 */
 	private void cast() {
-		Magic magic = components.getComponent(PLAYER_UID, Magic.class);
+		Magic magic = components.getComponent(Configuration.PLAYER_UID, Magic.class);
 		if (magic.getEquipped().isPresent()) {
 			String id = magic.getEquipped().get();
 			
@@ -246,28 +280,34 @@ public final class GameState extends State {
 				
 				if (looking && spell.target == Target.OTHER) {
 					if (magic.getEquipped().isPresent()) {
-						Optional<Long> creature = config.getCurrentMap().getEntities(pointer.getX(), pointer.getY()).stream()
+						Shape position = pointer.getShape();
+						Optional<Long> creature = config.getCurrentMap().getEntities(position.getX(), position.getY()).stream()
 								.filter(uid -> components.hasComponent(uid, CreatureInfo.class)).findFirst();
-						if (creature.isPresent() && creature.get() != PLAYER_UID) {
-							creature.ifPresent(uid -> bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquipped().get(), uid)));
+						if (creature.isPresent() && creature.get() != Configuration.PLAYER_UID) {
+							creature.ifPresent(uid -> bus.post(new MagicEvent.Cast(Configuration.PLAYER_UID, magic.getEquipped().get(), uid)));
 						}
 						look();
 					}
 				} else if (spell.target == Target.SELF) {
-					bus.post(new MagicEvent.Cast(PLAYER_UID, magic.getEquipped().get(), PLAYER_UID));
+					bus.post(new MagicEvent.Cast(Configuration.PLAYER_UID, magic.getEquipped().get(), Configuration.PLAYER_UID));
 				} else {
 					look();
 				}
 			} catch (ResourceException e) {
-				logger.severe("spell <" + id + "> not found");
+				LOGGER.severe("spell <" + id + "> not found");
 			}
 		} 
 	}
 
+	/**
+	 * Lets the player look around by pausing the map and transferring control
+	 * to a pointer.
+	 */
 	private void look() {
 		if (!looking) {
-			pointer.setPosition(components.getComponent(PLAYER_UID, Shape.class));
-			config.getCurrentMap().addEntity(POINTER_UID, pointer.getX(), pointer.getY());
+			Shape position = components.getComponent(Configuration.PLAYER_UID, Shape.class);
+			pointer.getShape().setPosition(position.getX(), position.getY(), position.getZ());
+			config.getCurrentMap().addEntity(POINTER_UID, position.getX(), position.getY());
 			infoLabel.setVisible(true);
 			redraw();
 			looking = true;
@@ -279,10 +319,13 @@ public final class GameState extends State {
 		}
 	}
 	
+	/**
+	 * Redraws the user interface.
+	 */
 	private void redraw() {
-		PlayerInfo record = components.getComponent(PLAYER_UID, PlayerInfo.class);
+		PlayerInfo record = components.getComponent(Configuration.PLAYER_UID, PlayerInfo.class);
 		modeLabel.setText(record.getMode().toString());
-		Stats stats = components.getComponent(PLAYER_UID, Stats.class);
+		Stats stats = components.getComponent(Configuration.PLAYER_UID, Stats.class);
 		
 		healthLabel.setText("♥ " + stats.getHealth() + "/" + stats.getBaseHealth());
 		if ((float) stats.getHealth()/stats.getBaseHealth() < 0.1) {
@@ -305,26 +348,29 @@ public final class GameState extends State {
 			staminaLabel.setTextFill(Color.SILVER);			
 		}		
 		
-		Shape shape = components.getComponent(PLAYER_UID, Shape.class);
+		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
 		int xpos = Math.max(0, (int) (shape.getX() - renderPane.getWidth()/(2*scale)));
 		int ypos = Math.max(0, (int) (shape.getY() - renderPane.getHeight()/(2*scale)));
 		renderPane.draw(xpos, ypos, scale);
 		redraw = false;
 	}
 	
+	/**
+	 * (Un)pauses the game.
+	 */
 	private void pause() {
 		if (config.isPaused()) {
-			config.setPaused(false);
+			config.unpause();
 			bus.post(new InputEvent.Unpause());
 		} else {
-			config.setPaused(true);
+			config.pause();
 			bus.post(new InputEvent.Pause());
 		}
 	}
 
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering game module");
+		LOGGER.finest("entering game module");
 		ui.showScene(scene);
 		
 		// unpause the server when returning to the game module
@@ -335,7 +381,7 @@ public final class GameState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting game module");
+		LOGGER.finest("exiting game module");
 		// pause the server when leaving the game module
 		bus.post(new InputEvent.Pause());
 	}

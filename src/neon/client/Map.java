@@ -19,7 +19,6 @@
 package neon.client;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -30,8 +29,6 @@ import org.jdom2.Element;
 
 import com.google.common.collect.ImmutableSet;
 
-import neon.common.files.NeonFileSystem;
-import neon.common.files.XMLTranslator;
 import neon.common.graphics.RenderableMap;
 import neon.common.resources.RMap;
 import neon.util.spatial.PointQuadTree;
@@ -39,8 +36,12 @@ import neon.util.spatial.PointSpatialIndex;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
+/**
+ * Client implementation of a map.
+ * 
+ * @author mdriesen
+ */
 public final class Map implements RenderableMap<Long> {
-	private static final XMLTranslator translator = new XMLTranslator();
 	private static final Logger logger = Logger.getGlobal();
 
 	private final RegionSpatialIndex<String> terrain;
@@ -49,7 +50,13 @@ public final class Map implements RenderableMap<Long> {
 	private final Collection<Marker> markers = new ArrayList<>();
 	private final String id;
 	
-	public Map(RMap map, NeonFileSystem files) throws IOException {
+	/**
+	 * Initializes a new map.
+	 * 
+	 * @param map
+	 * @param files
+	 */
+	public Map(RMap map, Element root) {
 		this.id = map.id;
 		
 		entities = new PointQuadTree<>(0, 0, map.width, map.height, 100);
@@ -57,7 +64,6 @@ public final class Map implements RenderableMap<Long> {
 		// initialize with a ground plane at 0 elevation
 		elevation = new RegionQuadTree<>(map.width,  map.height, 0);
 
-		Element root = files.loadFile(translator, "maps", map.id + ".xml").getRootElement();
 		initTerrain(root.getChild("terrain"));
 		initElevation(root.getChild("elevation"));
 		initMarkers(root.getChild("labels"));
@@ -140,6 +146,11 @@ public final class Map implements RenderableMap<Long> {
 		entities.remove(uid);
 	}
 	
+	/**
+	 * Initializes the terrain on this map.
+	 * 
+	 * @param terrain
+	 */
 	private void initTerrain(Element terrain) {
 		for (Element region : terrain.getChildren("region")) {
 			try {
@@ -155,6 +166,11 @@ public final class Map implements RenderableMap<Long> {
 		}
 	}
 
+	/**
+	 * Initializes the height map.
+	 * 
+	 * @param elevation
+	 */
 	private void initElevation(Element elevation) {
 		for (Element region : elevation.getChildren("region")) {
 			try {
@@ -180,6 +196,11 @@ public final class Map implements RenderableMap<Long> {
 		return elevation;
 	}
 
+	/**
+	 * Initializes map markers.
+	 * 
+	 * @param labels
+	 */
 	private void initMarkers(Element labels) {
 		for (Element label : labels.getChildren()) {
 			try {
@@ -201,11 +222,26 @@ public final class Map implements RenderableMap<Long> {
 		return ImmutableSet.copyOf(markers);
 	}
 	
+	/**
+	 * A marker on the world map.
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Marker {
+		/** The x coordinate of the marker. */
 		public final int x;
+		/** The y coordinate of the marker. */
 		public final int y;
+		/** The text on the marker. */
 		public final String text;
 		
+		/**
+		 * The text must not be null.
+		 * 
+		 * @param x
+		 * @param y
+		 * @param text
+		 */
 		private Marker(int x, int y, String text) {
 			this.text = Objects.requireNonNull(text, "text");
 			this.x = x;

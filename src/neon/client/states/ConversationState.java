@@ -38,6 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import neon.client.ComponentManager;
+import neon.client.Configuration;
 import neon.client.help.HelpWindow;
 import neon.client.ui.DescriptionLabel;
 import neon.client.ui.UserInterface;
@@ -46,8 +47,7 @@ import neon.systems.conversation.ConversationEvent;
 import neon.systems.conversation.Topic;
 
 public final class ConversationState extends State {
-	private static final Logger logger = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final EventBus bus;
 	private final UserInterface ui;
@@ -87,7 +87,7 @@ public final class ConversationState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load conversation interface: " + e.getMessage());
+			LOGGER.severe("failed to load conversation interface: " + e.getMessage());
 		}
 		
 		scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F1), this::showHelp);
@@ -99,9 +99,9 @@ public final class ConversationState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering conversation module");
+		LOGGER.finest("entering conversation module");
 		bus.register(this);
-		bus.post(new ConversationEvent.Start(PLAYER_UID, event.getParameter(Long.class)));		
+		bus.post(new ConversationEvent.Start(Configuration.PLAYER_UID, event.getParameter(Long.class)));		
 		description.updateCreature(components.getComponents(event.getParameter(Long.class)));
 		flow.getChildren().clear();	
 		ui.showScene(scene);
@@ -109,7 +109,7 @@ public final class ConversationState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting conversation module");
+		LOGGER.finest("exiting conversation module");
 		bus.unregister(this);
 	}
 	

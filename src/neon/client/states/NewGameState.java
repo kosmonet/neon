@@ -50,7 +50,7 @@ import neon.common.resources.ResourceManager;
 import neon.util.GraphicsUtils;
 
 public final class NewGameState extends State {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	@FXML private Button cancelButton, startButton;
 	@FXML private ListView<RCreature> speciesList;
@@ -89,7 +89,7 @@ public final class NewGameState extends State {
 			scene = new Scene(loader.load());
 			scene.getStylesheets().add(getClass().getResource("/neon/client/scenes/main.css").toExternalForm());
 		} catch (IOException e) {
-			logger.severe("failed to load new game menu: " + e.getMessage());
+			LOGGER.severe("failed to load new game menu: " + e.getMessage());
 		}
 		
 		cancelButton.setOnAction(event -> bus.post(new TransitionEvent("cancel")));
@@ -129,7 +129,7 @@ public final class NewGameState extends State {
 	
 	@Override
 	public void enter(TransitionEvent event) {
-		logger.finest("entering new game state");
+		LOGGER.finest("entering new game state");
 		configure();
 		bus.register(this);
 		ui.showScene(scene);
@@ -138,7 +138,7 @@ public final class NewGameState extends State {
 
 	@Override
 	public void exit(TransitionEvent event) {
-		logger.finest("exiting new game state");
+		LOGGER.finest("exiting new game state");
 		bus.unregister(this);
 	}
 	
@@ -209,7 +209,7 @@ public final class NewGameState extends State {
 				speciesList.getItems().add(resources.getResource("creatures", id));
 			}
 		} catch (ResourceException e) {
-			logger.severe("could not initialize playable species list");
+			LOGGER.severe("could not initialize playable species list");
 		}
 
 		speciesList.getSelectionModel().select(0);
