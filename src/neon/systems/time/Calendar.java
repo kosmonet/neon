@@ -53,6 +53,10 @@ public final class Calendar {
 		ticks += amount;
 	}
 	
+	public int getTicks() {
+		return ticks;
+	}
+	
 	public int getDay() {
 		return ticks/(ticksPerTurn*TURNS_PER_DAY);
 	}
@@ -63,7 +67,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getDayOfWeek(int days) {
+	public static int getDayOfWeek(int days) {
 		return (days - 1) % DAYS_PER_WEEK + 1;
 	}
 	
@@ -73,7 +77,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getDayOfMonth(int days) {
+	public static int getDayOfMonth(int days) {
 		return (days - 1) % DAYS_PER_MONTH + 1;
 	}
 	
@@ -83,7 +87,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getDayOfYear(int days) {
+	public static int getDayOfYear(int days) {
 		return (days - 1) % DAYS_PER_YEAR + 1;
 	}
 	
@@ -93,7 +97,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public Day getDayName(int days) {
+	public static Day getDayName(int days) {
 		return Day.values()[getDayOfWeek(days) - 1];
 	}
 	
@@ -103,7 +107,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getWeek(int days) {
+	public static int getWeek(int days) {
 		return (days - 1)/DAYS_PER_WEEK + 1;
 	}
 	
@@ -113,7 +117,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getWeekOfMonth(int days) {
+	public static int getWeekOfMonth(int days) {
 		return (getWeek(days) - 1) % WEEKS_PER_MONTH + 1;
 	}
 	
@@ -123,7 +127,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getWeekOfYear(int days) {
+	public static int getWeekOfYear(int days) {
 		return (getWeek(days) - 1) % WEEKS_PER_YEAR + 1;
 	}
 	
@@ -133,7 +137,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getMonth(int days) {
+	public static int getMonth(int days) {
 		return (days - 1)/DAYS_PER_MONTH + 1;
 	}
 	
@@ -143,7 +147,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getMonthOfYear(int days) {
+	public static int getMonthOfYear(int days) {
 		return (getMonth(days) - 1) % MONTHS_PER_YEAR + 1;
 	}
 	
@@ -153,7 +157,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public Month getMonthName(int days) {
+	public static Month getMonthName(int days) {
 		return Month.values()[getMonthOfYear(days) - 1];
 	}
 	
@@ -163,7 +167,7 @@ public final class Calendar {
 	 * @param days
 	 * @return
 	 */
-	public int getYear(int days) {
+	public static int getYear(int days) {
 		return (days - 1)/DAYS_PER_YEAR + 1;
 	}
 }

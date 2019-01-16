@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jdom2.DataConversionException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -66,7 +67,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 	}
 	
 	@Override
-	public Resource load(String id) throws IOException {
+	public Resource load(String id) throws IOException, DataConversionException {
 		Element root = files.loadFile(TRANSLATOR, NAMESPACE, id + ".xml").getRootElement();
 		switch (root.getName()) {
 		case "client":
@@ -201,11 +202,13 @@ public final class ConfigurationLoader implements ResourceLoader {
 	 * 
 	 * @param root
 	 * @return
+	 * @throws DataConversionException	if the game configuration contains the wrong type of data
 	 */
-	private CGame loadGame(Element root) {
+	private CGame loadGame(Element root) throws DataConversionException {
 		Element start = root.getChild("start");
 		String map = start.getAttributeValue("map");
-		return new CGame(map, -1, -1, -1, Collections.emptyList(), Collections.emptySet());
+		int time = start.getAttribute("time").getIntValue();
+		return new CGame(map, -1, -1, -1, time, Collections.emptyList(), Collections.emptySet());
 	}
 
 	/**
@@ -218,6 +221,7 @@ public final class ConfigurationLoader implements ResourceLoader {
 		Element game = new Element("game");
 		Element start = new Element("start");
 		start.setAttribute("map", config.map);
+		start.setAttribute("time", Integer.toString(config.time));
 		game.addContent(start);
 		return game;
 	}

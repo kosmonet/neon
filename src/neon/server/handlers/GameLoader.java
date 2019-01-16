@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ import neon.common.resources.RCreature;
 import neon.common.resources.RModule;
 import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
+import neon.server.Configuration;
 import neon.server.entity.EntityManager;
 import neon.systems.magic.Magic;
 
@@ -69,7 +70,6 @@ import neon.systems.magic.Magic;
  */
 public final class GameLoader {
 	private static final Logger LOGGER = Logger.getGlobal();
-	private static final long PLAYER_UID = 0;
 	
 	private final EventBus bus;
 	private final ResourceManager resources;
@@ -113,8 +113,8 @@ public final class GameLoader {
 
 			// the player character
 			RCreature species = resources.getResource("creatures", event.species);
-			Entity player = entities.createEntity(PLAYER_UID, species);
-			player.setComponent(new PlayerInfo(PLAYER_UID, event.name, event.gender));
+			Entity player = entities.createEntity(Configuration.PLAYER_UID, species);
+			player.setComponent(new PlayerInfo(Configuration.PLAYER_UID, event.name, event.gender));
 			player.getComponent(Shape.class).setPosition(game.startX, game.startY, 0);
 
 			Stats stats = player.getComponent(Stats.class);
@@ -181,6 +181,7 @@ public final class GameLoader {
 		int x = 0;
 		int y = 0;
 		int money = 0;
+		int time = 0;
 		List<String> items = new ArrayList<>();
 		Set<String> spells = new HashSet<>();
 		
@@ -200,7 +201,7 @@ public final class GameLoader {
 			}
 		}
 		
-		CGame game = new CGame(map, x, y, money, items, spells);
+		CGame game = new CGame(map, x, y, time, money, items, spells);
 		return game;
 	}
 
@@ -239,12 +240,12 @@ public final class GameLoader {
 		}
 		
 		// send the player to the client
-		notifier.notifyClient(entities.getEntity(PLAYER_UID));
+		notifier.notifyClient(entities.getEntity(Configuration.PLAYER_UID));
 		// get the start map
 		CGame game = resources.getResource("config", "game");
 		notifier.notifyClient(entities.getMap(game.map));
 		// tell the client everything is ready to start
-		bus.post(new UpdateEvent.Start());
+		bus.post(new UpdateEvent.Start(game.time));
 	}
 	
 	/**

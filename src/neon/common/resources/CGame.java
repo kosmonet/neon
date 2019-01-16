@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -33,16 +33,19 @@ public final class CGame extends Resource {
 	public final int startY;
 	/** The amount of money the player starts with. */
 	public final int startMoney;
+	/** The starting time. */
+	public final int time;
 
 	private final Iterable<String> items;
 	private final Set<String> spells;
 	
-	public CGame(String startMap, int startX, int startY, int startMoney, Iterable<String> items, Iterable<String> spells) {
+	public CGame(String startMap, int startX, int startY, int startMoney, int time, Iterable<String> items, Iterable<String> spells) {
 		super("game", "config");
 		this.map = Objects.requireNonNull(startMap, "start map");
 		this.startX = startX;
 		this.startY = startY;
 		this.startMoney = startMoney;
+		this.time = time;
 		
 		this.items = ImmutableList.copyOf(items);
 		this.spells = ImmutableSet.copyOf(spells);

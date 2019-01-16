@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2018-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -35,7 +35,17 @@ public abstract class UpdateEvent extends NeonEvent {
 	 * @author mdriesen
 	 *
 	 */
-	public static final class Start extends UpdateEvent {}
+	public static final class Start extends UpdateEvent {
+		public final int time;
+		
+		public Start() {
+			this(0);
+		}
+		
+		public Start(int time) {
+			this.time = time;
+		}
+	}
 	
 	/**
 	 * An event to indicate a change of map.
@@ -53,6 +63,11 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * An event to signal a moved entity.
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Move extends UpdateEvent {
 		public final long uid;
 		public final int x, y, z;
@@ -67,6 +82,12 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * An event to indicate that an entity is removed from a map (e.g. when 
+	 * picking up an item).
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Remove extends UpdateEvent {
 		public final long uid;
 		public final int map;
@@ -77,6 +98,11 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * An event to indicate skill increases.
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Skills extends UpdateEvent {
 		public final long uid;
 		public final Skill skill;
@@ -89,6 +115,11 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * An event to indicate level increases.
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Level extends UpdateEvent {
 		public final long uid;
 		public final int level;
@@ -99,6 +130,12 @@ public abstract class UpdateEvent extends NeonEvent {
 		}
 	}
 	
+	/**
+	 * An event to indicate that an entity is destroyed and should be removed
+	 * from the game.
+	 * 
+	 * @author mdriesen
+	 */
 	public static final class Destroy extends UpdateEvent {
 		public final long uid;
 		

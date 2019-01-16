@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2018-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -75,8 +75,10 @@ public class GameSaver {
 		entities.flushEntities();
 		// store all cached maps
 		entities.flushMaps();		
-		// save configuration (current map, TODO: calendar)
-		CGame game = new CGame(configuration.getCurrentMap().getID(), 0, 0, 0, Collections.emptyList(), Collections.emptySet());
+		// save configuration (current map, calendar)
+		String map = configuration.getCurrentMap().getID();
+		int time = configuration.getCalendar().getTicks();
+		CGame game = new CGame(map, 0, 0, 0, time, Collections.emptyList(), Collections.emptySet());
 		resources.addResource(game);
 		
 		// move the temp folder to the saves folder

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -104,6 +104,7 @@ public final class SystemManager {
 	 */
 	@Subscribe
 	private void onGameStart(UpdateEvent.Start event) {
+		config.getCalendar().addTicks(event.time);
 		config.setRunning(true);
 	}
 	
