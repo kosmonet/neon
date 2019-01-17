@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 package neon.common.resources;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,5 +80,27 @@ public final class CServer extends Resource {
 	 */
 	public boolean hasModule(String module) {
 		return modules.contains(module);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime*result + Objects.hash(level, modules);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof CServer) {
+			CServer cs = (CServer) other;
+			return Objects.equals(level, cs.level) && Objects.equals(modules, cs.modules);
+		} else {
+			return false;
+		} 
 	}
 }

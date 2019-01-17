@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -64,5 +64,28 @@ public final class CClient extends Resource {
 	 */
 	public Set<String> getPlayableSpecies() {
 		return species;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(intro, species, subtitle, title);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof CClient) {
+			CClient cc = (CClient) other;
+			return Objects.equals(intro, cc.intro) && Objects.equals(species, cc.species)
+					&& Objects.equals(subtitle, cc.subtitle) && Objects.equals(title, cc.title);
+		} else {
+			return false;
+		}
 	}
 }

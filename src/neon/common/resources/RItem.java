@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ import neon.systems.magic.Effect;
  *
  */
 public class RItem extends Resource {
+	private static final int prime = 31;
+	
 	/** The display name. */
 	public final String name;
 	/** The UTF-8 character to represent the item on screen. */
@@ -43,6 +45,8 @@ public class RItem extends Resource {
 	/** The weight of this item. */
 	public final int weight;
 	
+	private final int hash;
+	
 	private RItem(Builder builder) {
 		super(builder.id, "items");
 		name = builder.name;
@@ -50,6 +54,27 @@ public class RItem extends Resource {
 		color = builder.color;
 		price = builder.price;
 		weight = builder.weight;
+		hash = Objects.hash(color, glyph, name, price, weight);
+	}
+
+	@Override
+	public int hashCode() {
+		return prime * super.hashCode() + hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RItem) {
+			RItem ri = (RItem) other;
+			return Objects.equals(color, ri.color) && glyph == ri.glyph && Objects.equals(name, ri.name)
+					&& price == ri.price && weight == ri.weight;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -93,12 +118,34 @@ public class RItem extends Resource {
 		/** The magnitude of the enchantment. */
 		public final int magnitude;
 		
+		private final int hash;
+		
 		public Clothing(Builder builder) {
 			super(builder);
 			slot = builder.slot;
 			magnitude = builder.magnitude;
 			effect = Optional.ofNullable(builder.effect);
-		}		
+			hash = Objects.hash(effect, magnitude, slot);
+		}
+
+		@Override
+		public int hashCode() {
+			return prime * super.hashCode() + hash;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			} else if (!super.equals(other)) {
+				return false;
+			} else if (other instanceof Clothing) {
+				Clothing c = (Clothing) other;
+				return Objects.equals(effect, c.effect) && magnitude == c.magnitude && slot == c.slot;
+			} else {
+				return false;
+			}
+		}
 	}
 	
 	/**
@@ -114,11 +161,33 @@ public class RItem extends Resource {
 		/** The weight class. */
 		public final ArmorType type;
 		
+		private final int hash;
+		
 		public Armor(Builder builder) {
 			super(builder);
 			rating = builder.rating;
 			type = builder.type;
-		}		
+			hash = Objects.hash(rating, type);
+		}
+
+		@Override
+		public int hashCode() {
+			return prime * super.hashCode() + hash;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			} else if (!super.equals(other)) {
+				return false;
+			} else if (other instanceof Armor) {
+				Armor a = (Armor) other;
+				return rating == a.rating && type == a.type;
+			} else {
+				return false;
+			}		
+		}
 	}
 	
 	/**
@@ -134,6 +203,25 @@ public class RItem extends Resource {
 		public Weapon(Builder builder) {
 			super(builder);
 			damage = builder.damage;
+		}
+
+		@Override
+		public int hashCode() {
+			return prime * super.hashCode() + Objects.hash(damage);
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			} else if (!super.equals(other)) {
+				return false;
+			} else if (other instanceof Weapon) {
+				Weapon w = (Weapon) other;
+				return Objects.equals(damage, w.damage);
+			} else {
+				return false;
+			}
 		}		
 	}
 	
@@ -142,11 +230,33 @@ public class RItem extends Resource {
 		public final Optional<Effect> effect;
 		/** The magnitude of the enchantment. */
 		public final int magnitude;
+		
+		private final int hash;
 
 		public Potion(Builder builder) {
 			super(builder);
 			magnitude = builder.magnitude;
 			effect = Optional.ofNullable(builder.effect);
+			hash = Objects.hash(effect, magnitude);
+		}
+
+		@Override
+		public int hashCode() {
+			return prime * super.hashCode() + hash;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			} else if (!super.equals(other)) {
+				return false;
+			} else if (other instanceof Potion) {
+				Potion p = (Potion) other;
+				return Objects.equals(effect, p.effect) && magnitude == p.magnitude;
+			} else {
+				return false;
+			}
 		}
 	}
 	
@@ -155,14 +265,36 @@ public class RItem extends Resource {
 		public final char opened;
 		/** The character to represent a door in closed condition. */
 		public final char closed;
+		
+		private final int hash;
 
 		public Door(Builder builder) {
 			super(builder);
 			opened = builder.glyph;
 			closed = builder.closed;
+			hash = Objects.hash(closed, opened);
+		}
+
+		@Override
+		public int hashCode() {
+			return prime * super.hashCode() + hash;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) {
+				return true;
+			} else if (!super.equals(other)) {
+				return false;
+			} else if (other instanceof Door) {
+				Door d = (Door) other;
+				return closed == d.closed && opened == d.opened;
+			} else {
+				return false;
+			}
 		}		
 	}
-	
+
 	/**
 	 * A builder for the {@code RItem} class.
 	 * 

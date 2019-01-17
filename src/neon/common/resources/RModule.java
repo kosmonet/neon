@@ -54,7 +54,8 @@ public final class RModule extends Resource {
 	private final Set<String> parents;
 	private final List<String> items;
 	private final Set<String> spells;
-
+	private final int hash;
+	
 	/**
 	 * Initializes this RModule with a builder.
 	 * 
@@ -74,6 +75,8 @@ public final class RModule extends Resource {
 		parents = ImmutableSet.copyOf(builder.parents);
 		spells = ImmutableSet.copyOf(builder.spells);
 		items = ImmutableList.copyOf(builder.items);
+		
+		hash = Objects.hash(intro, items, map, money, parents, species, spells, subtitle, title, x, y);
 	}
 	
 	/**
@@ -112,7 +115,31 @@ public final class RModule extends Resource {
 	public Set<String> getParentModules() {
 		return parents;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * super.hashCode() + hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RModule) {
+			RModule rm = (RModule) other;
+			return Objects.equals(intro, rm.intro) && Objects.equals(items, rm.items)
+					&& Objects.equals(map, rm.map) && money == rm.money && Objects.equals(parents, rm.parents)
+					&& Objects.equals(species, rm.species) && Objects.equals(spells, rm.spells)
+					&& Objects.equals(subtitle, rm.subtitle) && Objects.equals(title, rm.title) && x == rm.x
+					&& y == rm.y;
+		} else {
+			return false;
+		}  
+	}
+
 	/**
 	 * A builder for RModules.
 	 * 
@@ -133,6 +160,11 @@ public final class RModule extends Resource {
 		private Set<String> parents = new HashSet<>();
 		private List<String> items = new ArrayList<>();
 		
+		/**
+		 * Initializes a builder. The id must not be null.
+		 * 
+		 * @param id
+		 */
 		public Builder(String id) {
 			this.id = Objects.requireNonNull(id, "id");
 		}
@@ -146,11 +178,24 @@ public final class RModule extends Resource {
 			return new RModule(this);
 		}
 		
+		/**
+		 * Sets the game title, as shown in the main menu and in the window 
+		 * title bar.
+		 * 
+		 * @param title
+		 * @return
+		 */
 		public Builder setTitle(String title) {
 			this.title = Objects.requireNonNull(title, "title");
 			return this;
 		}
 		
+		/**
+		 * Sets the game subtitle.
+		 * 
+		 * @param subtitle
+		 * @return
+		 */
 		public Builder setSubtitle(String subtitle) {
 			this.subtitle = Objects.requireNonNull(subtitle, "subtitle");
 			return this;

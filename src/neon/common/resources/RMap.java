@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ package neon.common.resources;
 import java.util.Objects;
 
 /**
+ * A map resource.
+ * 
  * @author mdriesen
  */
 public final class RMap extends Resource {
@@ -34,6 +36,8 @@ public final class RMap extends Resource {
 	public final int height;
 	/** The module this map belongs to. */
 	public final String module;
+	
+	private final int hash;
 	
 	/**
 	 * Initializes this map without terrain, elevation or entities. The name 
@@ -53,5 +57,27 @@ public final class RMap extends Resource {
 		this.width = width;
 		this.height = height;
 		this.uid = uid;
+		hash = Objects.hash(height, module, name, uid, width);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * super.hashCode() + hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RMap) {
+			RMap rm = (RMap) other;
+			return height == rm.height && Objects.equals(module, rm.module) && Objects.equals(name, rm.name)
+					&& uid == rm.uid && width == rm.width;
+		} else {
+			return false;
+		}
 	}
 }

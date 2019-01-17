@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -52,6 +52,8 @@ public final class RCreature extends Resource {
 	/** A description of the creature. */
 	public final String description;
 	
+	private final int hash;
+	
 	private RCreature(Builder builder) {
 		super(builder.id, "creatures");
 		name = builder.name;
@@ -65,6 +67,31 @@ public final class RCreature extends Resource {
 		wisdom = builder.wisdom;
 		charisma = builder.charisma;
 		description = builder.description;
+		hash = Objects.hash(charisma, color, constitution, description, 
+				dexterity, glyph, intelligence, name, speed, strength, wisdom);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * super.hashCode() + hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RCreature) {
+			RCreature rc = (RCreature) other;
+			return charisma == rc.charisma && Objects.equals(color, rc.color) && constitution == rc.constitution
+					&& Objects.equals(description, rc.description) && dexterity == rc.dexterity
+					&& glyph == rc.glyph && intelligence == rc.intelligence && Objects.equals(name, rc.name)
+					&& speed == rc.speed && strength == rc.strength && wisdom == rc.wisdom;
+		} else {
+			return false;
+		}
 	}
 	
 	/**

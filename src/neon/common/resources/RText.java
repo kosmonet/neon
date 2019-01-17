@@ -30,8 +30,34 @@ public class RText extends Resource {
 	/** The contents of the html file. */
 	public final String text;
 	
+	/**
+	 * The text must not be null.
+	 * 
+	 * @param id
+	 * @param text
+	 */
 	public RText(String id, String text) {
 		super(id, "texts");
 		this.text = Objects.requireNonNull(text, "text");
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * super.hashCode() + Objects.hash(text);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RText) {
+			RText rt = (RText) other;
+			return Objects.equals(text, rt.text);
+		} else {
+			return false;
+		}
 	}
 }

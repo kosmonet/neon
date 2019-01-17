@@ -18,12 +18,19 @@
 
 package neon.common.resources;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * The game configuration resource.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class CGame extends Resource {
 	/** The id of the map the game starts on. */
 	public final String map;
@@ -36,9 +43,20 @@ public final class CGame extends Resource {
 	/** The starting time. */
 	public final int time;
 
-	private final Iterable<String> items;
+	private final List<String> items;
 	private final Set<String> spells;
 	
+	/**
+	 * Initializes a new game resource. The start map must not be null.
+	 * 
+	 * @param startMap
+	 * @param startX
+	 * @param startY
+	 * @param startMoney
+	 * @param time
+	 * @param items
+	 * @param spells
+	 */
 	public CGame(String startMap, int startX, int startY, int startMoney, int time, Iterable<String> items, Iterable<String> spells) {
 		super("game", "config");
 		this.map = Objects.requireNonNull(startMap, "start map");
@@ -67,5 +85,29 @@ public final class CGame extends Resource {
 	 */
 	public Set<String> getStartSpells() {
 		return spells;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(items, map, spells, startMoney, startX, startY, time);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof CGame) {
+			CGame cg = (CGame) other;
+			return Objects.equals(items, cg.items) && Objects.equals(map, cg.map) 
+					&& Objects.equals(spells, cg.spells) && startMoney == cg.startMoney 
+					&& startX == cg.startX && startY == cg.startY && time == cg.time;
+		} else {
+			return false;
+		} 
 	}
 }
