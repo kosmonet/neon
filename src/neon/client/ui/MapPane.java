@@ -46,7 +46,7 @@ public final class MapPane extends Pane {
 	/**
 	 * The resource manager must not be null.
 	 * 
-	 * @param resources
+	 * @param resources	the resource manager is used to load terrain resources when drawing the map
 	 */
 	public MapPane(ResourceManager resources) {
 		this.resources = Objects.requireNonNull(resources, "resource manager");

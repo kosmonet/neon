@@ -24,33 +24,34 @@ import java.util.Map;
 import javafx.scene.canvas.Canvas;
 
 /**
- * A class to render entities.
+ * A class to render entities on JavaFX {@code Canvas}ses.
  * 
  * @author mdriesen
  * @param <T>
  */
 public interface EntityRenderer<T> {
 	/**
-	 * Draws the entities on the map.
+	 * Draws the entities on the map. The interpretation of the scaling factor
+	 * may depend on the implementation. 
 	 * 
-	 * @param entity
-	 * @param xmin
-	 * @param ymin
-	 * @param scale
+	 * @param entity	an object to render
+	 * @param xmin	the leftmost position visible on the screen
+	 * @param ymin	the topmost position visible on the screen
+	 * @param scale	a scaling factor to apply to the rendering
 	 */	
 	public void drawEntity(T entity, int xmin, int ymin, int scale);
 	
 	/**
 	 * Sets the JavaFX {@code Canvas}ses to be used for drawing the entities.
 	 * 
-	 * @param layers
+	 * @param layers	a {@code Map<Integer, Canvas>} of layers
 	 */
 	public void setLayers(Map<Integer, Canvas> layers);
 	
 	/**
 	 * Returns the comparator used to decide the z-order of the entities.
 	 * 
-	 * @return
+	 * @return	a {@code Comparator}
 	 */
 	public Comparator<T> getComparator();
 }

@@ -40,7 +40,7 @@ public final class ItemCell extends ListCell<Long> {
 	/**
 	 * The component manager must not be null.
 	 * 
-	 * @param components
+	 * @param components	a component manager
 	 */
 	public ItemCell(ComponentManager components) {
 		this.components = Objects.requireNonNull(components, "component manager");

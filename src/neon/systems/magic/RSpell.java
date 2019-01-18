@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2018-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,6 +22,12 @@ import java.util.Objects;
 
 import neon.common.resources.Resource;
 
+/**
+ * A spell resource.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class RSpell extends Resource {
 	public final Effect effect;
 	public final Target target;
@@ -29,6 +35,19 @@ public final class RSpell extends Resource {
 	public final int magnitude;
 	public final String name;
 	
+	private final int hash;
+	
+	/**
+	 * Initializes a new spell resource. The name, effect and target must not 
+	 * be null.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param effect
+	 * @param target
+	 * @param duration
+	 * @param magnitude
+	 */
 	RSpell(String id, String name, Effect effect, Target target, int duration, int magnitude) {
 		super(id, "spells");
 		this.name = Objects.requireNonNull(name, "name");
@@ -36,5 +55,27 @@ public final class RSpell extends Resource {
 		this.target = Objects.requireNonNull(target, "target");
 		this.duration = duration;
 		this.magnitude = magnitude;
+		hash = Objects.hash(duration, effect, magnitude, name, target);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * super.hashCode() + hash;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		} else if (!super.equals(other)) {
+			return false;
+		} else if (other instanceof RSpell) {
+			RSpell rs = (RSpell) other;
+			return duration == rs.duration && effect == rs.effect && magnitude == rs.magnitude
+					&& Objects.equals(name, rs.name) && target == rs.target;
+		} else {
+			return false;
+		}
 	}
 }

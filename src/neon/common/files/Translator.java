@@ -31,19 +31,19 @@ import java.io.OutputStream;
  */
 public interface Translator<E> {
 	/**
-	 * Translates an InputStream into another type.
+	 * Translates an input stream into another type.
 	 * 
-	 * @param input
-	 * @return
+	 * @param input	an {@code InputStream}
+	 * @return	an object with the translated contents of the input
 	 * @throws IOException	if translating from the input stream fails
 	 */
 	public E translate(InputStream input) throws IOException;
 	
 	/**
-	 * Translates a Java type to an OutputStream.
+	 * Translates a Java type to an output stream.
 	 * 
-	 * @param output
-	 * @param out
+	 * @param output	an {@code OutputStream}
+	 * @param out	the object that has to be translated to the output
 	 * @throws IOException	if translating to the output stream fails
 	 */
 	public void translate(E out, OutputStream output) throws IOException;

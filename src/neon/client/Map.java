@@ -54,7 +54,7 @@ public final class Map implements RenderableMap<Long> {
 	 * Initializes a new map.
 	 * 
 	 * @param map
-	 * @param files
+	 * @param root
 	 */
 	public Map(RMap map, Element root) {
 		this.id = map.id;

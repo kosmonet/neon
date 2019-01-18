@@ -47,11 +47,11 @@ public final class FileUtils {
 	}
 
 	/**
-	 * Copy the contents of a folder to another folder. This method will 
-	 * overwrite existing items in the destination folder.
+	 * Copy the contents of a source folder to a destination folder. This 
+	 * method will overwrite existing items in the destination folder.
 	 * 
-	 * @param from
-	 * @param to
+	 * @param from	the {@code Path} to the source folder
+	 * @param to	the {@code Path} to the destination folder
 	 */
 	public static void copyFolder(Path from, Path to) {
 		logger.info("copying files from " + from + " to " + to);
@@ -84,11 +84,11 @@ public final class FileUtils {
 	}
 	
 	/**
-	 * Moves a folder to a new destination. If the destination folder already
-	 * exists, the contents will be overwritten.
+	 * Moves a source folder to a new destination. If the destination folder 
+	 * already exists, the contents will be overwritten.
 	 * 
-	 * @param from
-	 * @param to
+	 * @param from	the {@code Path} to the source folder
+	 * @param to	the {@code Path} to the destination folder
 	 */
 	public static void moveFolder(Path from, Path to) {
 		logger.info("moving files from " + from + " to " + to);
@@ -126,9 +126,9 @@ public final class FileUtils {
 	}
 	
 	/**
-	 * Clears all content from the given folder.
+	 * Clears all content from a folder.
 	 * 
-	 * @param folder
+	 * @param folder	the {@code Path} to the folder to be cleared
 	 */
 	public static void clearFolder(Path folder) {
 		logger.info("clearing folder " + folder);
@@ -144,8 +144,8 @@ public final class FileUtils {
 	 * Lists all the files in the given folder. If the given folder does not
 	 * exist or is not actually a folder, an empty set is returned.
 	 * 
-	 * @param path
-	 * @return	an unmodifiable set
+	 * @param folder	the {@code Path} to a folder
+	 * @return	an unmodifiable {@code Set<String>} of file names
 	 */
 	public static Set<String> listFiles(Path folder) {
 		File file = folder.toFile();

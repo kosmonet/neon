@@ -50,7 +50,7 @@ public final class ClientRenderer implements EntityRenderer<Long> {
 	/**
 	 * The component manager must not be null.
 	 * 
-	 * @param components
+	 * @param components	a {@code ComponentManager}
 	 */
 	public ClientRenderer(ComponentManager components) {
 		this.components = Objects.requireNonNull(components, "component manager");

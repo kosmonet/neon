@@ -48,6 +48,12 @@ public final class RenderPane<T> extends StackPane {
 	
 	private RenderableMap<? extends T> map;
 	
+	/**
+	 * The resource manager and entity renderer must not be null.
+	 * 
+	 * @param resources	a {@code ResourceManager}
+	 * @param renderer	the {@code EntityRenderer} to use
+	 */
 	public RenderPane(ResourceManager resources, EntityRenderer<T> renderer) {
 		this.resources = Objects.requireNonNull(resources, "resource manager");
 		this.renderer = Objects.requireNonNull(renderer, "renderer");
@@ -63,17 +69,23 @@ public final class RenderPane<T> extends StackPane {
 		renderer.setLayers(layers);
 	}
 	
+	/**
+	 * Sets the map to be rendered. The map must not be null.
+	 * 
+	 * @param map	a {@code RenderableMap}
+	 */
 	public void setMap(RenderableMap<? extends T> map) {
 		this.map = Objects.requireNonNull(map, "map");
-		logger.fine("setting new map on render pane");
+		logger.fine("setting new map on render pane");	// TODO: map id ook meegeven
 	}
 	
 	/**
-	 * Redraws this pane.
+	 * Redraws this pane. A scale of 1 means that every entity will be 
+	 * rendered as 1x1 pixels. A scale of 10 will render as 10x10 pixels. 
 	 * 
-	 * @param xmin
-	 * @param ymin
-	 * @param scale
+	 * @param xmin	the leftmost visible map position on the screen
+	 * @param ymin	the topmost visible map position on the screen
+	 * @param scale	a scale factor
 	 */
 	public void draw(int xmin, int ymin, int scale) {
 		for (Map.Entry<Integer, Canvas> entry : layers.entrySet()) {
@@ -91,11 +103,12 @@ public final class RenderPane<T> extends StackPane {
 	}
 	
 	/**
-	 * Draws the map.
+	 * Draws the map. A scale of 1 means that every terrain tile will be 
+	 * rendered as 1x1 pixels. A scale of 10 will render as 10x10 pixels.
 	 * 
-	 * @param xmin
-	 * @param ymin
-	 * @param scale
+	 * @param xmin	the leftmost visible map position on the screen
+	 * @param ymin	the topmost visible map position on the screen
+	 * @param scale	a scale factor
 	 */
 	private void drawMap(int xmin, int ymin, int scale) {
 		RegionSpatialIndex<String> terrain = map.getTerrain();

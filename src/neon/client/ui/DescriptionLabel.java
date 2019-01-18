@@ -59,7 +59,7 @@ public final class DescriptionLabel extends Label {
 	/**
 	 * Updates the description of a spell.
 	 * 
-	 * @param spell
+	 * @param spell	a spell resource
 	 */
 	public void updateSpell(RSpell spell) {
 		if (spell != null) {

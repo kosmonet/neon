@@ -31,8 +31,11 @@ public interface RegionSpatialIndex<E> {
 	/**
 	 * Inserts a value.
 	 * 
-	 * @param bounds
 	 * @param value
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
 	 */
 	public void insert(E value, int x, int y, int width, int height);
 	

@@ -39,7 +39,7 @@ public abstract class NeonEvent {
 	/**
 	 * Indicates whether this event is blocked from passing through a socket.
 	 * 
-	 * @return
+	 * @return	{@code true} when blocked, {@code false} otherwise
 	 */
 	public boolean isBlocked() {
 		return blocked;

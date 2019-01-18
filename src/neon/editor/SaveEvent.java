@@ -38,10 +38,8 @@ public abstract class SaveEvent extends NeonEvent {
 		public final Resource resource;
 		
 		/**
-		 * Initializes this event with a resource and a namespace the resource
-		 * belongs to.
+		 * Initializes this event with a resource.
 		 * 
-		 * @param namespace
 		 * @param resource
 		 */
 		public Resources(Resource resource) {

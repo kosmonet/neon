@@ -40,9 +40,10 @@ public final class ConfigurationEvent extends NeonEvent {
 	public final String subtitle;
 	
 	/**
-	 * Initializes this event with game configuration data.
+	 * Initializes this event with configuration data.
 	 * 
-	 * @param config
+	 * @param cc
+	 * @param cs
 	 */
 	public ConfigurationEvent(CClient cc, CServer cs) {
 		modules = ImmutableSet.copyOf(cs.getModules());

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -30,10 +30,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A virtual file system, containing all assets related to a game. The
@@ -53,7 +55,7 @@ public final class NeonFileSystem {
 	
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final ArrayList<String> modules = new ArrayList<>();
+	private final List<String> modules = new ArrayList<>();
 	private final boolean writable;
 	private Path temporary, save;
 	
@@ -69,7 +71,7 @@ public final class NeonFileSystem {
 	 * Creates an empty file system. Module folders should be added 
 	 * before the file system is usable.
 	 * 
-	 * @param permission
+	 * @param permission	the write {@code Permission} of the file system
 	 */
 	public NeonFileSystem(Permission permission) {
 		this.writable = Permission.WRITABLE.equals(permission);
@@ -77,10 +79,10 @@ public final class NeonFileSystem {
 	
 	/**
 	 * Adds a module folder to the virtual file system. Modules must be added 
-	 * in the correct order (parent should appear before any module that is 
-	 * dependent on it).
+	 * in the correct order (parent module should appear before any module that 
+	 * is dependent on it).
 	 * 
-	 * @param module
+	 * @param module	the id of a module
 	 * @throws FileNotFoundException	if the module is missing
 	 */
 	public void addModule(String module) throws FileNotFoundException {
@@ -97,7 +99,7 @@ public final class NeonFileSystem {
 	 * Sets the path to the temporary folder. If the file system is writable,
 	 * the folder will also be emptied.
 	 * 
-	 * @param path
+	 * @param path	the {@code Path} to the temporary folder
 	 * @throws IOException	if the temporary folder can't be created
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
@@ -115,7 +117,7 @@ public final class NeonFileSystem {
 	/**
 	 * Sets the path to the folder of the current saved game.
 	 * 
-	 * @param path
+	 * @param path	the {@code Path} to the saved game folder
 	 * @throws NotDirectoryException	if the given path doesn't point to a folder
 	 */
 	public void setSaveFolder(Path path) throws NotDirectoryException {
@@ -133,7 +135,7 @@ public final class NeonFileSystem {
 	 * modules are searched in reverse order. If the file is still not found,
 	 * an exception is thrown.
 	 * 
-	 * @param path	the path of the requested file
+	 * @param path	the {@code Path} of the requested file
 	 * @return the requested file
 	 * @throws FileNotFoundException	if the file was not found
 	 */
@@ -175,10 +177,10 @@ public final class NeonFileSystem {
 	}
 	
 	/**
-	 * Loads a file using the given translator.
+	 * Loads and translates a file at the given path.
 	 * 
-	 * @param translator
-	 * @param path
+	 * @param translator	the {@code Translator} to use
+	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
 	 * @return the translated file
 	 * @throws IOException	if a file at the given path can't be loaded
 	 */
@@ -190,12 +192,12 @@ public final class NeonFileSystem {
 	}
 	
 	/**
-	 * Saves a file using the given translator. Files are saved by default to 
-	 * the temporary folder. 
+	 * Translates and saves an object to a file at the given path. Files are 
+	 * saved by default to the temporary folder. 
 	 * 
-	 * @param output
-	 * @param translator
-	 * @param path
+	 * @param output	the object to save
+	 * @param translator	the {@code Translator} to use
+	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
 	 * @throws IOException	if the file can't be saved
 	 */
 	public <T> void saveFile(T output, Translator<T> translator, String... path) throws IOException {
@@ -227,18 +229,18 @@ public final class NeonFileSystem {
 	 * any reason (including possible {@code IOException}s), it will not be
 	 * listed.
 	 * 
-	 * @param folder
-	 * @return	a {@code Set} of filenames
+	 * @param folder	a sequence of strings that can be formed into a proper {@code Path}
+	 * @return	an immutable {@code Set<String>} of filenames
 	 */
 	public Set<String> listFiles(String... folder) {
-		HashSet<Path> files = new HashSet<>();
+		Set<Path> files = new HashSet<>();
 		
 		// check the temp folder first
 		if (temporary != null) {
 			Path path = Paths.get(temporary.toString(), folder);
 			if (Files.isDirectory(path)) {
 				try (Stream<Path> paths = Files.list(path)) {
-					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));					
+					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
 					logger.warning("could not list files in folder " + path);
 				}
@@ -250,7 +252,7 @@ public final class NeonFileSystem {
 			Path path = Paths.get(save.toString(), folder);
 			if (Files.isDirectory(path)) {
 				try (Stream<Path> paths = Files.list(path)) {
-					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));
+					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
 					logger.warning("could not list files in the save folder " + path);
 				}
@@ -267,21 +269,21 @@ public final class NeonFileSystem {
 			Path path = Paths.get("data", mod);
 			if (Files.isDirectory(path)) {
 				try (Stream<Path> paths = Files.list(path)) {
-					files.addAll(paths.map(Path::getFileName).collect(Collectors.toSet()));
+					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
 					logger.warning("could not list files in the temp folder " + path);
 				}
 			}
 		}
 		
-		return files.stream().map(Path::toString).collect(Collectors.toSet());
+		return files.stream().map(Path::toString).collect(ImmutableSet.toImmutableSet());
 	}
 	
 	/**
 	 * Deletes the file with the given path. This will only delete files in the
 	 * temp folder.
 	 * 
-	 * @param path
+	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
 	 * @throws IOException	if the file can't be deleted
 	 */
 	public void deleteFile(String... path) throws IOException {

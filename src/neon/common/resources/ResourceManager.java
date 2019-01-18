@@ -52,7 +52,6 @@ public final class ResourceManager {
 	 * temporary folder. If this resource already existed, it will be 
 	 * overwritten without warning. 
 	 * 
-	 * @param namespace
 	 * @param resource
 	 * @throws IOException	if the resource can't be stored
 	 */
@@ -119,7 +118,6 @@ public final class ResourceManager {
 	/**
 	 * Adds a loader for the given namespace.
 	 * 
-	 * @param type
 	 * @param loader
 	 */
 	public void addLoader(ResourceLoader loader) {

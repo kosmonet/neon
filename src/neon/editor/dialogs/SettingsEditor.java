@@ -84,9 +84,10 @@ public final class SettingsEditor {
 	private final ResourceManager resources;
 	
 	/**
-	 * Initializes this {@code SettingsEditor}.
+	 * Initializes this settings editor.
 	 * 
-	 * @param module	the module to edit
+	 * @param resources
+	 * @param id
 	 * @param bus		the {@code EventBus} used for messaging
 	 */
 	public SettingsEditor(ResourceManager resources, String id, EventBus bus) {
