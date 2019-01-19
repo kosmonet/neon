@@ -147,4 +147,9 @@ public final class RMap extends Resource implements RenderableMap<REntity> {
 		while (entities.containsValue(++i));
 		return i;
 	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
 }

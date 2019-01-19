@@ -22,8 +22,38 @@ import java.util.Collection;
 
 import neon.util.spatial.RegionSpatialIndex;
 
+/**
+ * A game map that can be rendered on screen.
+ * 
+ * @author mdriesen
+ * @param <T>	the type of entities on this map
+ */
 public interface RenderableMap<T> {
+	/**
+	 * Returns the terrain information.
+	 * 
+	 * @return	a {@code RegionSpatialIndex<Integer>} of terrain id's
+	 */
 	public RegionSpatialIndex<String> getTerrain();
+	
+	/**
+	 * Returns the height map.
+	 * 
+	 * @return	a {@code RegionSpatialIndex<Integer>}
+	 */
 	public RegionSpatialIndex<Integer> getElevation();
+	
+	/**
+	 * Returns all the entities on this map.
+	 * 
+	 * @return	a {@code Collection<T>}
+	 */
 	public Collection<T> getEntities();
+	
+	/**
+	 * Returns the id of the resource this map was derived from.
+	 * 
+	 * @return	a resource id
+	 */
+	public String getId();
 }

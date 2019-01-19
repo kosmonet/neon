@@ -76,7 +76,7 @@ public final class RenderPane<T> extends StackPane {
 	 */
 	public void setMap(RenderableMap<? extends T> map) {
 		this.map = Objects.requireNonNull(map, "map");
-		logger.fine("setting new map on render pane");	// TODO: map id ook meegeven
+		logger.fine("setting new map on render pane: " + map.getId());
 	}
 	
 	/**

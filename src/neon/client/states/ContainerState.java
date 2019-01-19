@@ -143,7 +143,7 @@ public final class ContainerState extends State {
 			playerList.getItems().remove(uid);
 			containerList.getItems().add(uid);
 			if (container == DUMMY) {
-				bus.post(new InventoryEvent.Drop(uid, map.getID()));
+				bus.post(new InventoryEvent.Drop(uid, map.getId()));
 			} else {
 				bus.post(new InventoryEvent.Store(uid, container));				
 			}
@@ -153,7 +153,7 @@ public final class ContainerState extends State {
 			containerList.getItems().remove(uid);
 			playerList.getItems().add(uid);
 			if (container == DUMMY) {
-				bus.post(new InventoryEvent.Pick(uid, map.getID()));
+				bus.post(new InventoryEvent.Pick(uid, map.getId()));
 			} else {
 				bus.post(new InventoryEvent.Take(uid, container));
 			}

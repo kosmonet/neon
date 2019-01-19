@@ -232,7 +232,7 @@ public final class GameState extends State {
 		Map map = config.getCurrentMap();
 		
 		if (!looking) {
-			bus.post(new InputEvent.Move(direction, map.getID()));
+			bus.post(new InputEvent.Move(direction, map.getId()));
 		} else {
 			pointer.move(direction, map);
 			StringBuilder builder = new StringBuilder();

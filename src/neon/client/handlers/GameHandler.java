@@ -79,7 +79,7 @@ public class GameHandler {
 		RMap resource = resources.getResource("maps", event.id);
 		Element root = files.loadFile(TRANSLATOR, "maps", event.id + ".xml").getRootElement();
 		Map map = new Map(resource, root);
-		LOGGER.finest("moving player to map " + map.getID());
+		LOGGER.finest("moving player to map " + map.getId());
 		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);
 		LOGGER.finest("moving player to position (" + shape.getX() + ", " + shape.getY() + ")");
 		map.addEntity(Configuration.PLAYER_UID, shape.getX(), shape.getY());

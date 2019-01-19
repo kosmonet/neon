@@ -69,12 +69,7 @@ public final class Map implements RenderableMap<Long> {
 		initMarkers(root.getChild("labels"));
 	}
 	
-	/**
-	 * Returns the id of the resource a map was derived from.
-	 * 
-	 * @return
-	 */
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 	
