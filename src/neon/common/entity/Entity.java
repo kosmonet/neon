@@ -39,7 +39,7 @@ public class Entity {
 	private final ClassToInstanceMap<Component> components = MutableClassToInstanceMap.create();
 	
 	/**
-	 * Initialize a new entity.
+	 * Initializes a new entity.
 	 * 
 	 * @param uid	the unique identifier of this entity
 	 */
@@ -57,6 +57,7 @@ public class Entity {
 	 * Returns a component.
 	 * 
 	 * @param type	a component type
+	 * @param <T> the type of the component to return
 	 * @return	the component of the given type
 	 */
 	public <T extends Component> T getComponent(Class<T> type) {
@@ -76,9 +77,9 @@ public class Entity {
 	/**
 	 * Adds a component to this entity. The component must not be null.
 	 * 
-	 * @param component	the component to add
+	 * @param component	the {@code Component} to add
 	 */
-	public <T extends Component> void setComponent(T component) {
+	public void setComponent(Component component) {
 		components.put(component.getClass(), component);
 	}
 	

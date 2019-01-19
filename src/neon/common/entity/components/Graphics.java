@@ -23,6 +23,7 @@ import java.util.Objects;
 import javafx.scene.paint.Color;
 
 /**
+ * A component that contains rendering-related information.
  * 
  * @author mdriesen
  *
@@ -35,9 +36,9 @@ public final class Graphics implements Component {
 	/**
 	 * Initializes new graphics. Color must not be null.
 	 * 
-	 * @param uid
-	 * @param glyph
-	 * @param color
+	 * @param uid	the uid of the entity this component belongs to
+	 * @param glyph	the glyph the entity should be rendered with
+	 * @param color	the color the entity should be rendered with
 	 */
 	public Graphics(long uid, char glyph, Color color) {
 		this.uid = uid;
@@ -68,7 +69,7 @@ public final class Graphics implements Component {
 	/**
 	 * Returns the glyph an entity should be rendered with.
 	 * 
-	 * @return
+	 * @return	a {@code char}
 	 */
 	public char getGlyph() {
 		return glyph;

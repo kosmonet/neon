@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * Java type.
  * 
  * @author mdriesen
- * @param <E>
+ * @param <E>	the type of object to translate from/to
  */
 public interface Translator<E> {
 	/**

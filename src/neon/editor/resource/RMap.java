@@ -30,6 +30,12 @@ import neon.common.resources.Resource;
 import neon.util.spatial.RegionQuadTree;
 import neon.util.spatial.RegionSpatialIndex;
 
+/**
+ * A map resource that can be directly rendered.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class RMap extends Resource implements RenderableMap<REntity> {
 	/** The display name. */
 	public final String name;
@@ -46,12 +52,12 @@ public final class RMap extends Resource implements RenderableMap<REntity> {
 	/**
 	 * Initializes this map without terrain, elevation or entities.
 	 * 
-	 * @param id
-	 * @param name
-	 * @param width
-	 * @param height
-	 * @param uid
-	 * @param module
+	 * @param id	the id of the map
+	 * @param name	the displayed name of the map
+	 * @param width	the width of the map
+	 * @param height	the height of the map
+	 * @param uid	the uid of the map
+	 * @param module	the id of the module this map belongs to
 	 */
 	public RMap(String id, String name, int width, int height, short uid, String module) {
 		super(id, "maps");
@@ -77,10 +83,20 @@ public final class RMap extends Resource implements RenderableMap<REntity> {
 		return elevation;
 	}
 	
+	/**
+	 * Returns the width of the map.
+	 * 
+	 * @return	the width
+	 */
 	public int getWidth() {
 		return terrain.getWidth();
 	}
 	
+	/**
+	 * Returns the height of the map.
+	 * 
+	 * @return	the height
+	 */
 	public int getHeight() {
 		return terrain.getHeight();
 	}
@@ -88,7 +104,7 @@ public final class RMap extends Resource implements RenderableMap<REntity> {
 	/**
 	 * Adds an entity to this map.
 	 * 
-	 * @param entity
+	 * @param entity	the {@code REntity} to add
 	 */
 	public void add(REntity entity) {
 		entities.put(entity, (int) entity.uid);
@@ -96,30 +112,33 @@ public final class RMap extends Resource implements RenderableMap<REntity> {
 	}
 	
 	/**
+	 * Returns all entities in a certain position.
 	 * 
-	 * @param x
-	 * @param y
-	 * @return	all entities in a certain position
+	 * @param x	the x coordinate of the position
+	 * @param y	the y coordinate of the position
+	 * @return	a {@code Collection<REntity>}
 	 */
 	public Collection<REntity> getEntities(int x, int y) {
 		return positions.get(new Point(x, y));
 	}
 	
-	/**
-	 * 
-	 * @return	all entities on this map
-	 */
 	@Override
 	public Collection<REntity> getEntities() {
 		return entities.keySet();
 	}
 	
+	/**
+	 * Removes an entity from this map.
+	 * 
+	 * @param entity	the {@code REntity} to remove
+	 */
 	public void removeEntity(REntity entity) {
 		entities.remove(entity);
 		positions.remove(new Point(entity.shape.getX(), entity.shape.getY()), entity);
 	}
 	
 	/**
+	 * Returns an unused uid.
 	 * 
 	 * @return	an unused uid
 	 */

@@ -25,7 +25,8 @@ import neon.common.entity.components.Shape;
 import neon.util.Direction;
 
 /**
- * A pointer that can be moved on the game screen.
+ * A pointer that can be moved on the game screen. For rendering purposes, the 
+ * pointer is considered to be another entity on the map, so it has a uid.
  * 
  * @author mdriesen
  */
@@ -34,9 +35,9 @@ public class Pointer {
 	private final Graphics graphics;
 
 	/**
-	 * Initializes an new pointer.
+	 * Initializes a new pointer.
 	 * 
-	 * @param uid
+	 * @param uid	the uid of the pointer
 	 */
 	public Pointer(long uid) {
 		graphics = new Graphics(uid, '◎', Color.WHITE);
@@ -46,7 +47,7 @@ public class Pointer {
 	/**
 	 * Returns the shape (size and position) of the pointer.
 	 * 
-	 * @return	a {@code Shape}
+	 * @return	a {@code Shape} component
 	 */
 	public Shape getShape() {
 		return shape;
@@ -55,7 +56,7 @@ public class Pointer {
 	/**
 	 * Returns the rendering data of the pointer.
 	 * 
-	 * @return
+	 * @return	a {@code Graphics} component
 	 */
 	public Graphics getGraphics() {
 		return graphics;
@@ -64,8 +65,8 @@ public class Pointer {
 	/**
 	 * Moves the pointer in a certain direction on the map.
 	 * 
-	 * @param direction
-	 * @param map
+	 * @param direction	the direction to move to
+	 * @param map	the map to move on
 	 */
 	public void move(Direction direction, Map map) {
 		switch (direction) {

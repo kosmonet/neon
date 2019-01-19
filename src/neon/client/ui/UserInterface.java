@@ -58,10 +58,10 @@ public final class UserInterface {
 	private final Tooltip tip = new Tooltip();
 	
 	/**
-	 * Initializes this {@code UserInterface} with the JavaFX {@code Stage} 
+	 * Initializes this {@code UserInterface} with the JavaFX stage
 	 * that is to be used to show {@code Scene}s.
 	 * 
-	 * @param stage
+	 * @param stage	a JavaFX {@code Stage}
 	 */
 	public UserInterface(Stage stage) {
 		this.stage = stage;
@@ -149,10 +149,11 @@ public final class UserInterface {
 	/**
 	 * Shows a question and possible answers.
 	 * 
-	 * @param message
-	 * @return
+	 * @param question	the text of the question
+	 * @param buttons	the answer buttons to show
+	 * @return	the answer button type that was clicked on
 	 */
-	public Optional<ButtonType> showQuestion(String message, ButtonType... buttons) {
+	public Optional<ButtonType> showQuestion(String question, ButtonType... buttons) {
 		// change the button order in the alert to center align the buttons
         DialogPane dialogPane = new DialogPane() {
             @Override
@@ -167,7 +168,7 @@ public final class UserInterface {
         alert.setDialogPane(dialogPane);
 		alert.initOwner(stage);
 		alert.setHeaderText(null);
-		alert.setContentText(message);
+		alert.setContentText(question);
 		alert.getButtonTypes().setAll(buttons);
 		alert.getDialogPane().getScene().setFill(null);
 		alert.initStyle(StageStyle.TRANSPARENT);
@@ -179,17 +180,17 @@ public final class UserInterface {
 	/**
 	 * Returns the current scene shown on the main stage.
 	 * 
-	 * @return
+	 * @return	a JavaFX {@code Scene}
 	 */
 	public Scene getCurrentScene() {
 		return stage.getScene();
 	}
 	
 	/**
-	 * Sets the {@code Scene} to show on the JavaFX primary {@code Stage}. The
+	 * Sets the scene to show on the JavaFX primary {@code Stage}. The
 	 * scene must not be null.
 	 * 
-	 * @param scene	
+	 * @param scene	a JavaFX {@code Scene}
 	 */
 	public void showScene(Scene scene) {
 		stage.setScene(Objects.requireNonNull(scene, "scene"));

@@ -27,7 +27,7 @@ import javafx.scene.canvas.Canvas;
  * A class to render entities on JavaFX {@code Canvas}ses.
  * 
  * @author mdriesen
- * @param <T>
+ * @param <T>	the type of the entities to render
  */
 public interface EntityRenderer<T> {
 	/**

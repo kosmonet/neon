@@ -55,10 +55,10 @@ public class GameHandler {
 	 * The file system, component manager, resource manager and configuration 
 	 * must not be null.
 	 * 
-	 * @param files
-	 * @param components
-	 * @param resources
-	 * @param config
+	 * @param files	the file system used by the client
+	 * @param components	the client component manager
+	 * @param resources	the client resource manager
+	 * @param config	the client configuration data
 	 */
 	public GameHandler(NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.files = Objects.requireNonNull(files, "file system");
@@ -70,7 +70,7 @@ public class GameHandler {
 	/**
 	 * Handles a change of maps.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the change
 	 * @throws ResourceException	if the map resource can't be loaded
 	 * @throws IOException	if the map is missing
 	 */

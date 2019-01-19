@@ -24,12 +24,25 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * A component containing creature-specific information.
+ * 
+ * @author mdriesen
+ *
+ */
 public final class CreatureInfo implements Component {
 	private final String id;
 	private final String name;
 	private final long uid;
 	private final Set<String> factions = new HashSet<>();
 	
+	/**
+	 * The id and name must not be null.
+	 * 
+	 * @param uid	the uid of the creature
+	 * @param id	the id of the creature resource the creature was based on
+	 * @param name	the name of the creature
+	 */
 	public CreatureInfo(long uid, String id, String name) {
 		this.id = Objects.requireNonNull(id, "id");
 		this.name = Objects.requireNonNull(name, "name");
@@ -54,7 +67,7 @@ public final class CreatureInfo implements Component {
 	/**
 	 * Returns the name of a creature.
 	 * 
-	 * @return
+	 * @return	the name
 	 */
 	public String getName() {
 		return name;
@@ -68,7 +81,7 @@ public final class CreatureInfo implements Component {
 	/**
 	 * Returns all factions a creature belongs to.
 	 * 
-	 * @return	an unmodifiable {@code Set} of factions
+	 * @return	an unmodifiable {@code Set<String>} of faction id's
 	 */
 	public Set<String> getFactions() {
 		return ImmutableSet.copyOf(factions);
@@ -77,12 +90,18 @@ public final class CreatureInfo implements Component {
 	/**
 	 * Adds a creature to a faction.
 	 * 
-	 * @param faction
+	 * @param faction	the faction id
 	 */
 	public void addFaction(String faction) {
 		factions.add(Objects.requireNonNull(faction, "faction"));
 	}
 	
+	/**
+	 * Checks whether a creature belongs to a faction.
+	 * 
+	 * @param faction	the faction id
+	 * @return	{@code true} if the creature belongs to the faction, {@code false} otherwise
+	 */
 	public boolean isMember(String faction) {
 		return factions.contains(faction);
 	}

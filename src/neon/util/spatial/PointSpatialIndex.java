@@ -22,49 +22,58 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Set;
 
+/**
+ * A spatial index that stores single elements at a certain x and y coordinate.
+ * 
+ * @author mdriesen
+ * @param <E>	the type of element to store
+ */
 public interface PointSpatialIndex<E> {
 	/** 
+	 * Returns all elements at the given position
 	 * 
-	 * @param x
-	 * @param y
-	 * @return	all elements at the given position
+	 * @param x	the x coordinate of the position
+	 * @param y	the y coordinate of the position
+	 * @return	a {@code Set} of elements
 	 */
 	public Set<E> get(int x, int y);
 
 	/**
+	 * Returns all elements within certain rectangular bounds.
 	 * 
-	 * @param bounds
-	 * @return	all elements contained in the given bounds
+	 * @param bounds	the {@code Rectangle} to search in
+	 * @return	a {@code Set} of elements
 	 */
 	public Set<E> get(Rectangle bounds);
 	
 	/**
+	 * Returns all elements in this index.
 	 * 
-	 * @return	all elements in the index
+	 * @return	a {@code Set} of elements
 	 */
 	public Set<E> getElements();
 	
 	/**
 	 * Inserts an element at the given position.
 	 * 
-	 * @param element
-	 * @param x
-	 * @param y
+	 * @param element	the element to insert
+	 * @param x	the x coordinate to insert in
+	 * @param y	the y coordinate to insert in
 	 */
 	public void insert(E element, int x, int y);
 	
 	/**
 	 * Removes an element.
 	 * 
-	 * @param element
+	 * @param element	the element to remove
 	 */
 	public void remove(E element);
 	
 	/**
 	 * Moves an element to a new position.
 	 * 
-	 * @param element
-	 * @param position
+	 * @param element	the element to move
+	 * @param position	the new position
 	 */
 	public void move(E element, Point position);
 }

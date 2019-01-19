@@ -29,7 +29,7 @@ import java.util.Set;
  * A PR quadtree.
  * 
  * @author mdriesen
- * @param <E>
+ * @param <E>	the type of element to store
  */
 public class PointQuadTree<E> implements PointSpatialIndex<E> {
 	private final Map<E, Point> elements = new HashMap<>();
@@ -38,7 +38,12 @@ public class PointQuadTree<E> implements PointSpatialIndex<E> {
 	private PointNode<E> root;
 	
 	/**
+	 * Initializes a new tree.
 	 * 
+	 * @param x	the x coordinate of the top left corner of the tree
+	 * @param y	the y coordinate of the top left corner of the tree
+	 * @param width	the width of the tree
+	 * @param height	the height of the tree
 	 * @param fill	the maximum amount of elements in a leaf node
 	 */
 	public PointQuadTree(int x, int y, int width, int height, int fill) {
@@ -49,14 +54,6 @@ public class PointQuadTree<E> implements PointSpatialIndex<E> {
 		// shift the root node a bit so we have some margin around the needed area for adding other elements
 		root = new PointNode<E>(x - dx, y - dy, size, fill, elements);
 		
-		this.fill = fill;
-	}
-	
-	/**
-	 * 
-	 * @param fill	the maximum amount of elements in a leaf node
-	 */
-	public PointQuadTree(int fill) {
 		this.fill = fill;
 	}
 	
@@ -79,7 +76,8 @@ public class PointQuadTree<E> implements PointSpatialIndex<E> {
 	/**
 	 * Enlarges the tree so that it contains the given position.
 	 * 
-	 * @param position
+	 * @param x	the x coordinate of the new position
+	 * @param y	the y coordinate of the new position
 	 */
 	private void enlargeTree(int x, int y) {
 		// find the minimum bounds needed to contain the new position

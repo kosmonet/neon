@@ -43,8 +43,8 @@ public class EntityHandler {
 	/**
 	 * The component manager and configuration must not be null.
 	 * 
-	 * @param components
-	 * @param config
+	 * @param components	the client component manager
+	 * @param config	the client configuration data
 	 */
 	public EntityHandler(ComponentManager components, Configuration config) {
 		this.components = Objects.requireNonNull(components, "component manager");
@@ -54,7 +54,7 @@ public class EntityHandler {
 	/**
 	 * Handles a component update.
 	 * 
-	 * @param event
+	 * @param event	a {@code ComponentEvent} describing the update
 	 * @throws ClassNotFoundException	if the event doesn't contain a valid component
 	 */
 	@Subscribe 
@@ -66,7 +66,7 @@ public class EntityHandler {
 	/**
 	 * Moves an entity on a map.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the movement
 	 */
 	@Subscribe
 	private void onEntityMove(UpdateEvent.Move event) {
@@ -89,7 +89,7 @@ public class EntityHandler {
 	/**
 	 * Removes an entity from a map.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the removal
 	 */
 	@Subscribe
 	private void onEntityRemove(UpdateEvent.Remove event) {
@@ -98,9 +98,9 @@ public class EntityHandler {
 	}
 	
 	/**
-	 * Removes an entity from the game.
+	 * Completely removes an entity from the game.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the removal
 	 */
 	@Subscribe
 	private void onEntityDestroy(UpdateEvent.Destroy event) {

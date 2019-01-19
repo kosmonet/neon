@@ -56,10 +56,10 @@ public final class CollisionHandler {
 	 * The user interface, event bus, component manager and configuration must
 	 * not be null.
 	 * 
-	 * @param ui
-	 * @param bus
-	 * @param components
-	 * @param config
+	 * @param ui	the {@code UserInterface} of the client
+	 * @param bus	the client event bus
+	 * @param components	the client component manager
+	 * @param config	the client configuration data.
 	 */
 	public CollisionHandler(UserInterface ui, EventBus bus, ComponentManager components, Configuration config) {
 		this.ui = Objects.requireNonNull(ui, "user interface");
@@ -95,8 +95,8 @@ public final class CollisionHandler {
 	/**
 	 * Handles the player bumping into a closed door.
 	 * 
-	 * @param player
-	 * @param door
+	 * @param player	the player uid
+	 * @param door	the door uid
 	 */
 	private void handleDoor(long player, long door) {
 		Optional<ButtonType> result = ui.showQuestion("Open door?", ButtonTypes.YES, ButtonTypes.NO);
@@ -108,8 +108,8 @@ public final class CollisionHandler {
 	/**
 	 * Handles the player bumping into another creature.
 	 * 
-	 * @param bumper
-	 * @param bumped
+	 * @param bumper	the player uid
+	 * @param bumped	the other creature uid
 	 */
 	private void handleCreature(long bumper, long bumped) {
 		PlayerInfo player = components.getComponent(bumper, PlayerInfo.class);

@@ -33,10 +33,10 @@ import neon.common.resources.Resource;
  */
 public interface ResourceLoader {
 	/**
-	 * Load a resource.
+	 * Loads a resource.
 	 * 
 	 * @param id	the id of a resource
-	 * @return
+	 * @return	the {@code Resource} with the given id
 	 * @throws IOException	if the resource can't be loaded
 	 * @throws DataConversionException	if the resource contains the wrong type of data
 	 */
@@ -45,7 +45,7 @@ public interface ResourceLoader {
 	/**
 	 * Saves a resource.
 	 * 
-	 * @param resource
+	 * @param resource	the {@code Resource} to be saved
 	 * @throws IOException	if the resource can't be saved
 	 */
 	public void save(Resource resource) throws IOException;
@@ -53,14 +53,14 @@ public interface ResourceLoader {
 	/**
 	 * Lists all the resources in the namespace of this loader.
 	 * 
-	 * @return
+	 * @return	a {@code Set<String>} of resource id's
 	 */
 	public Set<String> listResources();
 	
 	/**
 	 * Removes a resource in the namespace of this loader.
 	 * 
-	 * @param id
+	 * @param id	the id of the resource to be removed
 	 * @throws IOException	if the resource can't be removed
 	 */
 	public void removeResource(String id) throws IOException;
@@ -68,7 +68,7 @@ public interface ResourceLoader {
 	/**
 	 * Returns the namespace this loader loads from.
 	 * 
-	 * @return
+	 * @return	the namespace
 	 */
 	public String getNamespace();
 }

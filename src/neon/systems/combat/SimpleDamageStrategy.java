@@ -44,14 +44,14 @@ public class SimpleDamageStrategy implements DamageStrategy {
 
 		// creatures can have weapons equipped in both hands
 		if (equipment.hasEquipped(Slot.HAND_LEFT)) {
-			Entity item = entities.getEntity(equipment.getEquipedItem(Slot.HAND_LEFT));
+			Entity item = entities.getEntity(equipment.getEquippedItem(Slot.HAND_LEFT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			
 		}
 
 		if (equipment.hasEquipped(Slot.HAND_RIGHT)) {
-			Entity item = entities.getEntity(equipment.getEquipedItem(Slot.HAND_RIGHT));
+			Entity item = entities.getEntity(equipment.getEquippedItem(Slot.HAND_RIGHT));
 			if (item.hasComponent(Weapon.class)) {
 				damage += Dice.roll(item.getComponent(Weapon.class).getDamage());
 			}			

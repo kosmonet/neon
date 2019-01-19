@@ -21,41 +21,52 @@ package neon.util.spatial;
 import java.awt.Rectangle;
 import java.util.Map;
 
+/**
+ * A spatial index that contains regions filled with the same type of element, 
+ * such as a region quadtree.
+ * 
+ * @author mdriesen
+ * @param <E>	the type of elements in the index
+ */
 public interface RegionSpatialIndex<E> {
 	/**
+	 * Returns all contiguous regions in the index.
 	 * 
-	 * @return	all contiguous regions in the index
+	 * @return	a {@code Map<Rectangle, E>} of elements
 	 */
 	public Map<Rectangle, E> getElements();
 	
 	/**
-	 * Inserts a value.
+	 * Inserts an element with the given bounds.
 	 * 
-	 * @param value
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
+	 * @param value	the value of the element
+	 * @param x	the x coordinate of the top left corner of the bounds
+	 * @param y	the y coordinate of the top left corner of the bounds
+	 * @param width	the width of the bounds
+	 * @param height	the height of the bounds
 	 */
 	public void insert(E value, int x, int y, int width, int height);
 	
 	/**
+	 * Returns the value at the given position.
 	 * 
-	 * @param x
-	 * @param y
-	 * @return	the value at the given position
+	 * @param x the x coordinate of the position
+	 * @param y	the y coordinate of the position
+	 * @return	the value
 	 */
 	public E get(int x, int y);
 	
 	/**
+	 * Returns the width of this spatial index
 	 * 
-	 * @return	the width of this spatial index
+	 * @return	the width
 	 */
 	public int getWidth();
 	
 	/**
+	 * Returns the height of this spatial index.
 	 * 
-	 * @return	the height of this spatial index.
+	 * @return	the height
 	 */
 	public int getHeight();
 }

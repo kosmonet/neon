@@ -47,8 +47,8 @@ public class MessageHandler {
 	/**
 	 * The user interface and component manager must not be null.
 	 * 
-	 * @param ui
-	 * @param components
+	 * @param ui	the {@code UserInterface} of the client
+	 * @param components	the client component manager
 	 */
 	public MessageHandler(UserInterface ui, ComponentManager components) {
 		this.ui = Objects.requireNonNull(ui, "user interface");
@@ -58,7 +58,7 @@ public class MessageHandler {
 	/**
 	 * Shows the result of combat.
 	 * 
-	 * @param event
+	 * @param event	a {@code CombatEvent} describing the result
 	 */
 	@Subscribe
 	private void onCombat(CombatEvent.Result event) {
@@ -70,7 +70,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message when an attack was dodged.
 	 * 
-	 * @param event
+	 * @param event	a {@code CombatEvent} describing the dodge
 	 */
 	@Subscribe
 	private void onCombat(CombatEvent.Dodge event) {
@@ -81,18 +81,18 @@ public class MessageHandler {
 	/**
 	 * Shows a message when an attack was blocked.
 	 * 
-	 * @param event
+	 * @param event	a {@code CombatEvent} describing the block
 	 */
 	@Subscribe
 	private void onCombat(CombatEvent.Block event) {
-		String message = "The defender block the attack.";
+		String message = "The defender blocked the attack.";
 		ui.showOverlayMessage(message, 1000);
 	}
 	
 	/**
 	 * Shows a message when a pickpocketing victim has no possessions.
 	 * 
-	 * @param event
+	 * @param event	a {@code StealthEvent} describing the failure
 	 */
 	@Subscribe
 	private void onPickpocketFail(StealthEvent.Empty event) {
@@ -102,7 +102,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message when pickpocketing was successful.
 	 * 
-	 * @param event
+	 * @param event	a {@code StealthEvent} describing the success
 	 */
 	@Subscribe
 	private void onPickpocketSuccess(StealthEvent.Stolen event) {
@@ -112,7 +112,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message when a lock was picked.
 	 * 
-	 * @param event
+	 * @param event	a {@code StealthEvent} describing the succes
 	 */
 	@Subscribe
 	private void onLockpickSuccess(StealthEvent.Unlocked event) {
@@ -122,7 +122,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message when a skill increased.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the increase
 	 */
 	@Subscribe
 	private void onSkillIncrease(UpdateEvent.Skills event) {
@@ -134,7 +134,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message on level up.
 	 * 
-	 * @param event
+	 * @param event	an {@code UpdateEvent} describing the level increase
 	 */
 	@Subscribe
 	private void onLevelIncrease(UpdateEvent.Level event) {
@@ -144,7 +144,7 @@ public class MessageHandler {
 	/**
 	 * Shows a message on waking up.
 	 * 
-	 * @param event
+	 * @param event	a {@code RestEvent} describing the sleep
 	 */
 	@Subscribe
 	private void onSleep(RestEvent.Wake event) {

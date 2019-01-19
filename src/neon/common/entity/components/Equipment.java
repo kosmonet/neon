@@ -34,6 +34,11 @@ public class Equipment implements Component {
 	private final long uid;
 	private final Map<Slot, Long> equipped = new EnumMap<>(Slot.class);
 
+	/**
+	 * Initialize this component.
+	 * 
+	 * @param uid	the uid of the entity this equipment belongs to
+	 */
 	public Equipment(long uid) {
 		this.uid = uid;
 	}
@@ -46,63 +51,65 @@ public class Equipment implements Component {
 	/**
 	 * Checks whether an item is equipped.
 	 * 
-	 * @param uid
-	 * @return
+	 * @param uid	the uid of an item
+	 * @return	{@code true} if the item is equipped, {@code false} otherwise
 	 */
 	public boolean hasEquipped(long uid) {
 		return equipped.containsValue(uid);
 	}
 	
 	/**
-	 * Checks whether an item is equipped in the given slot.
-	 * @param slot
-	 * @return
+	 * Checks whether an item is equipped in a slot.
+	 * 
+	 * @param slot	an equipment {@code Slot}
+	 * @return	{@code true} if an item is equipped in the given slot, {@code false} otherwise
 	 */
 	public boolean hasEquipped(Slot slot) {
 		return equipped.containsKey(slot);
 	}
 	
 	/**
-	 * Unequip an item.
+	 * Unequips an item.
 	 * 
-	 * @param uid
+	 * @param uid	the uid of an item
 	 */
 	public void unequip(Long uid) {
 		equipped.values().removeIf(uid::equals);
 	}
 	
 	/**
-	 * Unequip the item in the given slot.
+	 * Unequips the item in an equipment slot.
 	 * 
-	 * @param slot
+	 * @param slot	an equipment {@code Slot}
 	 */
 	public void unequip(Slot slot) {
 		unequip(equipped.get(slot));
 	}
 	
 	/**
-	 * Equip an item to a slot.
+	 * Equips an item to a slot.
 	 * 
-	 * @param slot
-	 * @param uid
+	 * @param slot	an equipment {@code Slot}
+	 * @param uid	the uid of an item
 	 */
 	public void equip(Slot slot, long uid) {
 		equipped.put(slot, uid);
 	}
 	
 	/**
+	 * Returns the item equipped in a slot.
 	 * 
-	 * @param slot
-	 * @return	the item in the given equipment slot.
+	 * @param slot	an equipment {@code Slot}
+	 * @return	the uid of the item in the given equipment slot.
 	 */
-	public long getEquipedItem(Slot slot) {
+	public long getEquippedItem(Slot slot) {
 		return equipped.get(slot);
 	}
 	
 	/**
 	 * Returns all the equipped items.
 	 * 
-	 * @return	an {@code Iterable} of item uid's
+	 * @return	an {@code Iterable<Long>} of item uid's
 	 */
 	public Iterable<Long> getEquippedItems() {
 		return ImmutableList.copyOf(equipped.values());
