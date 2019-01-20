@@ -53,6 +53,7 @@ import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.ServerEvent;
 import neon.common.files.NeonFileSystem;
+import neon.common.files.Permissions;
 import neon.common.net.ClientSocket;
 import neon.common.resources.ResourceManager;
 import neon.common.resources.loaders.CreatureLoader;
@@ -72,7 +73,7 @@ public final class Client implements Runnable {
 	private final EventBus bus = new EventBus("Client Bus");
 	private final ClientSocket socket;
 	private final UserInterface ui;
-	private final NeonFileSystem files = new NeonFileSystem(NeonFileSystem.Permission.READONLY);
+	private final NeonFileSystem files = new NeonFileSystem(Permissions.READONLY);
 	private final ResourceManager resources = new ResourceManager();
 	private final ComponentManager components = new ComponentManager();
 	private final Configuration config = new Configuration();

@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.TreeTraverser;
+import com.google.common.graph.Traverser;
 import com.google.common.io.Files;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
@@ -56,8 +56,8 @@ public final class FileUtils {
 	public static void copyFolder(Path from, Path to) {
 		logger.info("copying files from " + from + " to " + to);
 		
-		TreeTraverser<File> traverser = Files.fileTreeTraverser();
-		for (File file : traverser.preOrderTraversal(from.toFile())) {
+		Traverser<File> traverser = Files.fileTraverser();
+		for (File file : traverser.depthFirstPreOrder(from.toFile())) {
 			// parent folder should not be copied!
 			if (!file.isDirectory()) {
 				// construct the destination path from the origin path
@@ -93,10 +93,10 @@ public final class FileUtils {
 	public static void moveFolder(Path from, Path to) {
 		logger.info("moving files from " + from + " to " + to);
 		
-		TreeTraverser<File> traverser = Files.fileTreeTraverser();
+		Traverser<File> traverser = Files.fileTraverser();
 		
 		// first move all the files
-		for (File file : traverser.preOrderTraversal(from.toFile())) {
+		for (File file : traverser.depthFirstPreOrder(from.toFile())) {
 			// parent folder should not be moved!
 			if (!file.isDirectory()) {
 				// construct the destination path from the origin path

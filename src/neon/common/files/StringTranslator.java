@@ -29,8 +29,13 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.CharStreams;
 
+/**
+ * A simple translator for UTF-8 strings.
+ * 
+ * @author mdriesen
+ *
+ */
 public class StringTranslator implements Translator<String> {
-
 	@Override
 	public String translate(InputStream input) throws IOException {
 		try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {

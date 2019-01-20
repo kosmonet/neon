@@ -91,7 +91,7 @@ final class ServerLoader {
 			CServer configuration = initConfiguration(files, entities);
 			LOGGER.setLevel(configuration.getLogLevel());
 			initEntities(entities);
-			initFileSystem(files, configuration.getModules());
+			initFileSystem(files, configuration);
 			initResources(files, resources, configuration, entities);
 			initClient(resources, configuration.getModules());
 			LOGGER.info("server succesfully configured");
@@ -139,17 +139,24 @@ final class ServerLoader {
 	 * @param files
 	 * @param modules
 	 */
-	private void initFileSystem(NeonFileSystem files, Set<String> modules) {
-		try {
-			for (String module : modules) {
+	private void initFileSystem(NeonFileSystem files, CServer configuration) {
+		for (String module : configuration.getModules()) {
+			try {
 				files.addModule(module);
+			} catch (IOException e) {
+				LOGGER.severe("failed to initialize file system: " + e.getMessage());
+				configuration.removeModule(module);
+				LOGGER.warning("module <" + module + "> removed from load order");
 			}
+		}
+		
+		try {
 			files.setTemporaryFolder(Paths.get("temp"));
 		} catch (IOException e) {
-			LOGGER.severe("could not initialize file system");
+			LOGGER.severe("could not initialize temp folder");
 		}
 	}
-	
+
 	/**
 	 * Initializes the resource manager.
 	 * 

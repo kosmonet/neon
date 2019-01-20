@@ -40,20 +40,20 @@ import com.google.gson.JsonParser;
  *
  */
 public final class JsonTranslator implements Translator<JsonElement> {
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-	private static final JsonParser parser = new JsonParser();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final JsonParser PARSER = new JsonParser();
 	
 	@Override
 	public JsonElement translate(InputStream input) throws IOException {
 		try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
-			return parser.parse(reader);
+			return PARSER.parse(reader);
 		}
 	}
 
 	@Override
 	public void translate(JsonElement element, OutputStream output) throws IOException {
 		try (Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-			writer.write(gson.toJson(element));
+			writer.write(GSON.toJson(element));
 		}
 	}
 }

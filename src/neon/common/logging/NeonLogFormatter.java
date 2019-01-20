@@ -22,8 +22,8 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * A log formatter that only outputs the message and the priority level. No
- * timestamp or other information is used.
+ * A log formatter that only outputs the message, source and the priority 
+ * level. No timestamp or other information is used.
  * 
  * @author mdriesen
  *
@@ -31,9 +31,12 @@ import java.util.logging.LogRecord;
 public final class NeonLogFormatter extends Formatter {
 	@Override
 	public String format(LogRecord record) {
-//		String source = record.getSourceClassName();
-//		return record.getLevel() + ": " + source.substring(source.lastIndexOf('.') + 1) + 
-//				"." + record.getSourceMethodName() + " - " + record.getMessage() + "\r\n";
-		return record.getLevel() + " - " + record.getMessage() + "\r\n";
+		String source = record.getSourceClassName();
+		String type = source.substring(source.lastIndexOf('.') + 1);
+		String method = record.getSourceMethodName();
+		String format = "%-7.7s %-36.36s %s";
+
+		return String.format(format, record.getLevel(), "- " + type + "::" + method, "- " + record.getMessage() + "\r\n");	
+//		return record.getLevel() + " - " + record.getMessage() + "\r\n";
 	}
 }

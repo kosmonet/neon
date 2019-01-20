@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ package neon.common.files;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Logger;
 
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -36,25 +35,20 @@ import org.jdom2.output.XMLOutputter;
  * @author mdriesen
  *
  */
-public final class XMLTranslator implements Translator<Document> {
-	private static final Logger LOGGER = Logger.getGlobal();
-	
+public final class XMLTranslator implements Translator<Document> {	
+	private static final XMLOutputter OUTPUTTER = new XMLOutputter(Format.getPrettyFormat());
+
 	@Override
 	public Document translate(InputStream input) throws IOException {
-		Document doc = new Document();
-		
 		try {
-			doc = new SAXBuilder().build(input);
+			return new SAXBuilder().build(input);
 		} catch (JDOMException e) {
-			LOGGER.severe("JDOMException in XMLTranslator");
+			throw new IOException(e);
 		} 
-		
-		return doc;
 	}
 	
 	@Override
 	public void translate(Document document, OutputStream output) throws IOException {
-		XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-		outputter.output(document, output);
+		OUTPUTTER.output(document, output);
 	}
 }

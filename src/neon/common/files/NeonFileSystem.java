@@ -49,11 +49,7 @@ import com.google.common.collect.ImmutableSet;
  *
  */
 public final class NeonFileSystem {
-	public enum Permission {
-		WRITABLE, READONLY;
-	}
-	
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	private final List<String> modules = new ArrayList<>();
 	private final boolean writable;
@@ -64,7 +60,7 @@ public final class NeonFileSystem {
 	 * before the file system is usable.
 	 */
 	public NeonFileSystem() {
-		this(Permission.WRITABLE);
+		this(Permissions.WRITABLE);
 	}
 	
 	/**
@@ -73,25 +69,29 @@ public final class NeonFileSystem {
 	 * 
 	 * @param permission	the write {@code Permission} of the file system
 	 */
-	public NeonFileSystem(Permission permission) {
-		this.writable = Permission.WRITABLE.equals(permission);
+	public NeonFileSystem(Permissions permission) {
+		this.writable = Permissions.WRITABLE.equals(permission);
 	}
 	
 	/**
 	 * Adds a module folder to the virtual file system. Modules must be added 
 	 * in the correct order (parent module should appear before any module that 
-	 * is dependent on it).
+	 * is dependent on it). A module must only be added once.
 	 * 
 	 * @param module	the id of a module
 	 * @throws FileNotFoundException	if the module is missing
 	 */
 	public void addModule(String module) throws FileNotFoundException {
+		if (modules.contains(module)) {
+			throw new IllegalStateException("Module '" + module + "' already present");
+		}
+		
 		Path path = Paths.get("data", module);
 		if (path.toFile().exists()) {
 			modules.add(0, module);
-			logger.info("path <" + module + "> found");
+			LOGGER.info("module '" + module + "' found");
 		} else {
-			throw new FileNotFoundException("Module <" + module + "> is missing!");
+			throw new FileNotFoundException("Module '" + module + "' is missing");
 		}		
 	}
 	
@@ -100,7 +100,7 @@ public final class NeonFileSystem {
 	 * the folder will also be emptied.
 	 * 
 	 * @param path	the {@code Path} to the temporary folder
-	 * @throws IOException	if the temporary folder can't be created
+	 * @throws IOException	if the temporary folder can't be set
 	 */
 	public void setTemporaryFolder(Path path) throws IOException {
 		// delete contents of existing temp folder
@@ -111,7 +111,7 @@ public final class NeonFileSystem {
 		// create new temp folder if it didn't exist
 		Files.createDirectories(path);
 		temporary = path;			
-		logger.config("temp folder set to " + path);
+		LOGGER.config("temp folder path set to [" + path + "]");
 	}
 	
 	/**
@@ -123,9 +123,9 @@ public final class NeonFileSystem {
 	public void setSaveFolder(Path path) throws NotDirectoryException {
 		if (path.toFile().isDirectory()) {
 			save = path;
-			logger.config("save folder set to " + path);
+			LOGGER.config("save folder set to [" + path + "]");
 		} else {
-			throw new NotDirectoryException(path.toString() + " is not a folder");
+			throw new NotDirectoryException("[" + path + "] is not a folder");
 		}
 	}
 	
@@ -135,7 +135,7 @@ public final class NeonFileSystem {
 	 * modules are searched in reverse order. If the file is still not found,
 	 * an exception is thrown.
 	 * 
-	 * @param path	the {@code Path} of the requested file
+	 * @param path	a {@code String[]} representation of a file path
 	 * @return the requested file
 	 * @throws FileNotFoundException	if the file was not found
 	 */
@@ -144,7 +144,7 @@ public final class NeonFileSystem {
 		if (temporary != null) {
 			File file = Paths.get(temporary.toString(), path).toFile();
 			if (file.exists()) {
-				logger.finest("file " + Arrays.toString(path) + " found in temp");
+				LOGGER.finest("file " + Arrays.toString(path) + " found in temp");
 				return file;
 			}
 		}
@@ -153,7 +153,7 @@ public final class NeonFileSystem {
 		if (save != null) {
 			File file = Paths.get(save.toString(), path).toFile();
 			if (file.exists()) {
-				logger.finest("file " + Arrays.toString(path) + " found in save");
+				LOGGER.finest("file " + Arrays.toString(path) + " found in save");
 				return file;
 			}			
 		}
@@ -167,20 +167,20 @@ public final class NeonFileSystem {
 			temp[0] = module;
 			File file = Paths.get("data", temp).toFile();
 			if (file.exists()) {
-				logger.finest("file " + Arrays.toString(path) + " found in module " + module);
+				LOGGER.finest("file " + Arrays.toString(path) + " found in module '" + module + "'");
 				return file;
 			}
 		}
 		
 		// if we get here, file was not found, throw an exception
-		throw new FileNotFoundException("File " + Arrays.toString(path) + " not found!");
+		throw new FileNotFoundException("File " + Arrays.toString(path) + " not found");
 	}
 	
 	/**
 	 * Loads and translates a file at the given path.
 	 * 
 	 * @param translator	the {@code Translator} to use
-	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
+	 * @param path	a {@code String[]} representation of a file path
 	 * @return the translated file
 	 * @throws IOException	if a file at the given path can't be loaded
 	 */
@@ -197,29 +197,29 @@ public final class NeonFileSystem {
 	 * 
 	 * @param output	the object to save
 	 * @param translator	the {@code Translator} to use
-	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
+	 * @param path	a {@code String[]} representation of a file path
 	 * @throws IOException	if the file can't be saved
 	 */
 	public <T> void saveFile(T output, Translator<T> translator, String... path) throws IOException {
 		// check if the filesystem is writable
 		if (!writable) {
-			throw new IOException("Filesystem is not writable.");			
+			throw new IOException("Filesystem is not writable");			
 		}
 		
 		// check if the temp folder exists
 		if (temporary == null) {
-			throw new IOException("No temp folder registered.");
+			throw new IOException("No temp folder registered");
 		}
 		
 		// check if the parent folder already exists, and if not, create it
 		Path parent = Paths.get(temporary.toString(), path).getParent();
 		if (parent != null && !Files.exists(parent)) {
-			logger.fine("creating folder " + parent + " for file " + Arrays.toString(path));
+			LOGGER.fine("creating folder [" + parent + "] for file " + Arrays.toString(path));
 			Files.createDirectories(parent);
 		}
 
 		try (OutputStream out = Files.newOutputStream(Paths.get(temporary.toString(), path))) {
-			logger.finest("writing file " + Arrays.toString(path));
+			LOGGER.finest("writing file " + Arrays.toString(path));
 			translator.translate(output, out);
 		}
 	}
@@ -229,7 +229,7 @@ public final class NeonFileSystem {
 	 * any reason (including possible {@code IOException}s), it will not be
 	 * listed.
 	 * 
-	 * @param folder	a sequence of strings that can be formed into a proper {@code Path}
+	 * @param folder	a {@code String[]} representation of a folder path
 	 * @return	an immutable {@code Set<String>} of filenames
 	 */
 	public Set<String> listFiles(String... folder) {
@@ -242,7 +242,7 @@ public final class NeonFileSystem {
 				try (Stream<Path> paths = Files.list(path)) {
 					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
-					logger.warning("could not list files in folder " + path);
+					LOGGER.warning("could not list files in folder " + path);
 				}
 			}
 		}
@@ -254,7 +254,7 @@ public final class NeonFileSystem {
 				try (Stream<Path> paths = Files.list(path)) {
 					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
-					logger.warning("could not list files in the save folder " + path);
+					LOGGER.warning("could not list files in the save folder " + path);
 				}
 			}
 		}
@@ -271,7 +271,7 @@ public final class NeonFileSystem {
 				try (Stream<Path> paths = Files.list(path)) {
 					paths.map(Path::getFileName).forEach(files::add);					
 				} catch (IOException e) {
-					logger.warning("could not list files in the temp folder " + path);
+					LOGGER.warning("could not list files in the temp folder " + path);
 				}
 			}
 		}
@@ -283,24 +283,24 @@ public final class NeonFileSystem {
 	 * Deletes the file with the given path. This will only delete files in the
 	 * temp folder.
 	 * 
-	 * @param path	a sequence of strings that can be formed into a proper {@code Path}
+	 * @param path	a {@code String[]} representation of a file path
 	 * @throws IOException	if the file can't be deleted
 	 */
 	public void deleteFile(String... path) throws IOException {
 		// check if the temp folder exists
 		if (temporary == null) {
-			throw new IOException("No temp folder registered.");
+			throw new IOException("No temp folder registered");
 		}
 
 		// check if the file system is writable
 		if (!writable) {
-			throw new IOException("Filesystem is not writable.");
+			throw new IOException("Filesystem is not writable");
 		}
 
 		File file = Paths.get(temporary.toString(), path).toFile();
 		if (file.exists()) {
 			file.delete();
-			logger.finest("deleted file " + Arrays.toString(path));
+			LOGGER.finest("deleted file " + Arrays.toString(path));
 		}
 	}
 }

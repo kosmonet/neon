@@ -37,20 +37,20 @@ import com.google.common.collect.ImmutableSet;
 public final class CServer extends Resource {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final Set<String> modules;
+	private final LinkedHashSet<String> modules;
 	private final Level level;
 
 	/**
 	 * Initializes this server configuration resource with the given set of
-	 * modules. A {@code LinkedHashSet} is used to prevent duplicates and to 
+	 * modules. A ordered set is used to prevent duplicates and to 
 	 * preserve the correct load order of the modules. 
 	 * 
-	 * @param modules
-	 * @param logLevel
+	 * @param modules	a {@code LinkedHashSet<String>} of module id's
+	 * @param logLevel	the granularity of the logging
 	 */
 	public CServer(LinkedHashSet<String> modules, String logLevel) {
 		super("server", "config");
-		this.modules = ImmutableSet.copyOf(modules);
+		this.modules = new LinkedHashSet<String>(modules);
 		level = Level.parse(logLevel);
 		logger.config("module load order: " + modules);
 	}
@@ -59,13 +59,23 @@ public final class CServer extends Resource {
 	 * Returns a set of modules that preserves the correct load 
 	 * order, as defined in the neon.ini configuration file.
 	 * 
-	 * @return 	an ordered, unmodifiable {@code Set} of module id's
+	 * @return 	an ordered, immutable {@code Set} of module id's
 	 */
 	public Set<String> getModules() {
-		return modules;
+		return ImmutableSet.copyOf(modules);
 	}
 	
 	/**
+	 * Removes a module from the load order.
+	 * 
+	 * @param module	the module id
+	 */
+	public void removeModule(String module) {
+		modules.remove(module);
+	}
+	
+	/**
+	 * Returns the logging granularity.
 	 * 
 	 * @return 	the required logging {@code Level}
 	 */
@@ -74,8 +84,9 @@ public final class CServer extends Resource {
 	}
 	
 	/**
+	 * Checks whether a module was in the load order.
 	 * 
-	 * @param module
+	 * @param module	a module id
 	 * @return	whether the given module was loaded
 	 */
 	public boolean hasModule(String module) {
