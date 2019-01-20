@@ -208,7 +208,7 @@ public final class MovementSystem implements NeonSystem {
 				map.moveEntity(creature.uid, x, y);
 			}
 			shape.setPosition(x, y, z);				
-			bus.post(new UpdateEvent.Move(creature.uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
+			bus.post(new UpdateEvent.Move(creature.uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 		}
 	}
 }

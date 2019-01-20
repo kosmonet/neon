@@ -133,7 +133,7 @@ public final class MapLoader implements ResourceLoader {
 		root.addContent(terrain);
 		Map<Rectangle, String> leaves = map.getTerrain().getElements();
 		for (Entry<Rectangle, String> entry : leaves.entrySet()) {
-			if(entry.getValue() != null) {
+			if (entry.getValue() != null) {
 				Element region = new Element("region");
 				region.setAttribute("x", Integer.toString(entry.getKey().x));
 				region.setAttribute("y", Integer.toString(entry.getKey().y));

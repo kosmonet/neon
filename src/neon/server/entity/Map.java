@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2018-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,8 +19,13 @@
 package neon.server.entity;
 
 import java.awt.Point;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
+
+import org.jdom2.Element;
+
+import com.google.common.collect.ImmutableList;
 
 import neon.common.resources.RMap;
 import neon.util.spatial.PointQuadTree;
@@ -39,16 +44,16 @@ public final class Map {
 	private final RegionSpatialIndex<String> terrain;
 	private final RegionSpatialIndex<Integer> elevation;
 	private final PointSpatialIndex<Long> entities;
+	private final Collection<Element> markers = new ArrayList<>();
 	private final int uid;
 
 	/**
 	 * Initializes a new map.
 	 * 
-	 * @param map
-	 * @param uid
-	 * @throws IOException
+	 * @param map	the map resource that describes this map
+	 * @param uid	the map uid
 	 */
-	public Map(RMap map, int uid) throws IOException {
+	public Map(RMap map, int uid) {
 		this.map = map;
 		this.uid = uid;
 		
@@ -59,27 +64,27 @@ public final class Map {
 	}
 	
 	/**
-	 * Returns the full 32-bit uid of the map.
+	 * Returns the uid of the map.
 	 * 
-	 * @return
+	 * @return	the full 32-bit uid
 	 */
-	public int getUID() {
+	public int getUid() {
 		return uid;
 	}
 	
 	/**
 	 * Returns the id of the map resource.
 	 * 
-	 * @return
+	 * @return	the id
 	 */
-	public String getID() {
+	public String getId() {
 		return map.id;
 	}
 	
 	/**
 	 * Returns the width of the map.
 	 * 
-	 * @return
+	 * @return	the width
 	 */
 	public int getWidth() {
 		return map.width;
@@ -88,7 +93,7 @@ public final class Map {
 	/**
 	 * Returns the height of the map.
 	 * 
-	 * @return
+	 * @return	the height
 	 */
 	public int getHeight() {
 		return map.height;
@@ -97,9 +102,9 @@ public final class Map {
 	/**
 	 * Returns the terrain type at the given position.
 	 * 
-	 * @param x
-	 * @param y
-	 * @return
+	 * @param x	the x coordinate of the position
+	 * @param y	the y coordinate of the position
+	 * @return	the terrain id
 	 */
 	public String getTerrain(int x, int y) {
 		return terrain.get(x, y);
@@ -108,7 +113,7 @@ public final class Map {
 	/**
 	 * Returns the terrain spatial index.
 	 * 
-	 * @return
+	 * @return	a {@code RegionSpatialIndex<String>} of terrain id's
 	 */
 	RegionSpatialIndex<String> getTerrain() {
 		return terrain;
@@ -117,7 +122,7 @@ public final class Map {
 	/**
 	 * Returns the height map.
 	 * 
-	 * @return
+	 * @return	a {@code RegionSpatialIndex<Integer>}
 	 */
 	RegionSpatialIndex<Integer> getElevation() {
 		return elevation;
@@ -126,9 +131,9 @@ public final class Map {
 	/**
 	 * Returns all entities at the given position.
 	 * 
-	 * @param x
-	 * @param y
-	 * @return
+	 * @param x	the x coordinate of the position
+	 * @param y	the y coordinate of the position
+	 * @return	a {@code Set<Long>} of entity uid's
 	 */
 	public Set<Long> getEntities(int x, int y) {
 		return entities.get(x, y);
@@ -137,7 +142,7 @@ public final class Map {
 	/**
 	 * Returns all entities on this map.
 	 * 
-	 * @return
+	 * @return	a {@code Set<Long>} of entity uid's
 	 */
 	public Set<Long> getEntities() {
 		return entities.getElements();
@@ -146,9 +151,9 @@ public final class Map {
 	/**
 	 * Adds an entity to the map in the given position.
 	 * 
-	 * @param uid
-	 * @param x
-	 * @param y
+	 * @param uid	an entity uid
+	 * @param x	the x coordinate of the position
+	 * @param y	the y coordinate of the position
 	 */
 	public void addEntity(long uid, int x, int y) {
 		entities.insert(uid, x, y);
@@ -157,9 +162,9 @@ public final class Map {
 	/**
 	 * Moves an entity to the given position.
 	 * 
-	 * @param uid
-	 * @param x
-	 * @param y
+	 * @param uid	an entity uid
+	 * @param x	the x coordinate of the position
+	 * @param y	the x coordinate of the position
 	 */
 	public void moveEntity(long uid, int x, int y) {
 		entities.move(uid, new Point(x, y));
@@ -168,9 +173,22 @@ public final class Map {
 	/**
 	 * Removes an entity from the map.
 	 * 
-	 * @param uid
+	 * @param uid	an entity uid
 	 */
 	public void removeEntity(long uid) {
 		entities.remove(uid);
-	}	
+	}
+	
+	void addMarker(Element marker) {
+		markers.add(marker);
+	}
+	
+	/**
+	 * Returns all markers on this map.
+	 * 
+	 * @return	an immutable {@code Iterable<Marker>}
+	 */
+	Iterable<Element> getMarkers() {
+		return ImmutableList.copyOf(markers);
+	}
 }

@@ -94,17 +94,17 @@ final class Notifier {
 	 */
 	void notifyClient(Map map) {
 		// then send the map
-		bus.post(new UpdateEvent.Map(map.getUID(), map.getID()));
+		bus.post(new UpdateEvent.Map(map.getUid(), map.getId()));
 
 		for (long uid : map.getEntities()) {
 			Entity entity = entities.getEntity(uid);
 			Shape shape = entity.getComponent(Shape.class);
 			if (entity.hasComponent(CreatureInfo.class)) {
 				notifyCreature(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 			} else if (entity.hasComponent(ItemInfo.class)) {
 				notifyItem(entity);
-				bus.post(new UpdateEvent.Move(uid, map.getUID(), shape.getX(), shape.getY(), shape.getZ()));
+				bus.post(new UpdateEvent.Move(uid, map.getUid(), shape.getX(), shape.getY(), shape.getZ()));
 			}
 		}		
 	}

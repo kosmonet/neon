@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2018 - Maarten Driesen
+ *	Copyright (C) 2018-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@
 
 package neon.client.handlers;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NotDirectoryException;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -30,6 +33,8 @@ import neon.client.ComponentManager;
 import neon.client.Configuration;
 import neon.client.Map;
 import neon.common.entity.components.Shape;
+import neon.common.event.ConfigurationEvent;
+import neon.common.event.LoadEvent;
 import neon.common.event.UpdateEvent;
 import neon.common.files.NeonFileSystem;
 import neon.common.files.XMLTranslator;
@@ -38,11 +43,11 @@ import neon.common.resources.ResourceException;
 import neon.common.resources.ResourceManager;
 
 /**
- * Handler for map events.
+ * Handler for general loading and saving related events.
  * 
  * @author mdriesen
  */
-public class GameHandler {
+public class FileHandler {
 	private static final Logger LOGGER = Logger.getGlobal();
 	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
@@ -60,11 +65,35 @@ public class GameHandler {
 	 * @param resources	the client resource manager
 	 * @param config	the client configuration data
 	 */
-	public GameHandler(NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
+	public FileHandler(NeonFileSystem files, ComponentManager components, ResourceManager resources, Configuration config) {
 		this.files = Objects.requireNonNull(files, "file system");
 		this.components = Objects.requireNonNull(components, "component manager");
 		this.resources = Objects.requireNonNull(resources, "resource manager");
 		this.config = Objects.requireNonNull(config, "configuration");
+	}
+	
+	/**
+	 * Configures the file system with the required modules.
+	 * 
+	 * @param event	the {@code ConfigurationEvent} describing the modules
+	 * @throws FileNotFoundException	if a module is missing
+	 */
+	@Subscribe
+	private void configure(ConfigurationEvent event) throws FileNotFoundException {
+		for (String module : event.getModules()) {
+			files.addModule(module);
+		}
+	}
+	
+	/**
+	 * Handles the loading of a saved game.
+	 * 
+	 * @param event	the {@code LoadEvent} describing the saved game
+	 * @throws NotDirectoryException	if the saved game folder is broken
+	 */
+	@Subscribe 
+	private void onGameLoad(LoadEvent.Start event) throws NotDirectoryException {
+		files.setSaveFolder(Paths.get("saves", event.save));
 	}
 	
 	/**
@@ -76,8 +105,21 @@ public class GameHandler {
 	 */
 	@Subscribe
 	private void onMapChange(UpdateEvent.Map event) throws ResourceException, IOException {
+		// TODO: map xml file wordt tweemaal na mekaar ingeladen
 		RMap resource = resources.getResource("maps", event.id);
-		Element root = files.loadFile(TRANSLATOR, "maps", event.id + ".xml").getRootElement();
+		Element root;
+		
+		// check if the maps was saved in cache
+		if (files.listFiles("maps").contains(Integer.toString(event.uid) + ".xml")) {
+			// load the map from cache
+			LOGGER.fine("loading map <" + event.uid + "> from temp folder");
+			root = files.loadFile(TRANSLATOR, "maps", Integer.toString(event.uid) + ".xml").getRootElement();
+		} else {
+			// load the map from module
+			LOGGER.fine("loading map <" + event.id + "> from module <" + resource.module + ">");
+			root = files.loadFile(TRANSLATOR, "maps", event.id + ".xml").getRootElement();
+		}
+		
 		Map map = new Map(resource, root);
 		LOGGER.finest("moving player to map " + map.getId());
 		Shape shape = components.getComponent(Configuration.PLAYER_UID, Shape.class);

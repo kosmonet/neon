@@ -37,7 +37,7 @@ import org.jdom2.output.XMLOutputter;
  *
  */
 public final class XMLTranslator implements Translator<Document> {
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOGGER = Logger.getGlobal();
 	
 	@Override
 	public Document translate(InputStream input) throws IOException {
@@ -46,7 +46,7 @@ public final class XMLTranslator implements Translator<Document> {
 		try {
 			doc = new SAXBuilder().build(input);
 		} catch (JDOMException e) {
-			logger.severe("JDOMException in XMLTranslator");
+			LOGGER.severe("JDOMException in XMLTranslator");
 		} 
 		
 		return doc;

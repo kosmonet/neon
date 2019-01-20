@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -68,8 +68,8 @@ public final class EntityManager {
 	/**
 	 * Initializes a new entity manager. The file system must not be null.
 	 * 
-	 * @param files
-	 * @param resources
+	 * @param files	the server file system
+	 * @param resources	the server resource manager
 	 */
 	public EntityManager(NeonFileSystem files, ResourceManager resources) {
 		this.files = Objects.requireNonNull(files, "file system");
@@ -80,8 +80,8 @@ public final class EntityManager {
 	 * Returns the entity with the given uid. If the entity is not present, an
 	 * {@code IllegalArgumentException} is thrown.
 	 * 
-	 * @param uid
-	 * @return
+	 * @param uid	an entity uid
+	 * @return	an {@code Entity} with the given uid
 	 */
 	public Entity getEntity(long uid) {
 		try {
@@ -94,7 +94,7 @@ public final class EntityManager {
 	/**
 	 * Removes an entity from the cache.
 	 * 
-	 * @param uid
+	 * @param uid	the uid of the entity to remove
 	 */
 	public void removeEntity(long uid) {
 		entities.invalidate(uid);
@@ -104,9 +104,9 @@ public final class EntityManager {
 	 * Creates a new entity from the given resource and uid. The new entity
 	 * is added to the cache.
 	 * 
-	 * @param uid
-	 * @param resource
-	 * @return
+	 * @param uid	the uid of the new entity
+	 * @param resource	the resource the entity is based on
+	 * @return	a new {@code Entity}
 	 */
 	@SuppressWarnings("unchecked")
 	public Entity createEntity(long uid, Resource resource) {
@@ -118,8 +118,8 @@ public final class EntityManager {
 	/**
 	 * Adds an entity builder. The type and the builder itself must not be null.
 	 * 
-	 * @param type
-	 * @param builder
+	 * @param type	the type of object the builder will build
+	 * @param builder	an {@code EntityBuilder}
 	 */
 	public <T extends Resource> void addBuilder(Class<T> type, EntityBuilder<? super T> builder) {
 		builders.put(Objects.requireNonNull(type, "type"), Objects.requireNonNull(builder, "builder"));
@@ -129,9 +129,9 @@ public final class EntityManager {
 	 * Calculates the full map uid given the module name and the base uid
 	 * of the map within the module.
 	 * 
-	 * @param base
-	 * @param module
-	 * @return
+	 * @param base	the 16-bit base uid of a map
+	 * @param module	the id of the module the map belongs to
+	 * @return	the full 32-bit map uid
 	 */
 	public int getMapUID(short base, String module) {
 		return ((int) getModuleUID(module) << 16) | base;
@@ -140,8 +140,8 @@ public final class EntityManager {
 	/**
 	 * Returns the map with the given id.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id	the resource id of the map
+	 * @return	a {@code Map}
 	 * @throws IOException	if the map is missing
 	 * @throws ResourceException	if the map can't be loaded
 	 */
@@ -157,7 +157,7 @@ public final class EntityManager {
 	/**
 	 * Return the 16-bit uid of the module the given entity belongs to.
 	 * 
-	 * @param entity
+	 * @param entity	a full 64-bit entity uid
 	 * @return	the uid of the module an entity belongs to
 	 */
 	short getModuleUID(long entity) {
@@ -167,17 +167,17 @@ public final class EntityManager {
 	/**
 	 * Returns the 16-bit uid of the module the given map belongs to.
 	 * 
-	 * @param map
-	 * @return	the uid of the module a map belongs to
+	 * @param map	the full 32-bit uid of a map
+	 * @return	the uid of the module the map belongs to
 	 */
 	short getModuleUID(int map) {
 		return (short) (map >>> 16);		
 	}
 
 	/**
-	 * Returns a 64-bit uid that is still unused.
+	 * Returns an entity uid that is still unused.
 	 * 
-	 * @return
+	 * @return	a full 64-bit uid
 	 */
 	public long getFreeUID() {
 		long uid = 256;
@@ -205,7 +205,7 @@ public final class EntityManager {
 	/**
 	 * Saves an entity in a json file.
 	 * 
-	 * @param entity
+	 * @param entity	the {@code Entity} to save
 	 */
 	private void saveEntity(Entity entity) {
 		try {
@@ -215,16 +215,20 @@ public final class EntityManager {
 		}
 	}
 	
+	/**
+	 * Saves a map to the temp folder on disk.
+	 * 
+	 * @param map	the {@code Map} to save
+	 */
 	private void saveMap(Map map) {
-		// TODO: maps opslaan
-		System.out.println("saving map " + map.getID());
+		loader.saveMap(map);
 	}
 	
 	/**
 	 * Loads an entity from a json file.
 	 * 
-	 * @param uid
-	 * @return
+	 * @param uid	the full 64-bit uid of the entity to load
+	 * @return	an {@code Entity}
 	 * @throws IOException	if the entity is missing
 	 */
 	private Entity loadEntity(long uid) throws IOException {
@@ -235,7 +239,7 @@ public final class EntityManager {
 	/**
 	 * Adds a module to the game.
 	 * 
-	 * @param module
+	 * @param module	the {@code Module} to add
 	 */
 	public void addModule(Module module) {
 		modules.add(Objects.requireNonNull(module, "module"));
@@ -255,8 +259,8 @@ public final class EntityManager {
 	 * Sets the uid of the given module. If another module with the same uid 
 	 * was already present, this module is moved to the next free uid.
 	 * 
-	 * @param module
-	 * @param uid
+	 * @param module	a module id
+	 * @param uid	the module uid
 	 */
 	public void setModuleUID(String module, short uid) {
 		if (uids.containsValue(uid)) {
@@ -294,6 +298,7 @@ public final class EntityManager {
 		@Override
 		public void onRemoval(RemovalNotification<String, Map> notification) {
 			LOGGER.finest(notification.getValue() + " removed from manager");
+			saveMap(notification.getValue());
 		}		
 	}
 }

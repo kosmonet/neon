@@ -55,7 +55,8 @@ public final class LoadState extends State {
 	private Scene scene;
 	
 	/**
-	 * Initializes this state.
+	 * Initializes this state. The user interface and event bus must not be 
+	 * null.
 	 * 
 	 * @param ui
 	 * @param bus	the client event bus

@@ -76,7 +76,7 @@ public class GameSaver {
 		// store all cached maps
 		entities.flushMaps();		
 		// save configuration (current map, calendar)
-		String map = configuration.getCurrentMap().getID();
+		String map = configuration.getCurrentMap().getId();
 		int time = configuration.getCalendar().getTicks();
 		CGame game = new CGame(map, 0, 0, 0, time, Collections.emptyList(), Collections.emptySet());
 		resources.addResource(game);

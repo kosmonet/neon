@@ -88,7 +88,7 @@ public final class SystemManager {
 	/**
 	 * Handles a change of maps.
 	 * 
-	 * @param event
+	 * @param event	an event that describes the map change
 	 * @throws ResourceException
 	 * @throws IOException
 	 */
@@ -131,7 +131,7 @@ public final class SystemManager {
 	/**
 	 * Handles the game loop timer ticks.
 	 * 
-	 * @param event
+	 * @param event	an event that describes the timer tick
 	 */
 	@Subscribe
 	private void onTimerTick(TimerEvent event) {
@@ -143,7 +143,7 @@ public final class SystemManager {
 	/**
 	 * Handles the next turn.
 	 * 
-	 * @param event
+	 * @param event	an event that describes the next turn
 	 */
 	@Subscribe
 	private void onNextTurn(TurnEvent event) {
@@ -155,14 +155,16 @@ public final class SystemManager {
 	/**
 	 * Returns all entities that are currently active.
 	 * 
-	 * @return
+	 * @return	a {@code Collection<Long>} of entity uid's
 	 */
 	private Collection<Long> getActiveEntities() {
 		return config.getCurrentMap().getEntities();
 	}
 	
 	/**
-	 * Updates the game state.
+	 * Advances the game state for a fraction of a turn.
+	 * 
+	 * @param fraction	the fraction of a turn
 	 */
 	private void update(int fraction) {
 		// update the player separately for now

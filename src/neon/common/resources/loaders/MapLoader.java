@@ -40,18 +40,23 @@ import neon.common.resources.Resource;
  *
  */
 public final class MapLoader implements ResourceLoader {
-	private static final String namespace = "maps";
+	private static final String NAMESPACE = "maps";
+	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
-	private final XMLTranslator translator = new XMLTranslator();
 	private final NeonFileSystem files;
 	
+	/**
+	 * Initializes a new map loader. The file system must not be null.
+	 * 
+	 * @param files	the file system used to load map resources
+	 */
 	public MapLoader(NeonFileSystem files) {
 		this.files = Objects.requireNonNull(files, "file system");
 	}
 	
 	@Override
 	public RMap load(String id) throws IOException, DataConversionException {
-		Element root = files.loadFile(translator, namespace, id + ".xml").getRootElement();
+		Element root = files.loadFile(TRANSLATOR, NAMESPACE, id + ".xml").getRootElement();
 		String name = root.getAttributeValue("name");
 		int width = root.getChild("size").getAttribute("width").getIntValue();
 		int height = root.getChild("size").getAttribute("height").getIntValue();
@@ -68,18 +73,18 @@ public final class MapLoader implements ResourceLoader {
 
 	@Override
 	public Set<String> listResources() {
-		return files.listFiles(namespace).parallelStream()
+		return files.listFiles(NAMESPACE).parallelStream()
 				.map(Files::getNameWithoutExtension)
 				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public void removeResource(String id) throws IOException {
-		files.deleteFile(namespace, id + ".xml");
+		files.deleteFile(NAMESPACE, id + ".xml");
 	}
 	
 	@Override
 	public String getNamespace() {
-		return namespace;
+		return NAMESPACE;
 	}
 }

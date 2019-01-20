@@ -18,11 +18,14 @@
 
 package neon.server.entity;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.jdom2.DataConversionException;
+import org.jdom2.Document;
 import org.jdom2.Element;
 
 import neon.common.entity.Entity;
@@ -42,7 +45,7 @@ import neon.systems.conversation.Dialog;
 import neon.util.spatial.RegionSpatialIndex;
 
 /**
- * A class to load maps.
+ * A class that takes care of loading and saving maps.
  * 
  * @author mdriesen
  *
@@ -59,9 +62,9 @@ public final class MapLoader {
 	 * Initializes a new map loader. The file system, resource manager and 
 	 * entity manager must not be null.
 	 * 
-	 * @param files
-	 * @param resources
-	 * @param entities
+	 * @param files	the server file system
+	 * @param resources	the server resource manager
+	 * @param entities	the entity manager
 	 */
 	public MapLoader(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		this.files = Objects.requireNonNull(files, "file system");
@@ -80,16 +83,82 @@ public final class MapLoader {
 	public Map loadMap(String id) throws IOException, ResourceException {
 		// load the map resource
 		RMap resource = resources.getResource("maps", id);
+		int uid = entities.getMapUID(resource.uid, resource.module);
+		Map map = new Map(resource, uid);
+		Element root;
 		
-		// load the map
-		Element root = files.loadFile(TRANSLATOR, "maps", id + ".xml").getRootElement();
-		Map map = new Map(resource, entities.getMapUID(resource.uid, resource.module));
+		// check if this map was cached
+		if (files.listFiles("maps").contains(Integer.toString(uid) + ".xml")) {
+			// load the map from cache
+			LOGGER.fine("loading map <" + uid + "> from temp folder");
+			root = files.loadFile(TRANSLATOR, "maps", Integer.toString(uid) + ".xml").getRootElement();
+			initSavedEntities(root.getChild("entities"), map);
+		} else {
+			// load the map from module
+			LOGGER.fine("loading map <" + id + "> from module <" + resource.module + ">");
+			root = files.loadFile(TRANSLATOR, "maps", id + ".xml").getRootElement();
+			initEntities(root.getChild("entities"), map);			
+		}
+
 		initTerrain(root.getChild("terrain"), map.getTerrain());
 		initElevation(root.getChild("elevation"), map.getElevation());
-		initEntities(root.getChild("entities"), map);
+		initMarkers(root.getChild("labels"), map);
 		
 		// add map to the entity manager
 		return map;
+	}
+
+	/**
+	 * Saves a map to the temp folder on disk.
+	 * 
+	 * @param map	the {@code Map} to save.
+	 */
+	public void saveMap(Map map) {
+		Element root = new Element("map");
+		root.setAttribute("id", map.getId());
+		root.setAttribute("uid", Integer.toString(map.getUid()));
+		
+		Element size = new Element("size");
+		size.setAttribute("width", Integer.toString(map.getWidth()));
+		size.setAttribute("height", Integer.toString(map.getHeight()));
+		root.addContent(size);
+		
+		Element entities = new Element("entities");
+		root.addContent(entities);
+		for (Long uid : map.getEntities()) {
+			Element entity = new Element("entity");
+			entity.setAttribute("uid", Long.toString(uid));
+			entities.addContent(entity);
+		}
+		
+		Element labels = new Element("labels");
+		root.addContent(labels);
+		for (Element marker : map.getMarkers()) {
+			labels.addContent(marker);
+		}
+		
+		Element elevation = new Element("elevation");
+		root.addContent(elevation);
+		
+		Element terrain = new Element("terrain");
+		root.addContent(terrain);
+		for (Entry<Rectangle, String> entry : map.getTerrain().getElements().entrySet()) {
+			if (entry.getValue() != null) {
+				Element region = new Element("region");
+				region.setAttribute("x", Integer.toString(entry.getKey().x));
+				region.setAttribute("y", Integer.toString(entry.getKey().y));
+				region.setAttribute("w", Integer.toString(entry.getKey().width));
+				region.setAttribute("h", Integer.toString(entry.getKey().height));
+				region.setAttribute("id", entry.getValue());
+				terrain.addContent(region);
+			}
+		}
+		
+		try {
+			files.saveFile(new Document(root), TRANSLATOR, "maps", map.getUid() + ".xml");
+		} catch (IOException e) {
+			LOGGER.severe("could not save map <" + map.getId() + ">");
+		}
 	}
 	
 	/**
@@ -116,8 +185,8 @@ public final class MapLoader {
 	/**
 	 * Initializes the height map of a map.
 	 * 
-	 * @param elevation
-	 * @param index
+	 * @param elevation	the JDOM {@code Element} containing height data
+	 * @param index	the spatial index containing height data
 	 */
 	private void initElevation(Element elevation, RegionSpatialIndex<Integer> index) {
 		for (Element region : elevation.getChildren("region")) {
@@ -135,13 +204,25 @@ public final class MapLoader {
 	}
 	
 	/**
+	 * Initializes the map markers.
+	 * 
+	 * @param labels	the JDOM {@code Element} containing markers
+	 * @param map	the {@code Map}
+	 */
+	private void initMarkers(Element labels, Map map) {
+		for (Element label : labels.getChildren()) {
+			map.addMarker(label.detach());			
+		}
+	}
+	
+	/**
 	 * Initializes all entities on a map.
 	 * 
-	 * @param entities
-	 * @param map
+	 * @param entities	the JDOM {@code Element} containing entities
+	 * @param map	the {@code Map}
 	 */
 	private void initEntities(Element entities, Map map) {
-		long base = (long) map.getUID() << 32;
+		long base = (long) map.getUid() << 32;
 		
 		// load creatures
 		for (Element entity : entities.getChildren("creature")) {
@@ -149,9 +230,9 @@ public final class MapLoader {
 				Entity creature = loadCreature(entity, base);
 				registerEntity(entity, creature.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
-				LOGGER.severe("unknown creature on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+				LOGGER.severe("unknown creature on map " + map.getId() + ": " + entity.getAttributeValue("id"));
 			} catch (DataConversionException e) {
-				LOGGER.severe("error loading creature on map " + map.getID() + ": " + e.getMessage());
+				LOGGER.severe("error loading creature on map " + map.getId() + ": " + e.getMessage());
 			}
 		}
 		
@@ -161,9 +242,28 @@ public final class MapLoader {
 				Entity item = loadItem(entity, base);
 				registerEntity(entity, item.getComponent(Shape.class), map);
 			} catch (ResourceException e) {
-				LOGGER.severe("unknown item on map " + map.getID() + ": " + entity.getAttributeValue("id"));
+				LOGGER.severe("unknown item on map <" + map.getId() + ">: " + entity.getAttributeValue("id"));
 			} catch (DataConversionException e) {
-				LOGGER.severe("error loading item on map " + map.getID() + ": " + e.getMessage());				
+				LOGGER.severe("error loading item on map <" + map.getId() + ">: " + e.getMessage());				
+			}
+		}
+	}
+	
+	/**
+	 * Initializes all entities on a map.
+	 * 
+	 * @param element	the JDOM {@code Element} containing entities
+	 * @param map	the {@code Map}
+	 */
+	private void initSavedEntities(Element element, Map map) {
+		// load creatures
+		for (Element entity : element.getChildren()) {
+			try {
+				long uid = entity.getAttribute("uid").getLongValue();
+				Shape shape = entities.getEntity(uid).getComponent(Shape.class);
+				map.addEntity(uid, shape.getX(), shape.getY());
+			} catch (DataConversionException e) {
+				LOGGER.severe("can't load entity <" + entity.getAttributeValue("uid") + ">");
 			}
 		}
 	}
@@ -171,9 +271,9 @@ public final class MapLoader {
 	/**
 	 * Sets the position of an entity on the map. 
 	 * 
-	 * @param entity
-	 * @param shape
-	 * @param map
+	 * @param entity	the JDOM {@code Element} containing the entity data
+	 * @param shape	the shape component of the entity
+	 * @param map	the map
 	 * @throws DataConversionException	if the entity data is invalid
 	 */
 	private void registerEntity(Element entity, Shape shape, Map map) throws DataConversionException {
@@ -187,9 +287,9 @@ public final class MapLoader {
 	/**
 	 * Loads a creature.
 	 * 
-	 * @param entity
-	 * @param base
-	 * @return
+	 * @param entity	the JDOM {@code Element} containing the creature data
+	 * @param base	the uid of the map, shifted 32 bits to the left
+	 * @return	a creature {@code Entity}
 	 * @throws ResourceException	if the creature resource is missing
 	 * @throws DataConversionException	if the creature data is invalid
 	 */
@@ -226,9 +326,9 @@ public final class MapLoader {
 	/**
 	 * Loads an item.
 	 * 
-	 * @param entity
-	 * @param base
-	 * @return
+	 * @param entity	the JDOM {@code Element} containing the item data
+	 * @param base	the uid of the map, shifted 32 bits to the left
+	 * @return	an item {@code Entity}
 	 * @throws ResourceException	if the item resource is missing
 	 * @throws DataConversionException	if the item data is invalid
 	 */

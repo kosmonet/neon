@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 package neon.client;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -32,7 +31,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import neon.client.handlers.CollisionHandler;
 import neon.client.handlers.EntityHandler;
-import neon.client.handlers.GameHandler;
+import neon.client.handlers.FileHandler;
 import neon.client.handlers.MessageHandler;
 import neon.client.states.ContainerState;
 import neon.client.states.ConversationState;
@@ -50,7 +49,6 @@ import neon.client.states.TradeState;
 import neon.client.states.Transition;
 import neon.client.states.TransitionEvent;
 import neon.client.ui.UserInterface;
-import neon.common.event.ConfigurationEvent;
 import neon.common.event.InputEvent;
 import neon.common.event.NeonEvent;
 import neon.common.event.ServerEvent;
@@ -116,7 +114,7 @@ public final class Client implements Runnable {
 		bus.register(new CollisionHandler(ui, bus, components, config));
 		bus.register(new EntityHandler(components, config));
 		bus.register(new MessageHandler(ui, components));
-		bus.register(new GameHandler(files, components, resources, config));
+		bus.register(new FileHandler(files, components, resources, config));
 		
 		// initialize all states and enter the first one
 		initStates(version);
@@ -199,7 +197,7 @@ public final class Client implements Runnable {
 	 * Gives a warning when an event is detected that no other object is currently 
 	 * listening to.
 	 * 
-	 * @param event
+	 * @param event	the {@code DeadEvent} describing the unhandled event
 	 */
 	@Subscribe
 	private void monitor(DeadEvent event) {
@@ -210,23 +208,10 @@ public final class Client implements Runnable {
 	 * Throws an error when a server event has somehow made its way into the
 	 * client.
 	 * 
-	 * @param event
+	 * @param event	the {@code ServerEvent}
 	 */
 	@Subscribe
 	private void monitor(ServerEvent event) {
 		throw new AssertionError("Client received a server event!");
-	}
-	
-	/**
-	 * Configures the file system with the required modules.
-	 * 
-	 * @param event
-	 * @throws FileNotFoundException	if a module is missing
-	 */
-	@Subscribe
-	private void configure(ConfigurationEvent event) throws FileNotFoundException {
-		for (String module : event.getModules()) {
-			files.addModule(module);
-		}
 	}
 }
