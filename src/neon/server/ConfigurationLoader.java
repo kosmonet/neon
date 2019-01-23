@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -19,11 +19,14 @@
 package neon.server;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.jdom2.DataConversionException;
@@ -48,6 +51,7 @@ import neon.server.entity.EntityManager;
  *
  */
 public final class ConfigurationLoader implements ResourceLoader {
+	private static final Logger LOGGER = Logger.getGlobal();
 	private static final String NAMESPACE = "config";
 	private static final XMLTranslator TRANSLATOR = new XMLTranslator();
 	
@@ -107,14 +111,20 @@ public final class ConfigurationLoader implements ResourceLoader {
 		// LinkedHashSet to preserve module load order and to prevent doubles
 		LinkedHashSet<String> modules = new LinkedHashSet<String>();
 		for (Element module : root.getChild("modules").getChildren()) {
-			modules.add(module.getText());
+			String id = module.getText();
+			// check if the module is present
+			if (Paths.get("data", id, id + ".xml").toFile().isFile()) {
+				modules.add(id);
+			} else {
+				LOGGER.warning("missing module '" + id + "' removed from load order");
+			}
 		}
 		
 		// set the correct module uid's in the entity manager
 		if (root.getName().equals("server")) {
 			// in case this was a saved configuration file
 			for (Element module : root.getChild("modules").getChildren()) {
-				entities.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
+					entities.setModuleUID(module.getText(), Short.parseShort(module.getAttributeValue("uid")));
 			}
 		} else {
 			// in case configuration was loaded from neon.ini
@@ -123,9 +133,9 @@ public final class ConfigurationLoader implements ResourceLoader {
 				entities.setModuleUID(module, index++);
 			}
 		}
-
+		
 		String level = root.getChildText("log").toUpperCase();
-		return new CServer(modules, level);
+		return new CServer(modules, Level.parse(level));
 	}
 
 	/**

@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet;
 public final class CServer extends Resource {
 	private static final Logger logger = Logger.getGlobal();
 	
-	private final LinkedHashSet<String> modules;
+	private final Set<String> modules;
 	private final Level level;
 
 	/**
@@ -48,10 +48,10 @@ public final class CServer extends Resource {
 	 * @param modules	a {@code LinkedHashSet<String>} of module id's
 	 * @param logLevel	the granularity of the logging
 	 */
-	public CServer(LinkedHashSet<String> modules, String logLevel) {
+	public CServer(LinkedHashSet<String> modules, Level logLevel) {
 		super("server", "config");
-		this.modules = new LinkedHashSet<String>(modules);
-		level = Level.parse(logLevel);
+		this.modules = ImmutableSet.copyOf(modules);
+		level = logLevel;
 		logger.config("module load order: " + modules);
 	}
 	
@@ -62,16 +62,7 @@ public final class CServer extends Resource {
 	 * @return 	an ordered, immutable {@code Set} of module id's
 	 */
 	public Set<String> getModules() {
-		return ImmutableSet.copyOf(modules);
-	}
-	
-	/**
-	 * Removes a module from the load order.
-	 * 
-	 * @param module	the module id
-	 */
-	public void removeModule(String module) {
-		modules.remove(module);
+		return modules;
 	}
 	
 	/**

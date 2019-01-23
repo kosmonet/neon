@@ -4,6 +4,10 @@
 	-fx-background-color: #303030;
 }
 
+TextFlow {
+	-fx-font-family: monospace;	
+}
+
 .bottom-buttons {	/* the row of buttons at the bottom of a scene */
 	-fx-background-color: #202020;
 	-fx-max-width: Infinity;

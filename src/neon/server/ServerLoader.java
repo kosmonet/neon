@@ -1,6 +1,6 @@
 /*
  *	Neon, a roguelike engine.
- *	Copyright (C) 2017-2018 - Maarten Driesen
+ *	Copyright (C) 2017-2019 - Maarten Driesen
  * 
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ final class ServerLoader {
 	 * Initializes this loader with an {@code EventBus}. The event bus must
 	 * not be null.
 	 * 
-	 * @param bus
+	 * @param bus	the server event bus
 	 */
 	ServerLoader(EventBus bus) {
 		this.bus = Objects.requireNonNull(bus, "event bus");
@@ -82,16 +82,16 @@ final class ServerLoader {
 	 * added to the resource manager as server, client and game configuration 
 	 * resources.
 	 * 
-	 * @param files
-	 * @param manager
-	 * @param entities
+	 * @param files	the server file manager
+	 * @param manager	the server resource manager
+	 * @param entities	the entity manager
 	 */
 	void configure(NeonFileSystem files, ResourceManager resources, EntityManager entities) {
 		try {
 			CServer configuration = initConfiguration(files, entities);
 			LOGGER.setLevel(configuration.getLogLevel());
-			initEntities(entities);
 			initFileSystem(files, configuration);
+			initEntities(entities);
 			initResources(files, resources, configuration, entities);
 			initClient(resources, configuration.getModules());
 			LOGGER.info("server succesfully configured");
@@ -105,9 +105,9 @@ final class ServerLoader {
 	/**
 	 * Loads the neon.ini file.
 	 * 
-	 * @param files
-	 * @param entities
-	 * @return
+	 * @param files	the server file system
+	 * @param entities	the entity manager
+	 * @return	the server configuration resource
 	 * @throws IOException	if the ini file is missing
 	 * @throws JDOMException	if the ini file is corrupt
 	 */
@@ -115,14 +115,14 @@ final class ServerLoader {
 		try (InputStream in = Files.newInputStream(Paths.get("neon.ini"))) {
 			Document doc = new SAXBuilder().build(in);
 			return new ConfigurationLoader(files, entities).loadServer(doc.getRootElement());
-		} 
+		}
 	}
 	
 	/**
 	 * Adds some basic builders to the entity manager. Systems may add more
 	 * builders later on.
 	 * 
-	 * @param entities
+	 * @param entities	the entity manager
 	 */
 	private void initEntities(EntityManager entities) {
 		entities.addBuilder(RItem.class, new ItemBuilder());
@@ -137,7 +137,7 @@ final class ServerLoader {
 	 * Initializes the file system with required modules and temporary folder.
 	 * 
 	 * @param files
-	 * @param modules
+	 * @param configuration
 	 */
 	private void initFileSystem(NeonFileSystem files, CServer configuration) {
 		for (String module : configuration.getModules()) {
@@ -145,8 +145,6 @@ final class ServerLoader {
 				files.addModule(module);
 			} catch (IOException e) {
 				LOGGER.severe("failed to initialize file system: " + e.getMessage());
-				configuration.removeModule(module);
-				LOGGER.warning("module <" + module + "> removed from load order");
 			}
 		}
 		
@@ -183,9 +181,9 @@ final class ServerLoader {
 				entities.addModule(new Module(module));
 				for (String parent : module.getParentModules()) {
 					if (!modules.contains(parent)) {
-						LOGGER.warning("module <" + id + "> is missing parent <" + parent + ">");
-						bus.post(new MessageEvent("Module <" + id + "> is missing parent <" + 
-								parent + ">. Check if all necessary modules are present in "
+						LOGGER.warning("module '" + id + "' is missing parent '" + parent + "'");
+						bus.post(new MessageEvent("Module '" + id + "' is missing parent '" + 
+								parent + "'. Check if all necessary modules are present in "
 								+ "the correct load order.", "Server configuration error"));
 					}
 				}

@@ -81,7 +81,7 @@ public final class CutSceneState extends State {
 			}
 		} catch (ResourceException e) {
 			bus.post(new TransitionEvent("cancel"));
-			LOGGER.severe("unable to load cutscene text");
+			LOGGER.severe("unable to load cutscene text: " + e.getMessage());
 		}
 	}
 
