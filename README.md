@@ -1,4 +1,6 @@
 # The Neon Roguelike Engine
+## Notification
+The engine is no longer under development in Java. A switch was made to .Net under the new name Argon.
 
 ## Requirements
 The engine is written for Java 8, and uses JavaFX 8 for the user interface. 
